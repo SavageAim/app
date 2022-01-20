@@ -27,4 +27,8 @@ class Team(models.Model):
         Generate a new invite code for a team
         Can be used to regenerate the code later as needed
         """
-        return ''.join(choice(CHARS) for _ in range(CODE_LEN))
+        code = ''.join(choice(CHARS) for _ in range(CODE_LEN))
+        while Team.objects.filter(invite_code=code).exists():
+            code = ''.join(choice(CHARS) for _ in range(CODE_LEN))
+
+        return code
