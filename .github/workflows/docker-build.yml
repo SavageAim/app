@@ -15,11 +15,11 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Build the Docker image
-      run: docker build . --file deployment/Dockerfile -t docker.pkg.github.com/freyamade/savage-aim/backend:latest -t docker.pkg.github.com/freyamade/savage-aim/backend:$(echo "$GITHUB_REF" | sed 's/refs\/tags\///')
+      run: docker build . --file deployment/Dockerfile -t docker.pkg.github.com/savage-aim/app/backend:latest -t docker.pkg.github.com/savage-aim/app/backend:$(echo "$GITHUB_REF" | sed 's/refs\/tags\///')
     - name: Login to GitHub Docker Registry
       run: docker login docker.pkg.github.com -u freyamade -p ${{ secrets.GITHUB_TOKEN }}
     - name: Push the Docker image
-      run: docker push --all-tags docker.pkg.github.com/freyamade/savage-aim/backend
+      run: docker push --all-tags docker.pkg.github.com/savage-aim/app/backend
 
   build-frontend:
     runs-on: ubuntu-latest
@@ -30,8 +30,8 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Build the Docker image
-      run: docker build . --file deployment/Dockerfile --tag docker.pkg.github.com/freyamade/savage-aim/frontend:latest -t docker.pkg.github.com/freyamade/savage-aim/frontend:$(echo "$GITHUB_REF" | sed 's/refs\/tags\///')
+      run: docker build . --file deployment/Dockerfile --tag docker.pkg.github.com/savage-aim/app/frontend:latest -t docker.pkg.github.com/savage-aim/app/frontend:$(echo "$GITHUB_REF" | sed 's/refs\/tags\///')
     - name: Login to GitHub Docker Registry
       run: docker login docker.pkg.github.com -u freyamade -p ${{ secrets.GITHUB_TOKEN }}
     - name: Push the Docker image
-      run: docker push --all-tags docker.pkg.github.com/freyamade/savage-aim/frontend
+      run: docker push --all-tags docker.pkg.github.com/savage-aim/app/frontend
