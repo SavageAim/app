@@ -32,4 +32,8 @@ class Character(models.Model):
         """
         Generate a token for a Character to use for verification
         """
-        return 'savageaim-' + ''.join(choice(CHARACTERS) for _ in range(RANDOM_CHARS))
+        code = 'savageaim-' + ''.join(choice(CHARACTERS) for _ in range(RANDOM_CHARS))
+        while Character.objects.filter(token=code).exists():
+            code = 'savageaim-' + ''.join(choice(CHARACTERS) for _ in range(RANDOM_CHARS))
+
+        return code
