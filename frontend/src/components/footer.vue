@@ -1,7 +1,9 @@
 <template>
   <footer id="footer" class="content has-text-centered">
-    <a href="#changelog" class="has-text-white" title="Changelog" @click="showChangelog"><span class="icon is-large"><i class="material-icons">update</i></span></a>
-    <p>Savage Aim, by Erika Yukiko (Lich)</p>
+    <a href="https://wiki.savageaim.com" target="_blank" data-microtip-position="top" role="tooltip" aria-label="Wiki"><span class="icon is-large"><i class="material-icons">menu_book</i></span></a>
+    <a href="#changelog" data-microtip-position="top" role="tooltip" aria-label="Changelog" @click="showChangelog"><span class="icon is-large"><i class="material-icons">update</i></span></a>
+    <a href="https://github.com/Savage-Aim/app" target="_blank" data-microtip-position="top" role="tooltip" aria-label="Github Repo" @click="showChangelog"><span class="icon is-large"><i class="material-icons">code</i></span></a>
+    <p>Savage Aim v{{ $store.state.version }}, by Erika Yukiko (Lich)</p>
     <p>FINAL FANTASY XIV ©2010 - {{ currentYear }} SQUARE ENIX CO., LTD. All Rights Reserved.</p>
     <p>FINAL FANTASY is a registered trademark of Square Enix Holdings Co., Ltd. All material used under license.</p>
   </footer>
