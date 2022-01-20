@@ -1,0 +1,38 @@
+$is-il-minus-25: #D55E00;
+$is-il-minus-20: #E69F00;
+$is-il-minus-15: #F0E442;
+$is-il-minus-10: #009E73;
+$is-il-minus-5: #0072B2;
+$is-il-minus-0: #56B4E9;
+$is-il-bis: #CC79A7;
+
+table.gear-table.is-beta {
+  .is-il-minus-25 {
+    background-color: $is-il-minus-25;
+    color: #fff;
+  }
+  .is-il-minus-20 {
+    background-color: $is-il-minus-20;
+    color: #fff;
+  }
+  .is-il-minus-15 {
+    background-color: $is-il-minus-15;
+    color: rgba(#000, 0.7);
+  }
+  .is-il-minus-10 {
+    background-color: $is-il-minus-10;
+    color: #fff;
+  }
+  .is-il-minus-5 {
+    background-color: $is-il-minus-5;
+    color: #fff;
+  }
+  .is-il-minus-0 {
+    background-color: $is-il-minus-0;
+    color: #fff;
+  }
+  .is-il-bis {
+    background-color: $is-il-bis;
+    color: #fff;
+  }
+}

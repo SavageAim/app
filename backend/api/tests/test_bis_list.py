@@ -1,0 +1,471 @@
+# stdlib
+from io import StringIO
+# lib
+from django.core.management import call_command
+from django.urls import reverse
+from rest_framework import status
+# local
+from api.models import BISList, Character, Gear
+from api.serializers import BISListSerializer
+from .test_base import SavageAimTestCase
+
+
+class BISListCollection(SavageAimTestCase):
+    """
+    Test the creation of new BISLists
+    """
+
+    def setUp(self):
+        """
+        Create a character for use in the test
+        """
+        self.char = Character.objects.create(
+            avatar_url='https://img.savageaim.com/abcde',
+            lodestone_id=1234567890,
+            user=self._get_user(),
+            name='Char 1',
+            world='Lich',
+            verified=True,
+        )
+        call_command('job_seed', stdout=StringIO())
+        call_command('gear_seed', stdout=StringIO())
+
+        self.gear_id_map = {g.name: g.id for g in Gear.objects.all()}
+
+    def tearDown(self):
+        """
+        Clean up the DB after each test
+        """
+        Character.objects.all().delete()
+
+    def test_create(self):
+        """
+        Create a new BIS List for the character
+        """
+        url = reverse('api:bis_collection', kwargs={'character_id': self.char.pk})
+        self.client.force_authenticate(self.char.user)
+
+        # Try one with PLD first
+        data = {
+            'job_id': 'PLD',
+            'bis_mainhand_id': self.gear_id_map['Divine Light'],
+            'bis_offhand_id': self.gear_id_map['Moonward'],
+            'bis_head_id': self.gear_id_map['Limbo'],
+            'bis_body_id': self.gear_id_map['Limbo'],
+            'bis_hands_id': self.gear_id_map['Limbo'],
+            'bis_legs_id': self.gear_id_map['Limbo'],
+            'bis_feet_id': self.gear_id_map['Limbo'],
+            'bis_earrings_id': self.gear_id_map['Limbo'],
+            'bis_necklace_id': self.gear_id_map['Limbo'],
+            'bis_bracelet_id': self.gear_id_map['Limbo'],
+            'bis_right_ring_id': self.gear_id_map['Limbo'],
+            'bis_left_ring_id': self.gear_id_map['Limbo'],
+            'current_mainhand_id': self.gear_id_map['Moonward'],
+            'current_offhand_id': self.gear_id_map['Moonward'],
+            'current_head_id': self.gear_id_map['Moonward'],
+            'current_body_id': self.gear_id_map['Moonward'],
+            'current_hands_id': self.gear_id_map['Moonward'],
+            'current_legs_id': self.gear_id_map['Moonward'],
+            'current_feet_id': self.gear_id_map['Moonward'],
+            'current_earrings_id': self.gear_id_map['Moonward'],
+            'current_necklace_id': self.gear_id_map['Moonward'],
+            'current_bracelet_id': self.gear_id_map['Moonward'],
+            'current_right_ring_id': self.gear_id_map['Moonward'],
+            'current_left_ring_id': self.gear_id_map['Moonward'],
+            'external_link': '',
+        }
+
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.content)
+        self.assertEqual(BISList.objects.count(), 1)
+        obj = BISList.objects.first()
+        self.assertNotEqual(obj.bis_offhand_id, obj.bis_mainhand_id)
+        self.assertIsNone(obj.external_link)
+        obj.delete()
+
+        # Do one for a different job, ensure that offhand and mainhand are actually the same
+        data['job_id'] = 'SGE'
+        data['external_link'] = 'https://etro.gg'
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.content)
+        self.assertEqual(BISList.objects.count(), 1)
+        obj = BISList.objects.first()
+        self.assertEqual(obj.bis_offhand_id, obj.bis_mainhand_id)
+        self.assertEqual(obj.bis_offhand_id, data['bis_mainhand_id'])
+        self.assertEqual(obj.external_link, data['external_link'])
+
+    def test_create_400(self):
+        """
+        Test all the kinds of errors that can come from the create endpoint;
+            - Invalid number for a gear type
+            - Gear pk doesn't exist
+            - Gear category is incorrect
+            - Job ID doesn't exist
+            - Job already has a BIS List
+            - Data missing
+            - External link isn't a url
+        """
+        url = reverse('api:bis_collection', kwargs={'character_id': self.char.pk})
+        self.client.force_authenticate(self.char.user)
+
+        response = self.client.post(url)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, response.content)
+        content = response.json()
+        for field in content:
+            self.assertEqual(content[field], ['This field is required.'])
+        self.assertEqual(len(content), 25)
+
+        # All gear errors will be run at once since there's only one actual function to test
+        data = {
+            'job_id': 'abc',
+            'bis_mainhand_id': 'abcde',
+            'bis_body_id': -1,
+            'bis_head_id': self.gear_id_map['Eternal Dark'],
+            'bis_earrings_id': self.gear_id_map['Divine Light'],
+            'current_mainhand_id': self.gear_id_map['The Last'],
+            'external_link': 'abcde',
+        }
+
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, response.content)
+        # Since we checked all the "this field is required" errors above, just check the ones we send now
+        content = response.json()
+        invalid_gear = 'The chosen category of Gear does not have an item for this slot.'
+        self.assertEqual(content['job_id'], ['Please select a valid Job.'])
+        self.assertEqual(content['bis_mainhand_id'], ['A valid integer is required.'])
+        self.assertEqual(content['bis_body_id'], ['Please ensure your value corresponds with a valid type of Gear.'])
+        self.assertEqual(content['bis_head_id'], [invalid_gear])
+        self.assertEqual(content['bis_earrings_id'], [invalid_gear])
+        self.assertEqual(content['current_mainhand_id'], [invalid_gear])
+        self.assertEqual(content['external_link'], ['Enter a valid URL.'])
+
+        # Create a BIS List for a job, then send a request to make one for the same job
+        bis_gear = Gear.objects.first()
+        curr_gear = Gear.objects.last()
+        BISList.objects.create(
+            bis_body=bis_gear,
+            bis_bracelet=bis_gear,
+            bis_earrings=bis_gear,
+            bis_feet=bis_gear,
+            bis_hands=bis_gear,
+            bis_head=bis_gear,
+            bis_left_ring=bis_gear,
+            bis_legs=bis_gear,
+            bis_mainhand=bis_gear,
+            bis_necklace=bis_gear,
+            bis_offhand=bis_gear,
+            bis_right_ring=bis_gear,
+            current_body=curr_gear,
+            current_bracelet=curr_gear,
+            current_earrings=curr_gear,
+            current_feet=curr_gear,
+            current_hands=curr_gear,
+            current_head=curr_gear,
+            current_left_ring=curr_gear,
+            current_legs=curr_gear,
+            current_mainhand=curr_gear,
+            current_necklace=curr_gear,
+            current_offhand=curr_gear,
+            current_right_ring=curr_gear,
+            job_id='DRG',
+            owner=self.char,
+        )
+
+        data = {'job_id': 'DRG'}
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, response.content)
+        # Since we checked all the "this field is required" errors above, just check the ones we send now
+        content = response.json()
+        self.assertEqual(content['job_id'], ['Currently SavageAim only supports one BISList per job.'])
+
+    def test_404(self):
+        """
+        Test all situations where the endpoint would respond with a 404;
+
+        - Invalid ID
+        - Character is not owned by the requesting user
+        - Character is not verified
+        """
+        user = self._get_user()
+        self.client.force_authenticate(user)
+
+        # ID doesn't exist
+        url = reverse('api:bis_collection', kwargs={'character_id': 0000000000000000000000})
+        response = self.client.post(url)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND, response.content)
+
+        # Character belongs to a different user
+        self.char.user = self._create_user()
+        self.char.save()
+        url = reverse('api:bis_collection', kwargs={'character_id': self.char.id})
+        response = self.client.post(url)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND, response.content)
+
+        # Character is not verified
+        self.char.verified = False
+        self.char.user = user
+        self.char.save()
+        response = self.client.post(url)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND, response.content)
+
+
+class BISListResource(SavageAimTestCase):
+    """
+    Test the update of existing BIS Lists
+    """
+
+    def setUp(self):
+        """
+        Create a character for use in the test
+        """
+        self.char = Character.objects.create(
+            avatar_url='https://img.savageaim.com/abcde',
+            lodestone_id=1234567890,
+            user=self._get_user(),
+            name='Char 1',
+            world='Lich',
+            verified=True,
+        )
+        call_command('job_seed', stdout=StringIO())
+        call_command('gear_seed', stdout=StringIO())
+
+        self.gear_id_map = {g.name: g.id for g in Gear.objects.all()}
+
+        bis_gear = Gear.objects.first()
+        curr_gear = Gear.objects.last()
+        self.bis = BISList.objects.create(
+            bis_body=bis_gear,
+            bis_bracelet=bis_gear,
+            bis_earrings=bis_gear,
+            bis_feet=bis_gear,
+            bis_hands=bis_gear,
+            bis_head=bis_gear,
+            bis_left_ring=bis_gear,
+            bis_legs=bis_gear,
+            bis_mainhand=bis_gear,
+            bis_necklace=bis_gear,
+            bis_offhand=bis_gear,
+            bis_right_ring=bis_gear,
+            current_body=curr_gear,
+            current_bracelet=curr_gear,
+            current_earrings=curr_gear,
+            current_feet=curr_gear,
+            current_hands=curr_gear,
+            current_head=curr_gear,
+            current_left_ring=curr_gear,
+            current_legs=curr_gear,
+            current_mainhand=curr_gear,
+            current_necklace=curr_gear,
+            current_offhand=curr_gear,
+            current_right_ring=curr_gear,
+            job_id='DRG',
+            owner=self.char,
+            external_link='https://etro.gg/',
+        )
+
+    def tearDown(self):
+        """
+        Clean up the DB after each test
+        """
+        Character.objects.all().delete()
+
+    def test_read(self):
+        """
+        Read a BIS List via the API and ensure it is correctly returned
+        """
+        url = reverse('api:bis_resource', kwargs={'character_id': self.char.pk, 'pk': self.bis.pk})
+        self.client.force_authenticate(self.char.user)
+
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK, response.content)
+        self.assertDictEqual(response.json(), BISListSerializer(self.bis).data)
+
+    def test_update(self):
+        """
+        Update the existing BIS List with a PUT request
+        """
+        url = reverse('api:bis_resource', kwargs={'character_id': self.char.pk, 'pk': self.bis.pk})
+        self.client.force_authenticate(self.char.user)
+
+        # Try one with PLD first
+        data = {
+            'job_id': 'PLD',
+            'bis_mainhand_id': self.gear_id_map['Divine Light'],
+            'bis_offhand_id': self.gear_id_map['Moonward'],
+            'bis_head_id': self.gear_id_map['Limbo'],
+            'bis_body_id': self.gear_id_map['Limbo'],
+            'bis_hands_id': self.gear_id_map['Limbo'],
+            'bis_legs_id': self.gear_id_map['Limbo'],
+            'bis_feet_id': self.gear_id_map['Limbo'],
+            'bis_earrings_id': self.gear_id_map['Limbo'],
+            'bis_necklace_id': self.gear_id_map['Limbo'],
+            'bis_bracelet_id': self.gear_id_map['Limbo'],
+            'bis_right_ring_id': self.gear_id_map['Limbo'],
+            'bis_left_ring_id': self.gear_id_map['Limbo'],
+            'current_mainhand_id': self.gear_id_map['Moonward'],
+            'current_offhand_id': self.gear_id_map['Moonward'],
+            'current_head_id': self.gear_id_map['Moonward'],
+            'current_body_id': self.gear_id_map['Moonward'],
+            'current_hands_id': self.gear_id_map['Moonward'],
+            'current_legs_id': self.gear_id_map['Moonward'],
+            'current_feet_id': self.gear_id_map['Moonward'],
+            'current_earrings_id': self.gear_id_map['Moonward'],
+            'current_necklace_id': self.gear_id_map['Moonward'],
+            'current_bracelet_id': self.gear_id_map['Moonward'],
+            'current_right_ring_id': self.gear_id_map['Moonward'],
+            'current_left_ring_id': self.gear_id_map['Moonward'],
+            'external_link': None,
+        }
+
+        response = self.client.put(url, data)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT, response.content)
+
+        self.bis.refresh_from_db()
+        self.assertEqual(self.bis.job_id, 'PLD')
+        self.assertNotEqual(self.bis.bis_mainhand, self.bis.bis_offhand)
+        self.assertIsNone(self.bis.external_link)
+
+    def test_update_400(self):
+        """
+        Test all the kinds of errors that can come from the update endpoint;
+            - Invalid number for a gear type
+            - Gear pk doesn't exist
+            - Gear category is incorrect
+            - Job ID doesn't exist
+            - Job already has a BIS List
+            - Data missing
+        """
+        url = reverse('api:bis_resource', kwargs={'character_id': self.char.pk, 'pk': self.bis.pk})
+        self.client.force_authenticate(self.char.user)
+
+        response = self.client.put(url)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, response.content)
+        content = response.json()
+        for field in content:
+            self.assertEqual(content[field], ['This field is required.'])
+        self.assertEqual(len(content), 25)
+
+        # All gear errors will be run at once since there's only one actual function to test
+        data = {
+            'job_id': 'abc',
+            'bis_mainhand_id': 'abcde',
+            'bis_body_id': -1,
+            'bis_head_id': self.gear_id_map['Eternal Dark'],
+            'bis_earrings_id': self.gear_id_map['Divine Light'],
+            'current_mainhand_id': self.gear_id_map['The Last'],
+        }
+
+        response = self.client.put(url, data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, response.content)
+        # Since we checked all the "this field is required" errors above, just check the ones we send now
+        content = response.json()
+        invalid_gear = 'The chosen category of Gear does not have an item for this slot.'
+        self.assertEqual(content['job_id'], ['Please select a valid Job.'])
+        self.assertEqual(content['bis_mainhand_id'], ['A valid integer is required.'])
+        self.assertEqual(content['bis_body_id'], ['Please ensure your value corresponds with a valid type of Gear.'])
+        self.assertEqual(content['bis_head_id'], [invalid_gear])
+        self.assertEqual(content['bis_earrings_id'], [invalid_gear])
+        self.assertEqual(content['current_mainhand_id'], [invalid_gear])
+
+        # Create a BIS List for a job, then send a request to make one for the same job
+        bis_gear = Gear.objects.first()
+        curr_gear = Gear.objects.last()
+        BISList.objects.create(
+            bis_body=bis_gear,
+            bis_bracelet=bis_gear,
+            bis_earrings=bis_gear,
+            bis_feet=bis_gear,
+            bis_hands=bis_gear,
+            bis_head=bis_gear,
+            bis_left_ring=bis_gear,
+            bis_legs=bis_gear,
+            bis_mainhand=bis_gear,
+            bis_necklace=bis_gear,
+            bis_offhand=bis_gear,
+            bis_right_ring=bis_gear,
+            current_body=curr_gear,
+            current_bracelet=curr_gear,
+            current_earrings=curr_gear,
+            current_feet=curr_gear,
+            current_hands=curr_gear,
+            current_head=curr_gear,
+            current_left_ring=curr_gear,
+            current_legs=curr_gear,
+            current_mainhand=curr_gear,
+            current_necklace=curr_gear,
+            current_offhand=curr_gear,
+            current_right_ring=curr_gear,
+            job_id='RPR',
+            owner=self.char,
+        )
+
+        data = {'job_id': 'RPR'}
+        response = self.client.put(url, data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, response.content)
+        # Since we checked all the "this field is required" errors above, just check the ones we send now
+        content = response.json()
+        self.assertEqual(content['job_id'], ['Currently SavageAim only supports one BISList per job.'])
+
+    def test_404(self):
+        """
+        Test all situations where the endpoint would respond with a 404;
+
+        - Invalid Character ID
+        - Character is not owned by the requesting user
+        - Character is not verified
+        - Invalid BISList ID
+        - Character doesn't own BISList
+        """
+        user = self._get_user()
+        self.client.force_authenticate(user)
+
+        # ID doesn't exist
+        url = reverse('api:bis_resource', kwargs={'character_id': 0000000000000000000000, 'pk': self.bis.pk})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND, response.content)
+        response = self.client.put(url)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND, response.content)
+
+        # Character belongs to a different user
+        self.char.user = self._create_user()
+        self.char.save()
+        url = reverse('api:bis_resource', kwargs={'character_id': self.char.id, 'pk': self.bis.pk})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND, response.content)
+        response = self.client.put(url)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND, response.content)
+
+        # Character is not verified
+        self.char.verified = False
+        self.char.user = user
+        self.char.save()
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND, response.content)
+        response = self.client.put(url)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND, response.content)
+
+        # Invalid BISList ID
+        self.char.verified = True
+        self.char.save()
+        url = reverse('api:bis_resource', kwargs={'character_id': self.char.id, 'pk': 99999})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND, response.content)
+        response = self.client.put(url)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND, response.content)
+
+        # Character doesn't own BIS List
+        char = Character.objects.create(
+            avatar_url='https://img.savageaim.com/abcde',
+            lodestone_id=1234567890,
+            user=self._get_user(),
+            name='Char 2',
+            world='Lich',
+            verified=True,
+        )
+        self.bis.owner = char
+        self.bis.save()
+        url = reverse('api:bis_resource', kwargs={'character_id': self.char.id, 'pk': self.bis.pk})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND, response.content)
+        response = self.client.put(url)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND, response.content)

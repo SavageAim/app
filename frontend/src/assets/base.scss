@@ -1,0 +1,97 @@
+@import url('https://fonts.googleapis.com/css2?family=Raleway:wght@200;300;400;700&display=swap');
+
+// Set up some initial variables
+@import './variables.scss';
+
+// Using our vairables, set stuff up for bulma
+$green: $accent-light;
+$primary: $main-colour;
+$link: $accent-blue;
+$link-hover: $main-colour;
+$info: $accent-dark;
+$warning: hsl(44, 100%, 40);
+$danger: hsl(348, 86%, 50%);
+
+$scheme-main: $black;
+$scheme-main-bis: $black-bis;
+$scheme-main-ter: $black-ter;
+$scheme-invert: $white;
+$scheme-invert-bis: $white-bis;
+$scheme-invert-ter: $white-ter;
+
+$text: $white-bis;
+$text-strong: $white;
+$text-light: $white-ter;
+
+$background: $scheme-main;
+$border-light: $scheme-main-ter;
+
+// Discord color
+$blurple: #5865F2;
+
+// Import derived variables here
+@import 'node_modules/bulma/sass/utilities/_all.sass';
+
+// Box Shadow Settings
+$shadow: 0 0.5em 1em -0.125em rgba($shade-dark, 0.1), 0 0px 0 1px rgba($shade-dark, 0.02);
+
+// Scrolling stuff
+$body-overflow-y: auto;
+
+// Navbar stuff
+$navbar-background-color: $scheme-main;
+$navbar-item-active-color: $main-colour;
+$navbar-dropdown-item-hover-background-color: $scheme-main-bis;
+
+// Card stuff
+$card-header-shadow: 0 0.5em 0 0 rgba($accent-dark, 0.1);
+$card-background-color: $scheme-main-bis;
+.vm--modal {
+  background-color: $card-background-color!important;
+}
+.card-footer > .button {
+  border-radius: 0 0 4px 4px;
+}
+.card:not(:last-child) {
+  margin-bottom: 1.5rem;
+}
+
+// Add extra colours for IL tiering (will be customisable later) and for roles
+$extra-colors: (
+  "il-out-of-range": ($il-out-of-range, findColorInvert($il-out-of-range)),
+
+  // Roles
+  "tank": ($accent-blue, findColorInvert($accent-blue)),
+  "heal": ($accent-green, findColorInvert($accent-green)),
+  "dps": ($accent-red, findColorInvert($accent-red)),
+
+  // Other colours
+  "blurple": ($blurple, findColorInvert($blurple)),
+);
+$colors: map-merge($colors, $extra-colors);
+
+$family-sans-serif: 'Raleway', BlinkMacSystemFont, -apple-system, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", "Helvetica", "Arial", sans-serif;
+
+@import '~bulma';
+@import "~@creativebulma/bulma-divider";
+@import 'microtip/microtip';
+
+// Body padding increase to 4.25rem;
+html.has-navbar-fixed-top {
+  padding-top: $navbar-height + 1rem;
+}
+.hero.is-fullheight-with-navbar {
+  min-height: calc(100vh - 4.25rem);
+}
+
+@import './gear_gradients';
+.table.is-bordered .is-il-bis,
+.table.is-bordered .is-il-minus-0,
+.table.is-bordered .is-il-minus-5,
+.table.is-bordered .is-il-minus-10,
+.table.is-bordered .is-il-minus-15,
+.table.is-bordered .is-il-minus-20,
+.table.is-bordered .is-il-minus-25,
+.table.is-bordered .is-il-out-of-range {
+  border-color: $border;
+}

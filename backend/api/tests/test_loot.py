@@ -1,0 +1,1193 @@
+from datetime import datetime, timedelta
+from io import StringIO
+from django.core.management import call_command
+from django.urls import reverse
+from rest_framework import status
+from api.models import BISList, Character, Gear, Loot, Team, TeamMember, Tier
+from .test_base import SavageAimTestCase
+
+
+class LootTestSuite(SavageAimTestCase):
+    """
+    Get a list of Tiers and make sure the correct list is returned
+    """
+
+    def setUp(self):
+        """
+        Prepopulate the DB with known data we can calculate off of
+        """
+        self.maxDiff = None
+        call_command('tier_seed', stdout=StringIO())
+        call_command('gear_seed', stdout=StringIO())
+        call_command('job_seed', stdout=StringIO())
+
+        # Create a Team first
+        self.team = Team.objects.create(
+            invite_code=Team.generate_invite_code(),
+            name='Les Jambons',
+            tier=Tier.objects.get(max_item_level=605),
+        )
+
+        # Create two characters belonging to separate users
+        self.raid_lead = Character.objects.create(
+            avatar_url='https://img.savageaim.com/abcde',
+            lodestone_id=1234567890,
+            user=self._get_user(),
+            name='Raid Lead',
+            verified=True,
+            world='Lich',
+        )
+        self.main_tank = Character.objects.create(
+            avatar_url='https://img.savageaim.com/abcde',
+            lodestone_id=1234567890,
+            user=self._create_user(),
+            name='Main Tank',
+            verified=True,
+            world='Lich',
+        )
+
+        # Next, create two BIS lists for each character
+        self.raid_weapon = Gear.objects.get(item_level=605)
+        self.raid_gear = Gear.objects.get(item_level=600, has_weapon=False)
+        self.tome_gear = Gear.objects.get(item_level=600, has_weapon=True)
+        self.crafted = Gear.objects.get(name='Classical')
+        self.rl_main_bis = BISList.objects.create(
+            bis_body=self.raid_gear,
+            bis_bracelet=self.raid_gear,
+            bis_earrings=self.raid_gear,
+            bis_feet=self.raid_gear,
+            bis_hands=self.tome_gear,
+            bis_head=self.tome_gear,
+            bis_left_ring=self.tome_gear,
+            bis_legs=self.tome_gear,
+            bis_mainhand=self.raid_weapon,
+            bis_necklace=self.tome_gear,
+            bis_offhand=self.raid_weapon,
+            bis_right_ring=self.raid_gear,
+            current_body=self.crafted,
+            current_bracelet=self.crafted,
+            current_earrings=self.crafted,
+            current_feet=self.crafted,
+            current_hands=self.crafted,
+            current_head=self.crafted,
+            current_left_ring=self.crafted,
+            current_legs=self.crafted,
+            current_mainhand=self.crafted,
+            current_necklace=self.crafted,
+            current_offhand=self.crafted,
+            current_right_ring=self.crafted,
+            job_id='SGE',
+            owner=self.raid_lead,
+        )
+        self.mt_alt_bis = BISList.objects.create(
+            bis_body=self.raid_gear,
+            bis_bracelet=self.raid_gear,
+            bis_earrings=self.raid_gear,
+            bis_feet=self.raid_gear,
+            bis_hands=self.tome_gear,
+            bis_head=self.tome_gear,
+            bis_left_ring=self.tome_gear,
+            bis_legs=self.tome_gear,
+            bis_mainhand=self.raid_weapon,
+            bis_necklace=self.tome_gear,
+            bis_offhand=self.raid_weapon,
+            bis_right_ring=self.raid_gear,
+            current_body=self.crafted,
+            current_bracelet=self.crafted,
+            current_earrings=self.crafted,
+            current_feet=self.crafted,
+            current_hands=self.crafted,
+            current_head=self.crafted,
+            current_left_ring=self.crafted,
+            current_legs=self.crafted,
+            current_mainhand=self.crafted,
+            current_necklace=self.crafted,
+            current_offhand=self.crafted,
+            current_right_ring=self.crafted,
+            job_id='WHM',
+            owner=self.main_tank,
+        )
+        self.rl_alt_bis = BISList.objects.create(
+            bis_body=self.tome_gear,
+            bis_bracelet=self.tome_gear,
+            bis_earrings=self.tome_gear,
+            bis_feet=self.tome_gear,
+            bis_hands=self.raid_gear,
+            bis_head=self.raid_gear,
+            bis_left_ring=self.raid_gear,
+            bis_legs=self.raid_gear,
+            bis_mainhand=self.raid_weapon,
+            bis_necklace=self.raid_gear,
+            bis_offhand=self.raid_weapon,
+            bis_right_ring=self.tome_gear,
+            current_body=self.crafted,
+            current_bracelet=self.crafted,
+            current_earrings=self.crafted,
+            current_feet=self.crafted,
+            current_hands=self.crafted,
+            current_head=self.crafted,
+            current_left_ring=self.crafted,
+            current_legs=self.crafted,
+            current_mainhand=self.crafted,
+            current_necklace=self.crafted,
+            current_offhand=self.crafted,
+            current_right_ring=self.crafted,
+            job_id='PLD',
+            owner=self.raid_lead,
+        )
+        self.rl_alt_bis2 = BISList.objects.create(
+            bis_body=self.tome_gear,
+            bis_bracelet=self.tome_gear,
+            bis_earrings=self.tome_gear,
+            bis_feet=self.tome_gear,
+            bis_hands=self.raid_gear,
+            bis_head=self.raid_gear,
+            bis_left_ring=self.raid_gear,
+            bis_legs=self.raid_gear,
+            bis_mainhand=self.raid_weapon,
+            bis_necklace=self.raid_gear,
+            bis_offhand=self.raid_weapon,
+            bis_right_ring=self.tome_gear,
+            current_body=self.crafted,
+            current_bracelet=self.crafted,
+            current_earrings=self.crafted,
+            current_feet=self.crafted,
+            current_hands=self.crafted,
+            current_head=self.crafted,
+            current_left_ring=self.crafted,
+            current_legs=self.crafted,
+            current_mainhand=self.crafted,
+            current_necklace=self.crafted,
+            current_offhand=self.crafted,
+            current_right_ring=self.crafted,
+            job_id='RPR',
+            owner=self.raid_lead,
+        )
+        self.mt_main_bis = BISList.objects.create(
+            bis_body=self.tome_gear,
+            bis_bracelet=self.tome_gear,
+            bis_earrings=self.tome_gear,
+            bis_feet=self.tome_gear,
+            bis_hands=self.raid_gear,
+            bis_head=self.raid_gear,
+            bis_left_ring=self.raid_gear,
+            bis_legs=self.raid_gear,
+            bis_mainhand=self.raid_weapon,
+            bis_necklace=self.raid_gear,
+            bis_offhand=self.raid_weapon,
+            bis_right_ring=self.tome_gear,
+            current_body=self.crafted,
+            current_bracelet=self.crafted,
+            current_earrings=self.crafted,
+            current_feet=self.crafted,
+            current_hands=self.crafted,
+            current_head=self.crafted,
+            current_left_ring=self.crafted,
+            current_legs=self.crafted,
+            current_mainhand=self.crafted,
+            current_necklace=self.crafted,
+            current_offhand=self.crafted,
+            current_right_ring=self.crafted,
+            job_id='PLD',
+            owner=self.main_tank,
+        )
+        self.mt_alt_bis2 = BISList.objects.create(
+            bis_body=self.tome_gear,
+            bis_bracelet=self.tome_gear,
+            bis_earrings=self.tome_gear,
+            bis_feet=self.tome_gear,
+            bis_hands=self.raid_gear,
+            bis_head=self.raid_gear,
+            bis_left_ring=self.raid_gear,
+            bis_legs=self.raid_gear,
+            bis_mainhand=self.raid_weapon,
+            bis_necklace=self.raid_gear,
+            bis_offhand=self.raid_weapon,
+            bis_right_ring=self.tome_gear,
+            current_body=self.crafted,
+            current_bracelet=self.crafted,
+            current_earrings=self.crafted,
+            current_feet=self.crafted,
+            current_hands=self.crafted,
+            current_head=self.crafted,
+            current_left_ring=self.crafted,
+            current_legs=self.crafted,
+            current_mainhand=self.crafted,
+            current_necklace=self.crafted,
+            current_offhand=self.crafted,
+            current_right_ring=self.crafted,
+            job_id='DNC',
+            owner=self.main_tank,
+        )
+
+        # Lastly, link the characters to the team
+        self.rl_tm = self.team.members.create(character=self.raid_lead, bis_list=self.rl_main_bis, lead=True)
+        self.mt_tm = self.team.members.create(character=self.main_tank, bis_list=self.mt_main_bis)
+
+        # Set up expected response (store it here to avoid redefining it)
+        self.expected_gear = {
+            'mainhand': {
+                'need': [
+                    {
+                        'member_id': self.mt_tm.pk,
+                        'character_name': f'{self.main_tank.name} @ {self.main_tank.world}',
+                        'current_gear_name': self.crafted.name,
+                        'current_gear_il': self.crafted.item_level,
+                        'job_icon_name': 'paladin',
+                        'job_role': 'tank',
+                    },
+                    {
+                        'member_id': self.rl_tm.pk,
+                        'character_name': f'{self.raid_lead.name} @ {self.raid_lead.world}',
+                        'current_gear_name': self.crafted.name,
+                        'current_gear_il': self.crafted.item_level,
+                        'job_icon_name': 'sage',
+                        'job_role': 'heal',
+                    },
+                ],
+                'greed': [
+                    {
+                        'member_id': self.mt_tm.pk,
+                        'character_name': f'{self.main_tank.name} @ {self.main_tank.world}',
+                        'greed_lists': [
+                            {
+                                'bis_list_id': self.mt_alt_bis.id,
+                                'current_gear_name': self.crafted.name,
+                                'current_gear_il': self.crafted.item_level,
+                                'job_icon_name': 'whitemage',
+                                'job_role': 'heal',
+                            },
+                            {
+                                'bis_list_id': self.mt_alt_bis2.id,
+                                'current_gear_name': self.crafted.name,
+                                'current_gear_il': self.crafted.item_level,
+                                'job_icon_name': 'dancer',
+                                'job_role': 'dps',
+                            },
+                        ],
+                    },
+                    {
+                        'member_id': self.rl_tm.pk,
+                        'character_name': f'{self.raid_lead.name} @ {self.raid_lead.world}',
+                        'greed_lists': [
+                            {
+                                'bis_list_id': self.rl_alt_bis.id,
+                                'current_gear_name': self.crafted.name,
+                                'current_gear_il': self.crafted.item_level,
+                                'job_icon_name': 'paladin',
+                                'job_role': 'tank',
+                            },
+                            {
+                                'bis_list_id': self.rl_alt_bis2.id,
+                                'current_gear_name': self.crafted.name,
+                                'current_gear_il': self.crafted.item_level,
+                                'job_icon_name': 'reaper',
+                                'job_role': 'dps',
+                            },
+                        ],
+                    },
+                ],
+            },
+            'offhand': {
+                'need': [
+                    {
+                        'member_id': self.mt_tm.pk,
+                        'character_name': f'{self.main_tank.name} @ {self.main_tank.world}',
+                        'current_gear_name': self.crafted.name,
+                        'current_gear_il': self.crafted.item_level,
+                        'job_icon_name': 'paladin',
+                        'job_role': 'tank',
+                    },
+                ],
+                'greed': [
+                    {
+                        'member_id': self.rl_tm.pk,
+                        'character_name': f'{self.raid_lead.name} @ {self.raid_lead.world}',
+                        'greed_lists': [
+                            {
+                                'bis_list_id': self.rl_alt_bis.id,
+                                'current_gear_name': self.crafted.name,
+                                'current_gear_il': self.crafted.item_level,
+                                'job_icon_name': 'paladin',
+                                'job_role': 'tank',
+                            },
+                        ],
+                    },
+                ],
+            },
+            'head': {
+                'need': [
+                    {
+                        'member_id': self.mt_tm.pk,
+                        'character_name': f'{self.main_tank.name} @ {self.main_tank.world}',
+                        'current_gear_name': self.crafted.name,
+                        'current_gear_il': self.crafted.item_level,
+                        'job_icon_name': 'paladin',
+                        'job_role': 'tank',
+                    },
+                ],
+                'greed': [
+                    {
+                        'member_id': self.mt_tm.pk,
+                        'character_name': f'{self.main_tank.name} @ {self.main_tank.world}',
+                        'greed_lists': [
+                            {
+                                'bis_list_id': self.mt_alt_bis2.id,
+                                'current_gear_name': self.crafted.name,
+                                'current_gear_il': self.crafted.item_level,
+                                'job_icon_name': 'dancer',
+                                'job_role': 'dps',
+                            },
+                        ],
+                    },
+                    {
+                        'member_id': self.rl_tm.pk,
+                        'character_name': f'{self.raid_lead.name} @ {self.raid_lead.world}',
+                        'greed_lists': [
+                            {
+                                'bis_list_id': self.rl_alt_bis.id,
+                                'current_gear_name': self.crafted.name,
+                                'current_gear_il': self.crafted.item_level,
+                                'job_icon_name': 'paladin',
+                                'job_role': 'tank',
+                            },
+                            {
+                                'bis_list_id': self.rl_alt_bis2.id,
+                                'current_gear_name': self.crafted.name,
+                                'current_gear_il': self.crafted.item_level,
+                                'job_icon_name': 'reaper',
+                                'job_role': 'dps',
+                            },
+                        ],
+                    },
+                ],
+            },
+            'body': {
+                'need': [
+                    {
+                        'member_id': self.rl_tm.pk,
+                        'character_name': f'{self.raid_lead.name} @ {self.raid_lead.world}',
+                        'current_gear_name': self.crafted.name,
+                        'current_gear_il': self.crafted.item_level,
+                        'job_icon_name': 'sage',
+                        'job_role': 'heal',
+                    },
+                ],
+                'greed': [
+                    {
+                        'member_id': self.mt_tm.pk,
+                        'character_name': f'{self.main_tank.name} @ {self.main_tank.world}',
+                        'greed_lists': [
+                            {
+                                'bis_list_id': self.mt_alt_bis.id,
+                                'current_gear_name': self.crafted.name,
+                                'current_gear_il': self.crafted.item_level,
+                                'job_icon_name': 'whitemage',
+                                'job_role': 'heal',
+                            },
+                        ],
+                    },
+                ],
+            },
+            'hands': {
+                'need': [
+                    {
+                        'member_id': self.mt_tm.pk,
+                        'character_name': f'{self.main_tank.name} @ {self.main_tank.world}',
+                        'current_gear_name': self.crafted.name,
+                        'current_gear_il': self.crafted.item_level,
+                        'job_icon_name': 'paladin',
+                        'job_role': 'tank',
+                    },
+                ],
+                'greed': [
+                    {
+                        'member_id': self.mt_tm.pk,
+                        'character_name': f'{self.main_tank.name} @ {self.main_tank.world}',
+                        'greed_lists': [
+                            {
+                                'bis_list_id': self.mt_alt_bis2.id,
+                                'current_gear_name': self.crafted.name,
+                                'current_gear_il': self.crafted.item_level,
+                                'job_icon_name': 'dancer',
+                                'job_role': 'dps',
+                            },
+                        ],
+                    },
+                    {
+                        'member_id': self.rl_tm.pk,
+                        'character_name': f'{self.raid_lead.name} @ {self.raid_lead.world}',
+                        'greed_lists': [
+                            {
+                                'bis_list_id': self.rl_alt_bis.id,
+                                'current_gear_name': self.crafted.name,
+                                'current_gear_il': self.crafted.item_level,
+                                'job_icon_name': 'paladin',
+                                'job_role': 'tank',
+                            },
+                            {
+                                'bis_list_id': self.rl_alt_bis2.id,
+                                'current_gear_name': self.crafted.name,
+                                'current_gear_il': self.crafted.item_level,
+                                'job_icon_name': 'reaper',
+                                'job_role': 'dps',
+                            },
+                        ],
+                    },
+                ],
+            },
+            'legs': {
+                'need': [
+                    {
+                        'member_id': self.mt_tm.pk,
+                        'character_name': f'{self.main_tank.name} @ {self.main_tank.world}',
+                        'current_gear_name': self.crafted.name,
+                        'current_gear_il': self.crafted.item_level,
+                        'job_icon_name': 'paladin',
+                        'job_role': 'tank',
+                    },
+                ],
+                'greed': [
+                    {
+                        'member_id': self.mt_tm.pk,
+                        'character_name': f'{self.main_tank.name} @ {self.main_tank.world}',
+                        'greed_lists': [
+                            {
+                                'bis_list_id': self.mt_alt_bis2.id,
+                                'current_gear_name': self.crafted.name,
+                                'current_gear_il': self.crafted.item_level,
+                                'job_icon_name': 'dancer',
+                                'job_role': 'dps',
+                            },
+                        ],
+                    },
+                    {
+                        'member_id': self.rl_tm.pk,
+                        'character_name': f'{self.raid_lead.name} @ {self.raid_lead.world}',
+                        'greed_lists': [
+                            {
+                                'bis_list_id': self.rl_alt_bis.id,
+                                'current_gear_name': self.crafted.name,
+                                'current_gear_il': self.crafted.item_level,
+                                'job_icon_name': 'paladin',
+                                'job_role': 'tank',
+                            },
+                            {
+                                'bis_list_id': self.rl_alt_bis2.id,
+                                'current_gear_name': self.crafted.name,
+                                'current_gear_il': self.crafted.item_level,
+                                'job_icon_name': 'reaper',
+                                'job_role': 'dps',
+                            },
+                        ],
+                    },
+                ],
+            },
+            'feet': {
+                'need': [
+                    {
+                        'member_id': self.rl_tm.pk,
+                        'character_name': f'{self.raid_lead.name} @ {self.raid_lead.world}',
+                        'current_gear_name': self.crafted.name,
+                        'current_gear_il': self.crafted.item_level,
+                        'job_icon_name': 'sage',
+                        'job_role': 'heal',
+                    },
+                ],
+                'greed': [
+                    {
+                        'member_id': self.mt_tm.pk,
+                        'character_name': f'{self.main_tank.name} @ {self.main_tank.world}',
+                        'greed_lists': [
+                            {
+                                'bis_list_id': self.mt_alt_bis.id,
+                                'current_gear_name': self.crafted.name,
+                                'current_gear_il': self.crafted.item_level,
+                                'job_icon_name': 'whitemage',
+                                'job_role': 'heal',
+                            },
+                        ],
+                    },
+                ],
+            },
+            'earrings': {
+                'need': [
+                    {
+                        'member_id': self.rl_tm.pk,
+                        'character_name': f'{self.raid_lead.name} @ {self.raid_lead.world}',
+                        'current_gear_name': self.crafted.name,
+                        'current_gear_il': self.crafted.item_level,
+                        'job_icon_name': 'sage',
+                        'job_role': 'heal',
+                    },
+                ],
+                'greed': [
+                    {
+                        'member_id': self.mt_tm.pk,
+                        'character_name': f'{self.main_tank.name} @ {self.main_tank.world}',
+                        'greed_lists': [
+                            {
+                                'bis_list_id': self.mt_alt_bis.id,
+                                'current_gear_name': self.crafted.name,
+                                'current_gear_il': self.crafted.item_level,
+                                'job_icon_name': 'whitemage',
+                                'job_role': 'heal',
+                            },
+                        ],
+                    },
+                ],
+            },
+            'necklace': {
+                'need': [
+                    {
+                        'member_id': self.mt_tm.pk,
+                        'character_name': f'{self.main_tank.name} @ {self.main_tank.world}',
+                        'current_gear_name': self.crafted.name,
+                        'current_gear_il': self.crafted.item_level,
+                        'job_icon_name': 'paladin',
+                        'job_role': 'tank',
+                    },
+                ],
+                'greed': [
+                    {
+                        'member_id': self.mt_tm.pk,
+                        'character_name': f'{self.main_tank.name} @ {self.main_tank.world}',
+                        'greed_lists': [
+                            {
+                                'bis_list_id': self.mt_alt_bis2.id,
+                                'current_gear_name': self.crafted.name,
+                                'current_gear_il': self.crafted.item_level,
+                                'job_icon_name': 'dancer',
+                                'job_role': 'dps',
+                            },
+                        ],
+                    },
+                    {
+                        'member_id': self.rl_tm.pk,
+                        'character_name': f'{self.raid_lead.name} @ {self.raid_lead.world}',
+                        'greed_lists': [
+                            {
+                                'bis_list_id': self.rl_alt_bis.id,
+                                'current_gear_name': self.crafted.name,
+                                'current_gear_il': self.crafted.item_level,
+                                'job_icon_name': 'paladin',
+                                'job_role': 'tank',
+                            },
+                            {
+                                'bis_list_id': self.rl_alt_bis2.id,
+                                'current_gear_name': self.crafted.name,
+                                'current_gear_il': self.crafted.item_level,
+                                'job_icon_name': 'reaper',
+                                'job_role': 'dps',
+                            },
+                        ],
+                    },
+                ],
+            },
+            'bracelet': {
+                'need': [
+                    {
+                        'member_id': self.rl_tm.pk,
+                        'character_name': f'{self.raid_lead.name} @ {self.raid_lead.world}',
+                        'current_gear_name': self.crafted.name,
+                        'current_gear_il': self.crafted.item_level,
+                        'job_icon_name': 'sage',
+                        'job_role': 'heal',
+                    },
+                ],
+                'greed': [
+                    {
+                        'member_id': self.mt_tm.pk,
+                        'character_name': f'{self.main_tank.name} @ {self.main_tank.world}',
+                        'greed_lists': [
+                            {
+                                'bis_list_id': self.mt_alt_bis.id,
+                                'current_gear_name': self.crafted.name,
+                                'current_gear_il': self.crafted.item_level,
+                                'job_icon_name': 'whitemage',
+                                'job_role': 'heal',
+                            },
+                        ],
+                    },
+                ],
+            },
+            'ring': {
+                'need': [
+                    {
+                        'member_id': self.mt_tm.pk,
+                        'character_name': f'{self.main_tank.name} @ {self.main_tank.world}',
+                        'current_gear_name': self.crafted.name,
+                        'current_gear_il': self.crafted.item_level,
+                        'job_icon_name': 'paladin',
+                        'job_role': 'tank',
+                    },
+                    {
+                        'member_id': self.rl_tm.pk,
+                        'character_name': f'{self.raid_lead.name} @ {self.raid_lead.world}',
+                        'current_gear_name': self.crafted.name,
+                        'current_gear_il': self.crafted.item_level,
+                        'job_icon_name': 'sage',
+                        'job_role': 'heal',
+                    },
+                ],
+                'greed': [
+                    {
+                        'member_id': self.mt_tm.pk,
+                        'character_name': f'{self.main_tank.name} @ {self.main_tank.world}',
+                        'greed_lists': [
+                            {
+                                'bis_list_id': self.mt_alt_bis.id,
+                                'current_gear_name': self.crafted.name,
+                                'current_gear_il': self.crafted.item_level,
+                                'job_icon_name': 'whitemage',
+                                'job_role': 'heal',
+                            },
+                            {
+                                'bis_list_id': self.mt_alt_bis2.id,
+                                'current_gear_name': self.crafted.name,
+                                'current_gear_il': self.crafted.item_level,
+                                'job_icon_name': 'dancer',
+                                'job_role': 'dps',
+                            },
+                        ],
+                    },
+                    {
+                        'member_id': self.rl_tm.pk,
+                        'character_name': f'{self.raid_lead.name} @ {self.raid_lead.world}',
+                        'greed_lists': [
+                            {
+                                'bis_list_id': self.rl_alt_bis.id,
+                                'current_gear_name': self.crafted.name,
+                                'current_gear_il': self.crafted.item_level,
+                                'job_icon_name': 'paladin',
+                                'job_role': 'tank',
+                            },
+                            {
+                                'bis_list_id': self.rl_alt_bis2.id,
+                                'current_gear_name': self.crafted.name,
+                                'current_gear_il': self.crafted.item_level,
+                                'job_icon_name': 'reaper',
+                                'job_role': 'dps',
+                            },
+                        ],
+                    },
+                ],
+            },
+        }
+
+    def tearDown(self):
+        """
+        Clean up the DB after each test
+        """
+        Loot.objects.all().delete()
+        TeamMember.objects.all().delete()
+        Team.objects.all().delete()
+        BISList.objects.all().delete()
+        Character.objects.all().delete()
+
+    def test_calculator(self):
+        """
+        Given the objects we set up, test that the calculator returns the correct information
+        Then update some BIS items and recheck to ensure it's always up to date
+        """
+        url = reverse('api:loot_collection', kwargs={'team_id': self.team.pk})
+        user = self._get_user()
+        self.client.force_authenticate(user)
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        # Compile the expected gear response and ensure it all matches
+        content = response.json()['loot']['gear']
+        for item in self.expected_gear.keys():
+            self.assertEqual(content[item], self.expected_gear[item], item)
+
+        # Update some of the BIS Lists, remove the equivalent from the local response and check again
+        self.rl_main_bis.current_mainhand = self.raid_weapon
+        self.rl_main_bis.current_feet = self.raid_gear
+        self.rl_main_bis.current_right_ring = self.raid_gear
+        self.rl_main_bis.save()
+
+        self.expected_gear['mainhand']['need'].pop(1)
+        self.expected_gear['feet']['need'].pop(0)
+        self.expected_gear['ring']['need'].pop(1)
+
+        self.rl_alt_bis.current_offhand = self.raid_weapon
+        self.rl_alt_bis.current_legs = self.raid_gear
+        self.rl_alt_bis.current_left_ring = self.raid_gear
+        self.rl_alt_bis.save()
+
+        self.expected_gear['offhand']['greed'].pop(0)
+        self.expected_gear['legs']['greed'][1]['greed_lists'].pop(0)
+        self.expected_gear['ring']['greed'][1]['greed_lists'].pop(0)
+
+        self.rl_alt_bis2.current_mainhand = self.raid_weapon
+        self.rl_alt_bis2.current_head = self.raid_gear
+        self.rl_alt_bis2.current_necklace = self.raid_gear
+        self.rl_alt_bis2.save()
+
+        self.expected_gear['mainhand']['greed'][1]['greed_lists'].pop(1)
+        self.expected_gear['head']['greed'][1]['greed_lists'].pop(1)
+        self.expected_gear['necklace']['greed'][1]['greed_lists'].pop(1)
+
+        self.mt_main_bis.current_offhand = self.raid_weapon
+        self.mt_main_bis.current_hands = self.raid_gear
+        self.mt_main_bis.save()
+
+        self.expected_gear['offhand']['need'].pop(0)
+        self.expected_gear['hands']['need'].pop(0)
+
+        self.mt_alt_bis.current_mainhand = self.raid_weapon
+        self.mt_alt_bis.current_body = self.raid_gear
+        self.mt_alt_bis.current_right_ring = self.raid_gear
+        self.mt_alt_bis.save()
+
+        self.expected_gear['mainhand']['greed'][0]['greed_lists'].pop(0)
+        self.expected_gear['body']['greed'].pop(0)
+        self.expected_gear['ring']['greed'][0]['greed_lists'].pop(0)
+
+        self.mt_alt_bis2.current_legs = self.raid_gear
+        self.mt_alt_bis2.current_head = self.raid_gear
+        self.mt_alt_bis2.current_necklace = self.raid_gear
+        self.mt_alt_bis2.save()
+
+        self.expected_gear['legs']['greed'].pop(0)
+        self.expected_gear['head']['greed'].pop(0)
+        self.expected_gear['necklace']['greed'].pop(0)
+
+        # Send request and retest with updated expectation
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        content = response.json()['loot']['gear']
+        for item in self.expected_gear.keys():
+            self.assertEqual(content[item], self.expected_gear[item], item)
+
+    def test_history(self):
+        """
+        Do a test of the history part of the list and ensure that the response is correct
+        """
+        url = reverse('api:loot_collection', kwargs={'team_id': self.team.pk})
+        user = self._get_user()
+        self.client.force_authenticate(user)
+
+        # Create some loot items and then send a request and ensure the appropriate history is returned
+        l3 = Loot.objects.create(
+            greed=False,
+            item='mount',
+            member=self.rl_tm,
+            team=self.team,
+            obtained=datetime.today(),
+            tier=self.team.tier,
+        )  # 3
+        l2 = Loot.objects.create(
+            greed=False,
+            item='body',
+            member=self.mt_tm,
+            team=self.team,
+            obtained=datetime.today(),
+            tier=self.team.tier,
+        )  # 2
+        l1 = Loot.objects.create(
+            greed=True,
+            item='mainhand',
+            member=self.rl_tm,
+            team=self.team,
+            obtained=datetime.today(),
+            tier=self.team.tier,
+        )  # 1
+        l4 = Loot.objects.create(
+            greed=False,
+            item='tome-armour-augment',
+            member=self.mt_tm,
+            team=self.team,
+            obtained=datetime.today() - timedelta(days=2),
+            tier=self.team.tier,
+        )  # 4
+        l5 = Loot.objects.create(
+            greed=False,
+            item='tome-armour-augment',
+            member=None,
+            team=self.team,
+            obtained=datetime.today() - timedelta(days=7),
+            tier=self.team.tier,
+        )  # 5
+
+        history = [
+            {
+                'greed': True,
+                'item': 'Mainhand',
+                'member': 'Raid Lead @ Lich',
+                'obtained': l1.obtained.strftime('%Y-%m-%d'),
+                'id': l1.pk,
+            },
+            {
+                'greed': False,
+                'item': 'Body',
+                'member': 'Main Tank @ Lich',
+                'obtained': l1.obtained.strftime('%Y-%m-%d'),
+                'id': l2.pk,
+            },
+            {
+                'greed': False,
+                'item': 'Mount',
+                'member': 'Raid Lead @ Lich',
+                'obtained': l1.obtained.strftime('%Y-%m-%d'),
+                'id': l3.pk,
+            },
+            {
+                'greed': False,
+                'item': 'Tome Armour Augment',
+                'member': 'Main Tank @ Lich',
+                'obtained': l4.obtained.strftime('%Y-%m-%d'),
+                'id': l4.pk,
+            },
+            {
+                'greed': False,
+                'item': 'Tome Armour Augment',
+                'member': 'Old Member',
+                'obtained': l5.obtained.strftime('%Y-%m-%d'),
+                'id': l5.pk,
+            },
+        ]
+
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        content = response.json()['loot']['history']
+        self.assertEqual(len(content), 5)
+        for i in range(len(content)):
+            self.assertDictEqual(content[i], history[i])
+
+    def test_create(self):
+        """
+        Create just a loot record for an item not tracked using the need/greed gear system
+        """
+        url = reverse('api:loot_collection', kwargs={'team_id': self.team.pk})
+        user = self._get_user()
+        self.client.force_authenticate(user)
+        obtained = datetime.today().strftime('%Y-%m-%d')
+
+        data = {
+            'greed': False,
+            'member_id': self.rl_tm.pk,
+            'item': 'mount',
+            'obtained': obtained,
+        }
+        greed_data = {
+            'greed': True,
+            'member_id': self.mt_tm.pk,
+            'item': 'tome-armour-augment',
+            'obtained': obtained,
+        }
+        need_response = self.client.post(url, data)
+        self.assertEqual(need_response.status_code, status.HTTP_201_CREATED, need_response.content)
+        greed_response = self.client.post(url, greed_data)
+        self.assertEqual(greed_response.status_code, status.HTTP_201_CREATED, greed_response.content)
+
+        self.assertEqual(Loot.objects.count(), 2)
+        greed = Loot.objects.first()
+        need = Loot.objects.last()
+
+        self.assertTrue(greed.greed)
+        self.assertEqual(greed.member, self.mt_tm)
+        self.assertEqual(greed.item, 'tome-armour-augment')
+        self.assertFalse(need.greed)
+        self.assertEqual(need.member, self.rl_tm)
+        self.assertEqual(need.item, 'mount')
+
+    def test_create_400(self):
+        """
+        Test invalid creation cases for base loot api and ensure appropriate errors are returned
+
+        Member ID not sent: 'This field is required.'
+        Member ID not int: 'A valid integer is required.'
+        Member ID not valid Member: 'Please select a Character that is a member of the Team.'
+        Item not sent: 'This field is required.'
+        Item not in valid list: 'Please select a valid item.'
+        Greed not bool: 'Must be a valid boolean.'
+        Obtained not sent: 'This field is required.'
+        Obtained not valid date: 'Date has wrong format. Use one of these formats instead: YYYY-MM-DD.'
+        Obtained in the future: 'Cannot record loot for a date in the future.'
+        """
+        url = reverse('api:loot_collection', kwargs={'team_id': self.team.pk})
+        user = self._get_user()
+        self.client.force_authenticate(user)
+
+        response = self.client.post(url)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        content = response.json()
+        self.assertEqual(content['member_id'], ['This field is required.'])
+        self.assertEqual(content['item'], ['This field is required.'])
+        self.assertEqual(content['obtained'], ['This field is required.'])
+
+        data = {
+            'member_id': 'abcde',
+            'item': 'new-car',
+            'greed': 'abcde',
+            'obtained': 'abcde',
+        }
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        content = response.json()
+        self.assertEqual(content['member_id'], ['A valid integer is required.'])
+        self.assertEqual(content['item'], ['Please select a valid item.'])
+        self.assertEqual(content['greed'], ['Must be a valid boolean.'])
+        self.assertEqual(content['obtained'], ['Date has wrong format. Use one of these formats instead: YYYY-MM-DD.'])
+
+        data = {
+            'member_id': '9999999',
+            'obtained': (datetime.today() + timedelta(days=1)).strftime('%Y-%m-%d'),
+        }
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        content = response.json()
+        self.assertEqual(content['member_id'], ['Please select a Character that is a member of the Team.'])
+        self.assertEqual(content['obtained'], ['Cannot record loot for a date in the future.'])
+
+    def test_create_with_bis(self):
+        """
+        Create BIS Loot records, test the need/greed calculator to see the updates have been saved
+        """
+        read_url = reverse('api:loot_collection', kwargs={'team_id': self.team.pk})
+        write_url = reverse('api:loot_with_bis', kwargs={'team_id': self.team.pk})
+        user = self._get_user()
+        self.client.force_authenticate(user)
+
+        # We don't have to check initial values only post values
+        need_data_ring = {
+            'greed': False,
+            'member_id': self.rl_tm.pk,
+            'item': 'ring',
+            'greed_bis_id': None,
+        }
+        need_data_shield = {
+            'greed': False,
+            'member_id': self.mt_tm.pk,
+            'item': 'offhand',
+        }
+        need_data_body = {
+            'greed': False,
+            'member_id': self.rl_tm.pk,
+            'item': 'body',
+        }
+        greed_data_ring = {
+            'greed': True,
+            'member_id': self.mt_tm.pk,
+            'item': 'ring',
+            'greed_bis_id': self.mt_alt_bis2.pk,
+        }
+        greed_data_shield = {
+            'greed': True,
+            'member_id': self.rl_tm.pk,
+            'item': 'offhand',
+            'greed_bis_id': self.rl_alt_bis.pk,
+        }
+        greed_data_body = {
+            'greed': True,
+            'member_id': self.mt_tm.pk,
+            'item': 'body',
+            'greed_bis_id': self.mt_alt_bis.pk,
+        }
+
+        # Update expected data
+        self.expected_gear['ring']['need'].pop(1)
+        self.expected_gear['offhand']['need'].pop(0)
+        self.expected_gear['body']['need'].pop(0)
+        self.expected_gear['ring']['greed'][0]['greed_lists'].pop(1)
+        self.expected_gear['offhand']['greed'].pop(0)
+        self.expected_gear['body']['greed'].pop(0)
+
+        self.assertEqual(self.client.post(write_url, need_data_ring).status_code, status.HTTP_201_CREATED)
+        self.assertEqual(self.client.post(write_url, need_data_shield).status_code, status.HTTP_201_CREATED)
+        self.assertEqual(self.client.post(write_url, need_data_body).status_code, status.HTTP_201_CREATED)
+        self.assertEqual(self.client.post(write_url, greed_data_ring).status_code, status.HTTP_201_CREATED)
+        self.assertEqual(self.client.post(write_url, greed_data_shield).status_code, status.HTTP_201_CREATED)
+        self.assertEqual(self.client.post(write_url, greed_data_body).status_code, status.HTTP_201_CREATED)
+
+        self.assertEqual(Loot.objects.count(), 6)
+
+        # Send a request to the read url and check the response vs the expected gear
+        response = self.client.get(read_url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        content = response.json()['loot']['gear']
+        for item in self.expected_gear.keys():
+            self.assertEqual(content[item], self.expected_gear[item], item)
+
+        # Check the objects themselves
+        self.rl_main_bis.refresh_from_db()
+        self.assertEqual(self.rl_main_bis.bis_right_ring_id, self.raid_gear.pk)
+        self.assertEqual(self.rl_main_bis.bis_body_id, self.raid_gear.pk)
+        self.mt_main_bis.refresh_from_db()
+        self.assertEqual(self.mt_main_bis.bis_offhand_id, self.raid_weapon.pk)
+        self.mt_alt_bis2.refresh_from_db()
+        self.assertEqual(self.mt_alt_bis2.bis_left_ring_id, self.raid_gear.pk)
+        self.rl_alt_bis.refresh_from_db()
+        self.assertEqual(self.rl_alt_bis.bis_offhand_id, self.raid_weapon.pk)
+        self.mt_alt_bis.refresh_from_db()
+        self.assertEqual(self.mt_alt_bis.bis_body_id, self.raid_gear.pk)
+
+    def test_create_with_bis_400(self):
+        """
+        Test invalid creation cases for with bis loot api and ensure appropriate errors are returned
+
+        Greed not sent: 'This field is required.'
+        Greed not valid boolean: 'Must be a valid boolean.'
+        Greed BIS ID not int: 'A valid integer is required.'
+        Greed BIS ID doesn't belong to someone on the team: 'Please select a valid BIS List owned by a team member.'
+        Greed BIS ID not sent for greed=True request: 'This field is required for Greed loot entries.'
+        Greed BIS ID belongs to another member: 'Please select a valid BIS List owned by a team member.'
+        Greed BIS ID is the id of the main bis for the team member:
+            'To add Loot to the BIS List this Member has associated with the team, please set greed=false.'
+        Item not sent: 'This field is required.'
+        Invalid item: 'Please select a valid item.'
+        Offhand item for non PLD BIS: 'Offhand items can only be obtained by a PLD.'
+        No rings use raid as bis: 'The chosen item in the specified BIS List does not have raid loot as its BIS.'
+        Item BIS isn't raid: 'The chosen item in the specified BIS List does not have raid loot as its BIS.'
+        Member ID not sent: 'This field is required.'
+        Member ID not int: 'A valid integer is required.'
+        Member ID not valid Member: 'Please select a Character that is a member of the Team.'
+        """
+        url = reverse('api:loot_with_bis', kwargs={'team_id': self.team.pk})
+        user = self._get_user()
+        self.client.force_authenticate(user)
+
+        data = {}
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        content = response.json()
+        self.assertEqual(content['member_id'], ['This field is required.'])
+        self.assertEqual(content['item'], ['This field is required.'])
+        self.assertEqual(content['greed'], ['This field is required.'])
+
+        data = {
+            'greed': 'abcde',
+            'greed_bis_id': 'abcde',
+            'item': 'abcde',
+            'member_id': 'abcde',
+        }
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        content = response.json()
+        self.assertEqual(content['member_id'], ['A valid integer is required.'])
+        self.assertEqual(content['item'], ['Please select a valid item.'])
+        self.assertEqual(content['greed'], ['Must be a valid boolean.'])
+        self.assertEqual(content['greed_bis_id'], ['A valid integer is required.'])
+
+        data = {
+            'greed': False,
+            'greed_bis_id': '99999',
+            'item': 'offhand',
+            'member_id': '99999',
+        }
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        content = response.json()
+        self.assertEqual(content['member_id'], ['Please select a Character that is a member of the Team.'])
+        self.assertEqual(content['greed_bis_id'], ['Please select a valid BIS List owned by a team member.'])
+
+        data = {
+            'greed': True,
+            'greed_bis_id': None,
+            'item': 'offhand',
+            'member_id': self.rl_tm.pk,
+        }
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        content = response.json()
+        self.assertEqual(content['greed_bis_id'], ['This field is required for Greed loot entries.'])
+
+        data = {
+            'greed': True,
+            'greed_bis_id': self.mt_alt_bis.pk,
+            'item': 'offhand',
+            'member_id': self.rl_tm.pk,
+        }
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        content = response.json()
+        self.assertEqual(content['greed_bis_id'], ['Please select a valid BIS List owned by a team member.'])
+
+        data = {
+            'greed': True,
+            'greed_bis_id': self.rl_main_bis.pk,
+            'item': 'offhand',
+            'member_id': self.rl_tm.pk,
+        }
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        content = response.json()
+        self.assertEqual(
+            content['greed_bis_id'],
+            ['To add Loot to the BIS List this Member has associated with the team, please set greed=false.'],
+        )
+
+        data = {
+            'greed': True,
+            'greed_bis_id': self.rl_alt_bis2.pk,
+            'item': 'offhand',
+            'member_id': self.rl_tm.pk,
+        }
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        content = response.json()
+        self.assertEqual(content['item'], ['Offhand items can only be obtained by a PLD.'])
+
+        self.rl_alt_bis2.bis_body = self.tome_gear
+        self.rl_alt_bis2.bis_left_ring = self.tome_gear
+        self.rl_alt_bis2.save()
+
+        data = {
+            'greed': True,
+            'greed_bis_id': self.rl_alt_bis2.pk,
+            'item': 'ring',
+            'member_id': self.rl_tm.pk,
+        }
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        content = response.json()
+        self.assertEqual(
+            content['item'],
+            ['The chosen item in the specified BIS List does not have the raid loot as its BIS.'],
+        )
+
+        data = {
+            'greed': True,
+            'greed_bis_id': self.rl_alt_bis2.pk,
+            'item': 'body',
+            'member_id': self.rl_tm.pk,
+        }
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        content = response.json()
+        self.assertEqual(
+            content['item'],
+            ['The chosen item in the specified BIS List does not have the raid loot as its BIS.'],
+        )
+
+    def test_404(self):
+        """
+        Test 404 errors are returned for bad urls in each endpoint / method;
+
+        - Invalid ID
+        - Not having a character in the team
+        - POST when not the raid lead
+        """
+        user = self._get_user()
+        self.client.force_authenticate(user)
+
+        # Invalid ID
+        url = reverse('api:loot_collection', kwargs={'team_id': 'abcde'})
+        self.assertEqual(self.client.get(url).status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(self.client.post(url).status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(self.client.post(f'{url}bis/').status_code, status.HTTP_404_NOT_FOUND)
+
+        # Not having a character in the team
+        self.raid_lead.user = self._create_user()
+        self.raid_lead.save()
+        url = reverse('api:loot_collection', kwargs={'team_id': self.team.pk})
+        self.assertEqual(self.client.get(url).status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(self.client.post(url).status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(self.client.post(f'{url}bis/').status_code, status.HTTP_404_NOT_FOUND)
+
+        # POST while not raid lead
+        self.client.force_authenticate(self.main_tank.user)
+        self.assertEqual(self.client.post(url).status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(self.client.post(f'{url}bis/').status_code, status.HTTP_404_NOT_FOUND)
