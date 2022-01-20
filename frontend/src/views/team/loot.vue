@@ -28,41 +28,31 @@
           <div class="card">
             <div class="card-header">
               <div class="card-header-title">
-                How This Works
+                What Item Dropped
               </div>
             </div>
             <div class="card-content">
-              <p>Below the line is a drop down with all the different types of drops you can typically get from raids.</p>
-              <p>By selecting one, you will see two boxes below.</p>
-              <p>The box on the left contains Need data, or the Characters in the static that need that item for the role they play in the static.</p>
-              <p>The box on the right contains Greed data, which are where Characters in the static need the item for BIS Lists for other jobs.</p>
-              <p>The Raid Lead will have buttons to click that allows for recording loot obtained. This will also mark off the appropriate item and list for whoever is recorded as getting the loot.</p>
-              <p>At the bottom of the page is the Loot History for this team for the current Tier. Click or tap on the history box below to view it.</p>
-              <p class="has-text-warning">Please note that looted rings will replace whichever slot has the Raid ring on BIS, so be careful with your list setup.</p>
+              <ItemDropdown v-model="displayItem" />
+
+              <!-- Display generic errors here -->
+              <div class="box has-background-danger" v-if="bisLootErrors.greed !== undefined">
+                <b>Greed: </b> {{ bisLootErrors.greed[0] }}
+              </div>
+              <div class="box has-background-danger" v-if="bisLootErrors.greed_bis_id !== undefined">
+                <b>Greed BIS ID:</b> {{ bisLootErrors.greed_bis_id[0] }}
+              </div>
+              <div class="box has-background-danger" v-if="bisLootErrors.item !== undefined">
+                <b>Item: </b> {{ bisLootErrors.item[0] }}
+              </div>
+              <div class="box has-background-danger" v-if="bisLootErrors.member_id !== undefined">
+                <b>Member ID:</b> {{ bisLootErrors.member_id[0] }}
+              </div>
             </div>
-          </div>
-        </div>
-
-        <div class="column is-full">
-          <ItemDropdown v-model="displayItem" />
-
-          <!-- Display generic errors here -->
-          <div class="box has-background-danger" v-if="bisLootErrors.greed !== undefined">
-            <b>Greed: </b> {{ bisLootErrors.greed[0] }}
-          </div>
-          <div class="box has-background-danger" v-if="bisLootErrors.greed_bis_id !== undefined">
-            <b>Greed BIS ID:</b> {{ bisLootErrors.greed_bis_id[0] }}
-          </div>
-          <div class="box has-background-danger" v-if="bisLootErrors.item !== undefined">
-            <b>Item: </b> {{ bisLootErrors.item[0] }}
-          </div>
-          <div class="box has-background-danger" v-if="bisLootErrors.member_id !== undefined">
-            <b>Member ID:</b> {{ bisLootErrors.member_id[0] }}
           </div>
         </div>
 
         <!-- Need -->
-        <div class="column is-half" v-if="displayItem !== 'na'">
+        <div class="column is-half">
           <div class="card">
             <div class="card-header">
               <div class="card-header-title">
@@ -72,37 +62,38 @@
             <div class="card-content">
               <p>Below are the people that need the chosen item for their Team BIS.</p>
               <p v-if="editable">Clicking the button beside anyone will add a Loot entry, and update their BIS List accordingly.</p>
-
-              <div class="box list-item" v-for="entry in loot.gear[displayItem].need" :key="`need-${entry.member_id}`" data-microtip-position="top" role="tooltip" :aria-label="`Current: ${entry.current_gear_name}`">
-                <div class="list-data">
-                  <div class="left">
-                    {{ entry.character_name }}
-                  </div>
-                  <div class="right">
-                    <div class="tags has-addons is-hidden-touch">
-                      <span class="tag is-light">
-                        iL
-                      </span>
-                      <span class="tag" :class="[`is-${entry.job_role}`]">
-                        {{ entry.current_gear_il }}
+              <template v-if="displayItem !== 'na'">
+                <div class="box list-item" v-for="entry in loot.gear[displayItem].need" :key="`need-${entry.member_id}`" data-microtip-position="top" role="tooltip" :aria-label="`Current: ${entry.current_gear_name}`">
+                  <div class="list-data">
+                    <div class="left">
+                      {{ entry.character_name }}
+                    </div>
+                    <div class="right">
+                      <div class="tags has-addons is-hidden-touch">
+                        <span class="tag is-light">
+                          iL
+                        </span>
+                        <span class="tag" :class="[`is-${entry.job_role}`]">
+                          {{ entry.current_gear_il }}
+                        </span>
+                      </div>
+                      <span class="icon">
+                        <img :src="`/job_icons/${entry.job_icon_name}.png`" :alt="`${entry.job_icon_name} job icon`" />
                       </span>
                     </div>
-                    <span class="icon">
-                      <img :src="`/job_icons/${entry.job_icon_name}.png`" :alt="`${entry.job_icon_name} job icon`" />
-                    </span>
+                  </div>
+                  <div v-if="editable" class="list-actions">
+                    <button class="button is-success" @click="() => { giveNeedLoot(entry) }" v-if="!requesting">Give Item</button>
+                    <button class="button is-success is-loading" v-else>Give Item</button>
                   </div>
                 </div>
-                <div v-if="editable" class="list-actions">
-                  <button class="button is-success" @click="() => { giveNeedLoot(entry) }" v-if="!requesting">Give Item</button>
-                  <button class="button is-success is-loading" v-else>Give Item</button>
-                </div>
-              </div>
+              </template>
             </div>
           </div>
         </div>
 
         <!-- Greed -->
-        <div class="column is-half" v-if="displayItem !== 'na'">
+        <div class="column is-half">
           <div class="card">
             <div class="card-header">
               <div class="card-header-title">
@@ -113,32 +104,34 @@
               <p>Below are the people that need the chosen item for any other BIS they have, grouped by character.</p>
               <p v-if="editable">Clicking the button beside anyone will add a Loot entry, and update their BIS List accordingly.</p>
 
-              <div class="box" v-for="entry in loot.gear[displayItem].greed" :key="`greed-${entry.member_id}`">
-                <div class="list-item" v-for="list in entry.greed_lists" :key="`greed-${entry.member_id}-${list.bis_list_id}`" data-microtip-position="top" role="tooltip" :aria-label="`Current: ${list.current_gear_name}`">
-                  <div class="list-data">
-                    <div class="left">
-                      {{ entry.character_name }}
-                    </div>
-                    <div class="right">
-                      <div class="tags has-addons is-hidden-touch">
-                        <span class="tag is-light">
-                          iL
-                        </span>
-                        <span class="tag" :class="[`is-${list.job_role}`]">
-                          {{ list.current_gear_il }}
+              <template v-if="displayItem !== 'na'">
+                <div class="box" v-for="entry in loot.gear[displayItem].greed" :key="`greed-${entry.member_id}`">
+                  <div class="list-item" v-for="list in entry.greed_lists" :key="`greed-${entry.member_id}-${list.bis_list_id}`" data-microtip-position="top" role="tooltip" :aria-label="`Current: ${list.current_gear_name}`">
+                    <div class="list-data">
+                      <div class="left">
+                        {{ entry.character_name }}
+                      </div>
+                      <div class="right">
+                        <div class="tags has-addons is-hidden-touch">
+                          <span class="tag is-light">
+                            iL
+                          </span>
+                          <span class="tag" :class="[`is-${list.job_role}`]">
+                            {{ list.current_gear_il }}
+                          </span>
+                        </div>
+                        <span class="icon">
+                          <img :src="`/job_icons/${list.job_icon_name}.png`" :alt="`${list.job_icon_name} job icon`" />
                         </span>
                       </div>
-                      <span class="icon">
-                        <img :src="`/job_icons/${list.job_icon_name}.png`" :alt="`${list.job_icon_name} job icon`" />
-                      </span>
+                    </div>
+                    <div v-if="editable" class="list-actions">
+                      <button class="button is-success" @click="() => { giveGreedLoot(entry, list) }" v-if="!requesting">Give Item</button>
+                      <button class="button is-success is-loading" v-else>Give Item</button>
                     </div>
                   </div>
-                  <div v-if="editable" class="list-actions">
-                    <button class="button is-success" @click="() => { giveGreedLoot(entry, list) }" v-if="!requesting">Give Item</button>
-                    <button class="button is-success is-loading" v-else>Give Item</button>
-                  </div>
                 </div>
-              </div>
+              </template>
             </div>
           </div>
         </div>

@@ -11,11 +11,6 @@
       </div>
     </div>
     <div class="card-content">
-      <p>In the Team View pages, Characters' BIS Lists are rendered with colour and text.</p>
-      <p>The text in each box indicates the gear that is Best in Slot for that slot.</p>
-      <p>The colour of the box indicates the item level of the gear the character currently has equipped.</p>
-      <p>If you have one, you can hover your mouse over this box to get the name of the gear they currently have equipped.</p>
-      <p>The colours' meanings are outlined below.</p>
       <p>Please note that all references to a "Maximum Item Level" (Max IL) refer to the Item Level of the Weapon obtained from the Tier's final raid.</p>
       <p>For example, the Max IL for Pandæmonium: Asphodelos is 605.</p>
       <hr />
