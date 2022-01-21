@@ -22,6 +22,7 @@
       <p>Added wiki and github links to the footer.</p>
       <p>Footer now also displays the current version.</p>
       <p>Footer links now use tooltips instead of titles.</p>
+      <p>BIS List form filters no longer exclude currently chosen items if their item levels are outside the range of the chosen filter values.</p>
     </div>
   </div>
 </template>

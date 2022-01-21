@@ -102,18 +102,18 @@
           </div>
         </div>
         <div class="card-content">
-          <GearDropdown ref="bisMainhand" name="Main Hand" :choices="weapons" v-model="bisList.bis_mainhand_id" :error="errors.bis_mainhand_id" />
-          <GearDropdown ref="bisOffhand" name="Off Hand" :choices="weapons" v-if="displayOffhand" v-model="bisList.bis_offhand_id" :error="errors.bis_offhand_id" />
-          <GearDropdown ref="bisHead" name="Head" :choices="armour" v-model="bisList.bis_head_id" :error="errors.bis_head_id" />
-          <GearDropdown ref="bisBody" name="Body" :choices="armour" v-model="bisList.bis_body_id" :error="errors.bis_body_id" />
-          <GearDropdown ref="bisHands" name="Hands" :choices="armour" v-model="bisList.bis_hands_id" :error="errors.bis_hands_id" />
-          <GearDropdown ref="bisLegs" name="Legs" :choices="armour" v-model="bisList.bis_legs_id" :error="errors.bis_legs_id" />
-          <GearDropdown ref="bisFeet" name="Feet" :choices="armour" v-model="bisList.bis_feet_id" :error="errors.bis_feet_id" />
-          <GearDropdown ref="bisEarrings" name="Earrings" :choices="accessories" v-model="bisList.bis_earrings_id" :error="errors.bis_earrings_id" />
-          <GearDropdown ref="bisNecklace" name="Necklace" :choices="accessories" v-model="bisList.bis_necklace_id" :error="errors.bis_necklace_id" />
-          <GearDropdown ref="bisBracelet" name="Bracelet" :choices="accessories" v-model="bisList.bis_bracelet_id" :error="errors.bis_bracelet_id" />
-          <GearDropdown ref="bisRightRing" name="Right Ring" :choices="accessories" v-model="bisList.bis_right_ring_id" :error="errors.bis_right_ring_id" />
-          <GearDropdown ref="bisLeftRing" name="Left Ring" :choices="accessories" v-model="bisList.bis_left_ring_id" :error="errors.bis_left_ring_id" />
+          <GearDropdown :maxIl="maxIl" :minIl="minIl" ref="bisMainhand" name="Main Hand" :choices="weapons" v-model="bisList.bis_mainhand_id" :error="errors.bis_mainhand_id" />
+          <GearDropdown :maxIl="maxIl" :minIl="minIl" ref="bisOffhand" name="Off Hand" :choices="weapons" v-if="displayOffhand" v-model="bisList.bis_offhand_id" :error="errors.bis_offhand_id" />
+          <GearDropdown :maxIl="maxIl" :minIl="minIl" ref="bisHead" name="Head" :choices="armour" v-model="bisList.bis_head_id" :error="errors.bis_head_id" />
+          <GearDropdown :maxIl="maxIl" :minIl="minIl" ref="bisBody" name="Body" :choices="armour" v-model="bisList.bis_body_id" :error="errors.bis_body_id" />
+          <GearDropdown :maxIl="maxIl" :minIl="minIl" ref="bisHands" name="Hands" :choices="armour" v-model="bisList.bis_hands_id" :error="errors.bis_hands_id" />
+          <GearDropdown :maxIl="maxIl" :minIl="minIl" ref="bisLegs" name="Legs" :choices="armour" v-model="bisList.bis_legs_id" :error="errors.bis_legs_id" />
+          <GearDropdown :maxIl="maxIl" :minIl="minIl" ref="bisFeet" name="Feet" :choices="armour" v-model="bisList.bis_feet_id" :error="errors.bis_feet_id" />
+          <GearDropdown :maxIl="maxIl" :minIl="minIl" ref="bisEarrings" name="Earrings" :choices="accessories" v-model="bisList.bis_earrings_id" :error="errors.bis_earrings_id" />
+          <GearDropdown :maxIl="maxIl" :minIl="minIl" ref="bisNecklace" name="Necklace" :choices="accessories" v-model="bisList.bis_necklace_id" :error="errors.bis_necklace_id" />
+          <GearDropdown :maxIl="maxIl" :minIl="minIl" ref="bisBracelet" name="Bracelet" :choices="accessories" v-model="bisList.bis_bracelet_id" :error="errors.bis_bracelet_id" />
+          <GearDropdown :maxIl="maxIl" :minIl="minIl" ref="bisRightRing" name="Right Ring" :choices="accessories" v-model="bisList.bis_right_ring_id" :error="errors.bis_right_ring_id" />
+          <GearDropdown :maxIl="maxIl" :minIl="minIl" ref="bisLeftRing" name="Left Ring" :choices="accessories" v-model="bisList.bis_left_ring_id" :error="errors.bis_left_ring_id" />
         </div>
       </div>
     </div>
@@ -126,18 +126,18 @@
           </div>
         </div>
         <div class="card-content">
-          <GearDropdown ref="currMainhand" name="Main Hand" :choices="weapons" v-model="bisList.current_mainhand_id" :error="errors.current_mainhand_id" />
-          <GearDropdown ref="currOffhand" name="Off Hand" :choices="weapons" v-if="displayOffhand" v-model="bisList.current_offhand_id" :error="errors.current_offhand_id" />
-          <GearDropdown ref="currHead" name="Head" :choices="armour" v-model="bisList.current_head_id" :error="errors.current_head_id" />
-          <GearDropdown ref="currBody" name="Body" :choices="armour" v-model="bisList.current_body_id" :error="errors.current_body_id" />
-          <GearDropdown ref="currHands" name="Hands" :choices="armour" v-model="bisList.current_hands_id" :error="errors.current_hands_id" />
-          <GearDropdown ref="currLegs" name="Legs" :choices="armour" v-model="bisList.current_legs_id" :error="errors.current_legs_id" />
-          <GearDropdown ref="currFeet" name="Feet" :choices="armour" v-model="bisList.current_feet_id" :error="errors.current_feet_id" />
-          <GearDropdown ref="currEarrings" name="Earrings" :choices="accessories" v-model="bisList.current_earrings_id" :error="errors.current_earrings_id" />
-          <GearDropdown ref="currNecklace" name="Necklace" :choices="accessories" v-model="bisList.current_necklace_id" :error="errors.current_necklace_id" />
-          <GearDropdown ref="currBracelet" name="Bracelet" :choices="accessories" v-model="bisList.current_bracelet_id" :error="errors.current_bracelet_id" />
-          <GearDropdown ref="currRightRing" name="Right Ring" :choices="accessories" v-model="bisList.current_right_ring_id" :error="errors.current_right_ring_id" />
-          <GearDropdown ref="currLeftRing" name="Left Ring" :choices="accessories" v-model="bisList.current_left_ring_id" :error="errors.current_left_ring_id" />
+          <GearDropdown :maxIl="maxIl" :minIl="minIl" ref="currMainhand" name="Main Hand" :choices="weapons" v-model="bisList.current_mainhand_id" :error="errors.current_mainhand_id" />
+          <GearDropdown :maxIl="maxIl" :minIl="minIl" ref="currOffhand" name="Off Hand" :choices="weapons" v-if="displayOffhand" v-model="bisList.current_offhand_id" :error="errors.current_offhand_id" />
+          <GearDropdown :maxIl="maxIl" :minIl="minIl" ref="currHead" name="Head" :choices="armour" v-model="bisList.current_head_id" :error="errors.current_head_id" />
+          <GearDropdown :maxIl="maxIl" :minIl="minIl" ref="currBody" name="Body" :choices="armour" v-model="bisList.current_body_id" :error="errors.current_body_id" />
+          <GearDropdown :maxIl="maxIl" :minIl="minIl" ref="currHands" name="Hands" :choices="armour" v-model="bisList.current_hands_id" :error="errors.current_hands_id" />
+          <GearDropdown :maxIl="maxIl" :minIl="minIl" ref="currLegs" name="Legs" :choices="armour" v-model="bisList.current_legs_id" :error="errors.current_legs_id" />
+          <GearDropdown :maxIl="maxIl" :minIl="minIl" ref="currFeet" name="Feet" :choices="armour" v-model="bisList.current_feet_id" :error="errors.current_feet_id" />
+          <GearDropdown :maxIl="maxIl" :minIl="minIl" ref="currEarrings" name="Earrings" :choices="accessories" v-model="bisList.current_earrings_id" :error="errors.current_earrings_id" />
+          <GearDropdown :maxIl="maxIl" :minIl="minIl" ref="currNecklace" name="Necklace" :choices="accessories" v-model="bisList.current_necklace_id" :error="errors.current_necklace_id" />
+          <GearDropdown :maxIl="maxIl" :minIl="minIl" ref="currBracelet" name="Bracelet" :choices="accessories" v-model="bisList.current_bracelet_id" :error="errors.current_bracelet_id" />
+          <GearDropdown :maxIl="maxIl" :minIl="minIl" ref="currRightRing" name="Right Ring" :choices="accessories" v-model="bisList.current_right_ring_id" :error="errors.current_right_ring_id" />
+          <GearDropdown :maxIl="maxIl" :minIl="minIl" ref="currLeftRing" name="Left Ring" :choices="accessories" v-model="bisList.current_left_ring_id" :error="errors.current_left_ring_id" />
         </div>
       </div>
     </div>
@@ -189,7 +189,7 @@ export default class BISListForm extends Vue {
 
   // Get gear from store
   get gear(): Gear[] {
-    return this.$store.state.gear.filter((item: Gear) => item.item_level >= this.minIl && item.item_level <= this.maxIl)
+    return this.$store.state.gear
   }
 
   // Get an array of item level choices based on the total min and max values
