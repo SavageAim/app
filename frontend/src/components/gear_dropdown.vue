@@ -9,7 +9,7 @@
           <div class="select is-fullwidth" :class="{'is-danger': error !== undefined}">
             <select ref="dropdown" :value="value" @input="handleInput">
               <option value="-1">Select Gear</option>
-              <option v-for="gear in choices" :key="gear.id" :value="gear.id">{{ gear.name }} ({{ gear.item_level }})</option>
+              <option v-for="item in gear" :key="item.id" :value="item.id">{{ item.name }} ({{ item.item_level }})</option>
             </select>
           </div>
         </div>
@@ -32,6 +32,12 @@ export default class GearDropdown extends Vue {
   error!: string[] | undefined
 
   @Prop()
+  maxIl!: number
+
+  @Prop()
+  minIl!: number
+
+  @Prop()
   name!: string
 
   @Prop()
@@ -39,6 +45,10 @@ export default class GearDropdown extends Vue {
 
   get dropdown(): HTMLSelectElement {
     return this.$refs.dropdown as HTMLSelectElement
+  }
+
+  get gear(): Gear[] {
+    return this.choices.filter((item: Gear) => item.id === this.value || (item.item_level <= this.maxIl && item.item_level >= this.minIl))
   }
 
   handleInput(): void {
