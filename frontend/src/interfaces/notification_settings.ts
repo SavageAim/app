@@ -1,4 +1,4 @@
-export default interface Notifications {
+export default interface NotificationsSettings {
   loot_tracker_update: boolean
   team_join: boolean
   team_lead: boolean

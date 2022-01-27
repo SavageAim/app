@@ -1,9 +1,9 @@
-import Notifications from './notifications'
+import NotificationsSettings from './notifications_settings'
 
 export default interface User {
   avatar_url: string,
   id: number | null,
-  notifications: Notifications,
+  notifications: NotificationsSettings,
   theme: string,
   username: string,
 }
