@@ -8,6 +8,7 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "@creativebulma/bulma-badge": "^1.0.1",
     "@xivapi/js": "^0.3.3",
     "bulma": "^0.9.3",
     "microtip": "^0.2.2",
