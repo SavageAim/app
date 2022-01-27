@@ -9,5 +9,6 @@ from django.db import models
 
 
 class Settings(models.Model):
+    notifications = models.JSONField(default=dict)
     theme = models.CharField(max_length=24)
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='settings')
