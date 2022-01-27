@@ -9,18 +9,5 @@ from django.db import models
 
 
 class Settings(models.Model):
-    BETA = 'beta'
-    BLUE = 'blue'
-    GREEN = 'green'
-    PURPLE = 'purple'
-    RED = 'red'
-    THEMES = (
-        (BETA, BETA),
-        (BLUE, BLUE),
-        (GREEN, GREEN),
-        (PURPLE, PURPLE),
-        (RED, RED),
-    )
-
-    theme = models.CharField(max_length=24, choices=THEMES)
+    theme = models.CharField(max_length=24)
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='settings')
