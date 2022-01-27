@@ -35,7 +35,7 @@
         </a>
 
         <template v-if="authenticated">
-          <a href="#" class="navbar-item notifications">
+          <a href="#" class="navbar-item notifications" @click="showNotifs">
             <div class="icon-text" v-if="hasUnreads">
               <span class="icon">
                 <span class="badge is-info">1</span>
@@ -91,6 +91,7 @@
 <script lang="ts">
 import { Component, Prop, Watch } from 'vue-property-decorator'
 import Legend from './modals/legend.vue'
+import Notifications from './modals/notifications.vue'
 import SavageAimMixin from '@/mixins/savage_aim_mixin'
 
 @Component
@@ -141,6 +142,10 @@ export default class Nav extends SavageAimMixin {
   // Display the colour legend chart modal
   showLegend(): void {
     this.$modal.show(Legend)
+  }
+
+  showNotifs(): void {
+    this.$modal.show(Notifications)
   }
 
   // Watch the location.path value and any time it changes run the function
