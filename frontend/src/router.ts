@@ -2,6 +2,7 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Auth from './views/auth.vue'
 import Home from './views/home.vue'
+import store from './store'
 
 // Import our components and give them routes.
 
@@ -9,7 +10,12 @@ Vue.use(VueRouter)
 
 const routes = [
   // Home
-  { path: '/', component: Home, name: 'home' },
+  {
+    path: '/',
+    component: Home,
+    name: 'home',
+    meta: { anon: true },
+  },
 
   // Auth
   {
@@ -17,6 +23,7 @@ const routes = [
     component: Auth,
     name: 'auth',
     props: true,
+    meta: { anon: true },
   },
 
   // Character
@@ -51,4 +58,11 @@ const router = new VueRouter({
   mode: 'history',
   routes,
 })
+
+router.beforeEach((to, from, next) => {
+  const anonymous = (to.meta || { anon: false }).anon
+  if (!anonymous && store.state.user.id === null) next({ name: 'auth', params: { redirect: 'true' } })
+  else next()
+})
+
 export default router

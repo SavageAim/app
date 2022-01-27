@@ -22,7 +22,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop } from 'vue-property-decorator'
+import { Component, Prop, Watch } from 'vue-property-decorator'
 import Dashboard from '@/components/dashboard.vue'
 import Welcome from '@/components/welcome.vue'
 import SavageAimMixin from '@/mixins/savage_aim_mixin'
@@ -37,11 +37,16 @@ export default class Auth extends SavageAimMixin {
   @Prop({ default: false })
   redirect!: boolean
 
-  mounted(): void {
-    // If the user is authenticated, we don't need to be here
+  @Watch('$store.state.user.id')
+  checkAuth(): void {
     if (this.authenticated) {
       this.$router.push('/')
     }
+  }
+
+  mounted(): void {
+    // If the user is authenticated, we don't need to be here
+    this.checkAuth()
     document.title = 'Login - Savage Aim'
   }
 }
