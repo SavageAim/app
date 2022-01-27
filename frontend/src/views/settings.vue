@@ -1,7 +1,7 @@
 <template>
-  <div class="container is-fluid">
+  <div>
     <h2 class="title">
-      <span>Settings for {{ user.username }}</span>
+      Settings for {{ user.username }}
     </h2>
 
     <!-- Colour Scheme -->

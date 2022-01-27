@@ -1,5 +1,5 @@
 <template>
-  <div class="container is-fluid">
+  <div>
     <div v-if="!loaded">
       <button class="button is-static is-loading is-fullwidth">Loading</button>
     </div>
