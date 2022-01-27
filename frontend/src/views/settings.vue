@@ -15,7 +15,7 @@
             <div class="field">
               <div class="control">
                 <div class="select is-fullwidth">
-                  <select :value="user.theme" @input="handleInput" ref="dropdown">
+                  <select v-model="theme" ref="dropdown">
                     <option value="beta">Beta</option>
                     <option value="blue">Blue</option>
                     <option value="green">Green</option>
@@ -28,7 +28,7 @@
               </div>
             </div>
             <div class="divider"><i class="material-icons icon">expand_more</i> Example <i class="material-icons icon">expand_more</i></div>
-            <table class="table is-bordered is-fullwidth gear-table" :class="[`is-${$store.state.user.theme}`]">
+            <table class="table is-bordered is-fullwidth gear-table" :class="[`is-${theme}`]">
               <tr>
                 <th class="is-il-bis">Best in Slot</th>
               </tr>
@@ -123,12 +123,10 @@ export default class Settings extends SavageAimMixin {
     verify_success: this.user.notifications.verify_success,
   }
 
+  theme = this.user.theme
+
   get dropdown(): HTMLSelectElement {
     return this.$refs.dropdown as HTMLSelectElement
-  }
-
-  handleInput(): void {
-    this.$store.commit('setTheme', this.dropdown.value)
   }
 
   mounted(): void {
@@ -147,7 +145,7 @@ export default class Settings extends SavageAimMixin {
 
   // Save the data into a new bis list
   async save(): Promise<void> {
-    const body = JSON.stringify({ theme: this.user.theme, notifications: this.notifications })
+    const body = JSON.stringify({ theme: this.theme, notifications: this.notifications })
     try {
       const response = await fetch(this.url, {
         method: 'PUT',
@@ -161,6 +159,8 @@ export default class Settings extends SavageAimMixin {
       if (response.ok) {
         // Just give a message saying it was successful
         this.$notify({ text: 'Update successful!', type: 'is-success' })
+        // Update the user in the system too
+        this.$store.dispatch('fetchUser')
       }
       else {
         super.handleError(response.status)
