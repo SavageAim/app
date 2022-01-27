@@ -29,11 +29,11 @@ class LootTestSuite(SavageAimTestCase):
         )
 
         # Create two characters belonging to separate users
-        self.raid_lead = Character.objects.create(
+        self.team_lead = Character.objects.create(
             avatar_url='https://img.savageaim.com/abcde',
             lodestone_id=1234567890,
             user=self._get_user(),
-            name='Raid Lead',
+            name='Team Lead',
             verified=True,
             world='Lich',
         )
@@ -77,7 +77,7 @@ class LootTestSuite(SavageAimTestCase):
             current_offhand=self.crafted,
             current_right_ring=self.crafted,
             job_id='SGE',
-            owner=self.raid_lead,
+            owner=self.team_lead,
         )
         self.mt_alt_bis = BISList.objects.create(
             bis_body=self.raid_gear,
@@ -133,7 +133,7 @@ class LootTestSuite(SavageAimTestCase):
             current_offhand=self.crafted,
             current_right_ring=self.crafted,
             job_id='PLD',
-            owner=self.raid_lead,
+            owner=self.team_lead,
         )
         self.rl_alt_bis2 = BISList.objects.create(
             bis_body=self.tome_gear,
@@ -161,7 +161,7 @@ class LootTestSuite(SavageAimTestCase):
             current_offhand=self.crafted,
             current_right_ring=self.crafted,
             job_id='RPR',
-            owner=self.raid_lead,
+            owner=self.team_lead,
         )
         self.mt_main_bis = BISList.objects.create(
             bis_body=self.tome_gear,
@@ -221,7 +221,7 @@ class LootTestSuite(SavageAimTestCase):
         )
 
         # Lastly, link the characters to the team
-        self.rl_tm = self.team.members.create(character=self.raid_lead, bis_list=self.rl_main_bis, lead=True)
+        self.rl_tm = self.team.members.create(character=self.team_lead, bis_list=self.rl_main_bis, lead=True)
         self.mt_tm = self.team.members.create(character=self.main_tank, bis_list=self.mt_main_bis)
 
         # Set up expected response (store it here to avoid redefining it)
@@ -238,7 +238,7 @@ class LootTestSuite(SavageAimTestCase):
                     },
                     {
                         'member_id': self.rl_tm.pk,
-                        'character_name': f'{self.raid_lead.name} @ {self.raid_lead.world}',
+                        'character_name': f'{self.team_lead.name} @ {self.team_lead.world}',
                         'current_gear_name': self.crafted.name,
                         'current_gear_il': self.crafted.item_level,
                         'job_icon_name': 'sage',
@@ -268,7 +268,7 @@ class LootTestSuite(SavageAimTestCase):
                     },
                     {
                         'member_id': self.rl_tm.pk,
-                        'character_name': f'{self.raid_lead.name} @ {self.raid_lead.world}',
+                        'character_name': f'{self.team_lead.name} @ {self.team_lead.world}',
                         'greed_lists': [
                             {
                                 'bis_list_id': self.rl_alt_bis.id,
@@ -302,7 +302,7 @@ class LootTestSuite(SavageAimTestCase):
                 'greed': [
                     {
                         'member_id': self.rl_tm.pk,
-                        'character_name': f'{self.raid_lead.name} @ {self.raid_lead.world}',
+                        'character_name': f'{self.team_lead.name} @ {self.team_lead.world}',
                         'greed_lists': [
                             {
                                 'bis_list_id': self.rl_alt_bis.id,
@@ -342,7 +342,7 @@ class LootTestSuite(SavageAimTestCase):
                     },
                     {
                         'member_id': self.rl_tm.pk,
-                        'character_name': f'{self.raid_lead.name} @ {self.raid_lead.world}',
+                        'character_name': f'{self.team_lead.name} @ {self.team_lead.world}',
                         'greed_lists': [
                             {
                                 'bis_list_id': self.rl_alt_bis.id,
@@ -366,7 +366,7 @@ class LootTestSuite(SavageAimTestCase):
                 'need': [
                     {
                         'member_id': self.rl_tm.pk,
-                        'character_name': f'{self.raid_lead.name} @ {self.raid_lead.world}',
+                        'character_name': f'{self.team_lead.name} @ {self.team_lead.world}',
                         'current_gear_name': self.crafted.name,
                         'current_gear_il': self.crafted.item_level,
                         'job_icon_name': 'sage',
@@ -416,7 +416,7 @@ class LootTestSuite(SavageAimTestCase):
                     },
                     {
                         'member_id': self.rl_tm.pk,
-                        'character_name': f'{self.raid_lead.name} @ {self.raid_lead.world}',
+                        'character_name': f'{self.team_lead.name} @ {self.team_lead.world}',
                         'greed_lists': [
                             {
                                 'bis_list_id': self.rl_alt_bis.id,
@@ -463,7 +463,7 @@ class LootTestSuite(SavageAimTestCase):
                     },
                     {
                         'member_id': self.rl_tm.pk,
-                        'character_name': f'{self.raid_lead.name} @ {self.raid_lead.world}',
+                        'character_name': f'{self.team_lead.name} @ {self.team_lead.world}',
                         'greed_lists': [
                             {
                                 'bis_list_id': self.rl_alt_bis.id,
@@ -487,7 +487,7 @@ class LootTestSuite(SavageAimTestCase):
                 'need': [
                     {
                         'member_id': self.rl_tm.pk,
-                        'character_name': f'{self.raid_lead.name} @ {self.raid_lead.world}',
+                        'character_name': f'{self.team_lead.name} @ {self.team_lead.world}',
                         'current_gear_name': self.crafted.name,
                         'current_gear_il': self.crafted.item_level,
                         'job_icon_name': 'sage',
@@ -514,7 +514,7 @@ class LootTestSuite(SavageAimTestCase):
                 'need': [
                     {
                         'member_id': self.rl_tm.pk,
-                        'character_name': f'{self.raid_lead.name} @ {self.raid_lead.world}',
+                        'character_name': f'{self.team_lead.name} @ {self.team_lead.world}',
                         'current_gear_name': self.crafted.name,
                         'current_gear_il': self.crafted.item_level,
                         'job_icon_name': 'sage',
@@ -564,7 +564,7 @@ class LootTestSuite(SavageAimTestCase):
                     },
                     {
                         'member_id': self.rl_tm.pk,
-                        'character_name': f'{self.raid_lead.name} @ {self.raid_lead.world}',
+                        'character_name': f'{self.team_lead.name} @ {self.team_lead.world}',
                         'greed_lists': [
                             {
                                 'bis_list_id': self.rl_alt_bis.id,
@@ -588,7 +588,7 @@ class LootTestSuite(SavageAimTestCase):
                 'need': [
                     {
                         'member_id': self.rl_tm.pk,
-                        'character_name': f'{self.raid_lead.name} @ {self.raid_lead.world}',
+                        'character_name': f'{self.team_lead.name} @ {self.team_lead.world}',
                         'current_gear_name': self.crafted.name,
                         'current_gear_il': self.crafted.item_level,
                         'job_icon_name': 'sage',
@@ -623,7 +623,7 @@ class LootTestSuite(SavageAimTestCase):
                     },
                     {
                         'member_id': self.rl_tm.pk,
-                        'character_name': f'{self.raid_lead.name} @ {self.raid_lead.world}',
+                        'character_name': f'{self.team_lead.name} @ {self.team_lead.world}',
                         'current_gear_name': self.crafted.name,
                         'current_gear_il': self.crafted.item_level,
                         'job_icon_name': 'sage',
@@ -653,7 +653,7 @@ class LootTestSuite(SavageAimTestCase):
                     },
                     {
                         'member_id': self.rl_tm.pk,
-                        'character_name': f'{self.raid_lead.name} @ {self.raid_lead.world}',
+                        'character_name': f'{self.team_lead.name} @ {self.team_lead.world}',
                         'greed_lists': [
                             {
                                 'bis_list_id': self.rl_alt_bis.id,
@@ -815,7 +815,7 @@ class LootTestSuite(SavageAimTestCase):
             {
                 'greed': True,
                 'item': 'Mainhand',
-                'member': 'Raid Lead @ Lich',
+                'member': 'Team Lead @ Lich',
                 'obtained': l1.obtained.strftime('%Y-%m-%d'),
                 'id': l1.pk,
             },
@@ -829,7 +829,7 @@ class LootTestSuite(SavageAimTestCase):
             {
                 'greed': False,
                 'item': 'Mount',
-                'member': 'Raid Lead @ Lich',
+                'member': 'Team Lead @ Lich',
                 'obtained': l1.obtained.strftime('%Y-%m-%d'),
                 'id': l3.pk,
             },
@@ -1168,7 +1168,7 @@ class LootTestSuite(SavageAimTestCase):
 
         - Invalid ID
         - Not having a character in the team
-        - POST when not the raid lead
+        - POST when not the team lead
         """
         user = self._get_user()
         self.client.force_authenticate(user)
@@ -1180,14 +1180,14 @@ class LootTestSuite(SavageAimTestCase):
         self.assertEqual(self.client.post(f'{url}bis/').status_code, status.HTTP_404_NOT_FOUND)
 
         # Not having a character in the team
-        self.raid_lead.user = self._create_user()
-        self.raid_lead.save()
+        self.team_lead.user = self._create_user()
+        self.team_lead.save()
         url = reverse('api:loot_collection', kwargs={'team_id': self.team.pk})
         self.assertEqual(self.client.get(url).status_code, status.HTTP_404_NOT_FOUND)
         self.assertEqual(self.client.post(url).status_code, status.HTTP_404_NOT_FOUND)
         self.assertEqual(self.client.post(f'{url}bis/').status_code, status.HTTP_404_NOT_FOUND)
 
-        # POST while not raid lead
+        # POST while not team lead
         self.client.force_authenticate(self.main_tank.user)
         self.assertEqual(self.client.post(url).status_code, status.HTTP_404_NOT_FOUND)
         self.assertEqual(self.client.post(f'{url}bis/').status_code, status.HTTP_404_NOT_FOUND)

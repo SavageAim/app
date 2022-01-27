@@ -75,7 +75,7 @@ class ManagementCommandTestSuite(SavageAimTestCase):
             avatar_url='https://img.savageaim.com/abcde',
             lodestone_id=1234567890,
             user=self._get_user(),
-            name='Raid Lead',
+            name='Team Lead',
             verified=True,
             world='Lich',
         )

@@ -29,7 +29,7 @@
               </div>
               <p v-if="errors.tier_id !== undefined" class="help is-danger">{{ errors.tier_id[0] }}</p>
             </div>
-            <div class="divider"><i class="material-icons icon">expand_more</i> Raid Leader <i class="material-icons icon">expand_more</i></div>
+            <div class="divider"><i class="material-icons icon">expand_more</i> Team Leader <i class="material-icons icon">expand_more</i></div>
           <TeamMemberForm ref="form" :bis-list-id-errors="errors.bis_list_id" :character-id-errors="errors.character_id" />
           <button class="button is-success" @click="create">Create!</button>
         </div>

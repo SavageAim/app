@@ -85,5 +85,5 @@ export interface TeamMemberUpdateErrors {
 export interface TeamUpdateErrors {
   name?: string[]
   tier_id?: string[]
-  raid_lead?: string[]
+  team_lead?: string[]
 }

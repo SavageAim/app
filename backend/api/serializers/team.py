@@ -25,13 +25,13 @@ class TeamSerializer(serializers.ModelSerializer):
 
 
 class TeamUpdateSerializer(serializers.ModelSerializer):
-    raid_lead = serializers.IntegerField()
+    team_lead = serializers.IntegerField()
     tier_id = serializers.IntegerField()
 
     class Meta:
         model = Team
-        fields = ['name', 'tier_id', 'raid_lead']
-        write_only_fields = ['raid_lead']
+        fields = ['name', 'tier_id', 'team_lead']
+        write_only_fields = ['team_lead']
 
     def validate_tier_id(self, tier_id: int) -> int:
         """
@@ -45,16 +45,16 @@ class TeamUpdateSerializer(serializers.ModelSerializer):
 
         return tier_id
 
-    def validate_raid_lead(self, raid_lead_id: int) -> int:
+    def validate_team_lead(self, team_lead_id: int) -> int:
         """
-        Ensure that the raid lead id is a valid int and refers to a valid member of the team.
-        The sent raid lead id will be the id of the character, the returned value the id of the TM object.
+        Ensure that the team lead id is a valid int and refers to a valid member of the team.
+        The sent team lead id will be the id of the character, the returned value the id of the TM object.
         """
         # Ensure it corresponds with a member of this team
         try:
-            member = self.instance.members.get(character__pk=raid_lead_id)
+            member = self.instance.members.get(character__pk=team_lead_id)
         except TeamMember.DoesNotExist:
-            raise serializers.ValidationError('Please select a member of the Team to be the new raid lead.')
+            raise serializers.ValidationError('Please select a member of the Team to be the new team lead.')
 
         return member.id
 

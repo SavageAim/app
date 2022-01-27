@@ -4,7 +4,7 @@
       <div class="card-header">
         <div class="card-header-title">
           <span class="icon-text">
-            <span class="icon is-hidden-touch" v-if="details.lead"><img src="/party_lead.png" alt="Raid Lead" title="Raid Lead" /></span>
+            <span class="icon is-hidden-touch" v-if="details.lead"><img src="/party_lead.png" alt="Team Lead" title="Team Lead" /></span>
             <span class="icon is-hidden-touch" v-else><img src="/party_member.png" alt="Team Member" title="Team Member" /></span>
             <span>{{ details.character.name }} @ {{ details.character.world }}</span>
           </span>

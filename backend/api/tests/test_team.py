@@ -412,7 +412,7 @@ class TeamResource(SavageAimTestCase):
         data = {
             'name': 'Updated Team Name',
             'tier_id': new_tier.id,
-            'raid_lead': char.id,
+            'team_lead': char.id,
         }
         response = self.client.put(url, data)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT, response.content)
@@ -435,9 +435,9 @@ class TeamResource(SavageAimTestCase):
         Tier ID Not Sent: 'This field is required.'
         Tier ID Not Int:  'A valid integer is required.'
         Tier ID Invalid: 'Please select a valid Tier.'
-        Raid Lead Not Sent: 'This field is required.'
-        Raid Lead Not Int: 'A valid integer is required.'
-        Raid Lead Invalid: 'Please select a member of the Team to be the new raid lead.'
+        Team Lead Not Sent: 'This field is required.'
+        Team Lead Not Int: 'A valid integer is required.'
+        Team Lead Invalid: 'Please select a member of the Team to be the new team lead.'
         """
         user = self._get_user()
         self.client.force_authenticate(user)
@@ -448,32 +448,32 @@ class TeamResource(SavageAimTestCase):
         content = response.json()
         self.assertEqual(content['name'], ['This field is required.'])
         self.assertEqual(content['tier_id'], ['This field is required.'])
-        self.assertEqual(content['raid_lead'], ['This field is required.'])
+        self.assertEqual(content['team_lead'], ['This field is required.'])
 
         data = {
             'name': 'abcde' * 100,
             'tier_id': 'abcde',
-            'raid_lead': 'abcde',
+            'team_lead': 'abcde',
         }
         response = self.client.put(url, data)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, response.content)
         content = response.json()
         self.assertEqual(content['name'], ['Ensure this field has no more than 64 characters.'])
         self.assertEqual(content['tier_id'], ['A valid integer is required.'])
-        self.assertEqual(content['raid_lead'], ['A valid integer is required.'])
+        self.assertEqual(content['team_lead'], ['A valid integer is required.'])
 
         data = {
             'name': 'Hi c:',
             'tier_id': 123,
-            'raid_lead': 123,
+            'team_lead': 123,
         }
         response = self.client.put(url, data)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, response.content)
         content = response.json()
         self.assertEqual(content['tier_id'], ['Please select a valid Tier.'])
-        self.assertEqual(content['raid_lead'], ['Please select a member of the Team to be the new raid lead.'])
+        self.assertEqual(content['team_lead'], ['Please select a member of the Team to be the new team lead.'])
 
-        # Run the raid lead test again with a valid character id that isn't on the team
+        # Run the team lead test again with a valid character id that isn't on the team
         char = Character.objects.create(
             avatar_url='https://img.savageaim.com/abcde',
             lodestone_id=1348724213,
@@ -484,12 +484,12 @@ class TeamResource(SavageAimTestCase):
         data = {
             'name': 'Hi c:',
             'tier_id': Tier.objects.first().pk,
-            'raid_lead': char.id,
+            'team_lead': char.id,
         }
         response = self.client.put(url, data)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, response.content)
         content = response.json()
-        self.assertEqual(content['raid_lead'], ['Please select a member of the Team to be the new raid lead.'])
+        self.assertEqual(content['team_lead'], ['Please select a member of the Team to be the new team lead.'])
 
     def test_404(self):
         """
@@ -498,7 +498,7 @@ class TeamResource(SavageAimTestCase):
         - ID doesn't exist
         - Read request from someone who doesn't have a character in the Team
         - Update request from someone who doesn't have a character in the Team
-        - Update request from someone that isn't the raid lead
+        - Update request from someone that isn't the team lead
         """
         user = self._get_user()
         self.client.force_authenticate(user)

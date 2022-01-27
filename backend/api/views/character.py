@@ -72,7 +72,7 @@ class CharacterResource(APIView):
     #     Delete a character.
     #     Can only delete a character owned by the requesting user.
 
-    #     If deleting someone that is a raidlead, move the raidlead to someone else in the team
+    #     If deleting someone that is a teamlead, move the teamlead to someone else in the team
     #     """
     #     try:
     #         obj = Character.objects.get(pk=pk, user=request.user)
