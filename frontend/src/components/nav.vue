@@ -6,7 +6,9 @@
       </router-link>
 
       <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" ref="burger" @click="toggleNavbar">
-        <span aria-hidden="true"></span>
+        <span aria-hidden="true">
+          <div class="badge is-info" v-if="hasUnreads">1</div>
+        </span>
         <span aria-hidden="true"></span>
         <span aria-hidden="true"></span>
       </a>
@@ -25,16 +27,30 @@
       </div>
 
       <div class="navbar-end">
-        <div class="navbar-item">
-          <a href="#" @click="showLegend">
-            <div class="icon-text has-text-white">
-              <span class="icon"><i class="material-icons">bar_chart</i></span>
-              <span>Colours Explanation</span>
-            </div>
-          </a>
-        </div>
+        <a href="#" @click="showLegend" class="navbar-item">
+          <div class="icon-text">
+            <span class="icon"><i class="material-icons">bar_chart</i></span>
+            <span>Colours Explanation</span>
+          </div>
+        </a>
 
         <template v-if="authenticated">
+          <a href="#" class="navbar-item notifications">
+            <div class="icon-text" v-if="hasUnreads">
+              <span class="icon">
+                <span class="badge is-info">1</span>
+                <i class="material-icons">notifications_active</i>
+              </span>
+              <span class="is-hidden-desktop">Notifications</span>
+            </div>
+            <div class="icon-text" v-else>
+              <span class="icon">
+                <i class="material-icons">notifications</i>
+              </span>
+              <span class="is-hidden-desktop">Notifications</span>
+            </div>
+          </a>
+
           <div class="navbar-item has-dropdown is-hoverable">
             <div class="navbar-link" id="user-item">
               <figure class="image user-image" v-if="user.avatar_url">
@@ -81,6 +97,9 @@ import SavageAimMixin from '@/mixins/savage_aim_mixin'
 export default class Nav extends SavageAimMixin {
   @Prop({ default: false })
   maintenance!: boolean
+
+  // Display the notifications flag
+  hasUnreads = false
 
   // Only check for the refs after we've been mounted
   isMounted = false
@@ -165,5 +184,18 @@ nav {
 #user-item {
   display: flex;
   align-items: center;
+}
+
+.badge {
+  z-index: 10;
+}
+
+.navbar-burger.is-active .badge {
+  display: none;
+}
+
+.notifications .badge {
+  top: unset;
+  right: unset;
 }
 </style>
