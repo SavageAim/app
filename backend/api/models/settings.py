@@ -9,6 +9,14 @@ from django.db import models
 
 
 class Settings(models.Model):
+    NOTIFICATIONS = {
+        'loot_tracker_update',
+        'team_join',
+        'team_lead',
+        'verify_fail',
+        'verify_success',
+    }
+
     notifications = models.JSONField(default=dict)
     theme = models.CharField(max_length=24)
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='settings')

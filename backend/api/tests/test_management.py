@@ -9,6 +9,18 @@ __all__ = ['ManagementCommandTestSuite']
 
 class ManagementCommandTestSuite(SavageAimTestCase):
 
+    def test_gear_seed(self):
+        """
+        Run the gear seed command and check that it works as intended
+
+        May need to change numbers as the command gets more gear
+        """
+        call_command('gear_seed', stdout=StringIO())
+
+        self.assertTrue(models.Gear.objects.exists())
+        self.assertEqual(models.Gear.objects.filter(item_level=560).count(), 2)
+        self.assertEqual(models.Gear.objects.filter(item_level=580).count(), 4)
+
     def test_job_seed(self):
         """
         Run the job seed command and ensure everything is as it should be
@@ -42,30 +54,6 @@ class ManagementCommandTestSuite(SavageAimTestCase):
 
         for i in range(len(order)):
             self.assertEqual(data[i].id, order[i])
-
-    def test_gear_seed(self):
-        """
-        Run the gear seed command and check that it works as intended
-
-        May need to change numbers as the command gets more gear
-        """
-        call_command('gear_seed', stdout=StringIO())
-
-        self.assertTrue(models.Gear.objects.exists())
-        self.assertEqual(models.Gear.objects.filter(item_level=560).count(), 2)
-        self.assertEqual(models.Gear.objects.filter(item_level=580).count(), 4)
-
-    def test_tier_seed(self):
-        """
-        Run the tier seed command and check that it works as intended
-
-        May need to change numbers as the command gets more tiers
-        """
-        call_command('tier_seed', stdout=StringIO())
-
-        self.assertTrue(models.Tier.objects.exists())
-        self.assertEqual(models.Tier.objects.count(), 1)
-        self.assertEqual(models.Tier.objects.first().max_item_level, 605)  # Asphodelos
 
     def test_loot_team_link(self):
         """
@@ -143,3 +131,28 @@ class ManagementCommandTestSuite(SavageAimTestCase):
         call_command('loot_team_link', stdout=StringIO())
         loot.refresh_from_db()
         self.assertEqual(loot.team, team)
+
+    def test_notification_setup(self):
+        """
+        Set up a User, run the command and ensure that the keys are present and set to True
+        Add a key with False before running the command to ensure that hasn't been affected
+        """
+        user = self._create_user()
+        settings = models.Settings.objects.create(user=user, notifications={'verify_fail': False})
+        call_command('notification_setup')
+        settings.refresh_from_db()
+        self.assertTrue('verify_success' in settings.notifications)
+        self.assertTrue(settings.notifications['verify_success'])
+        self.assertFalse(settings.notifications['verify_fail'])
+
+    def test_tier_seed(self):
+        """
+        Run the tier seed command and check that it works as intended
+
+        May need to change numbers as the command gets more tiers
+        """
+        call_command('tier_seed', stdout=StringIO())
+
+        self.assertTrue(models.Tier.objects.exists())
+        self.assertEqual(models.Tier.objects.count(), 1)
+        self.assertEqual(models.Tier.objects.first().max_item_level, 605)  # Asphodelos
