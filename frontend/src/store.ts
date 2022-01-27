@@ -18,6 +18,7 @@ interface State {
   teams: Team[],
   tiers: Tier[],
   user: User,
+  user_loaded: boolean
   version: string,
 }
 
@@ -30,6 +31,13 @@ interface Store {
 const DEFAULT_USER = {
   avatar_url: '',
   id: null,
+  notifications: {
+    loot_tracker_update: true,
+    team_join: true,
+    team_lead: true,
+    verify_fail: true,
+    verify_success: true,
+  },
   theme: 'beta',
   username: '',
 }
@@ -190,6 +198,8 @@ const store: Store = {
 
     setUser(state: State, user: User) {
       state.user = user
+      // Set the user loaded flag to say we've at least called this method once
+      state.user_loaded = true
     },
 
     resetUser(state: State): void {
@@ -205,6 +215,7 @@ const store: Store = {
     teams: [],
     tiers: [],
     user: DEFAULT_USER,
+    user_loaded: false,
     version: process.env.VUE_APP_VERSION,
   },
 }
