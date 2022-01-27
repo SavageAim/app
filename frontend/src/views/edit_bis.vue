@@ -6,7 +6,7 @@
     <div v-else>
       <div class="breadcrumb">
         <ul>
-          <li><router-link to="../../">{{ character.name }} @ {{ character.world }}</router-link></li>
+          <li><router-link :to="`/characters/${character.id}/`">{{ character.name }} @ {{ character.world }}</router-link></li>
           <li class="is-active"><a aria-current="page">{{ bisList.job_id }}</a></li>
         </ul>
       </div>
