@@ -30,7 +30,7 @@ class SettingsSerializer(serializers.ModelSerializer):
         model = Settings
         fields = ['notifications', 'theme']
 
-    def validate_notifications(self, notifications: Dict[str, str]) -> Dict[str, str]:
+    def validate_notifications(self, notifications: Dict[str, bool]) -> Dict[str, bool]:
         """
         Ensure that the notifications dict sent by the user only contains valid keys
         """

@@ -1,6 +1,7 @@
 from django.urls import reverse
 from rest_framework import status
 from .test_base import SavageAimTestCase
+from api.models import Settings
 
 
 class User(SavageAimTestCase):
@@ -29,6 +30,14 @@ class User(SavageAimTestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.json()['id'], user.id)
+        self.assertTrue(response.json()['notifications']['verify_fail'])
+
+        # Add a notification to the settings and check again
+        Settings.objects.create(user=user, theme='beta', notifications={'verify_fail': False})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertFalse(response.json()['notifications']['verify_fail'])
+        self.assertTrue(response.json()['notifications']['verify_success'])
 
     def test_update(self):
         """
