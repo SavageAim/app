@@ -61,7 +61,7 @@ const router = new VueRouter({
 
 router.beforeEach(async (to, from, next) => {
   const anonymous = (to.meta || { anon: false }).anon
-  if(!store.state.user_loaded) await store.dispatch('fetchUser')
+  if (!store.state.userLoaded) await store.dispatch('fetchUser')
   if (!anonymous && store.state.user.id === null) next({ name: 'auth', params: { redirect: 'true' } })
   else next()
 })
