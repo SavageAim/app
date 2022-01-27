@@ -39,18 +39,22 @@ class User(SavageAimTestCase):
         user = self._get_user()
         self.client.force_authenticate(user)
 
-        data = {'theme': 'blue'}
+        data = {'theme': 'blue', 'notifications': {'verify_fail': False}}
         response = self.client.put(url, data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         user.refresh_from_db()
         self.assertEqual(user.settings.theme, 'blue')
+        self.assertFalse(user.settings.notifications['verify_fail'])
 
         # Run it again to hit the other block
-        data = {'theme': 'purple'}
+        data = {'theme': 'purple', 'notifications': {'verify_success': True}}
         response = self.client.put(url, data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         user.refresh_from_db()
         self.assertEqual(user.settings.theme, 'purple')
+        self.assertFalse(user.settings.notifications['verify_fail'])
+        self.assertTrue(user.settings.notifications['verify_success'])
+        self.assertTrue('team_lead' not in user.settings.notifications)
 
     def test_update_400(self):
         """
@@ -60,10 +64,16 @@ class User(SavageAimTestCase):
         user = self._get_user()
         self.client.force_authenticate(user)
 
-        data = {'theme': 'abcde'}
+        data = {'theme': 'abcde', 'notifications': {'abcde': 'abcde'}}
         response = self.client.put(url, data)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(response.json()['theme'], ['"abcde" is not a valid choice.'])
+        self.assertEqual(response.json()['notifications'], ['"abcde" is not a valid choice.'])
+
+        data['notifications'] = {'team_lead': 'abcde'}
+        response = self.client.put(url, data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.json()['notifications'], ['"team_lead" does not have a boolean for a value.'])
 
     def test_update_403(self):
         """
