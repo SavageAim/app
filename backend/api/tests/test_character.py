@@ -6,7 +6,8 @@ from django.core.management import call_command
 from django.urls import reverse
 from rest_framework import status
 # local
-from api.models import BISList, Character, Gear, Job
+from api import notifier
+from api.models import BISList, Character, Gear, Notification, Job, Settings
 from api.serializers import CharacterCollectionSerializer, CharacterDetailsSerializer
 from .test_base import SavageAimTestCase
 
@@ -16,12 +17,15 @@ def _fake_task(pk: int):
     Handle what celery would handle if it were running
     """
     try:
-        obj = Character.objects.get(pk=pk, verified=False)
+        obj = Character.objects.get(pk=pk)
     except Character.DoesNotExist:
         return
-
-    obj.verified = True
-    obj.save()
+    if not obj.verified:
+        obj.verified = True
+        obj.save()
+        notifier.verify_success(obj)
+    else:
+        notifier.verify_fail(obj, 'Already Verified!')
 
 
 class CharacterCollection(SavageAimTestCase):
@@ -267,6 +271,7 @@ class CharacterVerification(SavageAimTestCase):
         """
         Clean up the DB after each test
         """
+        Notification.objects.all().delete()
         Character.objects.all().delete()
 
     @patch('api.views.character.verify_character.delay', side_effect=_fake_task)
@@ -296,6 +301,43 @@ class CharacterVerification(SavageAimTestCase):
 
         # Do some testing of the mocked task information
         mocked_task.assert_called()
+
+        # Check Notifications
+        self.assertEqual(Notification.objects.filter(user=user).count(), 1)
+        notif = Notification.objects.filter(user=user).first()
+        self.assertEqual(notif.link, f'/characters/{char.id}/')
+        self.assertEqual(notif.text, f'The verification of {char} has succeeded!')
+        self.assertEqual(notif.type, 'verify_success')
+        self.assertFalse(notif.read)
+
+    def test_verify_fail_notifs(self):
+        """
+        Just call the mock task with a verified character and test the notifier task works
+        Also test after changing the notif settings to ensure a second notif isn't sent
+        """
+        user = self._get_user()
+        char = Character.objects.create(
+            avatar_url='https://img.savageaim.com/abcde',
+            lodestone_id=1234567890,
+            user=user,
+            name='Char 1',
+            world='Lich',
+            verified=True,
+        )
+        _fake_task(char.id)
+
+        # Check Notification was created properly
+        self.assertEqual(Notification.objects.filter(user=user).count(), 1)
+        notif = Notification.objects.filter(user=user).first()
+        self.assertEqual(notif.link, f'/characters/{char.id}/')
+        self.assertEqual(notif.text, f'The verification of {char} has failed! Reason: Already Verified!')
+        self.assertEqual(notif.type, 'verify_fail')
+        self.assertFalse(notif.read)
+
+        # Update settings and try again
+        Settings.objects.create(user=user, theme='beta', notifications={'verify_fail': False})
+        _fake_task(char.id)
+        self.assertEqual(Notification.objects.filter(user=user).count(), 1)
 
     @patch('api.views.character.verify_character.delay', side_effect=_fake_task)
     def test_404(self, mocked_task):

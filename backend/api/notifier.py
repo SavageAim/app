@@ -61,4 +61,4 @@ def verify_success(char: models.Character):
     text = f'The verification of {char} has succeeded!'
     link = f'/characters/{char.id}/'
     user = char.user
-    _create_notif(user, text, link, 'verify_fail')
+    _create_notif(user, text, link, 'verify_success')
