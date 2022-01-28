@@ -2,7 +2,7 @@
   <div>
     <div class="card-header">
       <div class="card-header-title">
-        Notifications
+        New Notifications
       </div>
       <div class="card-header-icon">
         <a class="icon" @click="() => { this.$emit('close') }">
@@ -13,31 +13,34 @@
     <div class="card-content">
       <div class="content">
         <p>Click or tap notifications to open them, or click the button below to mark all as read.</p>
-        <button class="button is-success is-fullwidth">Mark all as read</button>
+        <div class="buttons is-grouped">
+          <button class="button is-success">Mark all as read</button>
+          <button class="button is-info">View All Notifications</button>
+        </div>
       </div>
 
-      <a :href="`#${notif.target}`" class="box" v-for="notif in notifications" :class="[notif.read ? 'read' : 'unread']" :key="notif.id">
+      <a :href="`#${notifications[i].target}`" class="box" v-for="i in pageRange()" :class="[notifications[i].read ? 'read' : 'unread']" :key="i">
         <article class="media">
           <figure class="media-left">
             <div class="icon has-text-primary">
-              <i class="material-icons" v-if="notif.read">notifications</i>
+              <i class="material-icons" v-if="notifications[i].read">notifications</i>
               <i class="material-icons" v-else>notifications_active</i>
             </div>
           </figure>
           <div class="media-content">
-            <p><span class="has-text-info">{{ notif.actor }}</span> {{ notif.verb }} <span class="has-text-info" v-if="notif.action_object !== null">{{ notif.action_object }}</span></p>
-            <p><small class="has-text-grey">{{ notif.date }}</small></p>
+            <p><span class="has-text-info">{{ notifications[i].actor }}</span> {{ notifications[i].verb }} <span class="has-text-info" v-if="notifications[i].action_object !== null">{{ notifications[i].action_object }}</span></p>
+            <p><small class="has-text-grey">{{ notifications[i].date }}</small></p>
           </div>
         </article>
       </a>
 
       <div class="pagination is-centered" id="notif-pager" role="navigation" aria-label="pagination">
-        <a class="pagination-previous" v-if="page > 1">Previous Page</a>
-        <a class="pagination-previous is-disabled">Previous Page</a>
+        <a class="pagination-previous" @click="page--" v-if="page > 1">Previous Page</a>
+        <a class="pagination-previous is-disabled" v-else>Previous Page</a>
         <ul class="pagination-list">
           <li class="pagination-ellipsis">Page {{ page }} of {{ maxPages }}</li>
         </ul>
-        <a class="pagination-next" v-if="page < maxPages">Next Page</a>
+        <a class="pagination-next" @click="page++" v-if="page < maxPages">Next Page</a>
         <a class="pagination-next is-disabled" v-else>Next Page</a>
       </div>
     </div>
@@ -70,12 +73,18 @@ export default class Notifications extends Vue {
     },
   ]
 
-  notifsPerPage = 5
+  notifsPerPage = 4
 
   page = 1
 
   get maxPages(): number {
     return Math.ceil(this.notifications.length / this.notifsPerPage)
+  }
+
+  pageRange(): ReadonlyArray<number> {
+    const size = this.page * this.notifsPerPage < this.notifications.length ? this.notifsPerPage : this.notifications.length % this.notifsPerPage
+    const start = (this.page - 1) * this.notifsPerPage
+    return Array.from({ length: size }, (x, i) => i + start)
   }
 }
 </script>
