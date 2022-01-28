@@ -11,6 +11,7 @@ from rest_framework.views import APIView
 from rest_framework.request import Request
 from rest_framework.response import Response
 # local
+from api import notifier
 from api.models import Team, TeamMember
 from api.serializers import (
     TeamSerializer,
@@ -163,7 +164,10 @@ class TeamInvite(APIView):
         serializer.is_valid(raise_exception=True)
 
         # If we make it here, create a new Team Member object
-        TeamMember.objects.create(team=obj, **serializer.validated_data)
+        tm = TeamMember.objects.create(team=obj, **serializer.validated_data)
+
+        # Notify the Team Lead
+        notifier.team_join(tm.character, obj)
 
         # Return the team id to redirect to the page
         return Response({'id': obj.id}, status=201)

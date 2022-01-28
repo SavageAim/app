@@ -5,7 +5,7 @@ from django.core.management import call_command
 from django.urls import reverse
 from rest_framework import status
 # local
-from api.models import BISList, Character, Gear, Job, Team, TeamMember, Tier
+from api.models import BISList, Character, Gear, Notification, Job, Team, TeamMember, Tier
 from api.serializers import TeamSerializer
 from .test_base import SavageAimTestCase
 
@@ -579,7 +579,6 @@ class TeamInvite(SavageAimTestCase):
             name='Test Team 1',
             tier=Tier.objects.first(),
         )
-        # self.tm = TeamMember.objects.create(team=self.team, character=self.char, bis_list=self.bis, lead=True)
 
     def tearDown(self):
         """
@@ -617,19 +616,67 @@ class TeamInvite(SavageAimTestCase):
         """
         Attempt to join a Team using a character and bis list
         """
-        user = self._get_user()
+        user = self._create_user()
         self.client.force_authenticate(user)
         url = reverse('api:team_invite', kwargs={'invite_code': self.team.invite_code})
 
-        self.char.verified = True
-        self.char.save()
+        # Link the self.char to the team for notification checking
+        TeamMember.objects.create(team=self.team, character=self.char, bis_list=self.bis, lead=True)
+
+        # Create new details
+        char = Character.objects.create(
+            avatar_url='https://img.savageaim.com/abcde',
+            lodestone_id=1234567890,
+            user=user,
+            name='Char 1',
+            world='Lich',
+            verified=True,
+        )
+        g = Gear.objects.first()
+        bis = BISList.objects.create(
+            bis_body=g,
+            bis_bracelet=g,
+            bis_earrings=g,
+            bis_feet=g,
+            bis_hands=g,
+            bis_head=g,
+            bis_left_ring=g,
+            bis_legs=g,
+            bis_mainhand=g,
+            bis_necklace=g,
+            bis_offhand=g,
+            bis_right_ring=g,
+            current_body=g,
+            current_bracelet=g,
+            current_earrings=g,
+            current_feet=g,
+            current_hands=g,
+            current_head=g,
+            current_left_ring=g,
+            current_legs=g,
+            current_mainhand=g,
+            current_necklace=g,
+            current_offhand=g,
+            current_right_ring=g,
+            job=Job.objects.first(),
+            owner=char,
+        )
+
         data = {
-            'character_id': self.char.id,
-            'bis_list_id': self.bis.id,
+            'character_id': char.id,
+            'bis_list_id': bis.id,
         }
         response = self.client.post(url, data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.content)
         self.assertEqual(response.json()['id'], str(self.team.id))
+
+        # Check that the self.user has a notification
+        self.assertEqual(Notification.objects.filter(user=self.char.user).count(), 1)
+        notif = Notification.objects.filter(user=self.char.user).first()
+        self.assertEqual(notif.link, f'/team/{self.team.id}/')
+        self.assertEqual(notif.text, f'{char} has joined {self.team.name}!')
+        self.assertEqual(notif.type, 'team_join')
+        self.assertFalse(notif.read)
 
     def test_join_400(self):
         """
