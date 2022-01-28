@@ -5,6 +5,7 @@ Task to verify accounts on XIVAPI.
 """
 # stdlib
 from datetime import timedelta
+from typing import Optional
 # lib
 import requests
 from asgiref.sync import async_to_sync
@@ -13,6 +14,7 @@ from celery import shared_task
 from celery.utils.log import get_task_logger
 from django.utils import timezone
 # local
+from . import notifier
 from .models import Character
 
 logger = get_task_logger(__name__)
@@ -22,7 +24,7 @@ USER_AGENT = (
 )
 
 
-async def xivapi_lookup(pk: str, token: str, log) -> bool:
+async def xivapi_lookup(pk: str, token: str, log) -> Optional[str]:
     """
     Actually check XIVAPI for the specified token being present in the specified character's bio
     """
@@ -31,8 +33,7 @@ async def xivapi_lookup(pk: str, token: str, log) -> bool:
     response = requests.get(url, headers={'User-Agent': USER_AGENT})
     if response.status_code != 200:
         log.error(f'Received {response.status_code} response from Lodestone. Cannot verify right now.')
-        # TODO - give some notifications back to the user
-        return False
+        return 'Lodestone may be down.'
 
     soup = BeautifulSoup(response.content, 'html.parser')
 
@@ -42,13 +43,13 @@ async def xivapi_lookup(pk: str, token: str, log) -> bool:
     # Attempt the selfintroduction one first
     for el in soup.find_all('div', class_='character__selfintroduction'):
         if token in el.getText():
-            return True
+            return None
 
     for el in soup.find_all('div', class_='character__character_profile'):
         if token in el.getText():
-            return True
+            return None
 
-    return False
+    return 'Could not find the verification code in the Lodestone profile.'
 
 
 @shared_task(name='verify_character')
@@ -68,10 +69,11 @@ def verify_character(pk: int):
 
     # Call the xivapi function in a sync context
     logger.debug('calling async function')
-    valid = async_to_sync(xivapi_lookup)(obj.lodestone_id, obj.token, logger)
+    err = async_to_sync(xivapi_lookup)(obj.lodestone_id, obj.token, logger)
     logger.debug('finished async function')
 
-    if not valid:
+    if err is not None:
+        notifier.verify_fail(obj, err)
         logger.info(f'Character #{pk} could not be verified. Exiting.')
         return
 
@@ -86,6 +88,7 @@ def verify_character(pk: int):
     logger.debug(f'Found {objs.count()} instances of Character #{obj.lodestone_id} to delete.')
     objs.delete()
     # Then we're done!
+    notifier.verify_success(obj)
 
 
 @shared_task(name='cleanup')
