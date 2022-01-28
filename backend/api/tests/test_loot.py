@@ -3,7 +3,7 @@ from io import StringIO
 from django.core.management import call_command
 from django.urls import reverse
 from rest_framework import status
-from api.models import BISList, Character, Gear, Loot, Team, TeamMember, Tier
+from api.models import BISList, Character, Gear, Loot, Notification, Team, TeamMember, Tier
 from .test_base import SavageAimTestCase
 
 
@@ -51,7 +51,7 @@ class LootTestSuite(SavageAimTestCase):
         self.raid_gear = Gear.objects.get(item_level=600, has_weapon=False)
         self.tome_gear = Gear.objects.get(item_level=600, has_weapon=True)
         self.crafted = Gear.objects.get(name='Classical')
-        self.rl_main_bis = BISList.objects.create(
+        self.tl_main_bis = BISList.objects.create(
             bis_body=self.raid_gear,
             bis_bracelet=self.raid_gear,
             bis_earrings=self.raid_gear,
@@ -107,7 +107,7 @@ class LootTestSuite(SavageAimTestCase):
             job_id='WHM',
             owner=self.main_tank,
         )
-        self.rl_alt_bis = BISList.objects.create(
+        self.tl_alt_bis = BISList.objects.create(
             bis_body=self.tome_gear,
             bis_bracelet=self.tome_gear,
             bis_earrings=self.tome_gear,
@@ -135,7 +135,7 @@ class LootTestSuite(SavageAimTestCase):
             job_id='PLD',
             owner=self.team_lead,
         )
-        self.rl_alt_bis2 = BISList.objects.create(
+        self.tl_alt_bis2 = BISList.objects.create(
             bis_body=self.tome_gear,
             bis_bracelet=self.tome_gear,
             bis_earrings=self.tome_gear,
@@ -221,7 +221,7 @@ class LootTestSuite(SavageAimTestCase):
         )
 
         # Lastly, link the characters to the team
-        self.rl_tm = self.team.members.create(character=self.team_lead, bis_list=self.rl_main_bis, lead=True)
+        self.tl_tm = self.team.members.create(character=self.team_lead, bis_list=self.tl_main_bis, lead=True)
         self.mt_tm = self.team.members.create(character=self.main_tank, bis_list=self.mt_main_bis)
 
         # Set up expected response (store it here to avoid redefining it)
@@ -237,7 +237,7 @@ class LootTestSuite(SavageAimTestCase):
                         'job_role': 'tank',
                     },
                     {
-                        'member_id': self.rl_tm.pk,
+                        'member_id': self.tl_tm.pk,
                         'character_name': f'{self.team_lead.name} @ {self.team_lead.world}',
                         'current_gear_name': self.crafted.name,
                         'current_gear_il': self.crafted.item_level,
@@ -267,18 +267,18 @@ class LootTestSuite(SavageAimTestCase):
                         ],
                     },
                     {
-                        'member_id': self.rl_tm.pk,
+                        'member_id': self.tl_tm.pk,
                         'character_name': f'{self.team_lead.name} @ {self.team_lead.world}',
                         'greed_lists': [
                             {
-                                'bis_list_id': self.rl_alt_bis.id,
+                                'bis_list_id': self.tl_alt_bis.id,
                                 'current_gear_name': self.crafted.name,
                                 'current_gear_il': self.crafted.item_level,
                                 'job_icon_name': 'paladin',
                                 'job_role': 'tank',
                             },
                             {
-                                'bis_list_id': self.rl_alt_bis2.id,
+                                'bis_list_id': self.tl_alt_bis2.id,
                                 'current_gear_name': self.crafted.name,
                                 'current_gear_il': self.crafted.item_level,
                                 'job_icon_name': 'reaper',
@@ -301,11 +301,11 @@ class LootTestSuite(SavageAimTestCase):
                 ],
                 'greed': [
                     {
-                        'member_id': self.rl_tm.pk,
+                        'member_id': self.tl_tm.pk,
                         'character_name': f'{self.team_lead.name} @ {self.team_lead.world}',
                         'greed_lists': [
                             {
-                                'bis_list_id': self.rl_alt_bis.id,
+                                'bis_list_id': self.tl_alt_bis.id,
                                 'current_gear_name': self.crafted.name,
                                 'current_gear_il': self.crafted.item_level,
                                 'job_icon_name': 'paladin',
@@ -341,18 +341,18 @@ class LootTestSuite(SavageAimTestCase):
                         ],
                     },
                     {
-                        'member_id': self.rl_tm.pk,
+                        'member_id': self.tl_tm.pk,
                         'character_name': f'{self.team_lead.name} @ {self.team_lead.world}',
                         'greed_lists': [
                             {
-                                'bis_list_id': self.rl_alt_bis.id,
+                                'bis_list_id': self.tl_alt_bis.id,
                                 'current_gear_name': self.crafted.name,
                                 'current_gear_il': self.crafted.item_level,
                                 'job_icon_name': 'paladin',
                                 'job_role': 'tank',
                             },
                             {
-                                'bis_list_id': self.rl_alt_bis2.id,
+                                'bis_list_id': self.tl_alt_bis2.id,
                                 'current_gear_name': self.crafted.name,
                                 'current_gear_il': self.crafted.item_level,
                                 'job_icon_name': 'reaper',
@@ -365,7 +365,7 @@ class LootTestSuite(SavageAimTestCase):
             'body': {
                 'need': [
                     {
-                        'member_id': self.rl_tm.pk,
+                        'member_id': self.tl_tm.pk,
                         'character_name': f'{self.team_lead.name} @ {self.team_lead.world}',
                         'current_gear_name': self.crafted.name,
                         'current_gear_il': self.crafted.item_level,
@@ -415,18 +415,18 @@ class LootTestSuite(SavageAimTestCase):
                         ],
                     },
                     {
-                        'member_id': self.rl_tm.pk,
+                        'member_id': self.tl_tm.pk,
                         'character_name': f'{self.team_lead.name} @ {self.team_lead.world}',
                         'greed_lists': [
                             {
-                                'bis_list_id': self.rl_alt_bis.id,
+                                'bis_list_id': self.tl_alt_bis.id,
                                 'current_gear_name': self.crafted.name,
                                 'current_gear_il': self.crafted.item_level,
                                 'job_icon_name': 'paladin',
                                 'job_role': 'tank',
                             },
                             {
-                                'bis_list_id': self.rl_alt_bis2.id,
+                                'bis_list_id': self.tl_alt_bis2.id,
                                 'current_gear_name': self.crafted.name,
                                 'current_gear_il': self.crafted.item_level,
                                 'job_icon_name': 'reaper',
@@ -462,18 +462,18 @@ class LootTestSuite(SavageAimTestCase):
                         ],
                     },
                     {
-                        'member_id': self.rl_tm.pk,
+                        'member_id': self.tl_tm.pk,
                         'character_name': f'{self.team_lead.name} @ {self.team_lead.world}',
                         'greed_lists': [
                             {
-                                'bis_list_id': self.rl_alt_bis.id,
+                                'bis_list_id': self.tl_alt_bis.id,
                                 'current_gear_name': self.crafted.name,
                                 'current_gear_il': self.crafted.item_level,
                                 'job_icon_name': 'paladin',
                                 'job_role': 'tank',
                             },
                             {
-                                'bis_list_id': self.rl_alt_bis2.id,
+                                'bis_list_id': self.tl_alt_bis2.id,
                                 'current_gear_name': self.crafted.name,
                                 'current_gear_il': self.crafted.item_level,
                                 'job_icon_name': 'reaper',
@@ -486,7 +486,7 @@ class LootTestSuite(SavageAimTestCase):
             'feet': {
                 'need': [
                     {
-                        'member_id': self.rl_tm.pk,
+                        'member_id': self.tl_tm.pk,
                         'character_name': f'{self.team_lead.name} @ {self.team_lead.world}',
                         'current_gear_name': self.crafted.name,
                         'current_gear_il': self.crafted.item_level,
@@ -513,7 +513,7 @@ class LootTestSuite(SavageAimTestCase):
             'earrings': {
                 'need': [
                     {
-                        'member_id': self.rl_tm.pk,
+                        'member_id': self.tl_tm.pk,
                         'character_name': f'{self.team_lead.name} @ {self.team_lead.world}',
                         'current_gear_name': self.crafted.name,
                         'current_gear_il': self.crafted.item_level,
@@ -563,18 +563,18 @@ class LootTestSuite(SavageAimTestCase):
                         ],
                     },
                     {
-                        'member_id': self.rl_tm.pk,
+                        'member_id': self.tl_tm.pk,
                         'character_name': f'{self.team_lead.name} @ {self.team_lead.world}',
                         'greed_lists': [
                             {
-                                'bis_list_id': self.rl_alt_bis.id,
+                                'bis_list_id': self.tl_alt_bis.id,
                                 'current_gear_name': self.crafted.name,
                                 'current_gear_il': self.crafted.item_level,
                                 'job_icon_name': 'paladin',
                                 'job_role': 'tank',
                             },
                             {
-                                'bis_list_id': self.rl_alt_bis2.id,
+                                'bis_list_id': self.tl_alt_bis2.id,
                                 'current_gear_name': self.crafted.name,
                                 'current_gear_il': self.crafted.item_level,
                                 'job_icon_name': 'reaper',
@@ -587,7 +587,7 @@ class LootTestSuite(SavageAimTestCase):
             'bracelet': {
                 'need': [
                     {
-                        'member_id': self.rl_tm.pk,
+                        'member_id': self.tl_tm.pk,
                         'character_name': f'{self.team_lead.name} @ {self.team_lead.world}',
                         'current_gear_name': self.crafted.name,
                         'current_gear_il': self.crafted.item_level,
@@ -622,7 +622,7 @@ class LootTestSuite(SavageAimTestCase):
                         'job_role': 'tank',
                     },
                     {
-                        'member_id': self.rl_tm.pk,
+                        'member_id': self.tl_tm.pk,
                         'character_name': f'{self.team_lead.name} @ {self.team_lead.world}',
                         'current_gear_name': self.crafted.name,
                         'current_gear_il': self.crafted.item_level,
@@ -652,18 +652,18 @@ class LootTestSuite(SavageAimTestCase):
                         ],
                     },
                     {
-                        'member_id': self.rl_tm.pk,
+                        'member_id': self.tl_tm.pk,
                         'character_name': f'{self.team_lead.name} @ {self.team_lead.world}',
                         'greed_lists': [
                             {
-                                'bis_list_id': self.rl_alt_bis.id,
+                                'bis_list_id': self.tl_alt_bis.id,
                                 'current_gear_name': self.crafted.name,
                                 'current_gear_il': self.crafted.item_level,
                                 'job_icon_name': 'paladin',
                                 'job_role': 'tank',
                             },
                             {
-                                'bis_list_id': self.rl_alt_bis2.id,
+                                'bis_list_id': self.tl_alt_bis2.id,
                                 'current_gear_name': self.crafted.name,
                                 'current_gear_il': self.crafted.item_level,
                                 'job_icon_name': 'reaper',
@@ -679,6 +679,7 @@ class LootTestSuite(SavageAimTestCase):
         """
         Clean up the DB after each test
         """
+        Notification.objects.all().delete()
         Loot.objects.all().delete()
         TeamMember.objects.all().delete()
         Team.objects.all().delete()
@@ -702,28 +703,28 @@ class LootTestSuite(SavageAimTestCase):
             self.assertEqual(content[item], self.expected_gear[item], item)
 
         # Update some of the BIS Lists, remove the equivalent from the local response and check again
-        self.rl_main_bis.current_mainhand = self.raid_weapon
-        self.rl_main_bis.current_feet = self.raid_gear
-        self.rl_main_bis.current_right_ring = self.raid_gear
-        self.rl_main_bis.save()
+        self.tl_main_bis.current_mainhand = self.raid_weapon
+        self.tl_main_bis.current_feet = self.raid_gear
+        self.tl_main_bis.current_right_ring = self.raid_gear
+        self.tl_main_bis.save()
 
         self.expected_gear['mainhand']['need'].pop(1)
         self.expected_gear['feet']['need'].pop(0)
         self.expected_gear['ring']['need'].pop(1)
 
-        self.rl_alt_bis.current_offhand = self.raid_weapon
-        self.rl_alt_bis.current_legs = self.raid_gear
-        self.rl_alt_bis.current_left_ring = self.raid_gear
-        self.rl_alt_bis.save()
+        self.tl_alt_bis.current_offhand = self.raid_weapon
+        self.tl_alt_bis.current_legs = self.raid_gear
+        self.tl_alt_bis.current_left_ring = self.raid_gear
+        self.tl_alt_bis.save()
 
         self.expected_gear['offhand']['greed'].pop(0)
         self.expected_gear['legs']['greed'][1]['greed_lists'].pop(0)
         self.expected_gear['ring']['greed'][1]['greed_lists'].pop(0)
 
-        self.rl_alt_bis2.current_mainhand = self.raid_weapon
-        self.rl_alt_bis2.current_head = self.raid_gear
-        self.rl_alt_bis2.current_necklace = self.raid_gear
-        self.rl_alt_bis2.save()
+        self.tl_alt_bis2.current_mainhand = self.raid_weapon
+        self.tl_alt_bis2.current_head = self.raid_gear
+        self.tl_alt_bis2.current_necklace = self.raid_gear
+        self.tl_alt_bis2.save()
 
         self.expected_gear['mainhand']['greed'][1]['greed_lists'].pop(1)
         self.expected_gear['head']['greed'][1]['greed_lists'].pop(1)
@@ -773,7 +774,7 @@ class LootTestSuite(SavageAimTestCase):
         l3 = Loot.objects.create(
             greed=False,
             item='mount',
-            member=self.rl_tm,
+            member=self.tl_tm,
             team=self.team,
             obtained=datetime.today(),
             tier=self.team.tier,
@@ -789,7 +790,7 @@ class LootTestSuite(SavageAimTestCase):
         l1 = Loot.objects.create(
             greed=True,
             item='mainhand',
-            member=self.rl_tm,
+            member=self.tl_tm,
             team=self.team,
             obtained=datetime.today(),
             tier=self.team.tier,
@@ -867,7 +868,7 @@ class LootTestSuite(SavageAimTestCase):
 
         data = {
             'greed': False,
-            'member_id': self.rl_tm.pk,
+            'member_id': self.tl_tm.pk,
             'item': 'mount',
             'obtained': obtained,
         }
@@ -890,7 +891,7 @@ class LootTestSuite(SavageAimTestCase):
         self.assertEqual(greed.member, self.mt_tm)
         self.assertEqual(greed.item, 'tome-armour-augment')
         self.assertFalse(need.greed)
-        self.assertEqual(need.member, self.rl_tm)
+        self.assertEqual(need.member, self.tl_tm)
         self.assertEqual(need.item, 'mount')
 
     def test_create_400(self):
@@ -954,7 +955,7 @@ class LootTestSuite(SavageAimTestCase):
         # We don't have to check initial values only post values
         need_data_ring = {
             'greed': False,
-            'member_id': self.rl_tm.pk,
+            'member_id': self.tl_tm.pk,
             'item': 'ring',
             'greed_bis_id': None,
         }
@@ -965,7 +966,7 @@ class LootTestSuite(SavageAimTestCase):
         }
         need_data_body = {
             'greed': False,
-            'member_id': self.rl_tm.pk,
+            'member_id': self.tl_tm.pk,
             'item': 'body',
         }
         greed_data_ring = {
@@ -976,9 +977,9 @@ class LootTestSuite(SavageAimTestCase):
         }
         greed_data_shield = {
             'greed': True,
-            'member_id': self.rl_tm.pk,
+            'member_id': self.tl_tm.pk,
             'item': 'offhand',
-            'greed_bis_id': self.rl_alt_bis.pk,
+            'greed_bis_id': self.tl_alt_bis.pk,
         }
         greed_data_body = {
             'greed': True,
@@ -1012,17 +1013,48 @@ class LootTestSuite(SavageAimTestCase):
             self.assertEqual(content[item], self.expected_gear[item], item)
 
         # Check the objects themselves
-        self.rl_main_bis.refresh_from_db()
-        self.assertEqual(self.rl_main_bis.bis_right_ring_id, self.raid_gear.pk)
-        self.assertEqual(self.rl_main_bis.bis_body_id, self.raid_gear.pk)
+        self.tl_main_bis.refresh_from_db()
+        self.assertEqual(self.tl_main_bis.bis_right_ring_id, self.raid_gear.pk)
+        self.assertEqual(self.tl_main_bis.bis_body_id, self.raid_gear.pk)
         self.mt_main_bis.refresh_from_db()
         self.assertEqual(self.mt_main_bis.bis_offhand_id, self.raid_weapon.pk)
         self.mt_alt_bis2.refresh_from_db()
         self.assertEqual(self.mt_alt_bis2.bis_left_ring_id, self.raid_gear.pk)
-        self.rl_alt_bis.refresh_from_db()
-        self.assertEqual(self.rl_alt_bis.bis_offhand_id, self.raid_weapon.pk)
+        self.tl_alt_bis.refresh_from_db()
+        self.assertEqual(self.tl_alt_bis.bis_offhand_id, self.raid_weapon.pk)
         self.mt_alt_bis.refresh_from_db()
         self.assertEqual(self.mt_alt_bis.bis_body_id, self.raid_gear.pk)
+
+    def test_create_with_bis_notification(self):
+        """
+        Do the same as above, but only once, and check the Notification status
+        """
+        write_url = reverse('api:loot_with_bis', kwargs={'team_id': self.team.pk})
+        user = self._get_user()
+        self.client.force_authenticate(user)
+
+        # We don't have to check initial values only post values
+        data = {
+            'greed': False,
+            'member_id': self.tl_tm.pk,
+            'item': 'ring',
+            'greed_bis_id': None,
+        }
+
+        self.assertEqual(self.client.post(write_url, data).status_code, status.HTTP_201_CREATED)
+
+        # The only thing we need to check is the status of Notifications
+        self.assertEqual(Notification.objects.filter(user=self.team_lead.user).count(), 1)
+        notif = Notification.objects.filter(user=self.team_lead.user).first()
+        self.assertEqual(notif.link, f'/characters/{self.team_lead.id}/bis_list/{self.tl_main_bis.id}/')
+        self.assertEqual(
+            notif.text,
+            f'{self.team_lead} has had an item in their {self.tl_main_bis.job.id} '
+            f'BIS List updated via the Loot Tracker in {self.team.name}!',
+        )
+        self.assertEqual(notif.type, 'loot_tracker_update')
+        self.assertFalse(notif.read)
+
 
     def test_create_with_bis_400(self):
         """
@@ -1087,7 +1119,7 @@ class LootTestSuite(SavageAimTestCase):
             'greed': True,
             'greed_bis_id': None,
             'item': 'offhand',
-            'member_id': self.rl_tm.pk,
+            'member_id': self.tl_tm.pk,
         }
         response = self.client.post(url, data)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
@@ -1098,7 +1130,7 @@ class LootTestSuite(SavageAimTestCase):
             'greed': True,
             'greed_bis_id': self.mt_alt_bis.pk,
             'item': 'offhand',
-            'member_id': self.rl_tm.pk,
+            'member_id': self.tl_tm.pk,
         }
         response = self.client.post(url, data)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
@@ -1107,9 +1139,9 @@ class LootTestSuite(SavageAimTestCase):
 
         data = {
             'greed': True,
-            'greed_bis_id': self.rl_main_bis.pk,
+            'greed_bis_id': self.tl_main_bis.pk,
             'item': 'offhand',
-            'member_id': self.rl_tm.pk,
+            'member_id': self.tl_tm.pk,
         }
         response = self.client.post(url, data)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
@@ -1121,24 +1153,24 @@ class LootTestSuite(SavageAimTestCase):
 
         data = {
             'greed': True,
-            'greed_bis_id': self.rl_alt_bis2.pk,
+            'greed_bis_id': self.tl_alt_bis2.pk,
             'item': 'offhand',
-            'member_id': self.rl_tm.pk,
+            'member_id': self.tl_tm.pk,
         }
         response = self.client.post(url, data)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         content = response.json()
         self.assertEqual(content['item'], ['Offhand items can only be obtained by a PLD.'])
 
-        self.rl_alt_bis2.bis_body = self.tome_gear
-        self.rl_alt_bis2.bis_left_ring = self.tome_gear
-        self.rl_alt_bis2.save()
+        self.tl_alt_bis2.bis_body = self.tome_gear
+        self.tl_alt_bis2.bis_left_ring = self.tome_gear
+        self.tl_alt_bis2.save()
 
         data = {
             'greed': True,
-            'greed_bis_id': self.rl_alt_bis2.pk,
+            'greed_bis_id': self.tl_alt_bis2.pk,
             'item': 'ring',
-            'member_id': self.rl_tm.pk,
+            'member_id': self.tl_tm.pk,
         }
         response = self.client.post(url, data)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
@@ -1150,9 +1182,9 @@ class LootTestSuite(SavageAimTestCase):
 
         data = {
             'greed': True,
-            'greed_bis_id': self.rl_alt_bis2.pk,
+            'greed_bis_id': self.tl_alt_bis2.pk,
             'item': 'body',
-            'member_id': self.rl_tm.pk,
+            'member_id': self.tl_tm.pk,
         }
         response = self.client.post(url, data)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
