@@ -341,6 +341,7 @@ class TeamResource(SavageAimTestCase):
         """
         Clean up the DB after each test
         """
+        Notification.objects.all().delete()
         TeamMember.objects.all().delete()
         Team.objects.all().delete()
         BISList.objects.all().delete()
@@ -425,6 +426,14 @@ class TeamResource(SavageAimTestCase):
         self.assertTrue(tm.lead)
         self.tm.refresh_from_db()
         self.assertFalse(self.tm.lead)
+
+        # Ensure the new character got a notification
+        self.assertEqual(Notification.objects.filter(user=char.user).count(), 1)
+        notif = Notification.objects.filter(user=char.user).first()
+        self.assertEqual(notif.link, f'/team/{self.team.id}/')
+        self.assertEqual(notif.text, f'{char} has been made the Team Leader of {self.team.name}!')
+        self.assertEqual(notif.type, 'team_lead')
+        self.assertFalse(notif.read)
 
     def test_update_400(self):
         """
@@ -584,6 +593,7 @@ class TeamInvite(SavageAimTestCase):
         """
         Clean up the DB after each test
         """
+        Notification.objects.all().delete()
         TeamMember.objects.all().delete()
         Team.objects.all().delete()
         BISList.objects.all().delete()

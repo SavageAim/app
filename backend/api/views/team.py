@@ -115,6 +115,7 @@ class TeamResource(APIView):
             curr_lead.save()
             new_lead.lead = True
             new_lead.save()
+            notifier.team_lead(new_lead.character, obj)
 
         return Response(status=204)
 
