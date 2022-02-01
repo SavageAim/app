@@ -112,7 +112,7 @@ const store: Store = {
     async fetchNotifications({ commit }): Promise<void> {
       try {
         // Store is limited to latest 20, but a Notification page will return them all
-        const response = await fetch(`/backend/api/notification/?limit=20`)
+        const response = await fetch(`/backend/api/notifications/?limit=20`)
         if (!response.ok) {
           Vue.notify({ text: `Error ${response.status} when fetching Notifications list.`, type: 'is-danger' })
         }
@@ -168,6 +168,8 @@ const store: Store = {
             // When mounted, fetch the Character data for the user that is currently logged in
             // We know there is one because this function won't be called unless there is
             dispatch('fetchCharacters')
+            // And notifications
+            dispatch('fetchNotifications')
             // Also fetch team data
             dispatch('fetchTeams')
           }
