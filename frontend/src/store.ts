@@ -3,6 +3,7 @@ import Vuex, { ActionTree, MutationTree } from 'vuex'
 import { Character } from './interfaces/character'
 import Gear from './interfaces/gear'
 import Job from './interfaces/job'
+import Notification from './interfaces/notification'
 import Team from './interfaces/team'
 import Tier from './interfaces/tier'
 import User from './interfaces/user'
@@ -15,6 +16,7 @@ interface State {
   jobs: Job[],
   maxItemLevel: number
   minItemLevel: number
+  notifications: Notification[],
   teams: Team[],
   tiers: Tier[],
   user: User,
@@ -107,6 +109,22 @@ const store: Store = {
       }
     },
 
+    async fetchNotifications({ commit }): Promise<void> {
+      try {
+        // Store is limited to latest 20, but a Notification page will return them all
+        const response = await fetch(`/backend/api/notification/?limit=20`)
+        if (!response.ok) {
+          Vue.notify({ text: `Error ${response.status} when fetching Notifications list.`, type: 'is-danger' })
+        }
+        else {
+          commit('setNotifications', await response.json() as Notification[])
+        }
+      }
+      catch (e) {
+        Vue.notify({ text: `Error ${e} when fetching Notifications list.`, type: 'is-danger' })
+      }
+    },
+
     async fetchTeams({ commit }): Promise<void> {
       // Fetch teams for all characters under the control of the logged in user
       try {
@@ -184,6 +202,10 @@ const store: Store = {
       state.minItemLevel = il
     },
 
+    setNotifications(state: State, notifs: Notification[]) {
+      state.notifications = notifs
+    },
+
     setTeams(state: State, teams: Team[]) {
       state.teams = teams
     },
@@ -212,6 +234,7 @@ const store: Store = {
     jobs: [],
     maxItemLevel: 0,
     minItemLevel: 0,
+    notifications: [],
     teams: [],
     tiers: [],
     user: DEFAULT_USER,
