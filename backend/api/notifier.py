@@ -17,7 +17,7 @@ def _create_notif(user: User, text: str, link: str, type: str):
     # First we ensure that the User is set up to receive the notification type
     try:
         send = user.settings.notifications[type]
-    except (AttributeError, models.Settings.DoesNotExist):
+    except (AttributeError, models.Settings.DoesNotExist, KeyError):
         send = True
 
     if not send:
