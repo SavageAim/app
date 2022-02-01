@@ -3,6 +3,7 @@ from .character import CharacterCollection, CharacterResource, CharacterVerifica
 from .gear import GearCollection, ItemLevels
 from .job import JobCollection
 from .loot import LootCollection, LootWithBIS
+from .notification import NotificationCollection, NotificationResource
 from .team import TeamCollection, TeamResource, TeamInvite
 from .team_member import TeamMemberResource
 from .tier import TierCollection
@@ -23,6 +24,9 @@ __all__ = [
 
     'LootCollection',
     'LootWithBIS',
+
+    'NotificationCollection',
+    'NotificationResource',
 
     'TeamCollection',
     'TeamResource',
