@@ -1055,7 +1055,6 @@ class LootTestSuite(SavageAimTestCase):
         self.assertEqual(notif.type, 'loot_tracker_update')
         self.assertFalse(notif.read)
 
-
     def test_create_with_bis_400(self):
         """
         Test invalid creation cases for with bis loot api and ensure appropriate errors are returned

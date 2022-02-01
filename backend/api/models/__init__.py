@@ -20,6 +20,8 @@ __all__ = [
 
     'Loot',
 
+    'Notification',
+
     'Settings',
 
     'Team',

@@ -4,7 +4,6 @@ type used in the system, without having to add messy code elsewhere
 
 Also will handle sending info to websockets when we get there
 """
-from typing import Optional
 from django.contrib.auth.models import User
 from . import models
 
@@ -24,7 +23,7 @@ def _create_notif(user: User, text: str, link: str, type: str):
         return
 
     # If we make it to this point, create the object and then push updates down the web socket
-    notif = models.Notification.objects.create(user=user, text=text, link=link, type=type)
+    models.Notification.objects.create(user=user, text=text, link=link, type=type)
     # TODO - Websocket stuff
 
 

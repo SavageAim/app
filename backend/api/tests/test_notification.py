@@ -1,10 +1,8 @@
 from datetime import timedelta
-from django.core.management import call_command
 from django.urls import reverse
 from django.utils import timezone
 from rest_framework import status
 from api.models import Notification
-from api.serializers import NotificationSerializer
 from .test_base import SavageAimTestCase
 
 
