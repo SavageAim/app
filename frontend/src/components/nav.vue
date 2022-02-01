@@ -6,7 +6,9 @@
       </router-link>
 
       <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" ref="burger" @click="toggleNavbar">
-        <span aria-hidden="true"></span>
+        <span aria-hidden="true">
+          <div class="badge is-info" v-if="unreads > 0">{{ unreads }}</div>
+        </span>
         <span aria-hidden="true"></span>
         <span aria-hidden="true"></span>
       </a>
@@ -25,16 +27,30 @@
       </div>
 
       <div class="navbar-end">
-        <div class="navbar-item">
-          <a href="#" @click="showLegend">
-            <div class="icon-text has-text-white">
-              <span class="icon"><i class="material-icons">bar_chart</i></span>
-              <span>Colours Explanation</span>
-            </div>
-          </a>
-        </div>
+        <a href="#" @click="showLegend" class="navbar-item">
+          <div class="icon-text">
+            <span class="icon"><i class="material-icons">bar_chart</i></span>
+            <span>Colours Explanation</span>
+          </div>
+        </a>
 
         <template v-if="authenticated">
+          <a href="#" class="navbar-item notifications" @click="showNotifs">
+            <div class="icon-text" v-if="unreads > 0">
+              <span class="icon">
+                <span class="badge is-info">{{ unreads }}</span>
+                <i class="material-icons">notifications_active</i>
+              </span>
+              <span class="is-hidden-desktop">Notifications</span>
+            </div>
+            <div class="icon-text" v-else>
+              <span class="icon">
+                <i class="material-icons">notifications</i>
+              </span>
+              <span class="is-hidden-desktop">Notifications</span>
+            </div>
+          </a>
+
           <div class="navbar-item has-dropdown is-hoverable">
             <div class="navbar-link" id="user-item">
               <figure class="image user-image" v-if="user.avatar_url">
@@ -75,6 +91,8 @@
 <script lang="ts">
 import { Component, Prop, Watch } from 'vue-property-decorator'
 import Legend from './modals/legend.vue'
+import NotificationsModal from './modals/notifications.vue'
+import Notification from '@/interfaces/notification'
 import SavageAimMixin from '@/mixins/savage_aim_mixin'
 
 @Component
@@ -93,6 +111,11 @@ export default class Nav extends SavageAimMixin {
     return this.$refs.navbar as Element
   }
 
+  get unreads(): number {
+    // Filter the list of notifications, see how many are not read yet
+    return this.$store.state.notifications.reduce((sum: number, notif: Notification) => sum + (notif.read ? 0 : 1), 0)
+  }
+
   destroyed(): void {
     this.isMounted = false
   }
@@ -100,11 +123,6 @@ export default class Nav extends SavageAimMixin {
   toggleNavbar(): void {
     this.burger.classList.toggle('is-active')
     this.nav.classList.toggle('is-active')
-  }
-
-  beforeCreate(): void {
-    // Tell the store to attempt to fetch the logged in user
-    this.$store.dispatch('fetchUser')
   }
 
   async logout(): Promise<void> {
@@ -122,6 +140,10 @@ export default class Nav extends SavageAimMixin {
   // Display the colour legend chart modal
   showLegend(): void {
     this.$modal.show(Legend)
+  }
+
+  showNotifs(): void {
+    this.$modal.show(NotificationsModal)
   }
 
   // Watch the location.path value and any time it changes run the function
@@ -165,5 +187,18 @@ nav {
 #user-item {
   display: flex;
   align-items: center;
+}
+
+.badge {
+  z-index: 10;
+}
+
+.navbar-burger.is-active .badge {
+  display: none;
+}
+
+.notifications .badge {
+  top: unset;
+  right: unset;
 }
 </style>

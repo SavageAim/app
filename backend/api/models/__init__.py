@@ -3,6 +3,7 @@ from .character import Character
 from .gear import Gear
 from .job import Job
 from .loot import Loot
+from .notification import Notification
 from .settings import Settings
 from .team import Team
 from .team_member import TeamMember
@@ -18,6 +19,8 @@ __all__ = [
     'Job',
 
     'Loot',
+
+    'Notification',
 
     'Settings',
 

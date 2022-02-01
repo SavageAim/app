@@ -3,6 +3,7 @@ from .character import CharacterCollectionSerializer, CharacterDetailsSerializer
 from .gear import GearSerializer
 from .job import JobSerializer
 from .loot import LootSerializer, LootCreateSerializer, LootCreateWithBISSerializer
+from .notification import NotificationSerializer
 from .settings import SettingsSerializer
 from .team import (
     TeamSerializer,
@@ -27,6 +28,8 @@ __all__ = [
     'LootSerializer',
     'LootCreateSerializer',
     'LootCreateWithBISSerializer',
+
+    'NotificationSerializer',
 
     'SettingsSerializer',
 

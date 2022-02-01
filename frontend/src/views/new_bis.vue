@@ -1,12 +1,12 @@
 <template>
-  <div class="container is-fluid">
+  <div>
     <div v-if="!loaded">
       <button class="button is-static is-loading is-fullwidth">Loading</button>
     </div>
     <div v-else>
       <div class="breadcrumb">
         <ul>
-          <li><router-link to="../">{{ character.name }} @ {{ character.world }}</router-link></li>
+          <li><router-link :to="`/characters/${character.id}/`">{{ character.name }} @ {{ character.world }}</router-link></li>
           <li class="is-active"><a aria-current="page">New BIS List</a></li>
         </ul>
       </div>

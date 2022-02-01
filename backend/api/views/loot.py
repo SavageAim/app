@@ -14,6 +14,7 @@ from rest_framework.views import APIView
 from rest_framework.request import Request
 from rest_framework.response import Response
 # local
+from api import notifier
 from api.models import BISList, Team, Loot
 from api.serializers import (
     LootSerializer,
@@ -274,4 +275,8 @@ class LootWithBIS(APIView):
         bis_item = getattr(bis, f'bis_{item}')
         setattr(bis, f'current_{item}', bis_item)
         bis.save()
+
+        # Send a notification
+        notifier.loot_tracker_update(bis, team)
+
         return Response({'id': loot.pk}, status=201)

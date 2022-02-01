@@ -64,6 +64,7 @@
               <p v-if="editable">Clicking the button beside anyone will add a Loot entry, and update their BIS List accordingly.</p>
               <template v-if="displayItem !== 'na'">
                 <div class="box list-item" v-for="entry in loot.gear[displayItem].need" :key="`need-${entry.member_id}`" data-microtip-position="top" role="tooltip" :aria-label="`Current: ${entry.current_gear_name}`">
+                  <span class="badge is-primary">{{ getNeedLoot(entry) }}</span>
                   <div class="list-data">
                     <div class="left">
                       {{ entry.character_name }}
@@ -105,7 +106,8 @@
               <p v-if="editable">Clicking the button beside anyone will add a Loot entry, and update their BIS List accordingly.</p>
 
               <template v-if="displayItem !== 'na'">
-                <div class="box" v-for="entry in loot.gear[displayItem].greed" :key="`greed-${entry.member_id}`">
+                <div class="box greed-box" v-for="entry in loot.gear[displayItem].greed" :key="`greed-${entry.member_id}`">
+                  <span class="badge is-info">{{ getGreedLoot(entry) }}</span>
                   <div class="list-item" v-for="list in entry.greed_lists" :key="`greed-${entry.member_id}-${list.bis_list_id}`" data-microtip-position="top" role="tooltip" :aria-label="`Current: ${list.current_gear_name}`">
                     <div class="list-data">
                       <div class="left">
@@ -248,6 +250,7 @@ import {
   GreedGear,
   GreedItem,
   NeedGear,
+  Loot,
   LootData,
   LootPacket,
   LootResponse,
@@ -318,6 +321,16 @@ export default class TeamLoot extends SavageAimMixin {
     catch (e) {
       this.$notify({ text: `Error ${e} when fetching Team Loot Data.`, type: 'is-danger' })
     }
+  }
+
+  getGreedLoot(entry: GreedGear): number {
+    // Given an entry, search the history and find how many times that Character has received greed loot so far this tier
+    return this.loot.history.reduce((sum: number, loot: Loot) => sum + (loot.member === entry.character_name && loot.greed ? 1 : 0), 0)
+  }
+
+  getNeedLoot(entry: NeedGear): number {
+    // Given an entry, search the history and find how many times that Character has received need loot so far this tier
+    return this.loot.history.reduce((sum: number, loot: Loot) => sum + (loot.member === entry.character_name && !loot.greed ? 1 : 0), 0)
   }
 
   // Functions to handle interacting with the API for handling loot handouts
@@ -469,5 +482,9 @@ export default class TeamLoot extends SavageAimMixin {
 
 .mobile-history li:not(:last-child) {
   margin-bottom: 1.5rem;
+}
+
+.greed-box {
+  position: relative;
 }
 </style>

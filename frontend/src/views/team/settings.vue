@@ -64,14 +64,14 @@
             </div>
             <hr />
             <div class="field">
-              <label class="label has-text-warning" for="raidLead">Raid Lead</label>
-              <div class="select is-fullwidth" :class="[errors.raid_lead !== undefined ? 'is-danger' : 'is-warning']">
-                <select v-model="raidLeadId" id="raidLead">
+              <label class="label has-text-warning" for="teamLead">Team Lead</label>
+              <div class="select is-fullwidth" :class="[errors.team_lead !== undefined ? 'is-danger' : 'is-warning']">
+                <select v-model="teamLeadId" id="teamLead">
                   <option v-for="member in team.members" :key="member.id" :value="member.character.id">{{ member.character.name }} @ {{ member.character.world }}</option>
                 </select>
               </div>
               <p class="help is-warning">Changing this will lock you out of this page. Please be sure you want to hand over leadership before changing this value.</p>
-              <p v-if="errors.raid_lead !== undefined" class="help is-danger">{{ errors.raid_lead[0] }}</p>
+              <p v-if="errors.team_lead !== undefined" class="help is-danger">{{ errors.team_lead[0] }}</p>
             </div>
 
             <button class="button is-success" @click="saveDetails">Save</button>
@@ -100,7 +100,7 @@ export default class TeamSettings extends SavageAimMixin {
 
   loading = true
 
-  raidLeadId!: number
+  teamLeadId!: number
 
   team!: Team
 
@@ -121,7 +121,7 @@ export default class TeamSettings extends SavageAimMixin {
     // Ensure that the person on this page is the team leader and not anybody else
     if (!this.editable()) {
       this.$router.push('../', () => {
-        Vue.notify({ text: 'Only the raid leader can edit a Team\'s settings.', type: 'is-warning' })
+        Vue.notify({ text: 'Only the team leader can edit a Team\'s settings.', type: 'is-warning' })
       })
     }
   }
@@ -138,7 +138,7 @@ export default class TeamSettings extends SavageAimMixin {
         // Parse the JSON into a team and save it
         this.team = (await response.json()) as Team
         this.checkPermissions()
-        this.raidLeadId = this.team.members.find((teamMember: TeamMember) => teamMember.character.user_id === this.$store.state.user.id)?.character.id ?? -1
+        this.teamLeadId = this.team.members.find((teamMember: TeamMember) => teamMember.character.user_id === this.$store.state.user.id)?.character.id ?? -1
         this.loading = false
         document.title = `Settings - ${this.team.name} - Savage Aim`
       }
@@ -155,7 +155,7 @@ export default class TeamSettings extends SavageAimMixin {
     const updateObj = {
       name: this.team.name,
       tier_id: this.team.tier.id,
-      raid_lead: this.raidLeadId,
+      team_lead: this.teamLeadId,
     }
 
     try {

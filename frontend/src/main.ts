@@ -15,7 +15,7 @@ const dynamicDefaults = {
   scrollable: true,
   styles: {
     'max-height': '80vh',
-    'overflow-y': 'scroll',
+    'overflow-y': 'auto',
   },
 }
 Vue.use(Notifications)

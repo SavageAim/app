@@ -47,5 +47,6 @@ class UserView(APIView):
         serializer.is_valid(raise_exception=True)
 
         obj.theme = serializer.validated_data['theme']
+        obj.notifications.update(serializer.validated_data.get('notifications', {}))
         obj.save()
         return Response(status=201)

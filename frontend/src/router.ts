@@ -2,6 +2,7 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Auth from './views/auth.vue'
 import Home from './views/home.vue'
+import store from './store'
 
 // Import our components and give them routes.
 
@@ -9,7 +10,12 @@ Vue.use(VueRouter)
 
 const routes = [
   // Home
-  { path: '/', component: Home, name: 'home' },
+  {
+    path: '/',
+    component: Home,
+    name: 'home',
+    meta: { anon: true },
+  },
 
   // Auth
   {
@@ -17,6 +23,7 @@ const routes = [
     component: Auth,
     name: 'auth',
     props: true,
+    meta: { anon: true },
   },
 
   // Character
@@ -24,6 +31,9 @@ const routes = [
   { path: '/characters/:id/', component: () => import('@/views/character.vue'), name: 'viewChar' },
   { path: '/characters/:characterId/bis_list/', component: () => import('@/views/new_bis.vue'), name: 'newBIS' },
   { path: '/characters/:characterId/bis_list/:id/', component: () => import('@/views/edit_bis.vue'), name: 'editBIS' },
+
+  // Notifications
+  { path: '/notifications/', component: () => import('@/views/notifications.vue'), name: 'userNotifs' },
 
   // User Settings
   { path: '/settings/', component: () => import('@/views/settings.vue'), name: 'userSettings' },
@@ -51,4 +61,12 @@ const router = new VueRouter({
   mode: 'history',
   routes,
 })
+
+router.beforeEach(async (to, from, next) => {
+  const anonymous = (to.meta || { anon: false }).anon
+  if (!store.state.userLoaded) await store.dispatch('fetchUser')
+  if (!anonymous && store.state.user.id === null) next({ name: 'auth', params: { redirect: 'true' } })
+  else next()
+})
+
 export default router

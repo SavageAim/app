@@ -3,6 +3,7 @@ import Vuex, { ActionTree, MutationTree } from 'vuex'
 import { Character } from './interfaces/character'
 import Gear from './interfaces/gear'
 import Job from './interfaces/job'
+import Notification from './interfaces/notification'
 import Team from './interfaces/team'
 import Tier from './interfaces/tier'
 import User from './interfaces/user'
@@ -15,9 +16,11 @@ interface State {
   jobs: Job[],
   maxItemLevel: number
   minItemLevel: number
+  notifications: Notification[],
   teams: Team[],
   tiers: Tier[],
   user: User,
+  userLoaded: boolean
   version: string,
 }
 
@@ -30,6 +33,13 @@ interface Store {
 const DEFAULT_USER = {
   avatar_url: '',
   id: null,
+  notifications: {
+    loot_tracker_update: true,
+    team_join: true,
+    team_lead: true,
+    verify_fail: true,
+    verify_success: true,
+  },
   theme: 'beta',
   username: '',
 }
@@ -99,6 +109,24 @@ const store: Store = {
       }
     },
 
+    async fetchNotifications({ commit, state }): Promise<void> {
+      if ((state as State).user.id === null) return
+
+      try {
+        // Store is limited to latest 20, but a Notification page will return them all
+        const response = await fetch(`/backend/api/notifications/?limit=20`)
+        if (!response.ok) {
+          Vue.notify({ text: `Error ${response.status} when fetching Notifications list.`, type: 'is-danger' })
+        }
+        else {
+          commit('setNotifications', await response.json() as Notification[])
+        }
+      }
+      catch (e) {
+        Vue.notify({ text: `Error ${e} when fetching Notifications list.`, type: 'is-danger' })
+      }
+    },
+
     async fetchTeams({ commit }): Promise<void> {
       // Fetch teams for all characters under the control of the logged in user
       try {
@@ -142,6 +170,8 @@ const store: Store = {
             // When mounted, fetch the Character data for the user that is currently logged in
             // We know there is one because this function won't be called unless there is
             dispatch('fetchCharacters')
+            // And notifications
+            dispatch('fetchNotifications')
             // Also fetch team data
             dispatch('fetchTeams')
           }
@@ -176,6 +206,10 @@ const store: Store = {
       state.minItemLevel = il
     },
 
+    setNotifications(state: State, notifs: Notification[]) {
+      state.notifications = notifs
+    },
+
     setTeams(state: State, teams: Team[]) {
       state.teams = teams
     },
@@ -190,6 +224,8 @@ const store: Store = {
 
     setUser(state: State, user: User) {
       state.user = user
+      // Set the user loaded flag to say we've at least called this method once
+      state.userLoaded = true
     },
 
     resetUser(state: State): void {
@@ -202,9 +238,11 @@ const store: Store = {
     jobs: [],
     maxItemLevel: 0,
     minItemLevel: 0,
+    notifications: [],
     teams: [],
     tiers: [],
     user: DEFAULT_USER,
+    userLoaded: false,
     version: process.env.VUE_APP_VERSION,
   },
 }

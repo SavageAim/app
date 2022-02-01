@@ -5,7 +5,7 @@ from django.core.management import call_command
 from django.urls import reverse
 from rest_framework import status
 # local
-from api.models import BISList, Character, Gear, Job, Team, TeamMember, Tier
+from api.models import BISList, Character, Gear, Notification, Job, Team, TeamMember, Tier
 from api.serializers import TeamSerializer
 from .test_base import SavageAimTestCase
 
@@ -341,6 +341,7 @@ class TeamResource(SavageAimTestCase):
         """
         Clean up the DB after each test
         """
+        Notification.objects.all().delete()
         TeamMember.objects.all().delete()
         Team.objects.all().delete()
         BISList.objects.all().delete()
@@ -412,7 +413,7 @@ class TeamResource(SavageAimTestCase):
         data = {
             'name': 'Updated Team Name',
             'tier_id': new_tier.id,
-            'raid_lead': char.id,
+            'team_lead': char.id,
         }
         response = self.client.put(url, data)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT, response.content)
@@ -426,6 +427,14 @@ class TeamResource(SavageAimTestCase):
         self.tm.refresh_from_db()
         self.assertFalse(self.tm.lead)
 
+        # Ensure the new character got a notification
+        self.assertEqual(Notification.objects.filter(user=char.user).count(), 1)
+        notif = Notification.objects.filter(user=char.user).first()
+        self.assertEqual(notif.link, f'/team/{self.team.id}/')
+        self.assertEqual(notif.text, f'{char} has been made the Team Leader of {self.team.name}!')
+        self.assertEqual(notif.type, 'team_lead')
+        self.assertFalse(notif.read)
+
     def test_update_400(self):
         """
         Send invalid update requests and ensure the right errors are returned from each request
@@ -435,9 +444,9 @@ class TeamResource(SavageAimTestCase):
         Tier ID Not Sent: 'This field is required.'
         Tier ID Not Int:  'A valid integer is required.'
         Tier ID Invalid: 'Please select a valid Tier.'
-        Raid Lead Not Sent: 'This field is required.'
-        Raid Lead Not Int: 'A valid integer is required.'
-        Raid Lead Invalid: 'Please select a member of the Team to be the new raid lead.'
+        Team Lead Not Sent: 'This field is required.'
+        Team Lead Not Int: 'A valid integer is required.'
+        Team Lead Invalid: 'Please select a member of the Team to be the new team lead.'
         """
         user = self._get_user()
         self.client.force_authenticate(user)
@@ -448,32 +457,32 @@ class TeamResource(SavageAimTestCase):
         content = response.json()
         self.assertEqual(content['name'], ['This field is required.'])
         self.assertEqual(content['tier_id'], ['This field is required.'])
-        self.assertEqual(content['raid_lead'], ['This field is required.'])
+        self.assertEqual(content['team_lead'], ['This field is required.'])
 
         data = {
             'name': 'abcde' * 100,
             'tier_id': 'abcde',
-            'raid_lead': 'abcde',
+            'team_lead': 'abcde',
         }
         response = self.client.put(url, data)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, response.content)
         content = response.json()
         self.assertEqual(content['name'], ['Ensure this field has no more than 64 characters.'])
         self.assertEqual(content['tier_id'], ['A valid integer is required.'])
-        self.assertEqual(content['raid_lead'], ['A valid integer is required.'])
+        self.assertEqual(content['team_lead'], ['A valid integer is required.'])
 
         data = {
             'name': 'Hi c:',
             'tier_id': 123,
-            'raid_lead': 123,
+            'team_lead': 123,
         }
         response = self.client.put(url, data)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, response.content)
         content = response.json()
         self.assertEqual(content['tier_id'], ['Please select a valid Tier.'])
-        self.assertEqual(content['raid_lead'], ['Please select a member of the Team to be the new raid lead.'])
+        self.assertEqual(content['team_lead'], ['Please select a member of the Team to be the new team lead.'])
 
-        # Run the raid lead test again with a valid character id that isn't on the team
+        # Run the team lead test again with a valid character id that isn't on the team
         char = Character.objects.create(
             avatar_url='https://img.savageaim.com/abcde',
             lodestone_id=1348724213,
@@ -484,12 +493,12 @@ class TeamResource(SavageAimTestCase):
         data = {
             'name': 'Hi c:',
             'tier_id': Tier.objects.first().pk,
-            'raid_lead': char.id,
+            'team_lead': char.id,
         }
         response = self.client.put(url, data)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, response.content)
         content = response.json()
-        self.assertEqual(content['raid_lead'], ['Please select a member of the Team to be the new raid lead.'])
+        self.assertEqual(content['team_lead'], ['Please select a member of the Team to be the new team lead.'])
 
     def test_404(self):
         """
@@ -498,7 +507,7 @@ class TeamResource(SavageAimTestCase):
         - ID doesn't exist
         - Read request from someone who doesn't have a character in the Team
         - Update request from someone who doesn't have a character in the Team
-        - Update request from someone that isn't the raid lead
+        - Update request from someone that isn't the team lead
         """
         user = self._get_user()
         self.client.force_authenticate(user)
@@ -579,12 +588,12 @@ class TeamInvite(SavageAimTestCase):
             name='Test Team 1',
             tier=Tier.objects.first(),
         )
-        # self.tm = TeamMember.objects.create(team=self.team, character=self.char, bis_list=self.bis, lead=True)
 
     def tearDown(self):
         """
         Clean up the DB after each test
         """
+        Notification.objects.all().delete()
         TeamMember.objects.all().delete()
         Team.objects.all().delete()
         BISList.objects.all().delete()
@@ -617,19 +626,67 @@ class TeamInvite(SavageAimTestCase):
         """
         Attempt to join a Team using a character and bis list
         """
-        user = self._get_user()
+        user = self._create_user()
         self.client.force_authenticate(user)
         url = reverse('api:team_invite', kwargs={'invite_code': self.team.invite_code})
 
-        self.char.verified = True
-        self.char.save()
+        # Link the self.char to the team for notification checking
+        TeamMember.objects.create(team=self.team, character=self.char, bis_list=self.bis, lead=True)
+
+        # Create new details
+        char = Character.objects.create(
+            avatar_url='https://img.savageaim.com/abcde',
+            lodestone_id=1234567890,
+            user=user,
+            name='Char 1',
+            world='Lich',
+            verified=True,
+        )
+        g = Gear.objects.first()
+        bis = BISList.objects.create(
+            bis_body=g,
+            bis_bracelet=g,
+            bis_earrings=g,
+            bis_feet=g,
+            bis_hands=g,
+            bis_head=g,
+            bis_left_ring=g,
+            bis_legs=g,
+            bis_mainhand=g,
+            bis_necklace=g,
+            bis_offhand=g,
+            bis_right_ring=g,
+            current_body=g,
+            current_bracelet=g,
+            current_earrings=g,
+            current_feet=g,
+            current_hands=g,
+            current_head=g,
+            current_left_ring=g,
+            current_legs=g,
+            current_mainhand=g,
+            current_necklace=g,
+            current_offhand=g,
+            current_right_ring=g,
+            job=Job.objects.first(),
+            owner=char,
+        )
+
         data = {
-            'character_id': self.char.id,
-            'bis_list_id': self.bis.id,
+            'character_id': char.id,
+            'bis_list_id': bis.id,
         }
         response = self.client.post(url, data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.content)
         self.assertEqual(response.json()['id'], str(self.team.id))
+
+        # Check that the self.user has a notification
+        self.assertEqual(Notification.objects.filter(user=self.char.user).count(), 1)
+        notif = Notification.objects.filter(user=self.char.user).first()
+        self.assertEqual(notif.link, f'/team/{self.team.id}/')
+        self.assertEqual(notif.text, f'{char} has joined {self.team.name}!')
+        self.assertEqual(notif.type, 'team_join')
+        self.assertFalse(notif.read)
 
     def test_join_400(self):
         """

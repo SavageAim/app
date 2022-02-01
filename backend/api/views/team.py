@@ -11,6 +11,7 @@ from rest_framework.views import APIView
 from rest_framework.request import Request
 from rest_framework.response import Response
 # local
+from api import notifier
 from api.models import Team, TeamMember
 from api.serializers import (
     TeamSerializer,
@@ -47,7 +48,7 @@ class TeamCollection(APIView):
 
     def post(self, request: Request) -> Response:
         """
-        Create a new team, with the data for the raid lead team member
+        Create a new team, with the data for the team lead team member
         """
         # Ensure the data we were sent is valid
         serializer = TeamCreateSerializer(data=request.data, context={'user': request.user})
@@ -92,7 +93,7 @@ class TeamResource(APIView):
     def put(self, request: Request, pk: str) -> Response:
         """
         Update some data about the Team
-        This request can only be run by the user whose character is the raid lead
+        This request can only be run by the user whose character is the team lead
         """
         try:
             obj = Team.objects.get(pk=pk, members__character__user=request.user, members__lead=True)
@@ -102,18 +103,19 @@ class TeamResource(APIView):
         serializer = TeamUpdateSerializer(instance=obj, data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        # Pop the raid lead information from the serializer and save it, then update who the raid lead is
-        raid_lead_id = serializer.validated_data.pop('raid_lead')
+        # Pop the team lead information from the serializer and save it, then update who the team lead is
+        team_lead_id = serializer.validated_data.pop('team_lead')
         serializer.save()
 
         curr_lead = obj.members.get(lead=True)
-        new_lead = obj.members.get(pk=raid_lead_id)
+        new_lead = obj.members.get(pk=team_lead_id)
         if curr_lead.id != new_lead.id:
             # Make sure we have to do this before we run any code (don't do any unnecessary database hits)
             curr_lead.lead = False
             curr_lead.save()
             new_lead.lead = True
             new_lead.save()
+            notifier.team_lead(new_lead.character, obj)
 
         return Response(status=204)
 
@@ -163,7 +165,10 @@ class TeamInvite(APIView):
         serializer.is_valid(raise_exception=True)
 
         # If we make it here, create a new Team Member object
-        TeamMember.objects.create(team=obj, **serializer.validated_data)
+        tm = TeamMember.objects.create(team=obj, **serializer.validated_data)
+
+        # Notify the Team Lead
+        notifier.team_join(tm.character, obj)
 
         # Return the team id to redirect to the page
         return Response({'id': obj.id}, status=201)
