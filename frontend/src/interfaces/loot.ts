@@ -37,7 +37,7 @@ interface LootGear {
   ring: { need: NeedGear[], greed: GreedGear[] }
 }
 
-interface Loot {
+export interface Loot {
   greed: boolean
   item: string
   member: string
