@@ -24,6 +24,7 @@
         </ul>
       </p>
       <p>These are all toggleable, so you can disable any notification types you don't want to receive by visiting the Settings page!</p>
+      <p>Currently the Notification system is polled every 30 seconds for updates, but I intend to make this truly live in the near future with instant updates when necessary!</p>
 
       <div class="divider"><i class="material-icons icon">expand_more</i> Minor Changes <i class="material-icons icon">expand_more</i></div>
       <p>Added Trans Pride colour scheme.</p>
