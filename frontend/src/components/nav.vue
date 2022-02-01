@@ -125,11 +125,6 @@ export default class Nav extends SavageAimMixin {
     this.nav.classList.toggle('is-active')
   }
 
-  beforeCreate(): void {
-    // Tell the store to attempt to fetch the logged in user
-    this.$store.dispatch('fetchUser')
-  }
-
   async logout(): Promise<void> {
     // Send a GET request to the logout url, and that should be all we need to do
     await fetch(this.LOGOUT_URL)
