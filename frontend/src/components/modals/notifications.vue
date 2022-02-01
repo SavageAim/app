@@ -28,7 +28,7 @@
       </div>
 
       <template v-if="notifications.length > 0">
-        <NotificationCard v-for="i in pageRange()" :notification="notifications[i]" :key="notifications[i].id" />
+        <NotificationCard v-for="i in pageRange()" :notification="notifications[i]" :key="notifications[i].id" v-on:close="close" />
 
         <div class="pagination is-centered" id="notif-pager" role="navigation" aria-label="pagination">
           <a class="pagination-previous" @click="page--" v-if="page > 1">Previous Page</a>
@@ -66,6 +66,10 @@ export default class Notifications extends Vue {
 
   get notifications(): Notification[] {
     return this.$store.state.notifications
+  }
+
+  close(): void {
+    this.$emit('close')
   }
 
   async markAllAsRead(): Promise<void> {

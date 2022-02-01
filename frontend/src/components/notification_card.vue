@@ -1,5 +1,5 @@
 <template>
-  <a @clicl="open" class="box" :class="[notification.read ? 'read' : 'unread']">
+  <a @click="open" class="box" :class="[notification.read ? 'read' : 'unread']">
     <article class="media">
       <figure class="media-left">
         <div class="icon has-text-primary">
