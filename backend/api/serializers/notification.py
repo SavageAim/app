@@ -13,5 +13,5 @@ __all__ = [
 
 class NotificationSerializer(serializers.ModelSerializer):
     class Meta:
-        fields = '__all__'
+        exclude = ['user']
         model = Notification
