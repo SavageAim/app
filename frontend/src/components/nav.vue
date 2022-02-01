@@ -7,7 +7,7 @@
 
       <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" ref="burger" @click="toggleNavbar">
         <span aria-hidden="true">
-          <div class="badge is-info" v-if="hasUnreads">1</div>
+          <div class="badge is-info" v-if="unreads > 0">{{ unreads }}</div>
         </span>
         <span aria-hidden="true"></span>
         <span aria-hidden="true"></span>
@@ -36,9 +36,9 @@
 
         <template v-if="authenticated">
           <a href="#" class="navbar-item notifications" @click="showNotifs">
-            <div class="icon-text" v-if="hasUnreads">
+            <div class="icon-text" v-if="unreads > 0">
               <span class="icon">
-                <span class="badge is-info">1</span>
+                <span class="badge is-info">{{ unreads }}</span>
                 <i class="material-icons">notifications_active</i>
               </span>
               <span class="is-hidden-desktop">Notifications</span>
@@ -91,16 +91,14 @@
 <script lang="ts">
 import { Component, Prop, Watch } from 'vue-property-decorator'
 import Legend from './modals/legend.vue'
-import Notifications from './modals/notifications.vue'
+import NotificationsModal from './modals/notifications.vue'
+import Notification from '@/interfaces/notification'
 import SavageAimMixin from '@/mixins/savage_aim_mixin'
 
 @Component
 export default class Nav extends SavageAimMixin {
   @Prop({ default: false })
   maintenance!: boolean
-
-  // Display the notifications flag
-  hasUnreads = false
 
   // Only check for the refs after we've been mounted
   isMounted = false
@@ -111,6 +109,11 @@ export default class Nav extends SavageAimMixin {
 
   get nav(): Element {
     return this.$refs.navbar as Element
+  }
+
+  get unreads(): number {
+    // Filter the list of notifications, see how many are not read yet
+    return this.$store.state.notifications.reduce((sum: number, notif: Notification) => sum + (notif.read ? 0 : 1), 0)
   }
 
   destroyed(): void {
@@ -145,7 +148,7 @@ export default class Nav extends SavageAimMixin {
   }
 
   showNotifs(): void {
-    this.$modal.show(Notifications)
+    this.$modal.show(NotificationsModal)
   }
 
   // Watch the location.path value and any time it changes run the function
