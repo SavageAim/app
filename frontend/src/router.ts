@@ -32,6 +32,9 @@ const routes = [
   { path: '/characters/:characterId/bis_list/', component: () => import('@/views/new_bis.vue'), name: 'newBIS' },
   { path: '/characters/:characterId/bis_list/:id/', component: () => import('@/views/edit_bis.vue'), name: 'editBIS' },
 
+  // Notifications
+  { path: '/notifications/', component: () => import('@/views/notifications.vue'), name: 'userNotifs' },
+
   // User Settings
   { path: '/settings/', component: () => import('@/views/settings.vue'), name: 'userSettings' },
 
