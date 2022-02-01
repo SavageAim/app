@@ -65,6 +65,9 @@ export default class App extends Vue {
 
     // Check the changelog stuff
     this.checkChangelog()
+
+    // Set up a window interval to poll for notifications (temp holdover until WS implementation added)
+    setInterval(() => { this.$store.dispatch('fetchNotifications') }, 30 * 1000)
   }
 }
 </script>

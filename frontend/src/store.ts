@@ -109,7 +109,9 @@ const store: Store = {
       }
     },
 
-    async fetchNotifications({ commit }): Promise<void> {
+    async fetchNotifications({ commit, state }): Promise<void> {
+      if ((state as State).user.id === null) return
+
       try {
         // Store is limited to latest 20, but a Notification page will return them all
         const response = await fetch(`/backend/api/notifications/?limit=20`)
