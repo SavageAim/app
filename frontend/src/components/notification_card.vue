@@ -54,7 +54,6 @@ export default class NotificationCard extends Vue {
         this.$store.dispatch('fetchNotifications')
       }
       else {
-        super.handleError(response.status)
         this.$notify({ text: `Unexpected HTTP response ${response.status} received when marking notification as read.`, type: 'is-danger' })
       }
     }
@@ -65,7 +64,7 @@ export default class NotificationCard extends Vue {
 
   open(): void {
     // Open a Notification, marking it as read in the process
-    this.markAsRead(this.notification.id)
+    this.markAsRead()
 
     // Open the link contained in the notification, using the router
     this.$router.push(this.notification.link)

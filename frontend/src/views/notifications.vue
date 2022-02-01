@@ -2,7 +2,7 @@
   <div>
     <h2 class="title">
       Notifications
-      <button class="button is-pulled-right is-success" v-if="notifications.length > 0">Mark All As Read</button>
+      <button class="button is-pulled-right is-success is-hidden-touch" @click="markAllAsRead" v-if="notifications.length > 0">Mark All As Read</button>
     </h2>
     <div v-if="loading">
       <button class="button is-static is-loading is-fullwidth">Loading</button>
@@ -12,9 +12,10 @@
       <h3 class="subtitle has-text-centered">No Notifications Found!</h3>
     </div>
 
-    <template v-else>
+    <div v-else>
+      <button class="button is-success is-hidden-desktop is-fullwidth maar-button" @click="markAllAsRead">Mark All As Read</button>
       <NotificationCard v-for="notif in notifications" :notification="notif" :key="notif.id" />
-    </template>
+    </div>
   </div>
 </template>
 
@@ -82,4 +83,7 @@ export default class NotificationView extends SavageAimMixin {
 </script>
 
 <style lang="scss">
+.maar-button {
+  margin-bottom: 1rem;
+}
 </style>

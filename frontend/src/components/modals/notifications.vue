@@ -81,7 +81,6 @@ export default class Notifications extends Vue {
         this.$store.dispatch('fetchNotifications')
       }
       else {
-        super.handleError(response.status)
         this.$notify({ text: `Unexpected HTTP response ${response.status} received when marking notifications as read.`, type: 'is-danger' })
       }
     }
