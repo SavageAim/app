@@ -28,25 +28,7 @@
       </div>
 
       <template v-if="notifications.length > 0">
-        <a @click="() => open(i)" class="box" v-for="i in pageRange()" :class="[notifications[i].read ? 'read' : 'unread']" :key="notifications[i].id">
-          <article class="media">
-            <figure class="media-left">
-              <div class="icon has-text-primary">
-                <i class="material-icons" v-if="notifications[i].read">notifications</i>
-                <i class="material-icons" v-else>notifications_active</i>
-              </div>
-            </figure>
-            <div class="media-content">
-              <p>{{ notifications[i].text }}</p>
-              <p>
-                <small class="has-text-grey icon-text" data-microtip-position="right" role="tooltip" :aria-label="getTimestamp(i)">
-                  <span class="icon"><i class="material-icons">schedule</i></span>
-                  <span>{{ getHumanDisplay(i) }}</span>
-                </small>
-              </p>
-            </div>
-          </article>
-        </a>
+        <NotificationCard v-for="i in pageRange()" :notification="notifications[i]" :key="notifications[i].id" />
 
         <div class="pagination is-centered" id="notif-pager" role="navigation" aria-label="pagination">
           <a class="pagination-previous" @click="page--" v-if="page > 1">Previous Page</a>
@@ -64,26 +46,19 @@
 </template>
 
 <script lang="ts">
-import dayjs from 'dayjs'
-import relativeTime from 'dayjs/plugin/relativeTime'
 import { Component, Vue } from 'vue-property-decorator'
+import NotificationCard from '@/components/notification_card.vue'
 import Notification from '@/interfaces/notification'
 
-dayjs.extend(relativeTime)
-
-@Component
+@Component({
+  components: {
+    NotificationCard,
+  },
+})
 export default class Notifications extends Vue {
   notifsPerPage = 4
 
   page = 1
-
-  getHumanDisplay(index: number): string {
-    return dayjs(this.notifications[index].timestamp).fromNow()
-  }
-
-  getTimestamp(index: number): dayjs.Dayjs {
-    return dayjs(this.notifications[index].timestamp)
-  }
 
   get maxPages(): number {
     return Math.ceil(this.notifications.length / this.notifsPerPage)
@@ -113,38 +88,6 @@ export default class Notifications extends Vue {
     catch (e) {
       this.$notify({ text: `Error ${e} when marking notifications as read.`, type: 'is-danger' })
     }
-  }
-
-  async markSingleAsRead(id: number): Promise<void> {
-    try {
-      const response = await fetch(`/backend/api/notifications/${id}/`, {
-        method: 'POST',
-        headers: {
-          'X-CSRFToken': this.$cookies.get('csrftoken'),
-        },
-      })
-
-      if (response.ok) {
-        this.$store.dispatch('fetchNotifications')
-      }
-      else {
-        super.handleError(response.status)
-        this.$notify({ text: `Unexpected HTTP response ${response.status} received when marking notification as read.`, type: 'is-danger' })
-      }
-    }
-    catch (e) {
-      this.$notify({ text: `Error ${e} when marking notification as read.`, type: 'is-danger' })
-    }
-  }
-
-  open(index: number): void {
-    // Open a Notification, marking it as read in the process
-    const notif = this.notifications[index]
-    this.markSingleAsRead(notif.id)
-
-    // Open the link contained in the notification, using the router
-    this.$router.push(notif.link)
-    this.$emit('close')
   }
 
   pageRange(): ReadonlyArray<number> {
