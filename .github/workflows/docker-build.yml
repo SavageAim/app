@@ -32,7 +32,7 @@ jobs:
     - name: Build the Docker image
       run: docker build . --file deployment/Dockerfile --tag docker.pkg.github.com/savage-aim/app/frontend:latest -t docker.pkg.github.com/savage-aim/app/frontend:$(echo "$GITHUB_REF" | sed 's/refs\/tags\///')
     - name: Build maintenance image
-      run: docker build . --file deployment/Dockerfile --build_arg VUE_APP_MAINTENANCE="1" --tag docker.pkg.github.com/savage-aim/app/frontend:maint
+      run: docker build . --file deployment/Dockerfile --build-arg VUE_APP_MAINTENANCE="1" --tag docker.pkg.github.com/savage-aim/app/frontend:maint
     - name: Login to GitHub Docker Registry
       run: docker login docker.pkg.github.com -u freyamade -p ${{ secrets.GITHUB_TOKEN }}
     - name: Push the Docker image
