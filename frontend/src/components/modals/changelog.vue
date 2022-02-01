@@ -13,16 +13,24 @@
     <div class="card-content content">
       <h2 class="has-text-primary subtitle">{{ version }}</h2>
       <div class="divider"><i class="material-icons icon">expand_more</i> Major Changes <i class="material-icons icon">expand_more</i></div>
-      <p>We have a wiki now!</p>
-      <p><a href="https://wiki.savageaim.com" target="_blank">wiki.savageaim.com</a></p>
-      <p>Removed a lot of the help text from the pages since it's all in the wiki now!</p>
+      <p>Notifications System has been added!</p>
+      <p>
+        The following events will give you notifications;
+        <ul>
+          <li>Character Verify requests failed or succeeded.</li>
+          <li>Your Character has been put in charge of a Team it is in.</li>
+          <li>Someone has joined a Team you lead.</li>
+          <li>The Loot Tracker of a Team has updated one of your BIS Lists.</li>
+        </ul>
+      </p>
+      <p>These are all toggleable, so you can disable any notification types you don't want to receive by visiting the Settings page!</p>
 
       <div class="divider"><i class="material-icons icon">expand_more</i> Minor Changes <i class="material-icons icon">expand_more</i></div>
-      <p>Prevented any issues forming from Teams or Characters generating duplicate tokens by preventing that from happening altogether.</p>
-      <p>Added wiki and github links to the footer.</p>
-      <p>Footer now also displays the current version.</p>
-      <p>Footer links now use tooltips instead of titles.</p>
-      <p>BIS List form filters no longer exclude currently chosen items if their item levels are outside the range of the chosen filter values.</p>
+      <p>Added Trans Pride colour scheme.</p>
+      <p>Fixed issues causing too much side padding on some pages, especially on mobile views.</p>
+      <p>Fixed breadcrumbs for Edit and New BIS pages linking to the wrong URL.</p>
+      <p>Removed mentions of "Raid Lead", only using "Team Lead" to avoid any confusion.</p>
+      <p>Add Badges to Character cards on the Loot Tracker pages to indicate how much Loot they have already received in this Tier.</p>
     </div>
   </div>
 </template>
