@@ -41,6 +41,7 @@
       <div class="divider"><i class="material-icons icon">expand_more</i> Minor Changes <i class="material-icons icon">expand_more</i></div>
       <p>Added Traffic Lights style colour scheme.</p>
       <p>Added more visibility into client side errors.</p>
+      <p>Minor help text additions.</p>
     </div>
   </div>
 </template>
