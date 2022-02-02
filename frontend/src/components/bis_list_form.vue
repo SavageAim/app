@@ -33,14 +33,15 @@
 
           <div class="field is-horizontal">
             <div class="field-label is-normal">
-              <label class="label">URL</label>
+              <label class="label">Extra URL</label>
             </div>
             <div class="field-body">
               <div class="field">
                 <div class="control">
-                  <input class="input" :class="{'is-danger': errors.external_link !== undefined}" v-model="bisList.external_link" />
+                  <input class="input" :class="{'is-danger': errors.external_link !== undefined}" v-model="bisList.external_link" placeholder="i.e. Etro, Ariyala, etc" />
                 </div>
                 <p v-if="errors.external_link !== undefined" class="help is-danger">{{ errors.external_link[0] }}</p>
+                <p class="help is-info" v-else>This is just a link to any page you deem would be handy to have attached to the list!</p>
               </div>
             </div>
           </div>
