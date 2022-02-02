@@ -21,6 +21,7 @@
                     <option value="green">Green</option>
                     <option value="purple">Purple</option>
                     <option value="red">Red</option>
+                    <option value="traffic">Traffic Lights</option>
                     <option value="trans">Trans Pride</option>
                   </select>
                 </div>

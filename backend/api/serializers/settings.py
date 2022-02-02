@@ -20,6 +20,7 @@ THEMES = {
     'green',
     'purple',
     'red',
+    'traffic',
     'trans',
 }
 
