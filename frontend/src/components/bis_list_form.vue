@@ -33,13 +33,14 @@
 
           <div class="field is-horizontal">
             <div class="field-label is-normal">
-              <label class="label">URL</label>
+              <label class="label">Extra URL</label>
             </div>
             <div class="field-body">
               <div class="field">
                 <div class="control">
                   <input class="input" :class="{'is-danger': errors.external_link !== undefined}" v-model="bisList.external_link" />
                 </div>
+                <p class="help is-info">This is just a link to a page to help tie websites like etro into this site easily.</p>
                 <p v-if="errors.external_link !== undefined" class="help is-danger">{{ errors.external_link[0] }}</p>
               </div>
             </div>
