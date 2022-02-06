@@ -198,6 +198,75 @@ class LootCollection(APIView):
                         'job_role': greed_list.job.role,
                     })
                 gear[slot]['greed'].append(data)
+
+        # Tome augment tokens
+        slot = 'tome-accessory-augment'
+        gear[slot] = {'need': [], 'greed': []}
+        for tm in obj.members.all():
+            # Check the Team linked BIS directly
+            needs = tm.bis_list.accessory_augments_required(obj.tier.tome_gear_name)
+            if needs > 0:
+                # Add details to the list
+                gear[slot]['need'].append({
+                    'member_id': tm.id,
+                    'character_name': f'{tm.character.name} @ {tm.character.world}',
+                    'job_icon_name': tm.bis_list.job.name,
+                    'job_role': tm.bis_list.job.role,
+                    'requires': needs,
+                })
+
+            # Get greed lists by doing a search on the character's other bis lists
+            greed_lists = BISList.needs_accessory_augments(obj.tier.tome_gear_name).filter(
+                owner=tm.character,
+            ).exclude(pk=tm.bis_list.id)
+            data = {
+                'member_id': tm.id,
+                'character_name': f'{tm.character.name} @ {tm.character.world}',
+                'greed_lists': [],
+            }
+            for greed_list in greed_lists:
+                current_gear = getattr(greed_list, 'current_offhand')
+                data['greed_lists'].append({
+                    'bis_list_id': greed_list.id,
+                    'job_icon_name': greed_list.job.name,
+                    'job_role': greed_list.job.role,
+                    'requires': greed_list.accessory_augments_required(obj.tier.tome_gear_name),
+                })
+            gear[slot]['greed'].append(data)
+
+        slot = 'tome-armour-augment'
+        gear[slot] = {'need': [], 'greed': []}
+        for tm in obj.members.all():
+            # Check the Team linked BIS directly
+            needs = tm.bis_list.armour_augments_required(obj.tier.tome_gear_name)
+            if needs > 0:
+                # Add details to the list
+                gear[slot]['need'].append({
+                    'member_id': tm.id,
+                    'character_name': f'{tm.character.name} @ {tm.character.world}',
+                    'job_icon_name': tm.bis_list.job.name,
+                    'job_role': tm.bis_list.job.role,
+                    'requires': needs,
+                })
+
+            # Get greed lists by doing a search on the character's other bis lists
+            greed_lists = BISList.needs_armour_augments(obj.tier.tome_gear_name).filter(
+                owner=tm.character,
+            ).exclude(pk=tm.bis_list.id)
+            data = {
+                'member_id': tm.id,
+                'character_name': f'{tm.character.name} @ {tm.character.world}',
+                'greed_lists': [],
+            }
+            for greed_list in greed_lists:
+                current_gear = getattr(greed_list, 'current_offhand')
+                data['greed_lists'].append({
+                    'bis_list_id': greed_list.id,
+                    'job_icon_name': greed_list.job.name,
+                    'job_role': greed_list.job.role,
+                    'requires': greed_list.armour_augments_required(obj.tier.tome_gear_name),
+                })
+            gear[slot]['greed'].append(data)
         return gear
 
     def get(self, request: Request, team_id: str) -> Response:
@@ -205,7 +274,9 @@ class LootCollection(APIView):
         Get loot history and current need/greed status for a team
         """
         try:
-            obj = Team.objects.prefetch_related(
+            obj = Team.objects.select_related(
+                'tier',
+            ).prefetch_related(
                 'members',
                 'members__character',
                 'members__bis_list',

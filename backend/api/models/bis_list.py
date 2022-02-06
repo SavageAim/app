@@ -5,8 +5,9 @@ Links together characters, jobs and gear into a single list
 
 Currently is one gear list per character per job for ease, may change later
 """
-
+from typing import List
 from django.db import models
+from django.db.models import Q
 
 
 class BISList(models.Model):
@@ -43,6 +44,44 @@ class BISList(models.Model):
         unique_together = ['job', 'owner']
         ordering = ['-job__role', 'job__ordering']
 
+    def accessory_augments_required(self, gear_name: str) -> int:
+        """
+        Get a value of how many accessory augment tokens are needed for this BIS List
+        """
+        slots = [
+            'earrings',
+            'necklace',
+            'bracelet',
+            'right_ring',
+            'left_ring',
+        ]
+        return self._check_augments(gear_name, slots)
+
+    def armour_augments_required(self, gear_name: str) -> int:
+        """
+        Get a value of how many armour augment tokens are needed for this BIS List
+        """
+        slots = [
+            'head',
+            'body',
+            'hands',
+            'legs',
+            'feet',
+        ]
+        return self._check_augments(gear_name, slots)
+
+    def _check_augments(self, gear_name: str, slots: List[str]) -> int:
+        """
+        Check through slots, see how many of them need augmenting
+        """
+        needed = 0
+        for slot in slots:
+            current = getattr(self, f'current_{slot}')
+            bis = getattr(self, f'bis_{slot}')
+            if bis.name == gear_name and current.name != gear_name:
+                needed += 1
+        return needed
+
     @property
     def item_level(self):
         """
@@ -62,3 +101,53 @@ class BISList(models.Model):
             self.current_offhand.item_level,
             self.current_right_ring.item_level,
         ]) / 12
+
+    @staticmethod
+    def needs_accessory_augments(gear_name: str) -> models.QuerySet:
+        """
+        Find any BIS Lists that require accessory augments, using the supplied name
+        """
+        return BISList.objects.select_related(
+            'bis_earrings',
+            'bis_necklace',
+            'bis_bracelet',
+            'bis_right_ring',
+            'bis_left_ring',
+            'current_earrings',
+            'current_necklace',
+            'current_bracelet',
+            'current_right_ring',
+            'current_left_ring',
+            'job',
+        ).filter(
+            (Q(bis_earrings__name=gear_name) & ~Q(current_earrings__name=gear_name)) |
+            (Q(bis_necklace__name=gear_name) & ~Q(current_necklace__name=gear_name)) |
+            (Q(bis_bracelet__name=gear_name) & ~Q(current_bracelet__name=gear_name)) |
+            (Q(bis_right_ring__name=gear_name) & ~Q(current_right_ring__name=gear_name)) |
+            (Q(bis_left_ring__name=gear_name) & ~Q(current_left_ring__name=gear_name)),
+        )
+
+    @staticmethod
+    def needs_armour_augments(gear_name: str) -> models.QuerySet:
+        """
+        Find any BIS Lists that require armour augments, using the supplied name
+        """
+        return BISList.objects.select_related(
+            'bis_head',
+            'bis_body',
+            'bis_hands',
+            'bis_legs',
+            'bis_feet',
+            'current_head',
+            'current_body',
+            'current_hands',
+            'current_legs',
+            'current_feet',
+            'job',
+        ).filter(
+            (Q(bis_head__name=gear_name) & ~Q(current_head__name=gear_name)) |
+            (Q(bis_body__name=gear_name) & ~Q(current_body__name=gear_name)) |
+            (Q(bis_hands__name=gear_name) & ~Q(current_hands__name=gear_name)) |
+            (Q(bis_legs__name=gear_name) & ~Q(current_legs__name=gear_name)) |
+            (Q(bis_feet__name=gear_name) & ~Q(current_feet__name=gear_name)),
+        )
