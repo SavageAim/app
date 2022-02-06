@@ -70,7 +70,11 @@ class LootCollection(APIView):
                     })
 
                 # Get greed lists by doing a search on the character's other bis lists
-                greed_lists = tm.character.bis_lists.exclude(
+                greed_lists = tm.character.bis_lists.select_related(
+                    f'current_{slot}',
+                    f'bis_{slot}',
+                    'job',
+                ).exclude(
                     **{f'current_{slot}__name': tier_name},
                 ).filter(
                     **{f'bis_{slot}__name': tier_name},
@@ -97,8 +101,8 @@ class LootCollection(APIView):
         gear[slot] = {'need': [], 'greed': []}
         for tm in obj.members.all():
             # Check the Team linked BIS directly
-            current_gear = getattr(tm.bis_list, f'current_{slot}')
-            bis_name = getattr(tm.bis_list, f'bis_{slot}').name
+            current_gear = getattr(tm.bis_list, 'current_offhand')
+            bis_name = getattr(tm.bis_list, 'bis_offhand').name
             if current_gear.name != tier_name and bis_name == tier_name and tm.bis_list.job.id == 'PLD':
                 # Add details to the list
                 gear[slot]['need'].append({
@@ -111,11 +115,15 @@ class LootCollection(APIView):
                 })
 
             # Get greed lists by doing a search on the character's other bis lists
-            greed_lists = tm.character.bis_lists.exclude(
-                **{f'current_{slot}__name': tier_name},
+            greed_lists = tm.character.bis_lists.select_related(
+                'current_offhand',
+                'bis_offhand',
+                'job',
+            ).exclude(
+                current_offhand__name=tier_name,
             ).filter(
                 job_id='PLD',
-                **{f'bis_{slot}__name': tier_name},
+                bis_offhand__name=tier_name,
             ).exclude(pk=tm.bis_list.id)
             if greed_lists.exists():
                 data = {
@@ -124,7 +132,7 @@ class LootCollection(APIView):
                     'greed_lists': [],
                 }
                 for greed_list in greed_lists:
-                    current_gear = getattr(greed_list, f'current_{slot}')
+                    current_gear = getattr(greed_list, 'current_offhand')
                     data['greed_lists'].append({
                         'bis_list_id': greed_list.id,
                         'current_gear_name': current_gear.name,
@@ -158,7 +166,13 @@ class LootCollection(APIView):
                 })
 
             # Get greed lists by doing a search on the character's other bis lists
-            greed_lists = tm.character.bis_lists.exclude(
+            greed_lists = tm.character.bis_lists.select_related(
+                'current_left_ring',
+                'bis_left_ring',
+                'current_right_ring',
+                'bis_right_ring',
+                'job',
+            ).exclude(
                 Q(current_left_ring__name=tier_name) | Q(current_right_ring__name=tier_name),
             ).filter(
                 Q(bis_left_ring__name=tier_name) | Q(bis_right_ring__name=tier_name),
@@ -191,7 +205,11 @@ class LootCollection(APIView):
         Get loot history and current need/greed status for a team
         """
         try:
-            obj = Team.objects.get(pk=team_id, members__character__user=request.user)
+            obj = Team.objects.prefetch_related(
+                'members',
+                'members__character',
+                'members__bis_list',
+            ).get(pk=team_id, members__character__user=request.user)
         except (Team.DoesNotExist, ValidationError):
             return Response(status=404)
 
