@@ -219,20 +219,21 @@ class LootCollection(APIView):
             greed_lists = BISList.needs_accessory_augments(obj.tier.tome_gear_name).filter(
                 owner=tm.character,
             ).exclude(pk=tm.bis_list.id)
-            data = {
-                'member_id': tm.id,
-                'character_name': f'{tm.character.name} @ {tm.character.world}',
-                'greed_lists': [],
-            }
-            for greed_list in greed_lists:
-                current_gear = getattr(greed_list, 'current_offhand')
-                data['greed_lists'].append({
-                    'bis_list_id': greed_list.id,
-                    'job_icon_name': greed_list.job.name,
-                    'job_role': greed_list.job.role,
-                    'requires': greed_list.accessory_augments_required(obj.tier.tome_gear_name),
-                })
-            gear[slot]['greed'].append(data)
+            if greed_lists.exists():
+                data = {
+                    'member_id': tm.id,
+                    'character_name': f'{tm.character.name} @ {tm.character.world}',
+                    'greed_lists': [],
+                }
+                for greed_list in greed_lists:
+                    current_gear = getattr(greed_list, 'current_offhand')
+                    data['greed_lists'].append({
+                        'bis_list_id': greed_list.id,
+                        'job_icon_name': greed_list.job.name,
+                        'job_role': greed_list.job.role,
+                        'requires': greed_list.accessory_augments_required(obj.tier.tome_gear_name),
+                    })
+                gear[slot]['greed'].append(data)
 
         slot = 'tome-armour-augment'
         gear[slot] = {'need': [], 'greed': []}
@@ -253,20 +254,21 @@ class LootCollection(APIView):
             greed_lists = BISList.needs_armour_augments(obj.tier.tome_gear_name).filter(
                 owner=tm.character,
             ).exclude(pk=tm.bis_list.id)
-            data = {
-                'member_id': tm.id,
-                'character_name': f'{tm.character.name} @ {tm.character.world}',
-                'greed_lists': [],
-            }
-            for greed_list in greed_lists:
-                current_gear = getattr(greed_list, 'current_offhand')
-                data['greed_lists'].append({
-                    'bis_list_id': greed_list.id,
-                    'job_icon_name': greed_list.job.name,
-                    'job_role': greed_list.job.role,
-                    'requires': greed_list.armour_augments_required(obj.tier.tome_gear_name),
-                })
-            gear[slot]['greed'].append(data)
+            if greed_lists.exists():
+                data = {
+                    'member_id': tm.id,
+                    'character_name': f'{tm.character.name} @ {tm.character.world}',
+                    'greed_lists': [],
+                }
+                for greed_list in greed_lists:
+                    current_gear = getattr(greed_list, 'current_offhand')
+                    data['greed_lists'].append({
+                        'bis_list_id': greed_list.id,
+                        'job_icon_name': greed_list.job.name,
+                        'job_role': greed_list.job.role,
+                        'requires': greed_list.armour_augments_required(obj.tier.tome_gear_name),
+                    })
+                gear[slot]['greed'].append(data)
         return gear
 
     def get(self, request: Request, team_id: str) -> Response:
