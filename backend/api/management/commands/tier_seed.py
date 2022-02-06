@@ -7,7 +7,12 @@ class Command(BaseCommand):
     help = 'Seed the DB with initial data for Tiers'
 
     tiers = [
-        {'max_item_level': 605, 'name': 'Pandæmonium: Asphodelos', 'raid_gear_name': 'Asphodelos'},
+        {
+            'max_item_level': 605,
+            'name': 'Pandæmonium: Asphodelos',
+            'raid_gear_name': 'Asphodelos',
+            'tome_gear_name': 'Augmented Radiant Host',
+        },
     ]
 
     def handle(self, *args, **options):
