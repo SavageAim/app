@@ -115,7 +115,82 @@
                   <span class="has-text-primary" v-else>Need</span>
                 </li>
                 <li v-if="editable">
-                  <p class="has-text-warning">Please visit the site on desktop to add arbitrary items, sorry :(</p>
+                  <hr />
+                  <h3 class="subtitle">Add Entry</h3>
+                  <div class="field is-horizontal">
+                    <div class="field-label is-normal">
+                      <label class="label">Obtained</label>
+                    </div>
+                    <div class="field-body">
+                      <div class="field">
+                        <div class="control">
+                          <input class="input" type="date" v-model="createData.obtained" />
+                          <p class="help is-danger" v-if="createLootErrors.obtained !== undefined">{{ createLootErrors.obtained[0] }}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="field is-horizontal">
+                    <div class="field-label is-normal">
+                      <label class="label">Team Member</label>
+                    </div>
+                    <div class="field-body">
+                      <div class="field">
+                        <div class="control">
+                          <div class="select is-fullwidth">
+                            <select v-model="createData.member">
+                              <option value="-1">Select Team Member</option>
+                              <option v-for="member in team.members" :key="member.id" :value="member.id">{{ member.character.name }} @ {{ member.character.world }}</option>
+                            </select>
+                          </div>
+                          <p class="help is-danger" v-if="createLootErrors.member_id !== undefined">{{ createLootErrors.member_id[0] }}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="field is-horizontal">
+                    <div class="field-label is-normal">
+                      <label class="label">Item</label>
+                    </div>
+                    <div class="field-body">
+                      <div class="field">
+                        <ItemDropdown v-model="createData.item" :displayNonGear="true" :error="createLootErrors.item" />
+                      </div>
+                    </div>
+                  </div>
+                  <div class="field is-horizontal">
+                    <div class="field-body">
+                      <div class="field">
+                        <div class="control">
+                          <div class="field has-addons" v-if="!requesting">
+                            <div class="control is-expanded">
+                              <button class="button is-primary is-fullwidth" @click="() => { trackExtraLoot(false) }">
+                                <span>Need</span>
+                              </button>
+                            </div>
+                            <div class="control is-expanded">
+                              <button class="button is-info is-fullwidth" @click="() => { trackExtraLoot(true) }">
+                                <span>Greed</span>
+                              </button>
+                            </div>
+                          </div>
+                          <div class="field has-addons" v-else>
+                            <div class="control is-expanded">
+                              <button class="button is-primary is-fullwidth is-loading">
+                                <span>Need</span>
+                              </button>
+                            </div>
+                            <div class="control is-expanded">
+                              <button class="button is-info is-fullwidth is-loading">
+                                <span>Greed</span>
+                              </button>
+                            </div>
+                          </div>
+                          <p class="help is-danger" v-if="createLootErrors.greed !== undefined">{{ createLootErrors.greed[0] }}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </li>
               </ul>
               <table class="table is-striped is-bordered is-fullwidth is-hidden-touch">
@@ -162,12 +237,12 @@
                       <div class="control">
                         <div class="field has-addons" v-if="!requesting">
                           <div class="control is-expanded">
-                            <button class="button is-primary is-fullwidth" @click="() => { sendLoot(false) }">
+                            <button class="button is-primary is-fullwidth" @click="() => { trackExtraLoot(false) }">
                               <span>Need</span>
                             </button>
                           </div>
                           <div class="control is-expanded">
-                            <button class="button is-info is-fullwidth" @click="() => { sendLoot(true) }">
+                            <button class="button is-info is-fullwidth" @click="() => { trackExtraLoot(true) }">
                               <span>Greed</span>
                             </button>
                           </div>
