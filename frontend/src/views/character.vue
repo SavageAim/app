@@ -230,6 +230,10 @@ export default class Character extends SavageAimMixin {
       if (response.ok) {
         this.$notify({ text: 'Verification requested, please check back in a few minutes!', type: 'is-success' })
       }
+      else if (response.status === 404) {
+        // Status 404 on this page likely means the character is verified
+        this.fetchChar()
+      }
       else {
         this.$notify({ text: `Unexpected HTTP status ${response.status} received when attempting to add Character to verification queue.`, type: 'is-danger' })
       }

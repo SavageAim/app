@@ -43,6 +43,7 @@
           <li>Note that to stick to Discord's branding guidelines, the links in the footer have all been made white when unhovered instead of the original dark blue.</li>
         </ul>
       </p>
+      <p>Trying to verify an already verified Character will reload the page instead of giving 404 error messages.</p>
     </div>
   </div>
 </template>
