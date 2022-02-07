@@ -14,10 +14,10 @@
         <option value="necklace">Necklace</option>
         <option value="bracelet">Bracelet</option>
         <option value="ring">Ring</option>
+        <option value="tome-accessory-augment">Tome Accessory Augment</option>
+        <option value="tome-armour-augment">Tome Armour Augment</option>
         <template v-if="displayNonGear">
-          <option value="tome-accessory-augment">Tome Accessory Augment</option>
           <option value="tome-weapon-token">Tome Weapon Token</option>
-          <option value="tome-armour-augment">Tome Armour Augment</option>
           <option value="tome-weapon-augment">Tome Weapon Augment</option>
           <option value="mount">Mount</option>
         </template>
