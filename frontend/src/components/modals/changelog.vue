@@ -37,6 +37,12 @@
 
       <div class="divider"><i class="material-icons icon">expand_more</i> Minor Changes <i class="material-icons icon">expand_more</i></div>
       <p>Added the arbitrary loot tracking form to mobile view as well as desktop, to not keep functionality away from the mobile version.</p>
+      <p>
+        Using a Discord logo for the Discord link in the footer, to make it more immediately obvious what it is.
+        <ul>
+          <li>Note that to stick to Discord's branding guidelines, the links in the footer have all been made white when unhovered instead of the original dark blue.</li>
+        </ul>
+      </p>
     </div>
   </div>
 </template>
