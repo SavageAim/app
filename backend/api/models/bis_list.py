@@ -120,11 +120,11 @@ class BISList(models.Model):
             'current_left_ring',
             'job',
         ).filter(
-            (Q(bis_earrings__name=gear_name) & ~Q(current_earrings__name=gear_name)) |
-            (Q(bis_necklace__name=gear_name) & ~Q(current_necklace__name=gear_name)) |
-            (Q(bis_bracelet__name=gear_name) & ~Q(current_bracelet__name=gear_name)) |
-            (Q(bis_right_ring__name=gear_name) & ~Q(current_right_ring__name=gear_name)) |
-            (Q(bis_left_ring__name=gear_name) & ~Q(current_left_ring__name=gear_name)),
+            (Q(bis_earrings__name=gear_name) & ~Q(current_earrings__name=gear_name))
+            | (Q(bis_necklace__name=gear_name) & ~Q(current_necklace__name=gear_name))
+            | (Q(bis_bracelet__name=gear_name) & ~Q(current_bracelet__name=gear_name))
+            | (Q(bis_right_ring__name=gear_name) & ~Q(current_right_ring__name=gear_name))
+            | (Q(bis_left_ring__name=gear_name) & ~Q(current_left_ring__name=gear_name)),
         )
 
     @staticmethod
@@ -145,9 +145,9 @@ class BISList(models.Model):
             'current_feet',
             'job',
         ).filter(
-            (Q(bis_head__name=gear_name) & ~Q(current_head__name=gear_name)) |
-            (Q(bis_body__name=gear_name) & ~Q(current_body__name=gear_name)) |
-            (Q(bis_hands__name=gear_name) & ~Q(current_hands__name=gear_name)) |
-            (Q(bis_legs__name=gear_name) & ~Q(current_legs__name=gear_name)) |
-            (Q(bis_feet__name=gear_name) & ~Q(current_feet__name=gear_name)),
+            (Q(bis_head__name=gear_name) & ~Q(current_head__name=gear_name))
+            | (Q(bis_body__name=gear_name) & ~Q(current_body__name=gear_name))
+            | (Q(bis_hands__name=gear_name) & ~Q(current_hands__name=gear_name))
+            | (Q(bis_legs__name=gear_name) & ~Q(current_legs__name=gear_name))
+            | (Q(bis_feet__name=gear_name) & ~Q(current_feet__name=gear_name)),
         )
