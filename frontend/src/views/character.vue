@@ -14,6 +14,18 @@
             <button class="button is-fullwidth is-danger is-outlined" @click="deleteChar">Delete Character</button>
           </footer> -->
         </div>
+
+        <!-- Navigation -->
+        <div class="card" v-if="character.verified">
+          <div class="card-content">
+            <aside class="menu">
+              <ul class="menu-list">
+                <li><a :class="{ 'is-active': bisShown }" @click="showBIS">View BIS Lists</a></li>
+                <li><a :class="{ 'is-active': teamsShown }" @click="showTeams">View Teams</a></li>
+              </ul>
+            </aside>
+          </div>
+        </div>
       </div>
 
       <!-- Lists -->
@@ -41,78 +53,77 @@
 
         <template v-else>
           <!-- BIS Lists -->
-          <div class="card">
-            <div class="card-content">
-              <div class="level">
-                <div class="level-left">
-                  <div class="level-item">
-                    <h2 class="title">BIS Lists</h2>
-                  </div>
-                </div>
-                <div class="level-right">
-                  <div class="level-item">
-                    <router-link to="./bis_list/" class="button is-info">Add New</router-link>
-                  </div>
+          <div v-if="bisShown">
+            <div class="level">
+              <div class="level-left">
+                <div class="level-item">
+                  <h2 class="title">BIS Lists</h2>
                 </div>
               </div>
-              <router-link class="box" :to="`./bis_list/${list.id}/`" v-for="list in character.bis_lists" :key="list.id">
-                <div class="level">
-                  <div class="level-left">
-                    <div class="level-item">
-                      <span class="icon-text">
-                        <span class="icon"><img :src="`/job_icons/${list.job.name}.png`" :alt="`${list.job.display_name} Job Icon`" /></span>
-                        <span>{{ list.job.display_name }}</span>
-                      </span>
-                    </div>
-                  </div>
-                  <div class="level-right">
-                    <div class="level-item">
-                      <div class="tags has-addons">
-                        <span class="tag is-light">
-                          iL
-                        </span>
-                        <span class="tag" :class="[`is-${list.job.role}`]">
-                          {{ list.item_level }}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
+              <div class="level-right">
+                <div class="level-item">
+                  <router-link to="./bis_list/" class="button is-info">Add New</router-link>
                 </div>
-              </router-link>
+              </div>
+            </div>
+
+            <div class="card" v-for="bis in character.bis_lists" :key="bis.id">
+              <div class="card-header">
+                <div class="card-header-title">
+                  <span>{{ bis.job.display_name }}</span>
+                </div>
+                <div class="card-header-icon">
+                  <div class="tags has-addons is-hidden-touch">
+                    <span class="tag is-light">
+                      iL
+                    </span>
+                    <span class="tag" :class="[`is-${bis.job.role}`]">
+                      {{ bis.item_level }}
+                    </span>
+                  </div>
+                  <span class="icon">
+                    <img :src="`/job_icons/${bis.job.name}.png`" :alt="`${bis.job.name} job icon`" />
+                  </span>
+                </div>
+              </div>
+              <div class="card-content">
+                <BISTable :list="bis" />
+                <p class="has-text-info has-text-centered">Colours generated using item level {{ bis.bis_mainhand.item_level }}</p>
+              </div>
+              <footer class="card-footer">
+                <router-link :to="`/characters/${character.id}/bis_list/${bis.id}/`" class="card-footer-item">
+                  Edit
+                </router-link>
+              </footer>
+            </div>
+            <div class="subtitle has-text-centered" v-if="character.bis_lists.length === 0">
+              <p>No BIS Lists here yet!</p>
             </div>
           </div>
 
           <!-- Teams -->
-          <div class="card">
-            <div class="card-content">
-              <div class="level">
-                <div class="level-left">
-                  <div class="level-item">
-                    <h2 class="title">Teams</h2>
-                  </div>
-                </div>
-                <div class="level-right">
-                  <div class="level-item">
-                    <router-link to="/team/" class="button is-info">Add New</router-link>
-                  </div>
+          <div v-if="teamsShown">
+            <div class="level">
+              <div class="level-left">
+                <div class="level-item">
+                  <h2 class="title">Teams</h2>
                 </div>
               </div>
-              <router-link class="box" :to="`/team/${team.id}/`" v-for="team in teams" :key="team.id" :set="job = getJob(team)">
-                <div class="level">
-                  <div class="level-left">
-                    <div class="level-item">
-                      <h2 class="title is-4">{{ team.name }}</h2>
-                    </div>
-                  </div>
-                  <div class="level-right">
-                    <div class="level-item">
-                      <span class="icon-text">
-                        <span class="icon"><img :src="`/job_icons/${job.name}.png`" :alt="`${job.display_name} Job Icon`" /></span>
-                      </span>
-                    </div>
-                  </div>
+              <div class="level-right">
+                <div class="level-item">
+                  <router-link to="/team/" class="button is-info">Add New</router-link>
                 </div>
-              </router-link>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-content">
+                <router-link class="box" :to="`/team/${team.id}/`" v-for="team in teams" :key="team.id" :set="job = getJob(team)">
+                  <TeamBio :team="team" />
+                </router-link>
+              </div>
+            </div>
+            <div class="subtitle has-text-centered" v-if="teams.length === 0">
+              <p>No Teams here yet!</p>
             </div>
           </div>
         </template>
@@ -123,32 +134,40 @@
 
 <script lang="ts">
 import { Component } from 'vue-property-decorator'
+import BISTable from '@/components/bis_table.vue'
+import CharacterBio from '@/components/character_bio.vue'
+import ConfirmDelete from '@/components/modals/confirm_delete.vue'
+import TeamBio from '@/components/team_bio.vue'
 import { CharacterDetails } from '@/interfaces/character'
 import Job from '@/interfaces/job'
 import Team from '@/interfaces/team'
 import TeamMember from '@/interfaces/team_member'
 import SavageAimMixin from '@/mixins/savage_aim_mixin'
-import CharacterBio from '@/components/character_bio.vue'
-import ConfirmDelete from '@/components/modals/confirm_delete.vue'
 
 @Component({
   components: {
+    BISTable,
     CharacterBio,
+    TeamBio,
   },
 })
 export default class Character extends SavageAimMixin {
+  bisShown = true
+
   character!: CharacterDetails
 
   teams: Team[] = []
 
-  loading = true
+  teamsShown = false
 
-  get url(): string {
-    return `/backend/api/character/${this.$route.params.id}/`
-  }
+  loading = true
 
   get teamsUrl(): string {
     return `/backend/api/team/?char_id=${this.$route.params.id}`
+  }
+
+  get url(): string {
+    return `/backend/api/character/${this.$route.params.id}/`
   }
 
   created(): void {
@@ -217,6 +236,10 @@ export default class Character extends SavageAimMixin {
       if (response.ok) {
         this.$notify({ text: 'Verification requested, please check back in a few minutes!', type: 'is-success' })
       }
+      else if (response.status === 404) {
+        // Status 404 on this page likely means the character is verified
+        this.fetchChar()
+      }
       else {
         this.$notify({ text: `Unexpected HTTP status ${response.status} received when attempting to add Character to verification queue.`, type: 'is-danger' })
       }
@@ -225,8 +248,34 @@ export default class Character extends SavageAimMixin {
       this.$notify({ text: `Error ${e} when attempting to add Character to verification queue..`, type: 'is-danger' })
     }
   }
+
+  // Show code for the tabs
+  showBIS(): void {
+    this.bisShown = true
+    this.teamsShown = false
+  }
+
+  showTeams(): void {
+    this.teamsShown = true
+    this.bisShown = false
+  }
 }
 </script>
 
 <style lang="scss">
+.card-header-icon {
+  cursor: default;
+}
+
+.card-header-icon > :not(:last-child) {
+  margin-right: 0.5rem;
+}
+
+.card-header-icon .tags {
+  margin-bottom: 0;
+
+  & .tag {
+    margin-bottom: 0;
+  }
+}
 </style>

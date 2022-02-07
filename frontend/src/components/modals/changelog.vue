@@ -11,37 +11,39 @@
       </div>
     </div>
     <div class="card-content content">
-      <h2 class="has-text-primary subtitle">{{ version }}</h2>
-      <div class="divider"><i class="material-icons icon">expand_more</i> A Message <i class="material-icons icon">expand_more</i></div>
-      <p>I had a little look at some DB metrics last night and I see a lot more people than I would have expected, since I've been slowly rolling the site out to friends' statics and such..</p>
-      <p>Needless to say, I'm sorta overwhelmed with the use (in a good way, don't worry!)</p>
-      <p>But, to those of you who have stumbled across my little website, I had no way of getting feedback from you so far...</p>
-      <p>So there's a Discord server available now! It's smol and not very good but I figured it was important to get one out at least, and we can grow from there!</p>
-      <p>Thank you to everyone who's been using the site so far, I will try my best to keep it going towards something ideal o7</p>
-      <p class="has-text-centered">
-        <a href="https://discord.gg/k8szJ5qAKw" class="button is-blurple icon-text" target="_blank">
-          <span class="icon"><img src="/discord.svg" alt="Discord Logo" /></span>
-          <span>Savage Aim Discord</span>
-        </a>
-      </p>
-      <div class="divider"><i class="material-icons icon">expand_more</i> Major Changes <i class="material-icons icon">expand_more</i></div>
-      <p>Notifications System has been added!</p>
+      <h2 class="has-text-primary subtitle">{{ version }} - The First Discord Requests Release!</h2>
+      <div class="divider"><i class="material-icons icon">expand_more</i> More Character Page Details  (from @Rai) <i class="material-icons icon">expand_more</i></div>
+      <p>Split the Character page into two sections, one for BIS Lists and one for Teams.</p>
       <p>
-        The following events will give you notifications;
+        With only one visible at a time, the Character page can now display more information;
         <ul>
-          <li>Character Verify requests failed or succeeded.</li>
-          <li>Your Character has been put in charge of a Team it is in.</li>
-          <li>Someone has joined a Team you lead.</li>
-          <li>The Loot Tracker of a Team has updated one of your BIS Lists.</li>
+          <li>BIS Lists now display as tables similar to Team Details. <span class="has-text-warning">Uses the bis mainhand item level for colours.</span></li>
+          <li>Teams now display the exact same as they do on the home page, with jobs displayed along the bottom.</li>
         </ul>
       </p>
-      <p>These are all toggleable, so you can disable any notification types you don't want to receive by visiting the Settings page!</p>
-      <p>Currently the Notification system is polled every 30 seconds for updates, but I intend to make this truly live in the near future with instant updates when necessary!</p>
+
+      <div class="divider"><i class="material-icons icon">expand_more</i> Tome Augment Manager (from @Brandon) <i class="material-icons icon">expand_more</i></div>
+      <p>Adds Tome Armour Augment and Tome Accessory Augment to the automated section of the Loot Manager.</p>
+      <p>Due to the nature of the items in question, giving these items as loot using the manager does not update the corresponding BIS List.</p>
+      <p>The boxes indicating character details for these items are differ slightly from those for the raid gear, so please check the wiki if there are any questions!</p>
+
+      <div class="divider"><i class="material-icons icon">expand_more</i> Improve BIS Form on Mobile (from @Yord) <i class="material-icons icon">expand_more</i></div>
+      <p>
+        Improved User experience when creating and editing BIS Lists on mobile devices.
+        <ul>
+          <li>On mobile, the sections are separated into tabs to keep the page tidy and logically break up each piece of the form.</li>
+        </ul>
+      </p>
 
       <div class="divider"><i class="material-icons icon">expand_more</i> Minor Changes <i class="material-icons icon">expand_more</i></div>
-      <p>Added Traffic Lights style colour scheme.</p>
-      <p>Added more visibility into client side errors.</p>
-      <p>Minor help text additions.</p>
+      <p>Added the arbitrary loot tracking form to mobile view as well as desktop, to not keep functionality away from the mobile version.</p>
+      <p>
+        Using a Discord logo for the Discord link in the footer, to make it more immediately obvious what it is.
+        <ul>
+          <li>Note that to stick to Discord's branding guidelines, the links in the footer have all been made white when unhovered instead of the original dark blue.</li>
+        </ul>
+      </p>
+      <p>Trying to verify an already verified Character will reload the page instead of giving 404 error messages.</p>
     </div>
   </div>
 </template>

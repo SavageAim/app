@@ -61,33 +61,12 @@
             </div>
             <div class="card-content">
               <p>Below are the people that need the chosen item for their Team BIS.</p>
-              <p v-if="editable">Clicking the button beside anyone will add a Loot entry, and update their BIS List accordingly.</p>
-              <template v-if="displayItem !== 'na'">
-                <div class="box list-item" v-for="entry in loot.gear[displayItem].need" :key="`need-${entry.member_id}`" data-microtip-position="top" role="tooltip" :aria-label="`Current: ${entry.current_gear_name}`">
-                  <span class="badge is-primary">{{ getNeedLoot(entry) }}</span>
-                  <div class="list-data">
-                    <div class="left">
-                      {{ entry.character_name }}
-                    </div>
-                    <div class="right">
-                      <div class="tags has-addons is-hidden-touch">
-                        <span class="tag is-light">
-                          iL
-                        </span>
-                        <span class="tag" :class="[`is-${entry.job_role}`]">
-                          {{ entry.current_gear_il }}
-                        </span>
-                      </div>
-                      <span class="icon">
-                        <img :src="`/job_icons/${entry.job_icon_name}.png`" :alt="`${entry.job_icon_name} job icon`" />
-                      </span>
-                    </div>
-                  </div>
-                  <div v-if="editable" class="list-actions">
-                    <button class="button is-success" @click="() => { giveNeedLoot(entry) }" v-if="!requesting">Give Item</button>
-                    <button class="button is-success is-loading" v-else>Give Item</button>
-                  </div>
-                </div>
+              <p v-if="editable">Clicking the button beside anyone will add a Loot entry, and update their BIS List accordingly (where possible).</p>
+              <template v-if="displayItem.indexOf('augment') !== -1">
+                <NeedTomeItemBox :editable="editable" :items-received="getNeedReceived(entry)" :entry="entry" :requesting="requesting" v-for="entry in loot.gear[displayItem].need" :key="entry.character_id" v-on:save="() => { giveNeedTomeLoot(entry) }" />
+              </template>
+              <template v-else-if="displayItem !== 'na'">
+                <NeedRaidItemBox :editable="editable" :items-received="getNeedReceived(entry)" :entry="entry" :requesting="requesting" v-for="entry in loot.gear[displayItem].need" :key="entry.character_id" v-on:save="() => { giveNeedRaidLoot(entry) }" />
               </template>
             </div>
           </div>
@@ -103,36 +82,13 @@
             </div>
             <div class="card-content">
               <p>Below are the people that need the chosen item for any other BIS they have, grouped by character.</p>
-              <p v-if="editable">Clicking the button beside anyone will add a Loot entry, and update their BIS List accordingly.</p>
+              <p v-if="editable">Clicking the button beside anyone will add a Loot entry, and update their BIS List accordingly (where possible).</p>
 
-              <template v-if="displayItem !== 'na'">
-                <div class="box greed-box" v-for="entry in loot.gear[displayItem].greed" :key="`greed-${entry.member_id}`">
-                  <span class="badge is-info">{{ getGreedLoot(entry) }}</span>
-                  <div class="list-item" v-for="list in entry.greed_lists" :key="`greed-${entry.member_id}-${list.bis_list_id}`" data-microtip-position="top" role="tooltip" :aria-label="`Current: ${list.current_gear_name}`">
-                    <div class="list-data">
-                      <div class="left">
-                        {{ entry.character_name }}
-                      </div>
-                      <div class="right">
-                        <div class="tags has-addons is-hidden-touch">
-                          <span class="tag is-light">
-                            iL
-                          </span>
-                          <span class="tag" :class="[`is-${list.job_role}`]">
-                            {{ list.current_gear_il }}
-                          </span>
-                        </div>
-                        <span class="icon">
-                          <img :src="`/job_icons/${list.job_icon_name}.png`" :alt="`${list.job_icon_name} job icon`" />
-                        </span>
-                      </div>
-                    </div>
-                    <div v-if="editable" class="list-actions">
-                      <button class="button is-success" @click="() => { giveGreedLoot(entry, list) }" v-if="!requesting">Give Item</button>
-                      <button class="button is-success is-loading" v-else>Give Item</button>
-                    </div>
-                  </div>
-                </div>
+              <template v-if="displayItem.indexOf('augment') !== -1">
+                <GreedTomeItemBox :editable="editable" :items-received="getGreedReceived(entry)" :entry="entry" :requesting="requesting" v-for="entry in loot.gear[displayItem].greed" :key="entry.character_id" v-on:save="() => { giveGreedTomeLoot(entry) }" />
+              </template>
+              <template v-else-if="displayItem !== 'na'">
+                <GreedRaidItemBox :editable="editable" :items-received="getGreedReceived(entry)" :entry="entry" :requesting="requesting" v-for="entry in loot.gear[displayItem].greed" :key="entry.character_id" v-on:save="(list) => { giveGreedRaidLoot(entry, list) }" />
               </template>
             </div>
           </div>
@@ -159,7 +115,82 @@
                   <span class="has-text-primary" v-else>Need</span>
                 </li>
                 <li v-if="editable">
-                  <p class="has-text-warning">Please visit the site on desktop to add arbitrary items, sorry :(</p>
+                  <hr />
+                  <h3 class="subtitle">Add Entry</h3>
+                  <div class="field is-horizontal">
+                    <div class="field-label is-normal">
+                      <label class="label">Obtained</label>
+                    </div>
+                    <div class="field-body">
+                      <div class="field">
+                        <div class="control">
+                          <input class="input" type="date" v-model="createData.obtained" />
+                          <p class="help is-danger" v-if="createLootErrors.obtained !== undefined">{{ createLootErrors.obtained[0] }}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="field is-horizontal">
+                    <div class="field-label is-normal">
+                      <label class="label">Team Member</label>
+                    </div>
+                    <div class="field-body">
+                      <div class="field">
+                        <div class="control">
+                          <div class="select is-fullwidth">
+                            <select v-model="createData.member">
+                              <option value="-1">Select Team Member</option>
+                              <option v-for="member in team.members" :key="member.id" :value="member.id">{{ member.character.name }} @ {{ member.character.world }}</option>
+                            </select>
+                          </div>
+                          <p class="help is-danger" v-if="createLootErrors.member_id !== undefined">{{ createLootErrors.member_id[0] }}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="field is-horizontal">
+                    <div class="field-label is-normal">
+                      <label class="label">Item</label>
+                    </div>
+                    <div class="field-body">
+                      <div class="field">
+                        <ItemDropdown v-model="createData.item" :displayNonGear="true" :error="createLootErrors.item" />
+                      </div>
+                    </div>
+                  </div>
+                  <div class="field is-horizontal">
+                    <div class="field-body">
+                      <div class="field">
+                        <div class="control">
+                          <div class="field has-addons" v-if="!requesting">
+                            <div class="control is-expanded">
+                              <button class="button is-primary is-fullwidth" @click="() => { trackExtraLoot(false) }">
+                                <span>Need</span>
+                              </button>
+                            </div>
+                            <div class="control is-expanded">
+                              <button class="button is-info is-fullwidth" @click="() => { trackExtraLoot(true) }">
+                                <span>Greed</span>
+                              </button>
+                            </div>
+                          </div>
+                          <div class="field has-addons" v-else>
+                            <div class="control is-expanded">
+                              <button class="button is-primary is-fullwidth is-loading">
+                                <span>Need</span>
+                              </button>
+                            </div>
+                            <div class="control is-expanded">
+                              <button class="button is-info is-fullwidth is-loading">
+                                <span>Greed</span>
+                              </button>
+                            </div>
+                          </div>
+                          <p class="help is-danger" v-if="createLootErrors.greed !== undefined">{{ createLootErrors.greed[0] }}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </li>
               </ul>
               <table class="table is-striped is-bordered is-fullwidth is-hidden-touch">
@@ -206,12 +237,12 @@
                       <div class="control">
                         <div class="field has-addons" v-if="!requesting">
                           <div class="control is-expanded">
-                            <button class="button is-primary is-fullwidth" @click="() => { sendLoot(false) }">
+                            <button class="button is-primary is-fullwidth" @click="() => { trackExtraLoot(false) }">
                               <span>Need</span>
                             </button>
                           </div>
                           <div class="control is-expanded">
-                            <button class="button is-info is-fullwidth" @click="() => { sendLoot(true) }">
+                            <button class="button is-info is-fullwidth" @click="() => { trackExtraLoot(true) }">
                               <span>Greed</span>
                             </button>
                           </div>
@@ -243,8 +274,13 @@
 </template>
 
 <script lang="ts">
+import dayjs from 'dayjs'
 import { Component } from 'vue-property-decorator'
+import GreedRaidItemBox from '@/components/loot/greed_raid_item_box.vue'
+import GreedTomeItemBox from '@/components/loot/greed_tome_item_box.vue'
 import ItemDropdown from '@/components/item_dropdown.vue'
+import NeedRaidItemBox from '@/components/loot/need_raid_item_box.vue'
+import NeedTomeItemBox from '@/components/loot/need_tome_item_box.vue'
 import TeamNav from '@/components/team_nav.vue'
 import {
   GreedGear,
@@ -254,6 +290,9 @@ import {
   LootData,
   LootPacket,
   LootResponse,
+  LootWithBISPacket,
+  TomeGreedGear,
+  TomeNeedGear,
 } from '@/interfaces/loot'
 import { LootCreateErrors, LootBISCreateErrors } from '@/interfaces/responses'
 import Team from '@/interfaces/team'
@@ -262,7 +301,11 @@ import SavageAimMixin from '@/mixins/savage_aim_mixin'
 
 @Component({
   components: {
+    GreedRaidItemBox,
+    GreedTomeItemBox,
     ItemDropdown,
+    NeedRaidItemBox,
+    NeedTomeItemBox,
     TeamNav,
   },
 })
@@ -323,18 +366,18 @@ export default class TeamLoot extends SavageAimMixin {
     }
   }
 
-  getGreedLoot(entry: GreedGear): number {
+  getGreedReceived(entry: GreedGear): number {
     // Given an entry, search the history and find how many times that Character has received greed loot so far this tier
     return this.loot.history.reduce((sum: number, loot: Loot) => sum + (loot.member === entry.character_name && loot.greed ? 1 : 0), 0)
   }
 
-  getNeedLoot(entry: NeedGear): number {
+  getNeedReceived(entry: NeedGear): number {
     // Given an entry, search the history and find how many times that Character has received need loot so far this tier
     return this.loot.history.reduce((sum: number, loot: Loot) => sum + (loot.member === entry.character_name && !loot.greed ? 1 : 0), 0)
   }
 
   // Functions to handle interacting with the API for handling loot handouts
-  giveGreedLoot(entry: GreedGear, list: GreedItem): void {
+  giveGreedRaidLoot(entry: GreedGear, list: GreedItem): void {
     const data = {
       greed: true,
       greed_bis_id: list.bis_list_id,
@@ -344,7 +387,18 @@ export default class TeamLoot extends SavageAimMixin {
     this.sendLootWithBis(data)
   }
 
-  giveNeedLoot(entry: NeedGear): void {
+  // Tome loot sends information using the non bis api -> tracks history, no BIS updates
+  giveGreedTomeLoot(entry: TomeGreedGear): void {
+    const data = {
+      greed: true,
+      obtained: dayjs().format('YYYY-MM-DD'),
+      member_id: entry.member_id,
+      item: this.displayItem,
+    }
+    this.sendLoot(data)
+  }
+
+  giveNeedRaidLoot(entry: NeedGear): void {
     const data = {
       greed: false,
       greed_bis_id: null,
@@ -354,21 +408,21 @@ export default class TeamLoot extends SavageAimMixin {
     this.sendLootWithBis(data)
   }
 
-  async sendLoot(greed: boolean): Promise<void> {
-    // Send a request to create loot entry without affecting bis lists
-    this.createLootErrors = {}
-    if (this.createData.obtained === '') {
-      this.createLootErrors.obtained = ['Please enter a date.']
-      return
+  giveNeedTomeLoot(entry: TomeNeedGear): void {
+    const data = {
+      greed: false,
+      obtained: dayjs().format('YYYY-MM-DD'),
+      member_id: entry.member_id,
+      item: this.displayItem,
     }
+    this.sendLoot(data)
+  }
+
+  async sendLoot(data: LootPacket): Promise<void> {
+    // Send a request to create loot entry without affecting bis lists
     if (this.requesting) return
     this.requesting = true
-    const body = JSON.stringify({
-      member_id: this.createData.member,
-      obtained: this.createData.obtained,
-      item: this.createData.item,
-      greed,
-    })
+    const body = JSON.stringify(data)
     try {
       const response = await fetch(this.url, {
         method: 'POST',
@@ -398,7 +452,7 @@ export default class TeamLoot extends SavageAimMixin {
     }
   }
 
-  async sendLootWithBis(data: LootPacket): Promise<void> {
+  async sendLootWithBis(data: LootWithBISPacket): Promise<void> {
     // Regardless of whichever type of button is pressed, send a request to create a loot entry
     if (this.requesting) return
     this.requesting = true
@@ -447,10 +501,25 @@ export default class TeamLoot extends SavageAimMixin {
     }
     history.classList.toggle('is-hidden')
   }
+
+  trackExtraLoot(greed: boolean): void {
+    this.createLootErrors = {}
+    if (this.createData.obtained === '') {
+      this.createLootErrors.obtained = ['Please enter a date.']
+      return
+    }
+    const data = {
+      member_id: this.createData.member,
+      obtained: this.createData.obtained,
+      item: this.createData.item,
+      greed,
+    }
+    this.sendLoot(data)
+  }
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .card-content .box:first-of-type {
   margin-top: 0.5rem;
 }

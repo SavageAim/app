@@ -673,6 +673,118 @@ class LootTestSuite(SavageAimTestCase):
                     },
                 ],
             },
+            'tome-accessory-augment': {
+                'need': [
+                    {
+                        'member_id': self.mt_tm.pk,
+                        'character_name': f'{self.main_tank.name} @ {self.main_tank.world}',
+                        'job_icon_name': 'paladin',
+                        'job_role': 'tank',
+                        'requires': 3,
+                    },
+                    {
+                        'member_id': self.tl_tm.pk,
+                        'character_name': f'{self.team_lead.name} @ {self.team_lead.world}',
+                        'job_icon_name': 'sage',
+                        'job_role': 'heal',
+                        'requires': 2,
+                    },
+                ],
+                'greed': [
+                    {
+                        'member_id': self.mt_tm.pk,
+                        'character_name': f'{self.main_tank.name} @ {self.main_tank.world}',
+                        'greed_lists': [
+                            {
+                                'bis_list_id': self.mt_alt_bis.id,
+                                'job_icon_name': 'whitemage',
+                                'job_role': 'heal',
+                                'requires': 2,
+                            },
+                            {
+                                'bis_list_id': self.mt_alt_bis2.id,
+                                'job_icon_name': 'dancer',
+                                'job_role': 'dps',
+                                'requires': 3,
+                            },
+                        ],
+                    },
+                    {
+                        'member_id': self.tl_tm.pk,
+                        'character_name': f'{self.team_lead.name} @ {self.team_lead.world}',
+                        'greed_lists': [
+                            {
+                                'bis_list_id': self.tl_alt_bis.id,
+                                'job_icon_name': 'paladin',
+                                'job_role': 'tank',
+                                'requires': 3,
+                            },
+                            {
+                                'bis_list_id': self.tl_alt_bis2.id,
+                                'job_icon_name': 'reaper',
+                                'job_role': 'dps',
+                                'requires': 3,
+                            },
+                        ],
+                    },
+                ],
+            },
+            'tome-armour-augment': {
+                'need': [
+                    {
+                        'member_id': self.mt_tm.pk,
+                        'character_name': f'{self.main_tank.name} @ {self.main_tank.world}',
+                        'job_icon_name': 'paladin',
+                        'job_role': 'tank',
+                        'requires': 2,
+                    },
+                    {
+                        'member_id': self.tl_tm.pk,
+                        'character_name': f'{self.team_lead.name} @ {self.team_lead.world}',
+                        'job_icon_name': 'sage',
+                        'job_role': 'heal',
+                        'requires': 3,
+                    },
+                ],
+                'greed': [
+                    {
+                        'member_id': self.mt_tm.pk,
+                        'character_name': f'{self.main_tank.name} @ {self.main_tank.world}',
+                        'greed_lists': [
+                            {
+                                'bis_list_id': self.mt_alt_bis.id,
+                                'job_icon_name': 'whitemage',
+                                'job_role': 'heal',
+                                'requires': 3,
+                            },
+                            {
+                                'bis_list_id': self.mt_alt_bis2.id,
+                                'job_icon_name': 'dancer',
+                                'job_role': 'dps',
+                                'requires': 2,
+                            },
+                        ],
+                    },
+                    {
+                        'member_id': self.tl_tm.pk,
+                        'character_name': f'{self.team_lead.name} @ {self.team_lead.world}',
+                        'greed_lists': [
+                            {
+                                'bis_list_id': self.tl_alt_bis.id,
+                                'job_icon_name': 'paladin',
+                                'job_role': 'tank',
+                                'requires': 2,
+                            },
+                            {
+                                'bis_list_id': self.tl_alt_bis2.id,
+                                'job_icon_name': 'reaper',
+                                'job_role': 'dps',
+                                'requires': 2,
+                            },
+                        ],
+                    },
+                ],
+            },
         }
 
     def tearDown(self):
@@ -754,6 +866,16 @@ class LootTestSuite(SavageAimTestCase):
         self.expected_gear['legs']['greed'].pop(0)
         self.expected_gear['head']['greed'].pop(0)
         self.expected_gear['necklace']['greed'].pop(0)
+
+        # Upgrade some tome gear and check required numbers
+        aug_tome_gear = Gear.objects.get(name='Augmented Radiant Host')
+        self.mt_main_bis.current_body = aug_tome_gear
+        self.mt_main_bis.save()
+        self.tl_alt_bis2.current_right_ring = aug_tome_gear
+        self.tl_alt_bis2.save()
+
+        self.expected_gear['tome-armour-augment']['need'][0]['requires'] -= 1
+        self.expected_gear['tome-accessory-augment']['greed'][1]['greed_lists'][1]['requires'] -= 1
 
         # Send request and retest with updated expectation
         response = self.client.get(url)

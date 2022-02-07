@@ -84,19 +84,5 @@ export default class TeamView extends SavageAimMixin {
 </script>
 
 <style lang="scss">
-.card-header-icon {
-  cursor: default;
-}
 
-.card-header-icon > :not(:last-child) {
-  margin-right: 0.5rem;
-}
-
-.card-header-icon .tags {
-  margin-bottom: 0;
-
-  & .tag {
-    margin-bottom: 0;
-  }
-}
 </style>
