@@ -16,7 +16,7 @@
         </div>
 
         <!-- Navigation -->
-        <div class="card">
+        <div class="card" v-if="character.verified">
           <div class="card-content">
             <aside class="menu">
               <ul class="menu-list">
