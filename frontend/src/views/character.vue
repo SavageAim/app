@@ -96,6 +96,9 @@
                 </router-link>
               </footer>
             </div>
+            <div class="subtitle has-text-centered" v-if="character.bis_lists.length === 0">
+              <p>No BIS Lists here yet!</p>
+            </div>
           </div>
 
           <!-- Teams -->
@@ -118,6 +121,9 @@
                   <TeamBio :team="team" />
                 </router-link>
               </div>
+            </div>
+            <div class="subtitle has-text-centered" v-if="teams.length === 0">
+              <p>No Teams here yet!</p>
             </div>
           </div>
         </template>
