@@ -384,7 +384,7 @@ export default class BISListForm extends Vue {
 
   // Update job icons when the job dropdown changes
   changeMobileJobIcon(): void {
-    const selectedJob = (this.mobileJobPicker.options[this.mobileJobPicker.selectedIndex]).dataset.target
+    const selectedJob = (this.mobileJobPicker.options[this.mobileJobPicker.selectedIndex]).dataset.target as string
 
     // Handle the flag for the offhand
     this.displayOffhand = selectedJob === 'paladin'
@@ -393,7 +393,7 @@ export default class BISListForm extends Vue {
   }
 
   changeJobIcon(): void {
-    const selectedJob = (this.jobPicker.options[this.jobPicker.selectedIndex]).dataset.target
+    const selectedJob = (this.jobPicker.options[this.jobPicker.selectedIndex]).dataset.target as string
 
     // Handle the flag for the offhand
     this.displayOffhand = selectedJob === 'paladin'
