@@ -369,10 +369,6 @@ export default class BISListForm extends Vue {
     return this.$refs.jobPicker as HTMLSelectElement
   }
 
-  get mobileJobIcon(): HTMLImageElement {
-    return this.$refs.mobileJobIcon as HTMLImageElement
-  }
-
   get mobileJobPicker(): HTMLSelectElement {
     return this.$refs.mobileJobPicker as HTMLSelectElement
   }
@@ -410,10 +406,11 @@ export default class BISListForm extends Vue {
   setIcon(job: string): void {
     const src = `${this.baseImgUrl}${job}.png`
     const alt = `${job} job icon`
+    const mobileJobIcon = this.$refs.mobileJobIcon as HTMLImageElement
     this.jobIcon.src = src
     this.jobIcon.alt = alt
-    this.mobileJobIcon.src = src
-    this.mobileJobIcon.alt = alt
+    mobileJobIcon.src = src
+    mobileJobIcon.alt = alt
   }
 
   // Method toggle for the tabs
@@ -430,6 +427,9 @@ export default class BISListForm extends Vue {
   showDetails(): void {
     this.showNone()
     this.tabsShown.details = true
+    Vue.nextTick(() => {
+      this.changeMobileJobIcon()
+    })
   }
 
   showFilters(): void {
