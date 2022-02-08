@@ -8,7 +8,7 @@
     <div class="columns">
       <div class="column is-half">
         <div class="card">
-          <div href="#" class="card-header">
+          <div class="card-header">
             <div class="card-header-title">Colour Scheme</div>
           </div>
           <div class="card-content">
@@ -62,9 +62,9 @@
       <!-- Notifications -->
       <div class="column is-half">
         <div class="card">
-          <a href="#" class="card-header">
+          <div class="card-header">
             <div class="card-header-title">Notifications</div>
-          </a>
+          </div>
           <div class="card-content">
             <p class="has-text-info">Tick or untick boxes for the Notifications you do / don't want to receive, and click save!</p>
             <hr />

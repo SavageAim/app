@@ -3,7 +3,7 @@
     <div class="breadcrumb">
       <ul>
         <li><router-link to="/team/">Create or Join a Team</router-link></li>
-        <li class="is-active"><a href="#">Create a Team</a></li>
+        <li class="is-active"><a>Create a Team</a></li>
       </ul>
     </div>
 

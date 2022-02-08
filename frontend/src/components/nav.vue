@@ -27,7 +27,7 @@
       </div>
 
       <div class="navbar-end">
-        <a href="#" @click="showLegend" class="navbar-item">
+        <a @click="showLegend" class="navbar-item">
           <div class="icon-text">
             <span class="icon"><i class="material-icons">bar_chart</i></span>
             <span>Colours Explanation</span>
@@ -35,7 +35,7 @@
         </a>
 
         <template v-if="authenticated">
-          <a href="#" class="navbar-item notifications" @click="showNotifs">
+          <a class="navbar-item notifications" @click="showNotifs">
             <div class="icon-text" v-if="unreads > 0">
               <span class="icon">
                 <span class="badge is-info">{{ unreads }}</span>

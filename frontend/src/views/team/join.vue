@@ -8,7 +8,7 @@
       <div class="breadcrumb">
         <ul>
           <li><router-link to="/team/">Create or Join a Team</router-link></li>
-          <li class="is-active"><a href="#">Join a Team</a></li>
+          <li class="is-active"><a>Join a Team</a></li>
         </ul>
       </div>
 
