@@ -2,7 +2,7 @@
   <div>
     <div class="breadcrumb">
       <ul>
-        <li class="is-active"><a href="#">Create or Join a Team</a></li>
+        <li class="is-active"><a>Create or Join a Team</a></li>
       </ul>
     </div>
 

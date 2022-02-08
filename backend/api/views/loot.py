@@ -365,6 +365,9 @@ class LootWithBIS(APIView):
         # If we just copy bis_item onto current_item that will avoid any checking we have to do :D
         bis_item = getattr(bis, f'bis_{item}')
         setattr(bis, f'current_{item}', bis_item)
+        if item == 'mainhand' and bis.job.id != 'PLD':
+            # Set the offhand as well
+            bis.current_offhand = bis_item
         bis.save()
 
         # Send a notification

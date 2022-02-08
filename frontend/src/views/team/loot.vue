@@ -96,7 +96,7 @@
 
         <div class="column is-full">
           <div class="card">
-            <a href="#" class="card-header" @click="toggleHistory">
+            <a class="card-header" @click="toggleHistory">
               <div class="card-header-title">
                 Loot History
               </div>

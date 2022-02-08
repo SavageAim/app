@@ -8,7 +8,7 @@
       <div class="breadcrumb">
         <ul>
           <li><router-link :to="`/team/${team.id}/`">{{ team.name }}</router-link></li>
-          <li class="is-active"><a href="#">Update Membership</a></li>
+          <li class="is-active"><a>Update Membership</a></li>
         </ul>
       </div>
 
