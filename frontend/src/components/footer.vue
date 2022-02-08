@@ -1,7 +1,7 @@
 <template>
   <footer id="footer" class="content has-text-centered">
     <a href="https://wiki.savageaim.com" target="_blank" data-microtip-position="top" role="tooltip" aria-label="Wiki"><span class="icon is-large"><i class="material-icons">menu_book</i></span></a>
-    <a href="#changelog" data-microtip-position="top" role="tooltip" aria-label="Changelog" @click="showChangelog"><span class="icon is-large"><i class="material-icons">update</i></span></a>
+    <a data-microtip-position="top" role="tooltip" aria-label="Changelog" @click="showChangelog"><span class="icon is-large"><i class="material-icons">update</i></span></a>
     <a href="https://github.com/Savage-Aim/app" target="_blank" data-microtip-position="top" role="tooltip" aria-label="Github Repo"><span class="icon is-large"><i class="material-icons">code</i></span></a>
     <a class="discord-link" href="https://discord.gg/k8szJ5qAKw" target="_blank" data-microtip-position="top" role="tooltip" aria-label="Savage Aim Discord"><span class="icon is-large"><img src="/discord.svg" alt="Discord Logo" class="image is-24x24 discord" /></span></a>
     <p>Savage Aim v{{ $store.state.version }}, by Erika Yukiko (Lich)</p>
