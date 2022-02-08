@@ -94,7 +94,7 @@ export default class Notifications extends Vue {
   }
 
   pageRange(): ReadonlyArray<number> {
-    const size = this.page * this.notifsPerPage < this.notifications.length ? this.notifsPerPage : this.notifications.length % this.notifsPerPage
+    const size = this.page * this.notifsPerPage <= this.notifications.length ? this.notifsPerPage : this.notifications.length % this.notifsPerPage
     const start = (this.page - 1) * this.notifsPerPage
     return Array.from({ length: size }, (x, i) => i + start)
   }
