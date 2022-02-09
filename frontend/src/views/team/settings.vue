@@ -76,6 +76,11 @@
 
             <button class="button is-success" @click="saveDetails">Save</button>
           </div>
+          <footer class="card-footer">
+            <a class="has-text-danger card-footer-item">
+              Disband
+            </a>
+          </footer>
         </div>
       </div>
     </template>
