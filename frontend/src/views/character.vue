@@ -10,9 +10,9 @@
           <div class="card-content">
             <CharacterBio :character="character" :displayUnverified="false" />
           </div>
-          <!-- <footer class="card-footer">
+          <footer class="card-footer">
             <button class="button is-fullwidth is-danger is-outlined" @click="deleteChar">Delete Character</button>
-          </footer> -->
+          </footer>
         </div>
 
         <!-- Navigation -->
@@ -93,6 +93,9 @@
               <footer class="card-footer">
                 <router-link :to="`/characters/${character.id}/bis_list/${bis.id}/`" class="card-footer-item">
                   Edit
+                </router-link>
+                <router-link :to="`/characters/${character.id}/bis_list/${bis.id}/`" class="card-footer-item has-text-danger">
+                  Delete
                 </router-link>
               </footer>
             </div>
