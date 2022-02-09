@@ -134,10 +134,20 @@ LOGGING = {
 }
 
 # Sentry for errors as well
+def sampler(context):
+    # Always inherit parent context
+    if context['parent_sampled'] is not None:
+        return context['parent_sampled']
+    # I want to trace loot requests since I need to know what's going on in the loot requests so I can improve them
+    if 'loot' in context['transaction_context']['name'].lower():
+        return 0.5
+    # Anything else I'm not too bothered by
+    return 0.05
+
 sentry_sdk.init(
     dsn=environ['SENTRY_DSN'],
     integrations=[DjangoIntegration()],
-    traces_sample_rate=0,
+    traces_sampler=sampler,
 
     # If you wish to associate users to errors (assuming you are using
     # django.contrib.auth) you may enable sending PII data.
