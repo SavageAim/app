@@ -59,9 +59,6 @@ $card-background-color: $scheme-main-bis;
 .vm--modal {
   background-color: $card-background-color!important;
 }
-.card-footer > .button {
-  border-radius: 0 0 4px 4px;
-}
 .card:not(:last-child) {
   margin-bottom: 1.5rem;
 }

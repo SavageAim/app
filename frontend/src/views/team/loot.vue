@@ -109,13 +109,15 @@
                 <li v-for="history in loot.history" :key="`mobile-history-${history.id}`">
                   <b>Item: </b> {{ history.item }}<br />
                   <b>Obtained By: </b> {{ history.member }}<br />
+                  <button v-if="editable" class="button is-danger is-pulled-right">
+                    <i class="material-icons">delete</i>
+                  </button>
                   <b>On: </b> {{ history.obtained }}<br />
                   <b>Via: </b>
                   <span class="has-text-info" v-if="history.greed">Greed</span>
                   <span class="has-text-primary" v-else>Need</span>
                 </li>
                 <li v-if="editable">
-                  <hr />
                   <h3 class="subtitle">Add Entry</h3>
                   <div class="field is-horizontal">
                     <div class="field-label is-normal">
@@ -200,16 +202,20 @@
                     <th>Obtained By</th>
                     <th>Item</th>
                     <th>Need / Greed</th>
+                    <th v-if="editable" class="delete-cell has-text-centered">Delete</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr v-for="history in loot.history" :key="`history-${history.id}`">
-                    <td>{{ history.obtained }}</td>
-                    <td>{{ history.member }}</td>
-                    <td>{{ history.item }}</td>
+                    <td><p>{{ history.obtained }}</p></td>
+                    <td><p>{{ history.member }}</p></td>
+                    <td><p>{{ history.item }}</p></td>
                     <td>
                       <p class="has-text-info" v-if="history.greed">Greed</p>
                       <p class="has-text-primary" v-else>Need</p>
+                    </td>
+                    <td v-if="editable" class="delete-cell has-text-centered">
+                      <input type="checkbox" />
                     </td>
                   </tr>
                   <tr v-if="editable">
@@ -261,6 +267,11 @@
                         </div>
                         <p class="help is-danger" v-if="createLootErrors.greed !== undefined">{{ createLootErrors.greed[0] }}</p>
                       </div>
+                    </td>
+                    <td>
+                      <button class="button is-danger">
+                        <i class="material-icons">delete</i>
+                      </button>
                     </td>
                   </tr>
                 </tbody>
@@ -550,10 +561,16 @@ export default class TeamLoot extends SavageAimMixin {
 }
 
 .mobile-history li:not(:last-child) {
-  margin-bottom: 1.5rem;
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 2px solid #17181c;
 }
 
 .greed-box {
   position: relative;
+}
+
+.delete-cell {
+  width: 0;
 }
 </style>
