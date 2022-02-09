@@ -98,6 +98,8 @@ import SavageAimMixin from '@/mixins/savage_aim_mixin'
 export default class TeamSettings extends SavageAimMixin {
   errors: TeamUpdateErrors = {}
 
+  firstLoad = true
+
   loading = true
 
   teamLeadId!: number
@@ -117,11 +119,11 @@ export default class TeamSettings extends SavageAimMixin {
     return `/backend/api/team/${this.$route.params.id}/`
   }
 
-  checkPermissions(): void {
+  checkPermissions(displayWarning: boolean): void {
     // Ensure that the person on this page is the team leader and not anybody else
     if (!this.editable()) {
-      this.$router.push('../', () => {
-        Vue.notify({ text: 'Only the team leader can edit a Team\'s settings.', type: 'is-warning' })
+      this.$router.push(`/team/${this.$route.params.id}/`, () => {
+        if (displayWarning) Vue.notify({ text: 'Only the team leader can edit a Team\'s settings.', type: 'is-warning' })
       })
     }
   }
@@ -137,9 +139,10 @@ export default class TeamSettings extends SavageAimMixin {
       if (response.ok) {
         // Parse the JSON into a team and save it
         this.team = (await response.json()) as Team
-        this.checkPermissions()
+        this.checkPermissions(this.firstLoad)
         this.teamLeadId = this.team.members.find((teamMember: TeamMember) => teamMember.character.user_id === this.$store.state.user.id)?.character.id ?? -1
         this.loading = false
+        this.firstLoad = false
         document.title = `Settings - ${this.team.name} - Savage Aim`
       }
       else {
