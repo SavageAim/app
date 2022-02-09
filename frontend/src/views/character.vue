@@ -11,7 +11,7 @@
             <CharacterBio :character="character" :displayUnverified="false" />
           </div>
           <footer class="card-footer">
-            <button class="button is-fullwidth is-danger is-outlined" @click="deleteChar">Delete Character</button>
+            <a class="has-text-danger card-footer-item" @click="deleteChar">Delete</a>
           </footer>
         </div>
 
