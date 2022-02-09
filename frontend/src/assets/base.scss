@@ -43,6 +43,16 @@ $navbar-background-color: $scheme-main;
 $navbar-item-active-color: $main-colour;
 $navbar-dropdown-item-hover-background-color: $scheme-main-bis;
 
+// Dropdown stuff
+$dropdown-content-background-color: $scheme-main-bis;
+.dropdown.is-centered .dropdown-menu {
+  left: auto;
+  right: auto;
+}
+.dropdown-trigger .icon-text {
+  color: $link;
+}
+
 // Card stuff
 $card-header-shadow: 0 0.5em 0 0 rgba($accent-dark, 0.1);
 $card-background-color: $scheme-main-bis;
