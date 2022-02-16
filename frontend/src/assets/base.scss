@@ -100,6 +100,11 @@ html.has-navbar-fixed-top {
   min-height: calc(100vh - 4.25rem);
 }
 
+p.disabled-delete {
+  font-weight: bold;
+  color: hsl(348, 86%, 30%);
+}
+
 @import './gear_gradients';
 .table.is-bordered .is-il-bis,
 .table.is-bordered .is-il-minus-0,

@@ -1,9 +1,7 @@
 <template>
   <div>
     <div class="card-header">
-      <div class="card-header-title">
-        Are you sure you want to delete the following character?
-      </div>
+      <div class="card-header-title"></div>
       <div class="card-header-icon">
         <a @click="() => { this.$emit('close') }" class="icon">
           <i class="material-icons">close</i>
@@ -11,11 +9,26 @@
       </div>
     </div>
     <div class="card-content">
+      <h2 class="subtitle">Are you sure you want to delete the following character?</h2>
+      <hr />
       <CharacterBio :character="character" :displayUnverified="false" />
+      <hr />
+      <h2 class="subtitle">Results of Deletion</h2>
+      <div class="content">
+        <!-- TODO - Populate this part with API info -->
+        <ul>
+          <li>Team Leadership of <b>Hi Wiki!</b> will be handed over to another character, and will be left.</li>
+          <li>All BIS Lists belonging to this character will be deleted.</li>
+        </ul>
+      </div>
+      <hr />
+      <p>Please type <code>{{ deleteCheck }}</code> to confirm.</p>
+      <input class="input" v-model="input" />
     </div>
     <div class="card-footer">
       <a class="card-footer-item" @click="() => { this.$emit('close') }">Cancel</a>
-      <a class="card-footer-item has-text-danger" @click="deleteCharacter">Delete</a>
+      <a class="card-footer-item has-text-danger" v-if="canDelete" @click="deleteCharacter">Delete</a>
+      <p class="card-footer-item disabled-delete" v-else data-microtip-position="top" role="tooltip" aria-label="Please confirm deletion.">Delete</p>
     </div>
   </div>
 </template>
@@ -33,6 +46,16 @@ import { CharacterDetails } from '@/interfaces/character'
 export default class DeleteCharacter extends Vue {
   @Prop()
   character!: CharacterDetails
+
+  input = ''
+
+  get canDelete(): boolean {
+    return this.input === this.deleteCheck
+  }
+
+  get deleteCheck(): string {
+    return `${this.character.name} @ ${this.character.world.split(' ')[0]}`
+  }
 
   get url(): string {
     return `/backend/api/character/${this.character.id}/`
