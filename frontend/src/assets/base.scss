@@ -56,6 +56,14 @@ $dropdown-content-background-color: $scheme-main-bis;
 // Card stuff
 $card-header-shadow: 0 0.5em 0 0 rgba($accent-dark, 0.1);
 $card-background-color: $scheme-main-bis;
+a.card-footer-item, .dropdown.card-footer-item a {
+  color: $main-colour;
+  font-weight: bold;
+
+  &:hover {
+    color: findDarkColor($main-colour)
+  }
+}
 .vm--modal {
   background-color: $card-background-color!important;
 }
