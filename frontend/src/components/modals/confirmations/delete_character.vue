@@ -15,7 +15,7 @@
     </div>
     <div class="card-footer">
       <a class="card-footer-item" @click="() => { this.$emit('close') }">Cancel</a>
-      <a class="card-footer-item" @click="deleteCharacter">Delete</a>
+      <a class="card-footer-item has-text-danger" @click="deleteCharacter">Delete</a>
     </div>
   </div>
 </template>
@@ -30,7 +30,7 @@ import { CharacterDetails } from '@/interfaces/character'
     CharacterBio,
   },
 })
-export default class ConfirmDelete extends Vue {
+export default class DeleteCharacter extends Vue {
   @Prop()
   character!: CharacterDetails
 

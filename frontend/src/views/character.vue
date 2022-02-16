@@ -139,7 +139,7 @@
 import { Component } from 'vue-property-decorator'
 import BISTable from '@/components/bis_table.vue'
 import CharacterBio from '@/components/character_bio.vue'
-import ConfirmDelete from '@/components/modals/confirm_delete.vue'
+import DeleteCharacter from '@/components/modals/confirmations/delete_character.vue'
 import TeamBio from '@/components/team_bio.vue'
 import { CharacterDetails } from '@/interfaces/character'
 import Job from '@/interfaces/job'
@@ -180,7 +180,7 @@ export default class Character extends SavageAimMixin {
 
   async deleteChar(): Promise<void> {
     // Prompt deletion first before sending an api request (we'll use a modal instead of javascript alerts)
-    this.$modal.show(ConfirmDelete, { character: this.character })
+    this.$modal.show(DeleteCharacter, { character: this.character })
   }
 
   async fetchChar(): Promise<void> {
