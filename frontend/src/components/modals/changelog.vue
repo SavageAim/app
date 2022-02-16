@@ -12,14 +12,20 @@
     </div>
     <div class="card-content content">
       <h2 class="has-text-primary subtitle">{{ version }}</h2>
-      <div class="divider"><i class="material-icons icon">expand_more</i> Minor Changes <i class="material-icons icon">expand_more</i></div>
+      <div class="divider"><i class="material-icons icon">expand_more</i> Deletion Update <i class="material-icons icon">expand_more</i></div>
+      <p>Wrong / Bad / Old data getting you down? Well now you can finally get rid of it!</p>
       <p>
-        Fixed issue in Loot Tracker where giving a Mainhand item to a non-PLD wouldn't internally update their offhand, causing desync of information.
-        <ul><li class="has-text-warning">If you have been assigned a mainhand using a Loot Tracker, go and manually save the BIS List again, which should fix this desync.</li></ul>
+        <ul>
+          <li>Characters and BIS Lists are deleted from the Character page. <span class="has-text-danger">BIS Lists cannot be deleted if they are used in a Team.</span></li>
+          <li>Teams are disbanded through the Team Settings page.</li>
+          <li>The Team Details page provides methods for Members to leave Teams, or for Team Leaders to kick Members.</li>
+        </ul>
       </p>
-      <p>Fixed issue causing random scrolls to top of page when interacting with some elements.</p>
-      <p>Fixed issue where having exactly 4 latest notifications displays none of them in the latest box.</p>
-      <p>Fixed issue where Job Icon is not kept updated in the new mobile version of the BIS List form.</p>
+
+      <div class="divider"><i class="material-icons icon">expand_more</i> Minor Changes <i class="material-icons icon">expand_more</i></div>
+      <p>Improved visibility of links in card footers by making the default colour lighter, and all links bold.</p>
+      <p>Changed the "Add New" links on the Dashboard to be the same style as all other card footer links, instead of being buttons.</p>
+      <p>Team Details card footer links are now stored in an "Actions" dropdown due to the increasing number of them.</p>
     </div>
   </div>
 </template>
