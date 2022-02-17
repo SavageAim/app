@@ -4,9 +4,9 @@ type used in the system, without having to add messy code elsewhere
 
 Also will handle sending info to websockets when we get there
 """
+from __future__ import annotations
 from django.contrib.auth.models import User
 from . import models
-
 
 def _create_notif(user: User, text: str, link: str, type: str):
     """
@@ -57,7 +57,9 @@ def team_lead(char: models.Character, team: models.Team):
     _create_notif(user, text, link, 'team_lead')
 
 
-def team_leave(char: models.Character, team: models.Team):
+def team_leave(member: models.TeamMember):
+    char = member.char
+    team = member.team
     text = f'{char} has left {team.name}!'
     link = f'/team/{team.id}/'
     user = team.members.get(lead=True).character.user
