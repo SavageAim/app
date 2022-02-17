@@ -8,6 +8,7 @@ from __future__ import annotations
 from django.contrib.auth.models import User
 from . import models
 
+
 def _create_notif(user: User, text: str, link: str, type: str):
     """
     Actually does the work of creating a Notification (and sending it down the websockets later)
@@ -54,7 +55,7 @@ def team_kick(member: models.TeamMember):
     char = member.character
     team = member.team
     text = f'{char} has been kicked from {team.name}!'
-    link = f'/'
+    link = '/'
     user = char.user
     _create_notif(user, text, link, 'team_kick')
 
