@@ -26,6 +26,18 @@
         <button class="button is-success is-loading" v-else>Give Item</button>
       </div>
     </div>
+
+    <div class="list-item" v-if="entry.greed_lists.length === 0">
+      <div class="list-data">
+        <div class="left">
+          {{ entry.character_name }}
+        </div>
+      </div>
+      <div v-if="editable" class="list-actions">
+        <button class="button is-success" @click="save" v-if="!requesting">Give Item</button>
+        <button class="button is-success is-loading" v-else>Give Item</button>
+      </div>
+    </div>
   </div>
 </template>
 

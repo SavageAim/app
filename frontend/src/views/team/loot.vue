@@ -88,7 +88,7 @@
                 <GreedTomeItemBox :editable="editable" :items-received="getGreedReceived(entry)" :entry="entry" :requesting="requesting" v-for="entry in loot.gear[displayItem].greed" :key="entry.character_id" v-on:save="() => { giveGreedTomeLoot(entry) }" />
               </template>
               <template v-else-if="displayItem !== 'na'">
-                <GreedRaidItemBox :editable="editable" :items-received="getGreedReceived(entry)" :entry="entry" :requesting="requesting" v-for="entry in loot.gear[displayItem].greed" :key="entry.character_id" v-on:save="(list) => { giveGreedRaidLoot(entry, list) }" />
+                <GreedRaidItemBox :editable="editable" :items-received="getGreedReceived(entry)" :entry="entry" :requesting="requesting" v-for="entry in loot.gear[displayItem].greed" :key="entry.character_id" v-on:save="(list) => { list === null ? giveGreedTomeLoot(entry) : giveGreedRaidLoot(entry, list) }" />
               </template>
             </div>
           </div>
