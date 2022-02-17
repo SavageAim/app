@@ -74,7 +74,7 @@ class Team(models.Model):
             return
 
         char_member = self.members.get(character=char)
-        if char_member.lead():
+        if char_member.lead:
             self.make_lead(self.members.filter(lead=False).first())
 
         notifier.team_leave(char_member)

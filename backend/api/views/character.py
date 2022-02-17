@@ -67,22 +67,6 @@ class CharacterResource(APIView):
         data = CharacterDetailsSerializer(instance=obj).data
         return Response(data)
 
-    # def delete(self, request: Request, pk: int) -> Response:
-    #     """
-    #     Delete a character.
-    #     Can only delete a character owned by the requesting user.
-
-    #     If deleting someone that is a teamlead, move the teamlead to someone else in the team
-    #     """
-    #     try:
-    #         obj = Character.objects.get(pk=pk, user=request.user)
-    #     except Character.DoesNotExist:
-    #         return Response(status=404)
-
-    #     # TODO - Safety checks on this when I switch things to using protect
-    #     obj.delete()
-    #     return Response(status=204)
-
 
 class CharacterVerification(APIView):
     """
@@ -129,3 +113,19 @@ class CharacterDelete(APIView):
         } for team in teams]
 
         return Response(info)
+
+    def delete(self, request: Request, pk: int) -> Response:
+        """
+        Delete the Character from the DB, doing all the things that are stated will happen
+        """
+        try:
+            obj = Character.objects.get(pk=pk, user=request.user)
+        except Character.DoesNotExist:
+            return Response(status=404)
+
+        # Call character.remove to cleanup teams first
+        obj.remove()
+
+        # Then delete the object
+        obj.delete()
+        return Response(status=204)

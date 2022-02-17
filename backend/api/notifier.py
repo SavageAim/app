@@ -58,7 +58,7 @@ def team_lead(char: models.Character, team: models.Team):
 
 
 def team_leave(member: models.TeamMember):
-    char = member.char
+    char = member.character
     team = member.team
     text = f'{char} has left {team.name}!'
     link = f'/team/{team.id}/'
