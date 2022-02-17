@@ -27,6 +27,7 @@
       <p>Changed the "Add New" links on the Dashboard to be the same style as all other card footer links, instead of being buttons.</p>
       <p>Team Details card footer links are now stored in an "Actions" dropdown due to the increasing number of them.</p>
       <p>Loot Tracker Greed Boxes will always have every Character in them, even if they don't have a BIS list, just for QoL.</p>
+      <p>Security and error reporting improvements.</p>
     </div>
   </div>
 </template>
