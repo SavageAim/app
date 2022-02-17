@@ -11,8 +11,10 @@ from django.db import models
 class Settings(models.Model):
     NOTIFICATIONS = {
         'loot_tracker_update',
+        'team_disband',
         'team_join',
         'team_lead',
+        'team_leave',
         'verify_fail',
         'verify_success',
     }

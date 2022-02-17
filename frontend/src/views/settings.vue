@@ -66,7 +66,7 @@
             <div class="card-header-title">Notifications</div>
           </div>
           <div class="card-content">
-            <p class="has-text-info">Tick or untick boxes for the Notifications you do / don't want to receive, and click save!</p>
+            <p class="has-text-info">Tick or untick boxes for the Notifications you do / don't want to receive, and click save!<br />Please note this only affects future notifications and will not delete any existing ones.</p>
             <hr />
             <div class="field">
               <label class="checkbox">
@@ -82,6 +82,12 @@
             </div>
             <div class="field">
               <label class="checkbox">
+                <input type="checkbox" v-model="notifications.team_disband">
+                A Team that one of your Characters was in has been disbanded.
+              </label>
+            </div>
+            <div class="field">
+              <label class="checkbox">
                 <input type="checkbox" v-model="notifications.team_lead">
                 Your Character has been made leader of a Team.
               </label>
@@ -89,7 +95,13 @@
             <div class="field">
               <label class="checkbox">
                 <input type="checkbox" v-model="notifications.team_join">
-                A Character has joined your team.
+                A Character has joined one of the Teams you lead.
+              </label>
+            </div>
+            <div class="field">
+              <label class="checkbox">
+                <input type="checkbox" v-model="notifications.team_leave">
+                A Character has left one of the Teams you lead.
               </label>
             </div>
             <div class="field">
@@ -118,8 +130,10 @@ export default class Settings extends SavageAimMixin {
 
   notifications = {
     loot_tracker_update: this.user.notifications.loot_tracker_update,
+    team_disband: this.user.notifications.team_disband,
     team_join: this.user.notifications.team_join,
     team_lead: this.user.notifications.team_lead,
+    team_leave: this.user.notifications.team_leave,
     verify_fail: this.user.notifications.verify_fail,
     verify_success: this.user.notifications.verify_success,
   }
