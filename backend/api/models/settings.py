@@ -13,6 +13,7 @@ class Settings(models.Model):
         'loot_tracker_update',
         'team_disband',
         'team_join',
+        'team_kick',
         'team_lead',
         'team_leave',
         'verify_fail',

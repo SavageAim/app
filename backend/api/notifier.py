@@ -50,6 +50,15 @@ def team_join(char: models.Character, team: models.Team):
     _create_notif(user, text, link, 'team_join')
 
 
+def team_kick(member: models.TeamMember):
+    char = member.character
+    team = member.team
+    text = f'{char} has been kicked from {team.name}!'
+    link = f'/'
+    user = char.user
+    _create_notif(user, text, link, 'team_kick')
+
+
 def team_lead(char: models.Character, team: models.Team):
     text = f'{char} has been made the Team Leader of {team.name}!'
     link = f'/team/{team.id}/'

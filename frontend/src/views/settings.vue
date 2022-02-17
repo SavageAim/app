@@ -88,14 +88,20 @@
             </div>
             <div class="field">
               <label class="checkbox">
-                <input type="checkbox" v-model="notifications.team_lead">
-                Your Character has been made leader of a Team.
+                <input type="checkbox" v-model="notifications.team_join">
+                A Character has joined one of the Teams you lead.
               </label>
             </div>
             <div class="field">
               <label class="checkbox">
-                <input type="checkbox" v-model="notifications.team_join">
-                A Character has joined one of the Teams you lead.
+                <input type="checkbox" v-model="notifications.team_kick">
+                A Character has been kicked from a Team.
+              </label>
+            </div>
+            <div class="field">
+              <label class="checkbox">
+                <input type="checkbox" v-model="notifications.team_lead">
+                Your Character has been made leader of a Team.
               </label>
             </div>
             <div class="field">
@@ -129,13 +135,7 @@ export default class Settings extends SavageAimMixin {
   errors: SettingsErrors = {}
 
   notifications = {
-    loot_tracker_update: this.user.notifications.loot_tracker_update,
-    team_disband: this.user.notifications.team_disband,
-    team_join: this.user.notifications.team_join,
-    team_lead: this.user.notifications.team_lead,
-    team_leave: this.user.notifications.team_leave,
-    verify_fail: this.user.notifications.verify_fail,
-    verify_success: this.user.notifications.verify_success,
+    ...this.user.notifications,
   }
 
   theme = this.user.theme
