@@ -14,10 +14,19 @@
       <CharacterBio :character="character" :displayUnverified="false" />
       <hr />
       <h2 class="subtitle">Results of Deletion</h2>
-      <div class="content">
-        <!-- TODO - Populate this part with API info -->
+      <div v-if="!character.verified">
+        Character isn't verified, so it is safe to delete!
+      </div>
+      <div v-else-if="loading">
+        <button class="button is-static is-loading is-fullwidth">Loading</button>
+      </div>
+      <div class="content" v-else>
         <ul>
-          <li>Team Leadership of <b>Hi Wiki!</b> will be handed over to another character, and will be left.</li>
+          <template v-for="team in details">
+            <li v-if="team.members === 1" :key="team.name"><b>{{ team.name }}</b> will be disbanded.</li>
+            <li v-else-if="team.lead" :key="team.name">Team Leadership of <b>{{ team.name }}</b> will be given to another Character, and this Character will leave the Team.</li>
+            <li v-else :key="team.name">This Character will leave <b>{{ team.name }}</b>.</li>
+          </template>
           <li>All BIS Lists belonging to this character will be deleted.</li>
         </ul>
       </div>
@@ -36,7 +45,7 @@
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
 import CharacterBio from '@/components/character_bio.vue'
-import { CharacterDetails } from '@/interfaces/character'
+import { CharacterDeleteTeamInfo, CharacterDetails } from '@/interfaces/character'
 
 @Component({
   components: {
@@ -47,7 +56,11 @@ export default class DeleteCharacter extends Vue {
   @Prop()
   character!: CharacterDetails
 
+  details: CharacterDeleteTeamInfo[] = []
+
   input = ''
+
+  loading = true
 
   get canDelete(): boolean {
     return this.input === this.deleteCheck
@@ -58,7 +71,29 @@ export default class DeleteCharacter extends Vue {
   }
 
   get url(): string {
-    return `/backend/api/character/${this.character.id}/`
+    return `/backend/api/character/${this.character.id}/delete/`
+  }
+
+  mounted(): void {
+    if (this.character.verified) this.getDeleteInfo()
+  }
+
+  async getDeleteInfo(): Promise<void> {
+    // Load the character data from the API
+    try {
+      const response = await fetch(this.url)
+      if (response.ok) {
+        // Parse the list into an array of character interfaces and store them in the character data list
+        this.details = (await response.json()) as CharacterDeleteTeamInfo[]
+        this.loading = false
+      }
+      else {
+        this.$notify({ text: `Unexpected HTTP Error ${response.status} when fetching Character deletion results.`, type: 'is-danger' })
+      }
+    }
+    catch (e) {
+      this.$notify({ text: `Error ${e} when fetching Character deletion results.`, type: 'is-danger' })
+    }
   }
 
   async deleteCharacter(): Promise<void> {

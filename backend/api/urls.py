@@ -9,6 +9,7 @@ urlpatterns = [
     # Character
     path('character/', views.CharacterCollection.as_view(), name='character_collection'),
     path('character/<int:pk>/', views.CharacterResource.as_view(), name='character_resource'),
+    path('character/<int:pk>/delete/', views.CharacterDelete.as_view(), name='character_delete'),
     path('character/<int:pk>/verify/', views.CharacterVerification.as_view(), name='character_verification'),
 
     # Gear

@@ -9,7 +9,7 @@ from rest_framework.views import APIView
 from rest_framework.request import Request
 from rest_framework.response import Response
 # local
-from api.models import Character
+from api.models import Character, Team
 from api.serializers import (
     CharacterCollectionSerializer,
     CharacterDetailsSerializer,
@@ -102,3 +102,30 @@ class CharacterVerification(APIView):
         verify_character.delay(pk)
 
         return Response(status=202)
+
+
+class CharacterDelete(APIView):
+    """
+    A class specifically for handling the deletion of a Character.
+    Has a GET request to get what will be affected by the deletion of this Character.
+    """
+
+    def get(self, request: Request, pk: int) -> Response:
+        """
+        Check through the DB for any information regarding the Character in question
+        """
+        try:
+            obj = Character.objects.get(pk=pk, user=request.user, verified=True)
+        except Character.DoesNotExist:
+            return Response(status=404)
+
+        # Information we need to gather;
+        #   - Teams the character is in, and whether they lead it or not
+        teams = Team.objects.filter(members__character=obj)
+        info = [{
+            'name': team.name,
+            'lead': team.members.get(character=obj).lead,
+            'members': team.members.count(),
+        } for team in teams]
+
+        return Response(info)
