@@ -7,7 +7,7 @@ from django.urls import reverse
 from rest_framework import status
 # local
 from api import notifier
-from api.models import BISList, Character, Gear, Notification, Job, Settings
+from api.models import BISList, Character, Gear, Notification, Job, Settings, Team, Tier
 from api.serializers import CharacterCollectionSerializer, CharacterDetailsSerializer
 from .test_base import SavageAimTestCase
 
@@ -208,28 +208,6 @@ class CharacterResource(SavageAimTestCase):
         self.assertIn('bis_lists', content)
         self.assertEqual(len(content['bis_lists']), 1)
 
-    # def test_delete(self):
-    #     """
-    #     Attempt to delete a character, then ensure it's missing from the DB
-    #     """
-    #     user = self._get_user()
-    #     self.client.force_authenticate(user)
-
-    #     # Create some users, then send a list request and check the data returned is correct
-    #     char = Character.objects.create(
-    #         avatar_url='https://img.savageaim.com/abcde',
-    #         lodestone_id=1234567890,
-    #         user=user,
-    #         name='Char 1',
-    #         world='Lich',
-    #     )
-    #     url = reverse('api:character_resource', kwargs={'pk': char.id})
-
-    #     response = self.client.delete(url)
-    #     self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT, response.content)
-    #     with self.assertRaises(Character.DoesNotExist):
-    #         Character.objects.get(pk=char.pk)
-
     def test_404(self):
         """
         Test the cases that cause a 404 to be returned;
@@ -377,3 +355,189 @@ class CharacterVerification(SavageAimTestCase):
 
         # Make sure the celery task was never called
         mocked_task.assert_not_called()
+
+
+class CharacterDelete(SavageAimTestCase):
+    """
+    Test the methods in the Delete view for correct logic
+    """
+
+    def tearDown(self):
+        """
+        Clean up the DB after each test
+        """
+        Team.objects.all().delete()
+        Character.objects.all().delete()
+
+    def test_read(self):
+        """
+        Create a couple of characters for a user and send a list request for them
+        ensure the data is returned as expected
+        """
+        user = self._get_user()
+        self.client.force_authenticate(user)
+
+        # Call management commands for the bislist
+        call_command('tier_seed', stdout=StringIO())
+        call_command('job_seed', stdout=StringIO())
+        call_command('gear_seed', stdout=StringIO())
+
+        # Create some users, then send a list request and check the data returned is correct
+        char = Character.objects.create(
+            avatar_url='https://img.savageaim.com/abcde',
+            lodestone_id=1234567890,
+            user=user,
+            name='Char 1',
+            world='Lich',
+            verified=True,
+        )
+        # Create a bislist for the character as well
+        bis_gear = Gear.objects.first()
+        curr_gear = Gear.objects.last()
+        bis = BISList.objects.create(
+            bis_body=bis_gear,
+            bis_bracelet=bis_gear,
+            bis_earrings=bis_gear,
+            bis_feet=bis_gear,
+            bis_hands=bis_gear,
+            bis_head=bis_gear,
+            bis_left_ring=bis_gear,
+            bis_legs=bis_gear,
+            bis_mainhand=bis_gear,
+            bis_necklace=bis_gear,
+            bis_offhand=bis_gear,
+            bis_right_ring=bis_gear,
+            current_body=curr_gear,
+            current_bracelet=curr_gear,
+            current_earrings=curr_gear,
+            current_feet=curr_gear,
+            current_hands=curr_gear,
+            current_head=curr_gear,
+            current_left_ring=curr_gear,
+            current_legs=curr_gear,
+            current_mainhand=curr_gear,
+            current_necklace=curr_gear,
+            current_offhand=curr_gear,
+            current_right_ring=curr_gear,
+            job=Job.objects.get(pk='DRG'),
+            owner=char,
+        )
+
+        # Create some extra data for proper testing
+        other_char = Character.objects.create(
+            avatar_url='https://img.savageaim.com/vwxyz',
+            lodestone_id=987654321,
+            user=self._create_user(),
+            name='Char 2',
+            world='Lich',
+            verified=True,
+        )
+        other_bis = BISList.objects.create(
+            bis_body=bis_gear,
+            bis_bracelet=bis_gear,
+            bis_earrings=bis_gear,
+            bis_feet=bis_gear,
+            bis_hands=bis_gear,
+            bis_head=bis_gear,
+            bis_left_ring=bis_gear,
+            bis_legs=bis_gear,
+            bis_mainhand=bis_gear,
+            bis_necklace=bis_gear,
+            bis_offhand=bis_gear,
+            bis_right_ring=bis_gear,
+            current_body=curr_gear,
+            current_bracelet=curr_gear,
+            current_earrings=curr_gear,
+            current_feet=curr_gear,
+            current_hands=curr_gear,
+            current_head=curr_gear,
+            current_left_ring=curr_gear,
+            current_legs=curr_gear,
+            current_mainhand=curr_gear,
+            current_necklace=curr_gear,
+            current_offhand=curr_gear,
+            current_right_ring=curr_gear,
+            job=Job.objects.get(pk='PLD'),
+            owner=other_char,
+        )
+
+        solo_team = Team.objects.create(
+            invite_code=Team.generate_invite_code(),
+            name='One Man Team',
+            tier=Tier.objects.first(),
+        )
+        my_team = Team.objects.create(
+            invite_code=Team.generate_invite_code(),
+            name='My Team',
+            tier=Tier.objects.first(),
+        )
+        your_team = Team.objects.create(
+            invite_code=Team.generate_invite_code(),
+            name='Your Team',
+            tier=Tier.objects.first(),
+        )
+
+        solo_team.members.create(character=char, bis_list=bis, lead=True)
+        my_team.members.create(character=char, bis_list=bis, lead=True)
+        your_team.members.create(character=char, bis_list=bis, lead=False)
+        my_team.members.create(character=other_char, bis_list=other_bis, lead=False)
+        your_team.members.create(character=other_char, bis_list=other_bis, lead=True)
+
+        url = reverse('api:character_delete', kwargs={'pk': char.id})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK, response.content)
+        content = response.json()
+        expected = {
+            solo_team.name: {
+                'members': 1,
+                'lead': True,
+                'name': solo_team.name,
+            },
+            my_team.name: {
+                'members': 2,
+                'lead': True,
+                'name': my_team.name,
+            },
+            your_team.name: {
+                'members': 2,
+                'lead': False,
+                'name': your_team.name,
+            },
+        }
+
+        for entry in content:
+            self.assertDictEqual(entry, expected[entry['name']])
+
+    def test_404(self):
+        """
+        Test the cases that cause a 404 to be returned;
+
+        - ID doesn't exist
+        - Character doesn't belong to specified User
+        - Character is not verified
+        """
+        user = self._get_user()
+        self.client.force_authenticate(user)
+
+        # ID doesn't exist
+        url = reverse('api:character_delete', kwargs={'pk': 0000000000000000000000})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND, response.content)
+
+        # Character belongs to a different user
+        char = Character.objects.create(
+            avatar_url='https://img.savageaim.com/abcde',
+            lodestone_id=1234567890,
+            user=self._create_user(),
+            name='Char 1',
+            world='Lich',
+        )
+        url = reverse('api:character_delete', kwargs={'pk': char.id})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND, response.content)
+
+        # Character is not verified
+        char.user = user
+        char.save()
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND, response.content)
