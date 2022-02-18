@@ -301,6 +301,11 @@ class LootTestSuite(SavageAimTestCase):
                 ],
                 'greed': [
                     {
+                        'member_id': self.mt_tm.pk,
+                        'character_name': f'{self.main_tank.name} @ {self.main_tank.world}',
+                        'greed_lists': [],
+                    },
+                    {
                         'member_id': self.tl_tm.pk,
                         'character_name': f'{self.team_lead.name} @ {self.team_lead.world}',
                         'greed_lists': [
@@ -386,6 +391,11 @@ class LootTestSuite(SavageAimTestCase):
                                 'job_role': 'heal',
                             },
                         ],
+                    },
+                    {
+                        'member_id': self.tl_tm.pk,
+                        'character_name': f'{self.team_lead.name} @ {self.team_lead.world}',
+                        'greed_lists': [],
                     },
                 ],
             },
@@ -508,6 +518,11 @@ class LootTestSuite(SavageAimTestCase):
                             },
                         ],
                     },
+                    {
+                        'member_id': self.tl_tm.pk,
+                        'character_name': f'{self.team_lead.name} @ {self.team_lead.world}',
+                        'greed_lists': [],
+                    },
                 ],
             },
             'earrings': {
@@ -534,6 +549,11 @@ class LootTestSuite(SavageAimTestCase):
                                 'job_role': 'heal',
                             },
                         ],
+                    },
+                    {
+                        'member_id': self.tl_tm.pk,
+                        'character_name': f'{self.team_lead.name} @ {self.team_lead.world}',
+                        'greed_lists': [],
                     },
                 ],
             },
@@ -608,6 +628,11 @@ class LootTestSuite(SavageAimTestCase):
                                 'job_role': 'heal',
                             },
                         ],
+                    },
+                    {
+                        'member_id': self.tl_tm.pk,
+                        'character_name': f'{self.team_lead.name} @ {self.team_lead.world}',
+                        'greed_lists': [],
                     },
                 ],
             },
@@ -829,7 +854,7 @@ class LootTestSuite(SavageAimTestCase):
         self.tl_alt_bis.current_left_ring = self.raid_gear
         self.tl_alt_bis.save()
 
-        self.expected_gear['offhand']['greed'].pop(0)
+        self.expected_gear['offhand']['greed'][1]['greed_lists'].pop(0)
         self.expected_gear['legs']['greed'][1]['greed_lists'].pop(0)
         self.expected_gear['ring']['greed'][1]['greed_lists'].pop(0)
 
@@ -855,7 +880,7 @@ class LootTestSuite(SavageAimTestCase):
         self.mt_alt_bis.save()
 
         self.expected_gear['mainhand']['greed'][0]['greed_lists'].pop(0)
-        self.expected_gear['body']['greed'].pop(0)
+        self.expected_gear['body']['greed'][0]['greed_lists'].pop(0)
         self.expected_gear['ring']['greed'][0]['greed_lists'].pop(0)
 
         self.mt_alt_bis2.current_legs = self.raid_gear
@@ -863,9 +888,9 @@ class LootTestSuite(SavageAimTestCase):
         self.mt_alt_bis2.current_necklace = self.raid_gear
         self.mt_alt_bis2.save()
 
-        self.expected_gear['legs']['greed'].pop(0)
-        self.expected_gear['head']['greed'].pop(0)
-        self.expected_gear['necklace']['greed'].pop(0)
+        self.expected_gear['legs']['greed'][0]['greed_lists'].pop(0)
+        self.expected_gear['head']['greed'][0]['greed_lists'].pop(0)
+        self.expected_gear['necklace']['greed'][0]['greed_lists'].pop(0)
 
         # Upgrade some tome gear and check required numbers
         aug_tome_gear = Gear.objects.get(name='Augmented Radiant Host')
@@ -1115,8 +1140,8 @@ class LootTestSuite(SavageAimTestCase):
         self.expected_gear['offhand']['need'].pop(0)
         self.expected_gear['body']['need'].pop(0)
         self.expected_gear['ring']['greed'][0]['greed_lists'].pop(1)
-        self.expected_gear['offhand']['greed'].pop(0)
-        self.expected_gear['body']['greed'].pop(0)
+        self.expected_gear['offhand']['greed'][1]['greed_lists'].pop(0)
+        self.expected_gear['body']['greed'][0]['greed_lists'].pop(0)
 
         self.assertEqual(self.client.post(write_url, need_data_ring).status_code, status.HTTP_201_CREATED)
         self.assertEqual(self.client.post(write_url, need_data_shield).status_code, status.HTTP_201_CREATED)
