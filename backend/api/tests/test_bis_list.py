@@ -5,7 +5,7 @@ from django.core.management import call_command
 from django.urls import reverse
 from rest_framework import status
 # local
-from api.models import BISList, Character, Gear
+from api.models import BISList, Character, Gear, Team, Tier
 from api.serializers import BISListSerializer
 from .test_base import SavageAimTestCase
 
@@ -468,4 +468,220 @@ class BISListResource(SavageAimTestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND, response.content)
         response = self.client.put(url)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND, response.content)
+
+
+class BISListDelete(SavageAimTestCase):
+    """
+    Tests for the delete methods
+    """
+
+    def setUp(self):
+        """
+        Create a character for use in the test
+        """
+        self.char = Character.objects.create(
+            avatar_url='https://img.savageaim.com/abcde',
+            lodestone_id=1234567890,
+            user=self._get_user(),
+            name='Char 1',
+            world='Lich',
+            verified=True,
+        )
+        call_command('job_seed', stdout=StringIO())
+        call_command('tier_seed', stdout=StringIO())
+        call_command('gear_seed', stdout=StringIO())
+
+        self.gear_id_map = {g.name: g.id for g in Gear.objects.all()}
+
+        bis_gear = Gear.objects.first()
+        curr_gear = Gear.objects.last()
+        self.bis = BISList.objects.create(
+            bis_body=bis_gear,
+            bis_bracelet=bis_gear,
+            bis_earrings=bis_gear,
+            bis_feet=bis_gear,
+            bis_hands=bis_gear,
+            bis_head=bis_gear,
+            bis_left_ring=bis_gear,
+            bis_legs=bis_gear,
+            bis_mainhand=bis_gear,
+            bis_necklace=bis_gear,
+            bis_offhand=bis_gear,
+            bis_right_ring=bis_gear,
+            current_body=curr_gear,
+            current_bracelet=curr_gear,
+            current_earrings=curr_gear,
+            current_feet=curr_gear,
+            current_hands=curr_gear,
+            current_head=curr_gear,
+            current_left_ring=curr_gear,
+            current_legs=curr_gear,
+            current_mainhand=curr_gear,
+            current_necklace=curr_gear,
+            current_offhand=curr_gear,
+            current_right_ring=curr_gear,
+            job_id='DRG',
+            owner=self.char,
+            external_link='https://etro.gg/',
+        )
+        self.other_bis = BISList.objects.create(
+            bis_body=bis_gear,
+            bis_bracelet=bis_gear,
+            bis_earrings=bis_gear,
+            bis_feet=bis_gear,
+            bis_hands=bis_gear,
+            bis_head=bis_gear,
+            bis_left_ring=bis_gear,
+            bis_legs=bis_gear,
+            bis_mainhand=bis_gear,
+            bis_necklace=bis_gear,
+            bis_offhand=bis_gear,
+            bis_right_ring=bis_gear,
+            current_body=curr_gear,
+            current_bracelet=curr_gear,
+            current_earrings=curr_gear,
+            current_feet=curr_gear,
+            current_hands=curr_gear,
+            current_head=curr_gear,
+            current_left_ring=curr_gear,
+            current_legs=curr_gear,
+            current_mainhand=curr_gear,
+            current_necklace=curr_gear,
+            current_offhand=curr_gear,
+            current_right_ring=curr_gear,
+            job_id='PLD',
+            owner=self.char,
+            external_link='https://etro.gg/',
+        )
+
+        self.team1 = Team.objects.create(
+            invite_code=Team.generate_invite_code(),
+            name='Team 1',
+            tier=Tier.objects.first(),
+        )
+        self.team2 = Team.objects.create(
+            invite_code=Team.generate_invite_code(),
+            name='Team 2',
+            tier=Tier.objects.first(),
+        )
+
+        self.team1.members.create(character=self.char, bis_list=self.bis, lead=True)
+        self.team2.members.create(character=self.char, bis_list=self.other_bis, lead=True)
+
+    def tearDown(self):
+        """
+        Clean up the DB after each test
+        """
+        Team.objects.all().delete()
+        Character.objects.all().delete()
+
+    def test_read(self):
+        """
+        - Create some Teams using the BIS List.
+        - Send a read request to the delete endpoint
+        - Ensure the expected response is returned
+        """
+        url = reverse('api:bis_delete', kwargs={'character_id': self.char.pk, 'pk': self.bis.pk})
+        self.client.force_authenticate(self.char.user)
+
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK, response.content)
+        content = response.json()
+
+        expected = [{'name': self.team1.name, 'id': str(self.team1.id)}]
+        self.assertEqual(len(content), len(expected))
+        self.assertDictEqual(content[0], expected[0])
+
+    def test_delete(self):
+        """
+        - Attempt to delete a BIS List that isn't tied to any teams
+        - Ensure the BIS no longer exists
+        """
+        url = reverse('api:bis_delete', kwargs={'character_id': self.char.pk, 'pk': self.other_bis.pk})
+        self.client.force_authenticate(self.char.user)
+
+        self.team2.delete()
+
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT, response.content)
+        with self.assertRaises(BISList.DoesNotExist):
+            BISList.objects.get(pk=self.other_bis.pk)
+
+    def test_delete_400(self):
+        """
+        - Attempt to delete a BIS List that is attached to a team
+        - Ensure a 400 response is returned and the error message is correct
+        """
+        url = reverse('api:bis_delete', kwargs={'character_id': self.char.pk, 'pk': self.other_bis.pk})
+        self.client.force_authenticate(self.char.user)
+
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, response.content)
+        self.assertEqual(response.json()['message'], 'Cannot delete; list is in use.')
+
+        BISList.objects.get(pk=self.other_bis.pk)
+
+    def test_404(self):
+        """
+        Test all situations where the endpoint would respond with a 404;
+
+        - Invalid Character ID
+        - Character is not owned by the requesting user
+        - Character is not verified
+        - Invalid BISList ID
+        - Character doesn't own BISList
+        """
+        user = self._get_user()
+        self.client.force_authenticate(user)
+
+        # ID doesn't exist
+        url = reverse('api:bis_delete', kwargs={'character_id': 0000000000000000000000, 'pk': self.bis.pk})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND, response.content)
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND, response.content)
+
+        # Character belongs to a different user
+        self.char.user = self._create_user()
+        self.char.save()
+        url = reverse('api:bis_delete', kwargs={'character_id': self.char.id, 'pk': self.bis.pk})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND, response.content)
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND, response.content)
+
+        # Character is not verified
+        self.char.verified = False
+        self.char.user = user
+        self.char.save()
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND, response.content)
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND, response.content)
+
+        # Invalid BISList ID
+        self.char.verified = True
+        self.char.save()
+        url = reverse('api:bis_delete', kwargs={'character_id': self.char.id, 'pk': 99999})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND, response.content)
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND, response.content)
+
+        # Character doesn't own BIS List
+        char = Character.objects.create(
+            avatar_url='https://img.savageaim.com/abcde',
+            lodestone_id=1234567890,
+            user=self._get_user(),
+            name='Char 2',
+            world='Lich',
+            verified=True,
+        )
+        self.bis.owner = char
+        self.bis.save()
+        url = reverse('api:bis_delete', kwargs={'character_id': self.char.id, 'pk': self.bis.pk})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND, response.content)
+        response = self.client.delete(url)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND, response.content)
