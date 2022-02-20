@@ -109,6 +109,7 @@ export default class DeleteCharacter extends Vue {
       if (response.ok) {
         // Attempt to parse the json, get the id, and then redirect
         this.$store.dispatch('fetchCharacters')
+        this.$emit('close')
         this.$router.push('/', () => {
           Vue.notify({ text: `${this.character.name} (${this.character.world}) deleted successfully!`, type: 'is-success' })
         })
