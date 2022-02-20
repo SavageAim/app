@@ -45,7 +45,8 @@
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
 import CharacterBio from '@/components/character_bio.vue'
-import { CharacterDeleteTeamInfo, CharacterDetails } from '@/interfaces/character'
+import { CharacterDetails } from '@/interfaces/character'
+import { CharacterDeleteReadResponse } from '@/interfaces/responses'
 
 @Component({
   components: {
@@ -56,7 +57,7 @@ export default class DeleteCharacter extends Vue {
   @Prop()
   character!: CharacterDetails
 
-  details: CharacterDeleteTeamInfo[] = []
+  details: CharacterDeleteReadResponse[] = []
 
   input = ''
 
@@ -84,7 +85,7 @@ export default class DeleteCharacter extends Vue {
       const response = await fetch(this.url)
       if (response.ok) {
         // Parse the list into an array of character interfaces and store them in the character data list
-        this.details = (await response.json()) as CharacterDeleteTeamInfo[]
+        this.details = (await response.json()) as CharacterDeleteReadResponse[]
         this.loading = false
       }
       else {

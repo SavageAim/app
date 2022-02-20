@@ -10,13 +10,6 @@ export interface Character {
   world: string
 }
 
-// Information about deleting Characters
-export interface CharacterDeleteTeamInfo {
-  lead: boolean
-  members: number
-  name: string
-}
-
 // The detailed view of a character's information
 export interface CharacterDetails extends Character {
   // TODO - Add arrays for gearsets and teams and stuff

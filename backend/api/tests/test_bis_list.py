@@ -589,7 +589,7 @@ class BISListDelete(SavageAimTestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK, response.content)
         content = response.json()
 
-        expected = [{'name': self.team1.name, 'id': str(self.team1.id)}]
+        expected = [{'name': self.team1.name, 'id': str(self.team1.id), 'member': self.team1.members.first().pk}]
         self.assertEqual(len(content), len(expected))
         self.assertDictEqual(content[0], expected[0])
 

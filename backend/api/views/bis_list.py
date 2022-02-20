@@ -107,6 +107,7 @@ class BISListDelete(APIView):
         teams = Team.objects.filter(members__character=char, members__bis_list=obj)
         info = [{
             'id': team.id,
+            'member': team.members.get(character=char, bis_list=obj).pk,
             'name': team.name,
         } for team in teams]
 
