@@ -24,7 +24,7 @@
     </div>
     <div class="card-footer">
       <a class="card-footer-item" @click="() => { this.$emit('close') }">Cancel</a>
-      <a class="card-footer-item has-text-danger" @click="deleteBIS">Delete</a>
+      <a class="card-footer-item has-text-danger" @click="deleteLoot">Delete</a>
     </div>
   </div>
 </template>

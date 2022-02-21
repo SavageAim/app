@@ -109,7 +109,7 @@
                 <li v-for="history in loot.history" :key="`mobile-history-${history.id}`">
                   <b>Item: </b> {{ history.item }}<br />
                   <b>Obtained By: </b> {{ history.member }}<br />
-                  <button v-if="editable" class="button is-danger is-pulled-right" @click="() => { deleteSpecificEntry(history) }">
+                  <button v-if="editable" class="button is-danger is-pulled-right" @click="() => { deleteEntries([history]) }">
                     <i class="material-icons">delete</i>
                   </button>
                   <b>On: </b> {{ history.obtained }}<br />
@@ -215,7 +215,7 @@
                       <p class="has-text-primary" v-else>Need</p>
                     </td>
                     <td v-if="editable" class="delete-cell has-text-centered">
-                      <input type="checkbox" ref="lootDeleteCheckbox" />
+                      <input type="checkbox" ref="lootDeleteCheckbox" :data-id="history.id" />
                     </td>
                   </tr>
                   <tr v-if="editable">
@@ -269,7 +269,7 @@
                       </div>
                     </td>
                     <td>
-                      <button class="button is-danger" @click="deleteEntries">
+                      <button class="button is-danger" @click="deleteMultipleEntries">
                         <i class="material-icons">delete</i>
                       </button>
                     </td>
@@ -354,20 +354,22 @@ export default class TeamLoot extends SavageAimMixin {
   }
 
   created(): void {
-    this.fetchData()
+    this.fetchData(false)
   }
 
-  deleteEntries(): void {
+  deleteEntries(items: Loot[]): void {
+    // Prompt deletion first before sending an api request (we'll use a modal instead of javascript alerts)
+    this.$modal.show(DeleteLoot, { team: this.team, items }, { }, { closed: () => { this.fetchData(true) } })
+  }
+
+  deleteMultipleEntries(): void {
     const checkboxes = this.$refs.lootDeleteCheckbox as HTMLInputElement[]
-    const items = this.loot.history.filter((_, index: number) => checkboxes[index].checked)
-    this.$modal.show(DeleteLoot, { team: this.team, items })
+    const ids = checkboxes.filter((check: HTMLInputElement) => check.checked).map((check: HTMLInputElement) => parseInt(check.dataset.id!, 10)) as number[]
+    const items = this.loot.history.filter((entry: Loot) => ids.includes(entry.id))
+    this.deleteEntries(items)
   }
 
-  deleteSpecificEntry(loot: Loot): void {
-    this.$modal.show(DeleteLoot, { team: this.team, items: [loot] })
-  }
-
-  async fetchData(): Promise<void> {
+  async fetchData(reload: boolean): Promise<void> {
     // Load the loot data from the API
     try {
       const response = await fetch(this.url)
@@ -377,6 +379,7 @@ export default class TeamLoot extends SavageAimMixin {
         this.team = content.team
         this.loot = content.loot
         this.loaded = true
+        if (reload) this.$forceUpdate()
         document.title = `Loot Tracker - ${this.team.name} - Savage Aim`
       }
       else {
@@ -456,10 +459,9 @@ export default class TeamLoot extends SavageAimMixin {
       })
 
       if (response.ok) {
-        await this.fetchData()
+        await this.fetchData(true)
         this.$notify({ text: 'Loot updated!', type: 'is-success' })
         this.createData = { obtained: '', member: -1, item: 'na' }
-        this.$forceUpdate()
       }
       else {
         super.handleError(response.status)
@@ -491,9 +493,8 @@ export default class TeamLoot extends SavageAimMixin {
       })
 
       if (response.ok) {
-        await this.fetchData()
+        await this.fetchData(true)
         this.$notify({ text: 'Loot updated!', type: 'is-success' })
-        this.$forceUpdate()
       }
       else {
         super.handleError(response.status)
