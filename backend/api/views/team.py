@@ -124,6 +124,20 @@ class TeamResource(APIView):
         obj.save()
         return Response(status=204)
 
+    def delete(self, request: Request, pk: str) -> Response:
+        """
+        Disband a Team
+
+        Notify all non leader members of the Team being disbanded
+        """
+        try:
+            obj = Team.objects.get(pk=pk, members__character__user=request.user, members__lead=True)
+        except (Team.DoesNotExist, ValidationError):
+            return Response(status=404)
+
+        obj.disband()
+        return Response(status=204)
+
 class TeamInvite(APIView):
     """
     Methods to interact with a team via its invite code.

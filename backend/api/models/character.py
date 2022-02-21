@@ -43,4 +43,4 @@ class Character(models.Model):
         Do all the cleanup of a Character's Teams before deleting the Character itself
         """
         for member in self.teammember_set.all():
-            member.team.remove_character(self)
+            member.team.remove_character(self, False)

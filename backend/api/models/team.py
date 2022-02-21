@@ -61,7 +61,7 @@ class Team(models.Model):
         new_lead.save()
         notifier.team_lead(new_lead.character, self)
 
-    def remove_character(self, char: Character):
+    def remove_character(self, char: Character, kick: bool):
         """
         Remove a character from the Team. This comes with some clauses;
             - Firstly, we assume this is called by someone with permission.
@@ -77,5 +77,8 @@ class Team(models.Model):
         if char_member.lead:
             self.make_lead(self.members.filter(lead=False).first())
 
-        notifier.team_leave(char_member)
+        if kick:
+            notifier.team_kick(char_member)
+        else:
+            notifier.team_leave(char_member)
         char_member.delete()
