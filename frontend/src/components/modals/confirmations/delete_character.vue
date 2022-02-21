@@ -9,7 +9,7 @@
       </div>
     </div>
     <div class="card-content">
-      <h2 class="subtitle">Are you sure you want to delete the following character?</h2>
+      <h2 class="subtitle">Are you sure you want to delete this character?</h2>
       <hr />
       <CharacterBio :character="character" :displayUnverified="false" />
       <hr />

@@ -76,13 +76,10 @@
               <p class="help is-warning">Changing this will lock you out of this page. Please be sure you want to hand over leadership before changing this value.</p>
               <p v-if="errors.team_lead !== undefined" class="help is-danger">{{ errors.team_lead[0] }}</p>
             </div>
-
-            <button class="button is-success" @click="saveDetails">Save</button>
           </div>
           <footer class="card-footer">
-            <a class="has-text-danger card-footer-item">
-              Disband
-            </a>
+            <a class="has-text-success card-footer-item" @click="saveDetails">Save</a>
+            <a class="has-text-danger card-footer-item" @click="disband">Disband</a>
           </footer>
         </div>
       </div>
@@ -93,6 +90,7 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 import TeamNav from '@/components/team_nav.vue'
+import DeleteTeam from '@/components/modals/confirmations/delete_team.vue'
 import { TeamUpdateErrors } from '@/interfaces/responses'
 import Team from '@/interfaces/team'
 import TeamMember from '@/interfaces/team_member'
@@ -138,6 +136,10 @@ export default class TeamSettings extends SavageAimMixin {
 
   created(): void {
     this.fetchTeam(false)
+  }
+
+  disband(): void {
+    this.$modal.show(DeleteTeam, { team: this.team })
   }
 
   async fetchTeam(reload: boolean): Promise<void> {
