@@ -138,6 +138,7 @@ class TeamResource(APIView):
         obj.disband()
         return Response(status=204)
 
+
 class TeamInvite(APIView):
     """
     Methods to interact with a team via its invite code.
