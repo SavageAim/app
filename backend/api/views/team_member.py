@@ -55,17 +55,27 @@ class TeamMemberResource(APIView):
 
         return Response(status=204)
 
-    # def delete(self, request: Request, team_id: str, pk: id) -> Response:
-    #     """
-    #     Team Members can leave a team
-    #     Team leaders can kick team members
-    #     """
-    #     try:
-    #         obj = TeamMember.objects.get(pk=pk, team_id=team_id)
-    #     except (Team.DoesNotExist, ValidationError):
-    #         return Response(status=404)
+    def delete(self, request: Request, team_id: str, pk: id) -> Response:
+        """
+        Team Members can leave a team
+        Team leaders can kick team members
+        """
+        try:
+            obj = TeamMember.objects.get(pk=pk, team_id=team_id)
+        except (TeamMember.DoesNotExist, ValidationError):
+            return Response(status=404)
 
-    #     # Check permissions
-    #     user_obj = TeamMember.objects.get(team_id=team_id, character__user=request.user)
-    #     if user_obj.id != obj.pk and not user_obj.lead:
-    #         return Response(status=404)
+        # Check permissions and kick status;
+        # Character owner is making request; valid and is leave request
+        kick: bool
+        if obj.character.user.id == request.user.id:
+            kick = False
+        # Team Leader making request; valid and is kick request
+        elif obj.team.members.get(lead=True).character.user.id == request.user.id:
+            kick = True
+        # If anything else, return a 404
+        else:
+            return Response(status=404)
+
+        obj.team.remove_character(obj.character, kick)
+        return Response(status=204)
