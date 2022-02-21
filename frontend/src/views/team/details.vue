@@ -24,7 +24,7 @@
       </div>
 
       <div class="columns is-multiline is-desktop">
-        <TeamMemberCard v-for="tm in team.members" :key="tm.id" :details="tm" :max-item-level="team.tier.max_item_level" :editable="editable" />
+        <TeamMemberCard v-for="tm in team.members" :key="tm.id" :team-id="team.id" :details="tm" :max-item-level="team.tier.max_item_level" :editable="editable" v-on:reload="() => { fetchTeam(true) }" />
       </div>
     </template>
   </div>
@@ -59,10 +59,10 @@ export default class TeamView extends SavageAimMixin {
   }
 
   created(): void {
-    this.fetchTeam()
+    this.fetchTeam(false)
   }
 
-  async fetchTeam(): Promise<void> {
+  async fetchTeam(reload: boolean): Promise<void> {
     // Load the team data from the API
     try {
       const response = await fetch(this.url)
@@ -70,6 +70,7 @@ export default class TeamView extends SavageAimMixin {
         // Parse the JSON into a team and save it
         this.team = (await response.json()) as Team
         this.loading = false
+        if (reload) this.$forceUpdate()
         document.title = `${this.team.name} - Savage Aim`
       }
       else {

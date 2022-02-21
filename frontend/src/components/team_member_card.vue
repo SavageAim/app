@@ -55,7 +55,7 @@
                 </router-link>
                 <hr class="dropdown-divider" />
                 <!-- Modal to confirm, leave team -->
-                <a class="card-footer-item has-text-danger">
+                <a class="card-footer-item has-text-danger" @click="leave">
                   Leave Team
                 </a>
               </template>
@@ -63,9 +63,7 @@
               <template v-if="!owner && editable">
                 <!-- Modal to confirm, kick from team -->
                 <hr class="dropdown-divider" />
-                <a class="card-footer-item has-text-danger">
-                  Kick from Team
-                </a>
+                <a class="card-footer-item has-text-danger" @click="kick">Kick from Team</a>
               </template>
             </div>
           </div>
@@ -78,6 +76,8 @@
 <script lang="ts">
 import { Component, Vue, Prop } from 'vue-property-decorator'
 import BISTable from '@/components/bis_table.vue'
+import KickFromTeam from '@/components/modals/confirmations/kick_from_team.vue'
+import LeaveTeam from '@/components/modals/confirmations/leave_team.vue'
 import TeamMember from '@/interfaces/team_member'
 
 @Component({
@@ -98,6 +98,9 @@ export default class TeamMemberCard extends Vue {
   @Prop()
   maxItemLevel!: number
 
+  @Prop()
+  teamId!: number
+
   get displayDropdown(): boolean {
     // Check all the link cases in the dropdown and if none of them are true, we don't want to render the dropdown at all
     return (
@@ -109,6 +112,14 @@ export default class TeamMemberCard extends Vue {
 
   get dropdown(): HTMLElement {
     return this.$refs.dropdown as HTMLElement
+  }
+
+  kick(): void {
+    this.$modal.show(KickFromTeam, { details: this.details, teamId: this.teamId }, { }, { closed: () => { this.$emit('reload') } })
+  }
+
+  leave(): void {
+    this.$modal.show(LeaveTeam, { details: this.details, teamId: this.teamId })
   }
 
   // Flag stating whether the logged in user is the owner of the member on this card
