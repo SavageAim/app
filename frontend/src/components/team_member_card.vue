@@ -78,7 +78,6 @@
 <script lang="ts">
 import { Component, Vue, Prop } from 'vue-property-decorator'
 import BISTable from '@/components/bis_table.vue'
-import Gear from '@/interfaces/gear'
 import TeamMember from '@/interfaces/team_member'
 
 @Component({

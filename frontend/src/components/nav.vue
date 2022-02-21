@@ -90,10 +90,10 @@
 
 <script lang="ts">
 import { Component, Prop, Watch } from 'vue-property-decorator'
-import Legend from './modals/legend.vue'
-import NotificationsModal from './modals/notifications.vue'
 import Notification from '@/interfaces/notification'
 import SavageAimMixin from '@/mixins/savage_aim_mixin'
+import Legend from './modals/legend.vue'
+import NotificationsModal from './modals/notifications.vue'
 
 @Component
 export default class Nav extends SavageAimMixin {

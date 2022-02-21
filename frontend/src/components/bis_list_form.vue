@@ -303,11 +303,11 @@
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
 import range from 'range-inclusive'
-import GearDropdown from './gear_dropdown.vue'
 import BISListModify from '@/dataclasses/bis_list_modify'
 import { BISListErrors } from '@/interfaces/responses'
 import Gear from '@/interfaces/gear'
 import Job from '@/interfaces/job'
+import GearDropdown from './gear_dropdown.vue'
 
 @Component({
   components: {
