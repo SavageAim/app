@@ -9,7 +9,7 @@
       </div>
     </div>
     <div class="card-content">
-      <h2 class="subtitle">Are you sure you want to disband this team?</h2>
+      <h2 class="subtitle">Are you sure you want to disband this Team?</h2>
       <hr />
       <div class="box">
         <TeamBio :team="team" />
@@ -20,8 +20,8 @@
     </div>
     <div class="card-footer">
       <a class="card-footer-item" @click="() => { this.$emit('close') }">Cancel</a>
-      <a class="card-footer-item has-text-danger" v-if="canDelete" @click="deleteTeam">Delete</a>
-      <p class="card-footer-item disabled-delete" v-else data-microtip-position="top" role="tooltip" aria-label="Please confirm deletion.">Delete</p>
+      <a class="card-footer-item has-text-danger" v-if="canDelete" @click="deleteTeam">Disband</a>
+      <p class="card-footer-item disabled-delete" v-else data-microtip-position="top" role="tooltip" aria-label="Please confirm deletion.">Disband</p>
     </div>
   </div>
 </template>

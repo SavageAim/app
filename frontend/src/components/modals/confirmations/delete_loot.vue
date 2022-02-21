@@ -9,7 +9,7 @@
       </div>
     </div>
     <div class="card-content">
-      <h2 class="subtitle">Are you sure you want to delete the following Loot History Details?</h2>
+      <h2 class="subtitle">Are you sure you want to delete these Loot History entries?</h2>
       <hr />
       <ul>
         <li v-for="history in items" :key="history.id">

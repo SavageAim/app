@@ -9,7 +9,7 @@
       </div>
     </div>
     <div class="card-content">
-      <h2 class="subtitle">Are you sure you want to delete the following BIS List?</h2>
+      <h2 class="subtitle">Are you sure you want to delete this BIS List?</h2>
       <hr />
       <div class="box">
         <div class="level is-mobile">
