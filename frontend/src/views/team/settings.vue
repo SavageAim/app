@@ -29,13 +29,16 @@
             <div class="card-header-title">Invite Code</div>
           </div>
           <div class="card-content">
-            <div class="field">
-              <label class="label is-sr-only" for="inviteCode">Invite Code</label>
-              <div class="control">
+            <div class="field has-addons">
+              <div class="control is-expanded">
                 <input class="input" id="inviteCode" type="text" :value="team.invite_code" readonly />
               </div>
+              <label class="label is-sr-only" for="inviteCode">Invite Code</label>
+              <div class="control">
+                <button class="button is-warning" @click="regenerateInviteCode">Regenerate</button>
+              </div>
             </div>
-            <p>Send the above code, or <a :href="inviteUrl" target="_blank">this URL</a>, to people to allow them to join <span class="has-text-primary">{{ team.name }}</span>!</p>
+            <p>Send the above code, or <a :href="`${inviteUrl}/${team.invite_code}/`" target="_blank">this URL</a>, to people to allow them to join <span class="has-text-primary">{{ team.name }}</span>!</p>
           </div>
         </div>
 
@@ -117,7 +120,7 @@ export default class TeamSettings extends SavageAimMixin {
   }
 
   get inviteUrl(): string {
-    return `${process.env.VUE_APP_URL}/team/join/${this.team.invite_code}/`
+    return `${process.env.VUE_APP_URL}/team/join`
   }
 
   get url(): string {
@@ -134,10 +137,10 @@ export default class TeamSettings extends SavageAimMixin {
   }
 
   created(): void {
-    this.fetchTeam()
+    this.fetchTeam(false)
   }
 
-  async fetchTeam(): Promise<void> {
+  async fetchTeam(reload: boolean): Promise<void> {
     // Load the team data from the API
     try {
       const response = await fetch(this.url)
@@ -148,6 +151,7 @@ export default class TeamSettings extends SavageAimMixin {
         this.teamLeadId = this.team.members.find((teamMember: TeamMember) => teamMember.character.user_id === this.$store.state.user.id)?.character.id ?? -1
         this.loading = false
         this.firstLoad = false
+        if (reload) this.$forceUpdate()
         document.title = `Settings - ${this.team.name} - Savage Aim`
       }
       else {
@@ -156,6 +160,29 @@ export default class TeamSettings extends SavageAimMixin {
     }
     catch (e) {
       this.$notify({ text: `Error ${e} when fetching Team.`, type: 'is-danger' })
+    }
+  }
+
+  async regenerateInviteCode(): Promise<void> {
+    try {
+      const response = await fetch(this.url, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': this.$cookies.get('csrftoken'),
+        },
+      })
+
+      if (response.ok) {
+        this.$notify({ text: 'New Invite Code Generated!', type: 'is-success' })
+        await this.fetchTeam(true)
+      }
+      else {
+        super.handleError(response.status)
+      }
+    }
+    catch (e) {
+      this.$notify({ text: `Error ${e} when attempting to regenerate Team Invite Code.`, type: 'is-danger' })
     }
   }
 
@@ -178,8 +205,7 @@ export default class TeamSettings extends SavageAimMixin {
 
       if (response.ok) {
         this.$notify({ text: 'Successfully updated!', type: 'is-success' })
-        await this.fetchTeam()
-        this.$forceUpdate()
+        await this.fetchTeam(true)
       }
       else {
         super.handleError(response.status)

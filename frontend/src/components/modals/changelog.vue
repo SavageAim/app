@@ -21,6 +21,7 @@
           <li>The Team Details page provides methods for Members to leave Teams, or for Team Leaders to kick Members.</li>
         </ul>
       </p>
+      <p>To go with this, the Team Settings page also now has the ability to regenerate an invite code for the Team. This is so kicked members are unable to get back in, if you wish.</p>
 
       <div class="divider"><i class="material-icons icon">expand_more</i> Minor Changes <i class="material-icons icon">expand_more</i></div>
       <p>Improved visibility of links in card footers by making the default colour lighter, and all links bold.</p>
