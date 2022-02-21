@@ -109,7 +109,7 @@
                 <li v-for="history in loot.history" :key="`mobile-history-${history.id}`">
                   <b>Item: </b> {{ history.item }}<br />
                   <b>Obtained By: </b> {{ history.member }}<br />
-                  <button v-if="editable" class="button is-danger is-pulled-right">
+                  <button v-if="editable" class="button is-danger is-pulled-right" @click="() => { deleteSpecificEntry(history) }">
                     <i class="material-icons">delete</i>
                   </button>
                   <b>On: </b> {{ history.obtained }}<br />
@@ -215,7 +215,7 @@
                       <p class="has-text-primary" v-else>Need</p>
                     </td>
                     <td v-if="editable" class="delete-cell has-text-centered">
-                      <input type="checkbox" />
+                      <input type="checkbox" ref="lootDeleteCheckbox" />
                     </td>
                   </tr>
                   <tr v-if="editable">
@@ -269,7 +269,7 @@
                       </div>
                     </td>
                     <td>
-                      <button class="button is-danger">
+                      <button class="button is-danger" @click="deleteEntries">
                         <i class="material-icons">delete</i>
                       </button>
                     </td>
@@ -289,6 +289,7 @@ import dayjs from 'dayjs'
 import { Component } from 'vue-property-decorator'
 import GreedRaidItemBox from '@/components/loot/greed_raid_item_box.vue'
 import GreedTomeItemBox from '@/components/loot/greed_tome_item_box.vue'
+import DeleteLoot from '@/components/modals/confirmations/delete_loot.vue'
 import ItemDropdown from '@/components/item_dropdown.vue'
 import NeedRaidItemBox from '@/components/loot/need_raid_item_box.vue'
 import NeedTomeItemBox from '@/components/loot/need_tome_item_box.vue'
@@ -354,6 +355,16 @@ export default class TeamLoot extends SavageAimMixin {
 
   created(): void {
     this.fetchData()
+  }
+
+  deleteEntries(): void {
+    const checkboxes = this.$refs.lootDeleteCheckbox as HTMLInputElement[]
+    const items = this.loot.history.filter((_, index: number) => checkboxes[index].checked)
+    this.$modal.show(DeleteLoot, { team: this.team, items })
+  }
+
+  deleteSpecificEntry(loot: Loot): void {
+    this.$modal.show(DeleteLoot, { team: this.team, items: [loot] })
   }
 
   async fetchData(): Promise<void> {

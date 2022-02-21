@@ -69,7 +69,7 @@ import { CharacterDetails } from '@/interfaces/character'
 import { BISListDeleteReadResponse } from '@/interfaces/responses'
 
 @Component
-export default class DeleteCharacter extends Vue {
+export default class DeleteBIS extends Vue {
   @Prop()
   bis!: BISList
 
@@ -82,10 +82,6 @@ export default class DeleteCharacter extends Vue {
 
   get canDelete(): boolean {
     return (!this.loading) && this.details.length === 0
-  }
-
-  get deleteCheck(): string {
-    return `${this.character.name} @ ${this.character.world.split(' ')[0]}`
   }
 
   get url(): string {
