@@ -111,6 +111,18 @@ class TeamResource(APIView):
         obj.make_lead(obj.members.get(pk=team_lead_id))
         return Response(status=204)
 
+    def patch(self, request: Request, pk: str) -> Response:
+        """
+        Regenerate the Team's token
+        """
+        try:
+            obj = Team.objects.get(pk=pk, members__character__user=request.user, members__lead=True)
+        except (Team.DoesNotExist, ValidationError):
+            return Response(status=404)
+
+        obj.invite_code = Team.generate_invite_code()
+        obj.save()
+        return Response(status=204)
 
 class TeamInvite(APIView):
     """

@@ -362,6 +362,19 @@ class TeamResource(SavageAimTestCase):
         self.assertIn('members', content)
         self.assertEqual(len(content['members']), 1)
 
+    def test_regenerate_token(self):
+        """
+        Send a PATCH request to the endpoint, and ensure the team's invite code has changed
+        """
+        user = self._get_user()
+        self.client.force_authenticate(user)
+        url = reverse('api:team_resource', kwargs={'pk': self.team.id})
+
+        response = self.client.patch(url)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT, response.content)
+        with self.assertRaises(Team.DoesNotExist):
+            Team.objects.get(invite_code=self.team.invite_code)
+
     def test_update(self):
         """
         Update the Team fully and ensure the data in the DB has been updated
@@ -518,6 +531,8 @@ class TeamResource(SavageAimTestCase):
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND, response.content)
         response = self.client.put(url)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND, response.content)
+        response = self.client.patch(url)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND, response.content)
 
         url = reverse('api:team_resource', kwargs={'pk': self.team.id})
         # Check update as non-team lead
@@ -525,12 +540,16 @@ class TeamResource(SavageAimTestCase):
         self.tm.save()
         response = self.client.put(url)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND, response.content)
+        response = self.client.patch(url)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND, response.content)
 
         # Delete membership altogether and test both read and update
         self.tm.delete()
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND, response.content)
         response = self.client.put(url)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND, response.content)
+        response = self.client.patch(url)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND, response.content)
 
 
