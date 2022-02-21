@@ -1340,6 +1340,64 @@ class LootTestSuite(SavageAimTestCase):
             ['The chosen item in the specified BIS List does not have the raid loot as its BIS.'],
         )
 
+    def test_delete(self):
+        """
+        Attempt to delete Loot entries for a Team and ensure all the details play nicely
+        """
+        user = self._get_user()
+        self.client.force_authenticate(user)
+        url = reverse('api:loot_collection', kwargs={'team_id': self.team.pk})
+
+        # Create some Loot entries for this Team, along with one for a new Team (just to make sure filtering works)
+        other_team = Team.objects.create(
+            invite_code=Team.generate_invite_code(),
+            name='Les Jambons Deux',
+            tier=Tier.objects.get(max_item_level=605),
+        )
+        other_team_member = other_team.members.create(character=self.main_tank, bis_list=self.mt_alt_bis, lead=True)
+        l1 = Loot.objects.create(
+            greed=False,
+            item='mount',
+            member=self.tl_tm,
+            team=self.team,
+            obtained=datetime.today(),
+            tier=self.team.tier,
+        )
+        l2 = Loot.objects.create(
+            greed=True,
+            item='mainhand',
+            member=self.mt_tm,
+            team=self.team,
+            obtained=datetime.today(),
+            tier=self.team.tier,
+        )
+        l3 = Loot.objects.create(
+            greed=False,
+            item='body',
+            member=self.mt_tm,
+            team=self.team,
+            obtained=datetime.today(),
+            tier=self.team.tier,
+        )
+        l4 = Loot.objects.create(
+            greed=False,
+            item='body',
+            member=other_team_member,
+            team=other_team,
+            obtained=datetime.today(),
+            tier=self.team.tier,
+        )
+
+        body = {'items': [l1.pk, l3.pk, l4.pk]}
+        response = self.client.delete(url, body)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT, response.content)
+        with self.assertRaises(Loot.DoesNotExist):
+            Loot.objects.get(pk=l1.pk)
+        with self.assertRaises(Loot.DoesNotExist):
+            Loot.objects.get(pk=l3.pk)
+        Loot.objects.get(pk=l2.pk)
+        Loot.objects.get(pk=l4.pk)
+
     def test_404(self):
         """
         Test 404 errors are returned for bad urls in each endpoint / method;
@@ -1355,6 +1413,7 @@ class LootTestSuite(SavageAimTestCase):
         url = reverse('api:loot_collection', kwargs={'team_id': 'abcde'})
         self.assertEqual(self.client.get(url).status_code, status.HTTP_404_NOT_FOUND)
         self.assertEqual(self.client.post(url).status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(self.client.delete(url).status_code, status.HTTP_404_NOT_FOUND)
         self.assertEqual(self.client.post(f'{url}bis/').status_code, status.HTTP_404_NOT_FOUND)
 
         # Not having a character in the team
@@ -1363,9 +1422,11 @@ class LootTestSuite(SavageAimTestCase):
         url = reverse('api:loot_collection', kwargs={'team_id': self.team.pk})
         self.assertEqual(self.client.get(url).status_code, status.HTTP_404_NOT_FOUND)
         self.assertEqual(self.client.post(url).status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(self.client.delete(url).status_code, status.HTTP_404_NOT_FOUND)
         self.assertEqual(self.client.post(f'{url}bis/').status_code, status.HTTP_404_NOT_FOUND)
 
         # POST while not team lead
         self.client.force_authenticate(self.main_tank.user)
         self.assertEqual(self.client.post(url).status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(self.client.delete(url).status_code, status.HTTP_404_NOT_FOUND)
         self.assertEqual(self.client.post(f'{url}bis/').status_code, status.HTTP_404_NOT_FOUND)

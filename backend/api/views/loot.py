@@ -311,6 +311,21 @@ class LootCollection(APIView):
         serializer.save(team=team, tier=team.tier)
         return Response({'id': serializer.instance.pk}, status=201)
 
+    def delete(self, request: Request, team_id: str) -> Response:
+        """
+        Remove Loot entries from the Team's history.
+        Entries to delete are specified in the request body.
+        """
+        try:
+            team = Team.objects.get(pk=team_id, members__character__user=request.user, members__lead=True)
+        except (Team.DoesNotExist, ValidationError):
+            return Response(status=404)
+
+        ids = request.data.get('items', [])
+        Loot.objects.filter(team=team, pk__in=ids).delete()
+
+        return Response(status=204)
+
 
 class LootWithBIS(APIView):
     """
