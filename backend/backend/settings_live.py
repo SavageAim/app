@@ -150,7 +150,7 @@ def sampler(context):
     # I want to trace loot requests since I need to know what's going on in the loot requests so I can improve them
     if 'loot' in path:
         return 0.5
-    else if 'notifications' in path:
+    elif 'notifications' in path:
         # Notifications spans are not important
         return 0
     # Anything else I'm not too bothered by
