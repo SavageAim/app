@@ -107,16 +107,35 @@ class TeamResource(APIView):
         team_lead_id = serializer.validated_data.pop('team_lead')
         serializer.save()
 
-        curr_lead = obj.members.get(lead=True)
-        new_lead = obj.members.get(pk=team_lead_id)
-        if curr_lead.id != new_lead.id:
-            # Make sure we have to do this before we run any code (don't do any unnecessary database hits)
-            curr_lead.lead = False
-            curr_lead.save()
-            new_lead.lead = True
-            new_lead.save()
-            notifier.team_lead(new_lead.character, obj)
+        # Make the chosen Character the new leader
+        obj.make_lead(obj.members.get(pk=team_lead_id))
+        return Response(status=204)
 
+    def patch(self, request: Request, pk: str) -> Response:
+        """
+        Regenerate the Team's token
+        """
+        try:
+            obj = Team.objects.get(pk=pk, members__character__user=request.user, members__lead=True)
+        except (Team.DoesNotExist, ValidationError):
+            return Response(status=404)
+
+        obj.invite_code = Team.generate_invite_code()
+        obj.save()
+        return Response(status=204)
+
+    def delete(self, request: Request, pk: str) -> Response:
+        """
+        Disband a Team
+
+        Notify all non leader members of the Team being disbanded
+        """
+        try:
+            obj = Team.objects.get(pk=pk, members__character__user=request.user, members__lead=True)
+        except (Team.DoesNotExist, ValidationError):
+            return Response(status=404)
+
+        obj.disband()
         return Response(status=204)
 
 

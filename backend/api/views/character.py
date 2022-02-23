@@ -9,7 +9,7 @@ from rest_framework.views import APIView
 from rest_framework.request import Request
 from rest_framework.response import Response
 # local
-from api.models import Character
+from api.models import Character, Team
 from api.serializers import (
     CharacterCollectionSerializer,
     CharacterDetailsSerializer,
@@ -67,22 +67,6 @@ class CharacterResource(APIView):
         data = CharacterDetailsSerializer(instance=obj).data
         return Response(data)
 
-    # def delete(self, request: Request, pk: int) -> Response:
-    #     """
-    #     Delete a character.
-    #     Can only delete a character owned by the requesting user.
-
-    #     If deleting someone that is a teamlead, move the teamlead to someone else in the team
-    #     """
-    #     try:
-    #         obj = Character.objects.get(pk=pk, user=request.user)
-    #     except Character.DoesNotExist:
-    #         return Response(status=404)
-
-    #     # TODO - Safety checks on this when I switch things to using protect
-    #     obj.delete()
-    #     return Response(status=204)
-
 
 class CharacterVerification(APIView):
     """
@@ -102,3 +86,46 @@ class CharacterVerification(APIView):
         verify_character.delay(pk)
 
         return Response(status=202)
+
+
+class CharacterDelete(APIView):
+    """
+    A class specifically for handling the deletion of a Character.
+    Has a GET request to get what will be affected by the deletion of this Character.
+    """
+
+    def get(self, request: Request, pk: int) -> Response:
+        """
+        Check through the DB for any information regarding the Character in question
+        """
+        try:
+            obj = Character.objects.get(pk=pk, user=request.user, verified=True)
+        except Character.DoesNotExist:
+            return Response(status=404)
+
+        # Information we need to gather;
+        #   - Teams the character is in, and whether they lead it or not
+        teams = Team.objects.filter(members__character=obj)
+        info = [{
+            'name': team.name,
+            'lead': team.members.get(character=obj).lead,
+            'members': team.members.count(),
+        } for team in teams]
+
+        return Response(info)
+
+    def delete(self, request: Request, pk: int) -> Response:
+        """
+        Delete the Character from the DB, doing all the things that are stated will happen
+        """
+        try:
+            obj = Character.objects.get(pk=pk, user=request.user)
+        except Character.DoesNotExist:
+            return Response(status=404)
+
+        # Call character.remove to cleanup teams first
+        obj.remove()
+
+        # Then delete the object
+        obj.delete()
+        return Response(status=204)

@@ -2,7 +2,7 @@ from io import StringIO
 from django.core.management import call_command
 from django.urls import reverse
 from rest_framework import status
-from api.models import BISList, Character, Gear, Team, Tier
+from api.models import BISList, Character, Gear, Notification, Team, Tier
 from api.serializers import TeamMemberSerializer
 from .test_base import SavageAimTestCase
 
@@ -51,7 +51,7 @@ class TeamMemberResource(SavageAimTestCase):
         raid_gear = Gear.objects.get(item_level=600, has_weapon=False)
         tome_gear = Gear.objects.get(item_level=600, has_weapon=True)
         crafted = Gear.objects.get(name='Classical')
-        self.rl_main_bis = BISList.objects.create(
+        self.tl_main_bis = BISList.objects.create(
             bis_body=raid_gear,
             bis_bracelet=raid_gear,
             bis_earrings=raid_gear,
@@ -79,7 +79,7 @@ class TeamMemberResource(SavageAimTestCase):
             job_id='SGE',
             owner=self.char,
         )
-        self.rl_alt_bis = BISList.objects.create(
+        self.tl_alt_bis = BISList.objects.create(
             bis_body=tome_gear,
             bis_bracelet=tome_gear,
             bis_earrings=tome_gear,
@@ -165,7 +165,7 @@ class TeamMemberResource(SavageAimTestCase):
         )
 
         # Lastly, link the characters to the team
-        self.tm = self.team.members.create(character=self.char, bis_list=self.rl_main_bis, lead=True)
+        self.tm = self.team.members.create(character=self.char, bis_list=self.tl_main_bis, lead=True)
 
     def test_read(self):
         """
@@ -193,13 +193,13 @@ class TeamMemberResource(SavageAimTestCase):
 
         data = {
             'character_id': self.char.pk,
-            'bis_list_id': self.rl_alt_bis.pk,
+            'bis_list_id': self.tl_alt_bis.pk,
         }
         response = self.client.put(url, data)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT, response.content)
         self.tm.refresh_from_db()
         self.assertEqual(self.tm.character, self.char)
-        self.assertEqual(self.tm.bis_list, self.rl_alt_bis)
+        self.assertEqual(self.tm.bis_list, self.tl_alt_bis)
 
         data = {
             'character_id': self.char2.pk,
@@ -211,6 +211,54 @@ class TeamMemberResource(SavageAimTestCase):
         self.assertEqual(self.tm.character, self.char2)
         self.assertEqual(self.tm.bis_list, self.mt_main_bis)
 
+    def test_delete(self):
+        """
+        Attempt to test both Kick and Leave requests for a Team Member
+
+        First have the team leader leave, and ensure the other character is now the Team Leader
+        Then re-add the character that left, and have the Team Leader send a request to kick the user
+        Note - Set char2's user to a new random user
+        """
+        self.char2.user = self._create_user()
+        self.char2.save()
+        tm2 = self.team.members.create(character=self.char2, bis_list=self.mt_main_bis, lead=False)
+
+        # Part 1 - Have the leader leave the Team, ensure that char2 is now leader and is the only one in the Team
+        url = reverse('api:team_member_resource', kwargs={'team_id': self.team.pk, 'pk': self.tm.pk})
+        self.client.force_authenticate(self.char.user)
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT, response.content)
+
+        self.team.refresh_from_db()
+        self.assertEqual(self.team.members.count(), 1)
+        tm2.refresh_from_db()
+        self.assertTrue(tm2.lead)
+
+        # Check notifications; char2's user should have 2 - one for new team lead, one for char leaving
+        notifs = Notification.objects.filter(user=self.char2.user)
+        self.assertEqual(notifs.count(), 2)
+        self.assertSetEqual({n.type for n in notifs}, {'team_leave', 'team_lead'})
+
+        # Return the other character to the Team and kick them from it
+        self.tm = self.team.members.create(character=self.char, bis_list=self.tl_main_bis, lead=False)
+        self.team.refresh_from_db()
+        self.assertEqual(self.team.members.count(), 2)
+
+        # Now send a delete request as the team leader's user
+        url = reverse('api:team_member_resource', kwargs={'team_id': self.team.pk, 'pk': self.tm.pk})
+        self.client.force_authenticate(self.char2.user)
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT, response.content)
+
+        self.team.refresh_from_db()
+        self.assertEqual(self.team.members.count(), 1)
+
+        notifs = Notification.objects.filter(user=self.char2.user)
+        self.assertEqual(notifs.count(), 2)
+        notifs = Notification.objects.filter(user=self.char.user)
+        self.assertEqual(notifs.count(), 1)
+        self.assertEqual(notifs.first().text, f'{self.char} has been kicked from {self.team.name}!')
+
     def test_404(self):
         """
         Test 404 responses for bad requests
@@ -218,6 +266,9 @@ class TeamMemberResource(SavageAimTestCase):
         - Team ID doesn't exist
         - Team member pk not in team
         - Team member doesn't belong to user
+
+        Delete specific:
+        - User isn't team leader
         """
         user = self._get_user()
         self.client.force_authenticate(user)
@@ -225,13 +276,16 @@ class TeamMemberResource(SavageAimTestCase):
         url = reverse('api:team_member_resource', kwargs={'team_id': 'abcde', 'pk': self.tm.pk})
         self.assertEqual(self.client.get(url).status_code, status.HTTP_404_NOT_FOUND)
         self.assertEqual(self.client.put(url).status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(self.client.delete(url).status_code, status.HTTP_404_NOT_FOUND)
 
         url = reverse('api:team_member_resource', kwargs={'team_id': self.team.pk, 'pk': '9999'})
         self.assertEqual(self.client.get(url).status_code, status.HTTP_404_NOT_FOUND)
         self.assertEqual(self.client.put(url).status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(self.client.delete(url).status_code, status.HTTP_404_NOT_FOUND)
 
         self.char.user = self._create_user()
         self.char.save()
         url = reverse('api:team_member_resource', kwargs={'team_id': self.team.pk, 'pk': self.tm.pk})
         self.assertEqual(self.client.get(url).status_code, status.HTTP_404_NOT_FOUND)
         self.assertEqual(self.client.put(url).status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(self.client.delete(url).status_code, status.HTTP_404_NOT_FOUND)

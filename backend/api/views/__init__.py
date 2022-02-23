@@ -1,5 +1,5 @@
-from .bis_list import BISListCollection, BISListResource
-from .character import CharacterCollection, CharacterResource, CharacterVerification
+from .bis_list import BISListCollection, BISListDelete, BISListResource
+from .character import CharacterCollection, CharacterDelete, CharacterResource, CharacterVerification
 from .gear import GearCollection, ItemLevels
 from .job import JobCollection
 from .loot import LootCollection, LootWithBIS
@@ -11,9 +11,11 @@ from .user import UserView
 
 __all__ = [
     'BISListCollection',
+    'BISListDelete',
     'BISListResource',
 
     'CharacterCollection',
+    'CharacterDelete',
     'CharacterResource',
     'CharacterVerification',
 

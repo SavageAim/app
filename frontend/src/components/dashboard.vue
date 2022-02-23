@@ -18,11 +18,9 @@
           </template>
         </div>
         <footer class="card-footer">
-          <router-link to="/team/" class="button is-fullwidth is-success is-outlined">
-            <div class="icon-text">
-              <span class="icon"><i class="material-icons">add</i></span>
-              <span>Add New</span>
-            </div>
+          <router-link to="/team/" class="card-footer-item has-text-success icon-text">
+            <span class="icon"><i class="material-icons">add</i></span>
+            <span>Add New</span>
           </router-link>
         </footer>
       </div>
@@ -47,11 +45,9 @@
         </template>
       </div>
       <footer class="card-footer">
-        <router-link to="/characters/new/" class="button is-fullwidth is-success is-outlined">
-          <div class="icon-text">
-            <span class="icon"><i class="material-icons">add</i></span>
-            <span>Add New</span>
-          </div>
+        <router-link to="/characters/new/" class="card-footer-item has-text-success icon-text">
+          <span class="icon"><i class="material-icons">add</i></span>
+          <span>Add New</span>
         </router-link>
       </footer>
     </div>

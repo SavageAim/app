@@ -29,13 +29,16 @@
             <div class="card-header-title">Invite Code</div>
           </div>
           <div class="card-content">
-            <div class="field">
-              <label class="label is-sr-only" for="inviteCode">Invite Code</label>
-              <div class="control">
+            <div class="field has-addons">
+              <div class="control is-expanded">
                 <input class="input" id="inviteCode" type="text" :value="team.invite_code" readonly />
               </div>
+              <label class="label is-sr-only" for="inviteCode">Invite Code</label>
+              <div class="control">
+                <button class="button is-warning" @click="regenerateInviteCode">Regenerate</button>
+              </div>
             </div>
-            <p>Send the above code, or <a :href="inviteUrl" target="_blank">this URL</a>, to people to allow them to join <span class="has-text-primary">{{ team.name }}</span>!</p>
+            <p>Send the above code, or <a :href="`${inviteUrl}/${team.invite_code}/`" target="_blank">this URL</a>, to people to allow them to join <span class="has-text-primary">{{ team.name }}</span>!</p>
           </div>
         </div>
 
@@ -73,9 +76,11 @@
               <p class="help is-warning">Changing this will lock you out of this page. Please be sure you want to hand over leadership before changing this value.</p>
               <p v-if="errors.team_lead !== undefined" class="help is-danger">{{ errors.team_lead[0] }}</p>
             </div>
-
-            <button class="button is-success" @click="saveDetails">Save</button>
           </div>
+          <footer class="card-footer">
+            <a class="has-text-success card-footer-item" @click="saveDetails">Save</a>
+            <a class="has-text-danger card-footer-item" @click="disband">Disband</a>
+          </footer>
         </div>
       </div>
     </template>
@@ -85,6 +90,7 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 import TeamNav from '@/components/team_nav.vue'
+import DeleteTeam from '@/components/modals/confirmations/delete_team.vue'
 import { TeamUpdateErrors } from '@/interfaces/responses'
 import Team from '@/interfaces/team'
 import TeamMember from '@/interfaces/team_member'
@@ -98,6 +104,8 @@ import SavageAimMixin from '@/mixins/savage_aim_mixin'
 export default class TeamSettings extends SavageAimMixin {
   errors: TeamUpdateErrors = {}
 
+  firstLoad = true
+
   loading = true
 
   teamLeadId!: number
@@ -110,36 +118,42 @@ export default class TeamSettings extends SavageAimMixin {
   }
 
   get inviteUrl(): string {
-    return `${process.env.VUE_APP_URL}/team/join/${this.team.invite_code}/`
+    return `${process.env.VUE_APP_URL}/team/join`
   }
 
   get url(): string {
     return `/backend/api/team/${this.$route.params.id}/`
   }
 
-  checkPermissions(): void {
+  checkPermissions(displayWarning: boolean): void {
     // Ensure that the person on this page is the team leader and not anybody else
     if (!this.editable()) {
-      this.$router.push('../', () => {
-        Vue.notify({ text: 'Only the team leader can edit a Team\'s settings.', type: 'is-warning' })
+      this.$router.push(`/team/${this.$route.params.id}/`, () => {
+        if (displayWarning) Vue.notify({ text: 'Only the team leader can edit a Team\'s settings.', type: 'is-warning' })
       })
     }
   }
 
   created(): void {
-    this.fetchTeam()
+    this.fetchTeam(false)
   }
 
-  async fetchTeam(): Promise<void> {
+  disband(): void {
+    this.$modal.show(DeleteTeam, { team: this.team })
+  }
+
+  async fetchTeam(reload: boolean): Promise<void> {
     // Load the team data from the API
     try {
       const response = await fetch(this.url)
       if (response.ok) {
         // Parse the JSON into a team and save it
         this.team = (await response.json()) as Team
-        this.checkPermissions()
+        this.checkPermissions(this.firstLoad)
         this.teamLeadId = this.team.members.find((teamMember: TeamMember) => teamMember.character.user_id === this.$store.state.user.id)?.character.id ?? -1
         this.loading = false
+        this.firstLoad = false
+        if (reload) this.$forceUpdate()
         document.title = `Settings - ${this.team.name} - Savage Aim`
       }
       else {
@@ -148,6 +162,29 @@ export default class TeamSettings extends SavageAimMixin {
     }
     catch (e) {
       this.$notify({ text: `Error ${e} when fetching Team.`, type: 'is-danger' })
+    }
+  }
+
+  async regenerateInviteCode(): Promise<void> {
+    try {
+      const response = await fetch(this.url, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': this.$cookies.get('csrftoken'),
+        },
+      })
+
+      if (response.ok) {
+        this.$notify({ text: 'New Invite Code Generated!', type: 'is-success' })
+        await this.fetchTeam(true)
+      }
+      else {
+        super.handleError(response.status)
+      }
+    }
+    catch (e) {
+      this.$notify({ text: `Error ${e} when attempting to regenerate Team Invite Code.`, type: 'is-danger' })
     }
   }
 
@@ -170,8 +207,7 @@ export default class TeamSettings extends SavageAimMixin {
 
       if (response.ok) {
         this.$notify({ text: 'Successfully updated!', type: 'is-success' })
-        await this.fetchTeam()
-        this.$forceUpdate()
+        await this.fetchTeam(true)
       }
       else {
         super.handleError(response.status)

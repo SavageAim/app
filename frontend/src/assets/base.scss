@@ -43,14 +43,29 @@ $navbar-background-color: $scheme-main;
 $navbar-item-active-color: $main-colour;
 $navbar-dropdown-item-hover-background-color: $scheme-main-bis;
 
+// Dropdown stuff
+$dropdown-content-background-color: $scheme-main-bis;
+.dropdown.is-centered .dropdown-menu {
+  left: auto;
+  right: auto;
+}
+.dropdown-trigger .icon-text {
+  color: $link;
+}
+
 // Card stuff
 $card-header-shadow: 0 0.5em 0 0 rgba($accent-dark, 0.1);
 $card-background-color: $scheme-main-bis;
+a.card-footer-item, .dropdown.card-footer-item a {
+  color: $main-colour;
+  font-weight: bold;
+
+  &:hover {
+    color: findDarkColor($main-colour)
+  }
+}
 .vm--modal {
   background-color: $card-background-color!important;
-}
-.card-footer > .button {
-  border-radius: 0 0 4px 4px;
 }
 .card:not(:last-child) {
   margin-bottom: 1.5rem;
@@ -83,6 +98,11 @@ html.has-navbar-fixed-top {
 }
 .hero.is-fullheight-with-navbar {
   min-height: calc(100vh - 4.25rem);
+}
+
+p.disabled-delete {
+  font-weight: bold;
+  color: hsl(348, 86%, 30%);
 }
 
 @import './gear_gradients';

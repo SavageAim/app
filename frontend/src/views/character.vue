@@ -10,9 +10,9 @@
           <div class="card-content">
             <CharacterBio :character="character" :displayUnverified="false" />
           </div>
-          <!-- <footer class="card-footer">
-            <button class="button is-fullwidth is-danger is-outlined" @click="deleteChar">Delete Character</button>
-          </footer> -->
+          <footer class="card-footer">
+            <a class="has-text-danger card-footer-item" @click="deleteChar">Delete</a>
+          </footer>
         </div>
 
         <!-- Navigation -->
@@ -94,6 +94,7 @@
                 <router-link :to="`/characters/${character.id}/bis_list/${bis.id}/`" class="card-footer-item">
                   Edit
                 </router-link>
+                <a class="has-text-danger card-footer-item" @click="() => { deleteBIS(bis) }">Delete</a>
               </footer>
             </div>
             <div class="subtitle has-text-centered" v-if="character.bis_lists.length === 0">
@@ -136,8 +137,10 @@
 import { Component } from 'vue-property-decorator'
 import BISTable from '@/components/bis_table.vue'
 import CharacterBio from '@/components/character_bio.vue'
-import ConfirmDelete from '@/components/modals/confirm_delete.vue'
+import DeleteBIS from '@/components/modals/confirmations/delete_bis.vue'
+import DeleteCharacter from '@/components/modals/confirmations/delete_character.vue'
 import TeamBio from '@/components/team_bio.vue'
+import BISList from '@/interfaces/bis_list'
 import { CharacterDetails } from '@/interfaces/character'
 import Job from '@/interfaces/job'
 import Team from '@/interfaces/team'
@@ -171,16 +174,22 @@ export default class Character extends SavageAimMixin {
   }
 
   created(): void {
-    this.fetchChar()
+    this.fetchChar(false)
     this.fetchTeams()
   }
 
-  async deleteChar(): Promise<void> {
+  deleteBIS(bis: BISList): void {
     // Prompt deletion first before sending an api request (we'll use a modal instead of javascript alerts)
-    this.$modal.show(ConfirmDelete, { character: this.character })
+    const { path } = this.$route // Store the path we were on so if the modal navigates off we don't try to run bad code
+    this.$modal.show(DeleteBIS, { bis, character: this.character }, { }, { closed: () => { if (this.$route.path === path) this.fetchChar(true) } })
   }
 
-  async fetchChar(): Promise<void> {
+  deleteChar(): void {
+    // Prompt deletion first before sending an api request (we'll use a modal instead of javascript alerts)
+    this.$modal.show(DeleteCharacter, { character: this.character })
+  }
+
+  async fetchChar(reload: boolean): Promise<void> {
     // Load the character data from the API
     try {
       const response = await fetch(this.url)
@@ -188,6 +197,7 @@ export default class Character extends SavageAimMixin {
         // Parse the list into an array of character interfaces and store them in the character data list
         this.character = (await response.json()) as CharacterDetails
         this.loading = false
+        if (reload) this.$forceUpdate()
         document.title = `${this.character.name} @ ${this.character.world} - Savage Aim`
       }
       else {
@@ -238,7 +248,7 @@ export default class Character extends SavageAimMixin {
       }
       else if (response.status === 404) {
         // Status 404 on this page likely means the character is verified
-        this.fetchChar()
+        this.fetchChar(true)
       }
       else {
         this.$notify({ text: `Unexpected HTTP status ${response.status} received when attempting to add Character to verification queue.`, type: 'is-danger' })

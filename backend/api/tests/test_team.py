@@ -362,6 +362,19 @@ class TeamResource(SavageAimTestCase):
         self.assertIn('members', content)
         self.assertEqual(len(content['members']), 1)
 
+    def test_regenerate_token(self):
+        """
+        Send a PATCH request to the endpoint, and ensure the team's invite code has changed
+        """
+        user = self._get_user()
+        self.client.force_authenticate(user)
+        url = reverse('api:team_resource', kwargs={'pk': self.team.id})
+
+        response = self.client.patch(url)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT, response.content)
+        with self.assertRaises(Team.DoesNotExist):
+            Team.objects.get(invite_code=self.team.invite_code)
+
     def test_update(self):
         """
         Update the Team fully and ensure the data in the DB has been updated
@@ -500,6 +513,65 @@ class TeamResource(SavageAimTestCase):
         content = response.json()
         self.assertEqual(content['team_lead'], ['Please select a member of the Team to be the new team lead.'])
 
+    def test_delete(self):
+        """
+        Send a request to disband a Team.
+        Ensure that other Members of the Team receive a disband notification as well
+        """
+        user = self._get_user()
+        self.client.force_authenticate(user)
+        url = reverse('api:team_resource', kwargs={'pk': self.team.id})
+
+        other_char = Character.objects.create(
+            avatar_url='https://img.savageaim.com/abcde',
+            lodestone_id=987654321,
+            user=self._create_user(),
+            name='Char 2',
+            world='Lich',
+        )
+        g = Gear.objects.first()
+        other_bis = BISList.objects.create(
+            bis_body=g,
+            bis_bracelet=g,
+            bis_earrings=g,
+            bis_feet=g,
+            bis_hands=g,
+            bis_head=g,
+            bis_left_ring=g,
+            bis_legs=g,
+            bis_mainhand=g,
+            bis_necklace=g,
+            bis_offhand=g,
+            bis_right_ring=g,
+            current_body=g,
+            current_bracelet=g,
+            current_earrings=g,
+            current_feet=g,
+            current_hands=g,
+            current_head=g,
+            current_left_ring=g,
+            current_legs=g,
+            current_mainhand=g,
+            current_necklace=g,
+            current_offhand=g,
+            current_right_ring=g,
+            job=Job.objects.last(),
+            owner=other_char,
+        )
+        self.team.members.create(character=other_char, bis_list=other_bis, lead=False)
+
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT, response.content)
+
+        with self.assertRaises(Team.DoesNotExist):
+            Team.objects.get(pk=self.team.pk)
+
+        self.assertEqual(Notification.objects.filter(user=user).count(), 0)
+        user = other_char.user
+        self.assertEqual(Notification.objects.filter(user=user).count(), 1)
+        notif = Notification.objects.filter(user=user).first()
+        self.assertEqual(notif.text, f'"{self.team.name}" has been disbanded!')
+
     def test_404(self):
         """
         Test the cases that cause a 404 to be returned;
@@ -518,6 +590,10 @@ class TeamResource(SavageAimTestCase):
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND, response.content)
         response = self.client.put(url)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND, response.content)
+        response = self.client.patch(url)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND, response.content)
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND, response.content)
 
         url = reverse('api:team_resource', kwargs={'pk': self.team.id})
         # Check update as non-team lead
@@ -525,12 +601,20 @@ class TeamResource(SavageAimTestCase):
         self.tm.save()
         response = self.client.put(url)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND, response.content)
+        response = self.client.patch(url)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND, response.content)
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND, response.content)
 
         # Delete membership altogether and test both read and update
         self.tm.delete()
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND, response.content)
         response = self.client.put(url)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND, response.content)
+        response = self.client.patch(url)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND, response.content)
+        response = self.client.delete(url)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND, response.content)
 
 

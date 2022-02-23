@@ -7,7 +7,7 @@ from django.urls import reverse
 from rest_framework import status
 # local
 from api import notifier
-from api.models import BISList, Character, Gear, Notification, Job, Settings
+from api.models import BISList, Character, Gear, Notification, Job, Settings, Team, Tier
 from api.serializers import CharacterCollectionSerializer, CharacterDetailsSerializer
 from .test_base import SavageAimTestCase
 
@@ -208,28 +208,6 @@ class CharacterResource(SavageAimTestCase):
         self.assertIn('bis_lists', content)
         self.assertEqual(len(content['bis_lists']), 1)
 
-    # def test_delete(self):
-    #     """
-    #     Attempt to delete a character, then ensure it's missing from the DB
-    #     """
-    #     user = self._get_user()
-    #     self.client.force_authenticate(user)
-
-    #     # Create some users, then send a list request and check the data returned is correct
-    #     char = Character.objects.create(
-    #         avatar_url='https://img.savageaim.com/abcde',
-    #         lodestone_id=1234567890,
-    #         user=user,
-    #         name='Char 1',
-    #         world='Lich',
-    #     )
-    #     url = reverse('api:character_resource', kwargs={'pk': char.id})
-
-    #     response = self.client.delete(url)
-    #     self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT, response.content)
-    #     with self.assertRaises(Character.DoesNotExist):
-    #         Character.objects.get(pk=char.pk)
-
     def test_404(self):
         """
         Test the cases that cause a 404 to be returned;
@@ -377,3 +355,242 @@ class CharacterVerification(SavageAimTestCase):
 
         # Make sure the celery task was never called
         mocked_task.assert_not_called()
+
+
+class CharacterDelete(SavageAimTestCase):
+    """
+    Test the methods in the Delete view for correct logic
+    """
+
+    def setUp(self):
+        """
+        Create necessary models
+        """
+        Notification.objects.all().delete()
+        # Call management commands for the bislist
+        call_command('tier_seed', stdout=StringIO())
+        call_command('job_seed', stdout=StringIO())
+        call_command('gear_seed', stdout=StringIO())
+
+        # Create some users, then send a list request and check the data returned is correct
+        self.char = Character.objects.create(
+            avatar_url='https://img.savageaim.com/abcde',
+            lodestone_id=1234567890,
+            user=self._get_user(),
+            name='Char 1',
+            world='Lich',
+            verified=True,
+        )
+        # Create a bislist for the character as well
+        bis_gear = Gear.objects.first()
+        curr_gear = Gear.objects.last()
+        self.bis = BISList.objects.create(
+            bis_body=bis_gear,
+            bis_bracelet=bis_gear,
+            bis_earrings=bis_gear,
+            bis_feet=bis_gear,
+            bis_hands=bis_gear,
+            bis_head=bis_gear,
+            bis_left_ring=bis_gear,
+            bis_legs=bis_gear,
+            bis_mainhand=bis_gear,
+            bis_necklace=bis_gear,
+            bis_offhand=bis_gear,
+            bis_right_ring=bis_gear,
+            current_body=curr_gear,
+            current_bracelet=curr_gear,
+            current_earrings=curr_gear,
+            current_feet=curr_gear,
+            current_hands=curr_gear,
+            current_head=curr_gear,
+            current_left_ring=curr_gear,
+            current_legs=curr_gear,
+            current_mainhand=curr_gear,
+            current_necklace=curr_gear,
+            current_offhand=curr_gear,
+            current_right_ring=curr_gear,
+            job=Job.objects.get(pk='DRG'),
+            owner=self.char,
+        )
+
+        # Create some extra data for proper testing
+        self.other_char = Character.objects.create(
+            avatar_url='https://img.savageaim.com/vwxyz',
+            lodestone_id=987654321,
+            user=self._create_user(),
+            name='Char 2',
+            world='Lich',
+            verified=True,
+        )
+        self.other_bis = BISList.objects.create(
+            bis_body=bis_gear,
+            bis_bracelet=bis_gear,
+            bis_earrings=bis_gear,
+            bis_feet=bis_gear,
+            bis_hands=bis_gear,
+            bis_head=bis_gear,
+            bis_left_ring=bis_gear,
+            bis_legs=bis_gear,
+            bis_mainhand=bis_gear,
+            bis_necklace=bis_gear,
+            bis_offhand=bis_gear,
+            bis_right_ring=bis_gear,
+            current_body=curr_gear,
+            current_bracelet=curr_gear,
+            current_earrings=curr_gear,
+            current_feet=curr_gear,
+            current_hands=curr_gear,
+            current_head=curr_gear,
+            current_left_ring=curr_gear,
+            current_legs=curr_gear,
+            current_mainhand=curr_gear,
+            current_necklace=curr_gear,
+            current_offhand=curr_gear,
+            current_right_ring=curr_gear,
+            job=Job.objects.get(pk='PLD'),
+            owner=self.other_char,
+        )
+
+        self.solo_team = Team.objects.create(
+            invite_code=Team.generate_invite_code(),
+            name='One Man Team',
+            tier=Tier.objects.first(),
+        )
+        self.my_team = Team.objects.create(
+            invite_code=Team.generate_invite_code(),
+            name='My Team',
+            tier=Tier.objects.first(),
+        )
+        self.your_team = Team.objects.create(
+            invite_code=Team.generate_invite_code(),
+            name='Your Team',
+            tier=Tier.objects.first(),
+        )
+
+        self.solo_team.members.create(character=self.char, bis_list=self.bis, lead=True)
+        self.my_team.members.create(character=self.char, bis_list=self.bis, lead=True)
+        self.your_team.members.create(character=self.char, bis_list=self.bis, lead=False)
+        self.my_team.members.create(character=self.other_char, bis_list=self.other_bis, lead=False)
+        self.your_team.members.create(character=self.other_char, bis_list=self.other_bis, lead=True)
+
+    def tearDown(self):
+        """
+        Clean up the DB after each test
+        """
+        Team.objects.all().delete()
+        Character.objects.all().delete()
+
+    def test_read(self):
+        """
+        Create a couple of characters for a user and send a list request for them
+        ensure the data is returned as expected
+        """
+        user = self._get_user()
+        self.client.force_authenticate(user)
+
+        url = reverse('api:character_delete', kwargs={'pk': self.char.id})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK, response.content)
+        content = response.json()
+        expected = {
+            self.solo_team.name: {
+                'members': 1,
+                'lead': True,
+                'name': self.solo_team.name,
+            },
+            self.my_team.name: {
+                'members': 2,
+                'lead': True,
+                'name': self.my_team.name,
+            },
+            self.your_team.name: {
+                'members': 2,
+                'lead': False,
+                'name': self.your_team.name,
+            },
+        }
+
+        for entry in content:
+            self.assertDictEqual(entry, expected[entry['name']])
+
+    def test_delete(self):
+        """
+        Delete a character and check that all information as expected has been updated
+        """
+        user = self._get_user()
+        self.client.force_authenticate(user)
+        url = reverse('api:character_delete', kwargs={'pk': self.char.id})
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+        with self.assertRaises(Character.DoesNotExist):
+            Character.objects.get(pk=self.char.pk)
+
+        with self.assertRaises(Team.DoesNotExist):
+            Team.objects.get(pk=self.solo_team.pk)
+
+        with self.assertRaises(BISList.DoesNotExist):
+            BISList.objects.get(pk=self.bis.pk)
+
+        Character.objects.get(pk=self.other_char.pk)
+        BISList.objects.get(pk=self.other_bis.pk)
+
+        # Check that My Team and Your Team both have 1 member and they are the leader
+        my_team = Team.objects.get(pk=self.my_team.pk)
+        your_team = Team.objects.get(pk=self.your_team.pk)
+        self.assertEqual(my_team.members.count(), 1)
+        self.assertEqual(my_team.members.first().character.pk, self.other_char.pk)
+        self.assertTrue(my_team.members.first().lead)
+        self.assertEqual(your_team.members.count(), 1)
+        self.assertEqual(your_team.members.first().character.pk, self.other_char.pk)
+        self.assertTrue(your_team.members.first().lead)
+
+        # Check notifications - Other Char should have three
+        # 1 - My Team Lead, 2 - My Team Leave, 3 - Your Team Leave
+        notifs = Notification.objects.filter(user=self.other_char.user)
+        self.assertEqual(notifs.count(), 3)
+        expected = {
+            f'{self.char} has left {self.my_team.name}!',
+            f'{self.char} has left {self.your_team.name}!',
+            f'{self.other_char} has been made the Team Leader of {self.my_team.name}!',
+        }
+        received = {notif.text for notif in notifs}
+        self.assertSetEqual(expected, received)
+
+    def test_404(self):
+        """
+        Test the cases that cause a 404 to be returned;
+
+        - ID doesn't exist
+        - Character doesn't belong to specified User
+        - Character is not verified
+        """
+        user = self._get_user()
+        self.client.force_authenticate(user)
+
+        # ID doesn't exist
+        url = reverse('api:character_delete', kwargs={'pk': 0000000000000000000000})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND, response.content)
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND, response.content)
+
+        # Character belongs to a different user
+        char = Character.objects.create(
+            avatar_url='https://img.savageaim.com/abcde',
+            lodestone_id=1234567890,
+            user=self._create_user(),
+            name='Char 1',
+            world='Lich',
+        )
+        url = reverse('api:character_delete', kwargs={'pk': char.id})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND, response.content)
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND, response.content)
+
+        # Character is not verified
+        char.user = user
+        char.save()
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND, response.content)

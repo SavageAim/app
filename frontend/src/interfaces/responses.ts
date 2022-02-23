@@ -30,6 +30,12 @@ export interface BISListErrors {
   external_link?: string[],
 }
 
+export interface BISListDeleteReadResponse {
+  id: string
+  member: number
+  name: string
+}
+
 // All create responses will return just the ID of the new item.
 export interface CreateResponse {
   id: number
@@ -38,6 +44,13 @@ export interface CreateResponse {
 // Interface defining the potential error responses that can come from the Character.create method
 export interface CharacterCreateErrors {
   lodestone_id: string[]
+}
+
+// Information about deleting Characters
+export interface CharacterDeleteReadResponse {
+  lead: boolean
+  members: number
+  name: string
 }
 
 // Interface for defining errors that can be returned from Loot create

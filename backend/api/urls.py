@@ -5,10 +5,12 @@ urlpatterns = [
     # BISLists
     path('character/<int:character_id>/bis_lists/', views.BISListCollection.as_view(), name='bis_collection'),
     path('character/<int:character_id>/bis_lists/<int:pk>/', views.BISListResource.as_view(), name='bis_resource'),
+    path('character/<int:character_id>/bis_lists/<int:pk>/delete/', views.BISListDelete.as_view(), name='bis_delete'),
 
     # Character
     path('character/', views.CharacterCollection.as_view(), name='character_collection'),
     path('character/<int:pk>/', views.CharacterResource.as_view(), name='character_resource'),
+    path('character/<int:pk>/delete/', views.CharacterDelete.as_view(), name='character_delete'),
     path('character/<int:pk>/verify/', views.CharacterVerification.as_view(), name='character_verification'),
 
     # Gear

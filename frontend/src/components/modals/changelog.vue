@@ -12,12 +12,21 @@
     </div>
     <div class="card-content content">
       <h2 class="has-text-primary subtitle">{{ version }}</h2>
-      <div class="divider"><i class="material-icons icon">expand_more</i> Minor Changes <i class="material-icons icon">expand_more</i></div>
-      <p>Loot Tracker Greed Boxes will always have every Character in them, even if they don't have a BIS list, just for QoL.</p>
-      <p>Security and error reporting improvements.</p>
+      <div class="divider"><i class="material-icons icon">expand_more</i> Deletion Update <i class="material-icons icon">expand_more</i></div>
+      <p>Wrong / Bad / Old data getting you down? Well now you can finally get rid of it!</p>
+      <p>
+        <ul>
+          <li>Characters and BIS Lists are deleted from the Character page. <span class="has-text-danger">BIS Lists cannot be deleted if they are used in a Team.</span></li>
+          <li>Teams are disbanded through the Team Settings page.</li>
+          <li>The Team Details page provides methods for Members to leave Teams, or for Team Leaders to kick Members.</li>
+        </ul>
+      </p>
+      <p>To go with this, the Team Settings page also now has the ability to regenerate an invite code for the Team. This is so kicked members are unable to get back in, if you wish.</p>
 
-      <div class="divider"><i class="material-icons icon">expand_more</i> Bugfixes <i class="material-icons icon">expand_more</i></div>
-      <p>Fixed an issue where Notification timestamps were not stored in UTC, causing issues for displaying them in other timezones.</p>
+      <div class="divider"><i class="material-icons icon">expand_more</i> Minor Changes <i class="material-icons icon">expand_more</i></div>
+      <p>Improved visibility of links in card footers by making the default colour lighter, and all links bold.</p>
+      <p>Changed the "Add New" links on the Dashboard to be the same style as all other card footer links, instead of being buttons.</p>
+      <p>Team Details card footer links are now stored in an "Actions" dropdown due to the increasing number of them.</p>
     </div>
   </div>
 </template>

@@ -62,6 +62,7 @@ interface LootGear {
 
 export interface Loot {
   greed: boolean
+  id: number
   item: string
   member: string
   obtained: string

@@ -35,8 +35,11 @@ const DEFAULT_USER = {
   id: null,
   notifications: {
     loot_tracker_update: true,
+    team_disband: true,
     team_join: true,
+    team_kick: true,
     team_lead: true,
+    team_leave: true,
     verify_fail: true,
     verify_success: true,
   },
