@@ -1116,6 +1116,11 @@ class LootTestSuite(SavageAimTestCase):
             'member_id': self.tl_tm.pk,
             'item': 'body',
         }
+        need_data_mainhand = {
+            'greed': False,
+            'member_id': self.tl_tm.pk,
+            'item': 'mainhand'
+        }
         greed_data_ring = {
             'greed': True,
             'member_id': self.mt_tm.pk,
@@ -1138,6 +1143,7 @@ class LootTestSuite(SavageAimTestCase):
         # Update expected data
         self.expected_gear['ring']['need'].pop(1)
         self.expected_gear['offhand']['need'].pop(0)
+        self.expected_gear['mainhand']['need'].pop(1)
         self.expected_gear['body']['need'].pop(0)
         self.expected_gear['ring']['greed'][0]['greed_lists'].pop(1)
         self.expected_gear['offhand']['greed'][1]['greed_lists'].pop(0)
@@ -1146,11 +1152,12 @@ class LootTestSuite(SavageAimTestCase):
         self.assertEqual(self.client.post(write_url, need_data_ring).status_code, status.HTTP_201_CREATED)
         self.assertEqual(self.client.post(write_url, need_data_shield).status_code, status.HTTP_201_CREATED)
         self.assertEqual(self.client.post(write_url, need_data_body).status_code, status.HTTP_201_CREATED)
+        self.assertEqual(self.client.post(write_url, need_data_mainhand).status_code, status.HTTP_201_CREATED)
         self.assertEqual(self.client.post(write_url, greed_data_ring).status_code, status.HTTP_201_CREATED)
         self.assertEqual(self.client.post(write_url, greed_data_shield).status_code, status.HTTP_201_CREATED)
         self.assertEqual(self.client.post(write_url, greed_data_body).status_code, status.HTTP_201_CREATED)
 
-        self.assertEqual(Loot.objects.count(), 6)
+        self.assertEqual(Loot.objects.count(), 7)
 
         # Send a request to the read url and check the response vs the expected gear
         response = self.client.get(read_url)
@@ -1163,6 +1170,8 @@ class LootTestSuite(SavageAimTestCase):
         self.tl_main_bis.refresh_from_db()
         self.assertEqual(self.tl_main_bis.bis_right_ring_id, self.raid_gear.pk)
         self.assertEqual(self.tl_main_bis.bis_body_id, self.raid_gear.pk)
+        self.assertEqual(self.tl_main_bis.bis_mainhand_id, self.raid_weapon.pk)
+        self.assertEqual(self.tl_main_bis.bis_offhand_id, self.raid_weapon.pk)
         self.mt_main_bis.refresh_from_db()
         self.assertEqual(self.mt_main_bis.bis_offhand_id, self.raid_weapon.pk)
         self.mt_alt_bis2.refresh_from_db()

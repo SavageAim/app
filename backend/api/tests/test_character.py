@@ -572,6 +572,8 @@ class CharacterDelete(SavageAimTestCase):
         url = reverse('api:character_delete', kwargs={'pk': 0000000000000000000000})
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND, response.content)
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND, response.content)
 
         # Character belongs to a different user
         char = Character.objects.create(
@@ -583,6 +585,8 @@ class CharacterDelete(SavageAimTestCase):
         )
         url = reverse('api:character_delete', kwargs={'pk': char.id})
         response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND, response.content)
+        response = self.client.delete(url)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND, response.content)
 
         # Character is not verified
