@@ -14,6 +14,10 @@
       <h2 class="has-text-primary subtitle">{{ version }}</h2>
       <div class="divider"><i class="material-icons icon">expand_more</i> Minor Changes <i class="material-icons icon">expand_more</i></div>
       <p>Fixed issue where Discord usernames were not being displayed properly.</p>
+      <p>
+        Set the default theme to Traffic Lights as feedback indicated it was much more easily understood for new users than gradient colours.
+        If you wish to change this, please visit the settings page.
+      </p>
     </div>
   </div>
 </template>
