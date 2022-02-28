@@ -18,6 +18,7 @@
         Set the default theme to Traffic Lights as feedback indicated it was much more easily understood for new users than gradient colours.
         <span class="has-text-warning">If you've never changed your settings, your colours will now be this style. Please change your user settings to change off this!</span>
       </p>
+      <p>Fixed bad wording in the 404 error page.</p>
     </div>
   </div>
 </template>
