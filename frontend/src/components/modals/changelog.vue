@@ -16,7 +16,7 @@
       <p>Fixed issue where Discord usernames were not being displayed properly.</p>
       <p>
         Set the default theme to Traffic Lights as feedback indicated it was much more easily understood for new users than gradient colours.
-        If you wish to change this, please visit the settings page.
+        <span class="has-text-warning">If you've never changed your settings, your colours will now be this style. Please change your user settings to change off this!</span>
       </p>
     </div>
   </div>
