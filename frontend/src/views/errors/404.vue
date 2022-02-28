@@ -6,7 +6,7 @@
           40<span class="has-text-danger">4</span>
         </h1>
         <p class="subtitle">
-          Not all the accuracy melds in the world can save you now.
+          All of the accuracy melds in the world can't save you now.
         </p>
         <router-link to="/">Go Home?</router-link>
       </div>
