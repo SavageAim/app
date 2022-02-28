@@ -18,7 +18,7 @@ class UserSerializer(serializers.Serializer):
     id = serializers.IntegerField()
     notifications = serializers.SerializerMethodField()
     theme = serializers.SerializerMethodField()
-    username = serializers.CharField()
+    username = serializers.SerializerMethodField()
 
     def get_avatar_url(self, obj) -> str:
         """
@@ -50,3 +50,12 @@ class UserSerializer(serializers.Serializer):
             return obj.settings.theme
         except (AttributeError, Settings.DoesNotExist):
             return 'beta'
+
+    def get_username(self, obj) -> str:
+        """
+        Use the `get_full_name` function to return the username since that actually works...
+        """
+        try:
+            return obj.get_full_name()
+        except AttributeError:
+            return 'guest'
