@@ -49,7 +49,7 @@ class UserSerializer(serializers.Serializer):
         try:
             return obj.settings.theme
         except (AttributeError, Settings.DoesNotExist):
-            return 'beta'
+            return 'traffic'
 
     def get_username(self, obj) -> str:
         """
