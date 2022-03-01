@@ -38,11 +38,10 @@
               </div>
             </div>
             <div class="control">
-              <a class="button is-link" :href="`/characters/${characterId}/bis_list/`" target="_blank" @click="giveRefreshInfo">Add New</a>
+              <a class="button is-link" target="_blank" @click="addBIS">Add New</a>
             </div>
           </div>
           <p v-if="bisListIdErrors !== undefined" class="help is-danger">{{ bisListIdErrors[0] }}</p>
-          <p v-if="refreshNote" class="help is-primary">Refresh the page to load in the newly made BIS List.</p>
         </template>
       </div>
     </div>
@@ -55,6 +54,7 @@ import {
   Prop,
   Watch,
 } from 'vue-property-decorator'
+import AddBIS from '@/components/modals/add_bis.vue'
 import BISList from '@/interfaces/bis_list'
 import { Character, CharacterDetails } from '@/interfaces/character'
 import SavageAimMixin from '@/mixins/savage_aim_mixin'
@@ -97,6 +97,14 @@ export default class TeamMemberForm extends SavageAimMixin {
     return this.$store.state.characters
   }
 
+  get chosen(): Character | undefined {
+    return this.characters.find((char: Character) => char.id === parseInt(this.characterId, 10))
+  }
+
+  addBIS(): void {
+    this.$modal.show(AddBIS, { character: this.chosen }, { }, { closed: () => this.fetchBis() })
+  }
+
   characterUrl(id: string): string {
     return `/backend/api/character/${id}/`
   }
@@ -109,9 +117,8 @@ export default class TeamMemberForm extends SavageAimMixin {
     }
 
     // If it's an actual character we should check it in the list
-    const chosen = this.characters.find((char: Character) => char.id === parseInt(this.characterId, 10))
-    if (chosen != null) {
-      this.characterVerified = chosen.verified
+    if (this.chosen != null) {
+      this.characterVerified = this.chosen.verified
     }
   }
 
@@ -119,14 +126,15 @@ export default class TeamMemberForm extends SavageAimMixin {
   async fetchBis(): Promise<void> {
     // Whenever the character id is changed we should fetch the BIS Lists
     this.bisListsLoaded = false
-    this.bisLists = []
 
     // Since we're not filtering out unverified users to be a bit more helpful to users, we should check verification here
-    this.checkVerified()
-    if (!this.characterVerified) return
-
     // Check it's an actual character
-    if (parseInt(this.characterId, 10) === -1) return
+    this.checkVerified()
+    if ((!this.characterVerified) || parseInt(this.characterId, 10) === -1) {
+      this.bisLists = []
+      return
+    }
+
     // If not, go fetch the bis lists for the character
     const url = this.characterUrl(this.characterId)
     try {
@@ -144,10 +152,6 @@ export default class TeamMemberForm extends SavageAimMixin {
     catch (e) {
       this.$notify({ text: `Error ${e} when fetching BIS Lists for the chosen Character.`, type: 'is-danger' })
     }
-  }
-
-  giveRefreshInfo(): void {
-    this.refreshNote = true
   }
 
   mounted(): void {
