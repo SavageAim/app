@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="columns is-hidden-touch">
+    <div class="columns" :class="[renderDesktop ? 'is-hidden-touch' : 'is-hidden']">
       <div class="column">
         <div class="card">
           <div class="card-header">
@@ -145,7 +145,7 @@
       </div>
     </div>
 
-    <div class="is-hidden-desktop mobile-form">
+    <div class="mobile-form" :class="[renderDesktop ? 'is-hidden-desktop' : '']">
       <div class="tabs is-fullwidth is-boxed">
         <ul>
           <li :class="{ 'is-active': tabsShown.filters }">
@@ -329,11 +329,11 @@ export default class BISListForm extends Vue {
   @Prop()
   bisList!: BISListModify
 
-  @Prop()
-  errors!: BISListErrors
+  @Prop({ default: true })
+  renderDesktop!: boolean
 
   @Prop()
-  jobs!: Job[]
+  errors!: BISListErrors
 
   // Set up default values for min and max IL, will change as new tiers are released
   maxIl = 605
@@ -358,6 +358,10 @@ export default class BISListForm extends Vue {
   // Get an array of item level choices based on the total min and max values
   get ilChoices(): number[] {
     return range(this.$store.state.maxItemLevel, this.$store.state.minItemLevel, -5)
+  }
+
+  get jobs(): Job[] {
+    return this.$store.state.jobs
   }
 
   // Conversion getters for job related refs
