@@ -10,7 +10,7 @@
           <li class="is-active"><a aria-current="page">New BIS List</a></li>
         </ul>
       </div>
-      <BISListForm :bisList="bisList" :jobs="jobs" :errors="errors" />
+      <BISListForm :bisList="bisList" :errors="errors" />
       <button class="button is-fullwidth is-success" @click="save">Create</button>
     </div>
   </div>
@@ -22,7 +22,6 @@ import BISListForm from '@/components/bis_list_form.vue'
 import BISListModify from '@/dataclasses/bis_list_modify'
 import { CreateResponse, BISListErrors } from '@/interfaces/responses'
 import { CharacterDetails } from '@/interfaces/character'
-import Job from '@/interfaces/job'
 import SavageAimMixin from '@/mixins/savage_aim_mixin'
 
 @Component({
@@ -44,20 +43,6 @@ export default class NewBIS extends SavageAimMixin {
   // URL to load character data from
   get charUrl(): string {
     return `/backend/api/character/${this.$route.params.characterId}/`
-  }
-
-  // Get store elements
-  get jobs(): Job[] {
-    return this.$store.state.jobs
-  }
-
-  // Conversion getters for refs
-  get jobPicker(): HTMLSelectElement {
-    return this.$refs.jobPicker as HTMLSelectElement
-  }
-
-  get jobIcon(): HTMLImageElement {
-    return this.$refs.jobIcon as HTMLImageElement
   }
 
   // Flag indicating if we're ready to display the page
