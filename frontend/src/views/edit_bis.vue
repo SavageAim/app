@@ -10,7 +10,7 @@
           <li class="is-active"><a aria-current="page">{{ breadcrumb }}</a></li>
         </ul>
       </div>
-      <BISListForm :bisList="bisList" :jobs="jobs" :errors="errors" />
+      <BISListForm :bisList="bisList" :errors="errors" />
       <button class="button is-fullwidth is-success" @click="save">Save</button>
     </div>
   </div>

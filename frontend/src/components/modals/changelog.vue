@@ -13,12 +13,13 @@
     <div class="card-content content">
       <h2 class="has-text-primary subtitle">{{ version }}</h2>
       <div class="divider"><i class="material-icons icon">expand_more</i> Minor Changes <i class="material-icons icon">expand_more</i></div>
-      <p>Fixed issue where Discord usernames were not being displayed properly.</p>
       <p>
-        Set the default theme to Traffic Lights as feedback indicated it was much more easily understood for new users than gradient colours.
-        <span class="has-text-warning">If you've never changed your settings, your colours will now be this style. Please change your user settings to change off this!</span>
+        Added a popup window to the Team Member Form via the Add BIS button.
+        <ul>
+          <li>This button used to open the New BIS page in a separate tab.</li>
+          <li>Instead now the popup window keeps you on the same page and allows for one page access to the entire process.</li>
+        </ul>
       </p>
-      <p>Fixed bad wording in the 404 error page.</p>
     </div>
   </div>
 </template>
