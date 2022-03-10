@@ -14,10 +14,10 @@
       <h2 class="has-text-primary subtitle">{{ version }}</h2>
       <div class="divider"><i class="material-icons icon">expand_more</i> Minor Changes <i class="material-icons icon">expand_more</i></div>
       <p>
-        Added a popup window to the Team Member Form via the Add BIS button.
+        Removed Offhand from the Loot Tracker.
         <ul>
-          <li>This button used to open the New BIS page in a separate tab.</li>
-          <li>Instead now the popup window keeps you on the same page and allows for one page access to the entire process.</li>
+          <li>PLDs will now be given both Main and Off slots when assigned the Mainhand is handed out.</li>
+          <li>This was requested for QoL during patch 6.0. If things change going forward this change may be reversed or changed further!</li>
         </ul>
       </p>
     </div>
