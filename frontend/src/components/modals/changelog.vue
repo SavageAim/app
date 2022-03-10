@@ -14,10 +14,9 @@
       <h2 class="has-text-primary subtitle">{{ version }}</h2>
       <div class="divider"><i class="material-icons icon">expand_more</i> Minor Changes <i class="material-icons icon">expand_more</i></div>
       <p>
-        Added a popup window to the Team Member Form via the Add BIS button.
+        Fixing occurrences of errors generated when issues occur during the authentication process.
         <ul>
-          <li>This button used to open the New BIS page in a separate tab.</li>
-          <li>Instead now the popup window keeps you on the same page and allows for one page access to the entire process.</li>
+          <li>I will continue monitoring the Sentry instance I have and as more come up I will try my best to patch them up!</li>
         </ul>
       </p>
     </div>
