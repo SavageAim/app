@@ -31,6 +31,19 @@ ALLOWED_HOSTS = [
     'savageaim.com',
 ]
 
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors': [
+                'django.template.context_processors.request',
+            ],
+        },
+    },
+]
+
 # Application definition
 INSTALLED_APPS = [
     'api',
@@ -98,7 +111,6 @@ SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 # Socal Auth
 AUTHENTICATION_BACKENDS = [
-    'django.contrib.auth.backends.ModelBackend',
     'allauth.account.auth_backends.AuthenticationBackend'
 ]
 SITE_ID = 2
@@ -106,7 +118,7 @@ SOCIALACCOUNT_PROVIDERS = {
     'discord': {},
 }
 LOGIN_REDIRECT_URL = 'https://savageaim.com/'
-LOGOUT_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = 'https://savageaim.com/'
 SOCIALACCOUNT_LOGIN_ON_GET = True
 
 # Celery settings
