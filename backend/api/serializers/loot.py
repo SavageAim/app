@@ -17,7 +17,7 @@ __all__ = [
 
 ITEMS = {
     'mainhand',
-    'offhand',
+    # 'offhand',
     'head',
     'body',
     'hands',
