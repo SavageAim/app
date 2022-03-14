@@ -19,6 +19,13 @@
           <li>I will continue monitoring the Sentry instance I have and as more come up I will try my best to patch them up!</li>
         </ul>
       </p>
+      <p>
+        Removed Offhand from the Loot Tracker.
+        <ul>
+          <li>PLDs will now be given both Main and Off slots when assigned the Mainhand is handed out.</li>
+          <li>This was requested for QoL during patch 6.0. If things change going forward this change may be reversed or changed further!</li>
+        </ul>
+      </p>
     </div>
   </div>
 </template>

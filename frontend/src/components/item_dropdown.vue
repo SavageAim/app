@@ -4,7 +4,7 @@
       <select :value="value" @input="handleInput" ref="dropdown">
         <option value="na">Select an item type</option>
         <option value="mainhand">Mainhand</option>
-        <option value="offhand">Offhand</option>
+        <!-- <option value="offhand">Offhand</option> -->
         <option value="head">Head</option>
         <option value="body">Body</option>
         <option value="hands">Hands</option>
