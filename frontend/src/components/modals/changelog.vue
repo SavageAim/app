@@ -14,6 +14,12 @@
       <h2 class="has-text-primary subtitle">{{ version }}</h2>
       <div class="divider"><i class="material-icons icon">expand_more</i> Minor Changes <i class="material-icons icon">expand_more</i></div>
       <p>
+        Fixing occurrences of errors generated when issues occur during the authentication process.
+        <ul>
+          <li>I will continue monitoring the Sentry instance I have and as more come up I will try my best to patch them up!</li>
+        </ul>
+      </p>
+      <p>
         Removed Offhand from the Loot Tracker.
         <ul>
           <li>PLDs will now be given both Main and Off slots when assigned the Mainhand is handed out.</li>
