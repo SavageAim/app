@@ -5,8 +5,16 @@ type used in the system, without having to add messy code elsewhere
 Also will handle sending info to websockets when we get there
 """
 from __future__ import annotations
+from asgiref.sync import async_to_sync
+from channels.layers import get_channel_layer
 from django.contrib.auth.models import User
 from . import models
+
+CHANNEL_LAYER = get_channel_layer()
+
+
+def _generate_group(user: User) -> str:
+    return f'user-updates-{user.id}'
 
 
 def _create_notif(user: User, text: str, link: str, type: str):
@@ -25,7 +33,12 @@ def _create_notif(user: User, text: str, link: str, type: str):
 
     # If we make it to this point, create the object and then push updates down the web socket
     models.Notification.objects.create(user=user, text=text, link=link, type=type)
-    # TODO - Websocket stuff
+    async_to_sync(CHANNEL_LAYER.group_send)(
+        _generate_group(user),
+        {
+            'type': 'notification',
+        },
+    )
 
 
 def loot_tracker_update(bis: models.BISList, team: models.Team):
