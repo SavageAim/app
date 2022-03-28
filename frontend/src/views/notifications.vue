@@ -36,11 +36,11 @@ export default class NotificationView extends SavageAimMixin {
   notifications: Notification[] = []
 
   created(): void {
-    this.fetchData()
+    this.load()
     document.title = 'Notifications - Savage Aim'
   }
 
-  async fetchData(): Promise<void> {
+  async load(): Promise<void> {
     // Load the team data from the API
     try {
       const response = await fetch('/backend/api/notifications/')
@@ -69,6 +69,7 @@ export default class NotificationView extends SavageAimMixin {
 
       if (response.ok) {
         this.$store.dispatch('fetchNotifications')
+        this.load()
       }
       else {
         super.handleError(response.status)
