@@ -22,5 +22,8 @@ class UpdatesConsumer(WebsocketConsumer):
         Send a notification update request to the socket
         """
         print('sending notification payload')
-        payload = {'type': 'notification'}
+        payload = {
+            'type': 'notification',
+            'reloadUrls': ['/notifications/'],
+        }
         self.send(text_data=json.dumps(payload))

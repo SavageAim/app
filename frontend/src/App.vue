@@ -88,11 +88,11 @@ export default class App extends Vue {
       switch (payload.type) {
       case 'notification':
         this.$store.dispatch('fetchNotifications')
-        if (this.$route.path === '/notifications/') this.reloadView()
         break
       default:
         Vue.notify({ text: `Unexpected packet type "${payload.type}" received.`, type: 'is-warning' })
       }
+      if (payload.reloadUrls.includes(this.$route.path)) this.reloadView()
     }
 
     this.updateSocket = sock
