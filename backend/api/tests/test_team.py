@@ -430,6 +430,7 @@ class TeamResource(SavageAimTestCase):
         }
         response = self.client.put(url, data)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT, response.content)
+        old_name = self.team.name
 
         # Ensure the Team has been updated
         self.team.refresh_from_db()
@@ -441,12 +442,16 @@ class TeamResource(SavageAimTestCase):
         self.assertFalse(self.tm.lead)
 
         # Ensure the new character got a notification
-        self.assertEqual(Notification.objects.filter(user=char.user).count(), 1)
-        notif = Notification.objects.filter(user=char.user).first()
-        self.assertEqual(notif.link, f'/team/{self.team.id}/')
-        self.assertEqual(notif.text, f'{char} has been made the Team Leader of {self.team.name}!')
-        self.assertEqual(notif.type, 'team_lead')
-        self.assertFalse(notif.read)
+        self.assertEqual(Notification.objects.filter(user=char.user).count(), 2)
+        notifs = Notification.objects.filter(user=char.user)
+        note_map = {
+            'team_lead': f'{char} has been made the Team Leader of {self.team.name}!',
+            'team_rename': f'{old_name} has been renamed to {self.team.name}!',
+        }
+        for notif in notifs:
+            self.assertEqual(notif.link, f'/team/{self.team.id}/')
+            self.assertEqual(notif.text, note_map[notif.type])
+            self.assertFalse(notif.read)
 
     def test_update_400(self):
         """

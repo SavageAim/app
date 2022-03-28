@@ -22,6 +22,7 @@
 
       <div class="divider"><i class="material-icons icon">expand_more</i> Minor Changes <i class="material-icons icon">expand_more</i></div>
       <p>Added a <code>team_rename</code> notification to inform users if a team they are in has been renamed.</p>
+      <p>Added dividers to the Notification settings section, to break up the groups of Notifications and make it more readable.</p>
     </div>
   </div>
 </template>

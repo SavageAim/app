@@ -2,6 +2,7 @@
 Stores Settings data for Users.
 Settings currently stored;
     - bis theme
+    - notification settings
 """
 # lib
 from django.contrib.auth.models import User
@@ -16,6 +17,7 @@ class Settings(models.Model):
         'team_kick',
         'team_lead',
         'team_leave',
+        'team_rename',
         'verify_fail',
         'verify_success',
     }

@@ -90,6 +90,13 @@ def team_leave(member: models.TeamMember):
     _create_notif(user, text, link, 'team_leave')
 
 
+def team_rename(team: models.Team, new_name: str):
+    text = f'{team.name} has been renamed to {new_name}!'
+    link = f'/team/{team.id}/'
+    for member in team.members.filter(lead=False):
+        _create_notif(member.character.user, text, link, 'team_rename')
+
+
 def verify_fail(char: models.Character, error: str):
     text = f'The verification of {char} has failed! Reason: {error}'
     link = f'/characters/{char.id}/'

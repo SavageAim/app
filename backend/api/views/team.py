@@ -103,6 +103,9 @@ class TeamResource(APIView):
         serializer = TeamUpdateSerializer(instance=obj, data=request.data)
         serializer.is_valid(raise_exception=True)
 
+        if serializer.validated_data.get('name', obj.name) != obj.name:
+            notifier.team_rename(obj, serializer.validated_data.get('name'))
+
         # Pop the team lead information from the serializer and save it, then update who the team lead is
         team_lead_id = serializer.validated_data.pop('team_lead')
         serializer.save()

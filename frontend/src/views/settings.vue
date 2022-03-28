@@ -67,7 +67,7 @@
           </div>
           <div class="card-content">
             <p class="has-text-info">Tick or untick boxes for the Notifications you do / don't want to receive, and click save!<br />Please note this only affects future notifications and will not delete any existing ones.</p>
-            <hr />
+            <div class="divider"><i class="material-icons icon">expand_more</i> Character <i class="material-icons icon">expand_more</i></div>
             <div class="field">
               <label class="checkbox">
                 <input type="checkbox" v-model="notifications.verify_success">
@@ -80,6 +80,8 @@
                 Character Verification failed.
               </label>
             </div>
+
+            <div class="divider"><i class="material-icons icon">expand_more</i> Team <i class="material-icons icon">expand_more</i></div>
             <div class="field">
               <label class="checkbox">
                 <input type="checkbox" v-model="notifications.team_disband">
@@ -110,6 +112,14 @@
                 A Character has left one of the Teams you lead.
               </label>
             </div>
+            <div class="field">
+              <label class="checkbox">
+                <input type="checkbox" v-model="notifications.team_rename">
+                A Team that one of your Characters is in has been renamed.
+              </label>
+            </div>
+
+            <div class="divider"><i class="material-icons icon">expand_more</i> Loot Manager <i class="material-icons icon">expand_more</i></div>
             <div class="field">
               <label class="checkbox">
                 <input type="checkbox" v-model="notifications.loot_tracker_update">

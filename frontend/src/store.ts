@@ -40,6 +40,7 @@ const DEFAULT_USER = {
     team_kick: true,
     team_lead: true,
     team_leave: true,
+    team_rename: true,
     verify_fail: true,
     verify_success: true,
   },
