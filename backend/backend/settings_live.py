@@ -48,6 +48,7 @@ TEMPLATES = [
 INSTALLED_APPS = [
     'api',
     'rest_framework',
+    'channels',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -75,6 +76,7 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'backend.urls'
 
+ASGI_APPLICATION = 'backend.asgi.application'
 WSGI_APPLICATION = 'backend.wsgi.application'
 
 # Database
