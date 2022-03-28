@@ -3,6 +3,7 @@ from asgiref.sync import async_to_sync
 from channels.generic.websocket import WebsocketConsumer
 from django.contrib.auth.models import User
 
+
 class UpdatesConsumer(WebsocketConsumer):
     room_group_name: str
     user: User
