@@ -51,7 +51,7 @@ class UpdatesConsumer(WebsocketConsumer):
         """
         payload = {
             'model': 'character',
-            'reloadUrls': [f'/characters/{event["id"]}/',],
+            'reloadUrls': [f'/characters/{event["id"]}/'],
         }
         self.send(text_data=json.dumps(payload))
 

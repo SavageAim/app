@@ -152,7 +152,7 @@ class TeamResource(APIView):
         obj.disband()
 
         # Websocket stuff
-        self._send_to_team(obj, {'type': 'team', 'id': str(obj.id)})
+        self._send_to_team(obj, {'type': 'team', 'id': team_id})
         for tm in members:
             self._send_to_user(tm.character.user, {'type': 'character', 'id': tm.character.pk})
         return Response(status=204)
