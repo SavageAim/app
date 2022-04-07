@@ -135,6 +135,9 @@ class BISListDelete(APIView):
         except BISList.DoesNotExist:
             return Response(status=404)
 
+        # Save the id
+        bis_id = obj.pk
+
         # Then delete the object
         try:
             obj.delete()
@@ -142,6 +145,6 @@ class BISListDelete(APIView):
             return Response({'message': 'Cannot delete; list is in use.'}, status=400)
 
         # Send a WS update for BIS
-        self._send_to_user(char.user, {'type': 'bis', 'char': char.id, 'id': serializer.instance.pk})
+        self._send_to_user(char.user, {'type': 'bis', 'char': char.id, 'id': bis_id})
 
         return Response(status=204)
