@@ -11,21 +11,14 @@
       </div>
     </div>
     <div class="card-content content">
-      <h2 class="has-text-primary subtitle">{{ version }}</h2>
+      <h2 class="has-text-primary subtitle">{{ version }} - The First Major Release!</h2>
+      <div class="divider"><i class="material-icons icon">expand_more</i> Major Changes <i class="material-icons icon">expand_more</i></div>
+      <p>Websocket functionality has been added to the system, causing all updates to be received immediately without need of refreshing the page.</p>
+      <p>Any page that can be updated by a source other than the current user has this feature added, allowing for immediate feedback of other user's actions.</p>
+      <p>Also, the version scheme has changed going forward, and now uses the current date as the version instead of the SemVer pattern that was used previously!</p>
+
       <div class="divider"><i class="material-icons icon">expand_more</i> Minor Changes <i class="material-icons icon">expand_more</i></div>
-      <p>
-        Fixing occurrences of errors generated when issues occur during the authentication process.
-        <ul>
-          <li>I will continue monitoring the Sentry instance I have and as more come up I will try my best to patch them up!</li>
-        </ul>
-      </p>
-      <p>
-        Removed Offhand from the Loot Tracker.
-        <ul>
-          <li>PLDs will now be given both Main and Off slots when assigned the Mainhand is handed out.</li>
-          <li>This was requested for QoL during patch 6.0. If things change going forward this change may be reversed or changed further!</li>
-        </ul>
-      </p>
+      <p>Added the External URL links to BIS displays in Character pages.</p>
     </div>
   </div>
 </template>

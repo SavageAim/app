@@ -1,5 +1,6 @@
 <template>
   <footer id="footer" class="content has-text-centered">
+    <a href="https://ko-fi.com/eriyukidesu" target="_blank" data-microtip-position="top" role="tooltip" aria-label="Donate"><span class="icon is-large"><img src="/kofi.png" alt="Ko-Fi Logo" class="image is-24x24" /></span></a>
     <a href="https://wiki.savageaim.com" target="_blank" data-microtip-position="top" role="tooltip" aria-label="Wiki"><span class="icon is-large"><i class="material-icons">menu_book</i></span></a>
     <a data-microtip-position="top" role="tooltip" aria-label="Changelog" @click="showChangelog"><span class="icon is-large"><i class="material-icons">update</i></span></a>
     <a href="https://github.com/Savage-Aim/app" target="_blank" data-microtip-position="top" role="tooltip" aria-label="Github Repo"><span class="icon is-large"><i class="material-icons">code</i></span></a>
