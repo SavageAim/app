@@ -140,4 +140,8 @@ class BISListDelete(APIView):
             obj.delete()
         except ProtectedError:
             return Response({'message': 'Cannot delete; list is in use.'}, status=400)
+
+        # Send a WS update for BIS
+        self._send_to_user(char.user, {'type': 'bis', 'char': char.id, 'id': serializer.instance.pk})
+
         return Response(status=204)
