@@ -114,7 +114,7 @@ const store: Store = {
     },
 
     async fetchNotifications({ commit, state }): Promise<void> {
-      if ((state as State).user.id === null) return
+      // if ((state as State).user.id === null) return
 
       try {
         // Store is limited to latest 20, but a Notification page will return them all
@@ -168,9 +168,9 @@ const store: Store = {
         const response = await fetch(`/backend/api/me/`, { credentials: 'include' })
         if (response.ok) {
           // Store the response as the state's user
-          commit('setUser', await response.json() as User)
+          const userDetails = await response.json() as User
 
-          if ((state as State).user.id !== null) {
+          if ((!state.userLoaded) && userDetails.id !== null) {
             // When mounted, fetch the Character data for the user that is currently logged in
             // We know there is one because this function won't be called unless there is
             dispatch('fetchCharacters')
@@ -179,6 +179,7 @@ const store: Store = {
             // Also fetch team data
             dispatch('fetchTeams')
           }
+          commit('setUser', userDetails)
         }
         else {
           Vue.notify({ text: `Error ${response.status} when fetching User details.`, type: 'is-danger' })
@@ -234,6 +235,7 @@ const store: Store = {
 
     resetUser(state: State): void {
       state.user = DEFAULT_USER
+      state.userLoaded = false
     },
   },
   state: {
