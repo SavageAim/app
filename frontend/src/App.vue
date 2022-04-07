@@ -89,6 +89,7 @@ export default class App extends Vue {
       case 'bis':
         break
       case 'character':
+        this.$store.dispatch('fetchCharacters')
         break
       case 'loot':
         break
@@ -99,6 +100,7 @@ export default class App extends Vue {
         this.$store.dispatch('fetchUser')
         break
       case 'team':
+        this.$store.dispatch('fetchTeams')
         break
       default:
         Vue.notify({ text: `Unexpected packet model "${payload.model}" received.`, type: 'is-warning' })

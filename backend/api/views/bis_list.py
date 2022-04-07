@@ -5,10 +5,10 @@ Can only create and update from these views, no listing since they are returned 
 """
 # lib
 from django.db.models.deletion import ProtectedError
-from rest_framework.views import APIView
 from rest_framework.request import Request
 from rest_framework.response import Response
 # local
+from .base import APIView
 from api.models import BISList, Character, Team
 from api.serializers import BISListSerializer, BISListModifySerializer
 
@@ -31,6 +31,9 @@ class BISListCollection(APIView):
         serializer = BISListModifySerializer(data=request.data, context={'owner': char})
         serializer.is_valid(raise_exception=True)
         serializer.save(owner=char)
+
+        # Send a WS update for BIS
+        self._send_to_user(char.user, {'type': 'bis', 'char': char.id, 'id': serializer.instance.pk})
 
         # Return the id for redirects
         return Response({'id': serializer.instance.pk}, status=201)
@@ -75,6 +78,11 @@ class BISListResource(APIView):
         serializer = BISListModifySerializer(instance=obj, data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
+
+        # Send a WS updates for BIS and Teams
+        self._send_to_user(char.user, {'type': 'bis', 'char': char.id, 'id': serializer.instance.pk})
+        for tm in obj.teammember_set.all():
+            self._send_to_team(tm.team, {'type': 'team', 'id': str(tm.team.id)})
 
         return Response(status=204)
 

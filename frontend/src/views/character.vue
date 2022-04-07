@@ -231,6 +231,12 @@ export default class Character extends SavageAimMixin {
     return team.members.find((tm: TeamMember) => tm.character.id === parseInt(this.$route.params.id, 10))!.bis_list.job
   }
 
+  // WS reload
+  async load(): Promise<void> {
+    this.fetchChar(true)
+    this.fetchTeams()
+  }
+
   async verify(): Promise<void> {
     // Send a verification request to the API. Since it's a celery based system, there's no need to reload
     if (this.character.verified) return // No need running this function if we're already verified
