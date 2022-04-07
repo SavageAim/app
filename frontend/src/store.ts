@@ -113,7 +113,7 @@ const store: Store = {
       }
     },
 
-    async fetchNotifications({ commit, state }): Promise<void> {
+    async fetchNotifications({ commit }): Promise<void> {
       // if ((state as State).user.id === null) return
 
       try {
@@ -170,7 +170,7 @@ const store: Store = {
           // Store the response as the state's user
           const userDetails = await response.json() as User
 
-          if ((!state.userLoaded) && userDetails.id !== null) {
+          if (!(state as State).userLoaded && userDetails.id !== null) {
             // When mounted, fetch the Character data for the user that is currently logged in
             // We know there is one because this function won't be called unless there is
             dispatch('fetchCharacters')
