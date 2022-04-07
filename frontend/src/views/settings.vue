@@ -135,7 +135,7 @@
 </template>
 
 <script lang="ts">
-import { Component } from 'vue-property-decorator'
+import { Component, Watch } from 'vue-property-decorator'
 import { SettingsErrors } from '@/interfaces/responses'
 import User from '@/interfaces/user'
 import SavageAimMixin from '@/mixins/savage_aim_mixin'
@@ -166,6 +166,18 @@ export default class Settings extends SavageAimMixin {
   // Return the user object from the store
   get user(): User {
     return this.$store.state.user
+  }
+
+  // Function called on page reload via websockets
+  async load(): Promise<void> {
+    // This function does nothing on purpose
+  }
+
+  // Reset the settings when the User changes
+  @Watch('$store.state.user', { deep: true })
+  reset(): void {
+    this.theme = this.$store.state.user.theme
+    this.notifications = { ...this.$store.state.user.notifications }
   }
 
   // Save the data into a new bis list
