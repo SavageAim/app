@@ -7,10 +7,10 @@ This links to requesting users, which is how we check permissions
 
 # lib
 from django.core.exceptions import ValidationError
-from rest_framework.views import APIView
 from rest_framework.request import Request
 from rest_framework.response import Response
 # local
+from .base import APIView
 from api import notifier
 from api.models import Team, TeamMember
 from api.serializers import (
@@ -68,6 +68,9 @@ class TeamCollection(APIView):
             lead=True,
         )
 
+        # Websocket stuff
+        self._send_to_user(request.user, {'type': 'team', 'id': str(obj.id)})
+
         # With everything created, return the Team ID
         return Response({'id': obj.id}, status=201)
 
@@ -112,6 +115,11 @@ class TeamResource(APIView):
 
         # Make the chosen Character the new leader
         obj.make_lead(obj.members.get(pk=team_lead_id))
+
+        # Websocket stuff
+        self._send_to_team(obj, {'type': 'team', 'id': str(obj.id)})
+        for tm in obj.members.all():
+            self._send_to_user(tm.character.user, {'type': 'character', 'id': tm.character.pk})
         return Response(status=204)
 
     def patch(self, request: Request, pk: str) -> Response:
@@ -138,7 +146,15 @@ class TeamResource(APIView):
         except (Team.DoesNotExist, ValidationError):
             return Response(status=404)
 
+        team_id = str(obj.pk)
+        members = list(obj.members.all())
+
         obj.disband()
+
+        # Websocket stuff
+        self._send_to_team(obj, {'type': 'team', 'id': str(obj.id)})
+        for tm in members:
+            self._send_to_user(tm.character.user, {'type': 'character', 'id': tm.character.pk})
         return Response(status=204)
 
 
@@ -191,6 +207,11 @@ class TeamInvite(APIView):
 
         # Notify the Team Lead
         notifier.team_join(tm.character, obj)
+
+        # Websocket stuff
+        self._send_to_team(obj, {'type': 'team', 'id': str(obj.id)})
+        for tm in obj.members.all():
+            self._send_to_user(tm.character.user, {'type': 'character', 'id': tm.character.pk})
 
         # Return the team id to redirect to the page
         return Response({'id': obj.id}, status=201)
