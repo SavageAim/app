@@ -85,12 +85,23 @@ export default class App extends Vue {
     sock.onmessage = (msg: MessageEvent) => {
       const payload = JSON.parse(msg.data) as SocketPayload
 
-      switch (payload.type) {
+      switch (payload.model) {
+      case 'bis':
+        break
+      case 'character':
+        break
+      case 'loot':
+        break
       case 'notification':
         this.$store.dispatch('fetchNotifications')
         break
+      case 'settings':
+        this.$store.dispatch('fetchUser')
+        break
+      case 'team':
+        break
       default:
-        Vue.notify({ text: `Unexpected packet type "${payload.type}" received.`, type: 'is-warning' })
+        Vue.notify({ text: `Unexpected packet model "${payload.model}" received.`, type: 'is-warning' })
       }
       if (payload.reloadUrls.includes(this.$route.path)) this.reloadView()
     }
