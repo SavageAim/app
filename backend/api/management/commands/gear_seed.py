@@ -23,6 +23,11 @@ class Command(BaseCommand):
         {'has_accessories': True, 'has_armour': True, 'has_weapon': True, 'item_level': 600, 'name': 'Augmented Radiant Host'},
         {'has_accessories': True, 'has_armour': True, 'has_weapon': False, 'item_level': 600, 'name': 'Asphodelos'},
         {'has_accessories': False, 'has_armour': False, 'has_weapon': True, 'item_level': 605, 'name': 'Asphodelos'},
+
+        # 6.1
+        {'has_accessories': False, 'has_armour': True, 'has_weapon': False, 'item_level': 590, 'name': 'Aplaia Gear'},
+        {'has_accessories': False, 'has_armour': False, 'has_weapon': True, 'item_level': 595, 'name': 'Endsinger'},
+        {'has_accessories': True, 'has_armour': True, 'has_weapon': True, 'item_level': 590, 'name': 'Augmented Classical'},
     ]
 
     def handle(self, *args, **options):
