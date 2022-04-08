@@ -27,6 +27,16 @@
         </ul>
       </p>
 
+      <div class="divider"><i class="material-icons icon">expand_more</i> FFXIV 6.1 <i class="material-icons icon">expand_more</i></div>
+      <p>
+        Added the following Gear with the release of 6.1;
+        <ul>
+          <li>Endsinger's Aria; Item Level 595 Weapons</li>
+          <li>Augmented Classical; Item Level 590 Weapons, Armour, Accessories</li>
+          <li>Aglaia; Item Level 590 Armour</li>
+        </ul>
+      </p>
+
       <div class="divider"><i class="material-icons icon">expand_more</i> Minor Changes <i class="material-icons icon">expand_more</i></div>
       <p>Added the External URL links to the footer of the cards in the BIS section of the Character page.</p>
     </div>
