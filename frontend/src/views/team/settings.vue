@@ -165,6 +165,10 @@ export default class TeamSettings extends SavageAimMixin {
     }
   }
 
+  async load(): Promise<void> {
+    this.fetchTeam(true)
+  }
+
   async regenerateInviteCode(): Promise<void> {
     try {
       const response = await fetch(this.url, {

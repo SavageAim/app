@@ -353,8 +353,9 @@ export default class TeamLoot extends SavageAimMixin {
     return `/backend/api/team/${this.$route.params.id}/loot/`
   }
 
-  created(): void {
-    this.fetchData(false)
+  async created(): Promise<void> {
+    await this.fetchData(false)
+    document.title = `Loot Tracker - ${this.team.name} - Savage Aim`
   }
 
   deleteEntries(items: Loot[]): void {
@@ -380,7 +381,6 @@ export default class TeamLoot extends SavageAimMixin {
         this.loot = content.loot
         this.loaded = true
         if (reload) this.$forceUpdate()
-        document.title = `Loot Tracker - ${this.team.name} - Savage Aim`
       }
       else {
         super.handleError(response.status)
@@ -441,6 +441,11 @@ export default class TeamLoot extends SavageAimMixin {
       item: this.displayItem,
     }
     this.sendLoot(data)
+  }
+
+  // Reload called via websockets
+  async load(): Promise<void> {
+    this.fetchData(true)
   }
 
   async sendLoot(data: LootPacket): Promise<void> {

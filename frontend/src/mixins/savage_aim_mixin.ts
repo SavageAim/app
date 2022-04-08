@@ -10,6 +10,10 @@ export default class SavageAimMixin extends Vue {
     return this.$store.state.user.id !== null
   }
 
+  async load(): Promise<void> {
+    console.log('unimplemented')
+  }
+
   get user(): User {
     // This assumes that the User exists
     return this.$store.state.user

@@ -94,6 +94,9 @@
                 <router-link :to="`/characters/${character.id}/bis_list/${bis.id}/`" class="card-footer-item">
                   Edit
                 </router-link>
+                <a v-if="bis.external_link != null" target="_blank" :href="bis.external_link" class="card-footer-item">
+                  View on {{ bis.external_link.replace(/https?:\/\//, '').split('/')[0] }}
+                </a>
                 <a class="has-text-danger card-footer-item" @click="() => { deleteBIS(bis) }">Delete</a>
               </footer>
             </div>
@@ -229,6 +232,12 @@ export default class Character extends SavageAimMixin {
   // Return the details of the Job the character plays in the given Team
   getJob(team: Team): Job {
     return team.members.find((tm: TeamMember) => tm.character.id === parseInt(this.$route.params.id, 10))!.bis_list.job
+  }
+
+  // WS reload
+  async load(): Promise<void> {
+    this.fetchChar(true)
+    this.fetchTeams()
   }
 
   async verify(): Promise<void> {

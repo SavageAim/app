@@ -5,6 +5,8 @@ billiard==3.6.4.0
 celery==5.2.3
 certifi==2021.10.8
 cffi==1.15.0
+channels
+channels_redis
 charset-normalizer==2.0.9
 click==8.0.3
 click-didyoumean==0.3.0
@@ -17,7 +19,6 @@ Django==3.2.12
 django-allauth==0.47.0
 django-rest-framework==0.1.0
 djangorestframework==3.13.1
-gunicorn==20.1.0
 idna==3.3
 kombu==5.2.3
 oauthlib==3.1.1
