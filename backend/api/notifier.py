@@ -13,10 +13,6 @@ from . import models
 CHANNEL_LAYER = get_channel_layer()
 
 
-def _generate_group(user: User) -> str:
-    return f'user-updates-{user.id}'
-
-
 def _create_notif(user: User, text: str, link: str, type: str):
     """
     Actually does the work of creating a Notification (and sending it down the websockets later)
@@ -34,12 +30,7 @@ def _create_notif(user: User, text: str, link: str, type: str):
     # If we make it to this point, create the object and then push updates down the web socket
     models.Notification.objects.create(user=user, text=text, link=link, type=type)
     if CHANNEL_LAYER is not None:
-        async_to_sync(CHANNEL_LAYER.group_send)(
-            _generate_group(user),
-            {
-                'type': 'notification',
-            },
-        )
+        async_to_sync(CHANNEL_LAYER.group_send)(f'user-updates-{user.id}', {'type': 'notification'})
 
 
 def loot_tracker_update(bis: models.BISList, team: models.Team):
