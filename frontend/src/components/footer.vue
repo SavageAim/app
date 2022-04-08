@@ -1,6 +1,6 @@
 <template>
   <footer id="footer" class="content has-text-centered">
-    <a class="kofi-link" href="https://ko-fi.com/eriyukidesu" target="_blank" data-microtip-position="top" role="tooltip" aria-label="Donate">
+    <a class="kofi-link" href="https://ko-fi.com/eriyukidesu" target="_blank" data-microtip-position="top" role="tooltip" aria-label="Donate on Ko-Fi">
       <span class="icon is-large">
         <div class="icon-stack">
           <img src="/kofi-cup.svg" alt="Ko-Fi Logo" class="image is-24x24 cup" />
