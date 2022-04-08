@@ -9,10 +9,10 @@ Basically just a management interface of Team Membership;
 
 # lib
 from django.core.exceptions import ValidationError
-from rest_framework.views import APIView
 from rest_framework.request import Request
 from rest_framework.response import Response
 # local
+from .base import APIView
 from api.models import TeamMember
 from api.serializers import (
     TeamMemberSerializer,
@@ -53,6 +53,11 @@ class TeamMemberResource(APIView):
         obj.bis_list_id = serializer.validated_data['bis_list_id']
         obj.save()
 
+        # Websocket stuff
+        self._send_to_team(obj.team, {'type': 'team', 'id': str(obj.team.id)})
+        for tm in obj.team.members.all():
+            self._send_to_user(tm.character.user, {'type': 'character', 'id': tm.character.pk})
+
         return Response(status=204)
 
     def delete(self, request: Request, team_id: str, pk: id) -> Response:
@@ -64,6 +69,8 @@ class TeamMemberResource(APIView):
             obj = TeamMember.objects.get(pk=pk, team_id=team_id)
         except (TeamMember.DoesNotExist, ValidationError):
             return Response(status=404)
+
+        team = obj.team
 
         # Check permissions and kick status;
         # Character owner is making request; valid and is leave request
@@ -78,4 +85,9 @@ class TeamMemberResource(APIView):
             return Response(status=404)
 
         obj.team.remove_character(obj.character, kick)
+
+        # Websocket stuff
+        self._send_to_team(team, {'type': 'team', 'id': str(team.id)})
+        for tm in team.members.all():
+            self._send_to_user(tm.character.user, {'type': 'character', 'id': tm.character.pk})
         return Response(status=204)

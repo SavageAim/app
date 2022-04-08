@@ -12,20 +12,17 @@
     </div>
     <div class="card-content content">
       <h2 class="has-text-primary subtitle">{{ version }}</h2>
+      <div class="divider"><i class="material-icons icon">expand_more</i> 1.0 Release! <i class="material-icons icon">expand_more</i></div>
+      <p>
+        Added Websockets so pages update automatically.
+        This is so if another user makes changes that affect you, the appropriate data on your side will also get updated automatically.
+      </p>
+      <p>This is the final feature I wanted to add before calling this 1.0.</p>
+      <p>All future functionality and ideas will be driven by <b><i>you</i></b> so join the Discord if you have suggestions!</p>
+
       <div class="divider"><i class="material-icons icon">expand_more</i> Minor Changes <i class="material-icons icon">expand_more</i></div>
-      <p>
-        Fixing occurrences of errors generated when issues occur during the authentication process.
-        <ul>
-          <li>I will continue monitoring the Sentry instance I have and as more come up I will try my best to patch them up!</li>
-        </ul>
-      </p>
-      <p>
-        Removed Offhand from the Loot Tracker.
-        <ul>
-          <li>PLDs will now be given both Main and Off slots when assigned the Mainhand is handed out.</li>
-          <li>This was requested for QoL during patch 6.0. If things change going forward this change may be reversed or changed further!</li>
-        </ul>
-      </p>
+      <p>Added a <code>team_rename</code> notification to inform users if a team they are in has been renamed.</p>
+      <p>Added dividers to the Notification settings section, to break up the groups of Notifications and make it more readable.</p>
     </div>
   </div>
 </template>

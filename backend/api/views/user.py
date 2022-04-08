@@ -3,10 +3,10 @@ A view to identify if the user is authenticated or not, for ease
 """
 
 # lib
-from rest_framework.views import APIView
 from rest_framework.permissions import BasePermission
 from rest_framework.response import Response
 # local
+from .base import APIView
 from api.models import Settings
 from api.serializers import SettingsSerializer, UserSerializer
 
@@ -49,4 +49,8 @@ class UserView(APIView):
         obj.theme = serializer.validated_data['theme']
         obj.notifications.update(serializer.validated_data.get('notifications', {}))
         obj.save()
+
+        # Send websocket packet for updates
+        self._send_to_user(request.user, {'type': 'settings'})
+
         return Response(status=201)

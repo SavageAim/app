@@ -21,6 +21,21 @@ jobs:
     - name: Push the Docker image
       run: docker push --all-tags docker.pkg.github.com/savage-aim/app/backend
 
+  build-ws-backend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Build the Docker image
+      run: docker build . --file deployment/ws.Dockerfile -t docker.pkg.github.com/savage-aim/app/ws-backend:latest -t docker.pkg.github.com/savage-aim/app/ws-backend:$(echo "$GITHUB_REF" | sed 's/refs\/tags\///')
+    - name: Login to GitHub Docker Registry
+      run: docker login docker.pkg.github.com -u freyamade -p ${{ secrets.GITHUB_TOKEN }}
+    - name: Push the Docker image
+      run: docker push --all-tags docker.pkg.github.com/savage-aim/app/ws-backend
+
   build-frontend:
     runs-on: ubuntu-latest
     defaults:

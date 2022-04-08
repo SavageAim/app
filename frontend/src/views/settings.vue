@@ -67,7 +67,7 @@
           </div>
           <div class="card-content">
             <p class="has-text-info">Tick or untick boxes for the Notifications you do / don't want to receive, and click save!<br />Please note this only affects future notifications and will not delete any existing ones.</p>
-            <hr />
+            <div class="divider"><i class="material-icons icon">expand_more</i> Character <i class="material-icons icon">expand_more</i></div>
             <div class="field">
               <label class="checkbox">
                 <input type="checkbox" v-model="notifications.verify_success">
@@ -80,6 +80,8 @@
                 Character Verification failed.
               </label>
             </div>
+
+            <div class="divider"><i class="material-icons icon">expand_more</i> Team <i class="material-icons icon">expand_more</i></div>
             <div class="field">
               <label class="checkbox">
                 <input type="checkbox" v-model="notifications.team_disband">
@@ -112,6 +114,14 @@
             </div>
             <div class="field">
               <label class="checkbox">
+                <input type="checkbox" v-model="notifications.team_rename">
+                A Team that one of your Characters is in has been renamed.
+              </label>
+            </div>
+
+            <div class="divider"><i class="material-icons icon">expand_more</i> Loot Manager <i class="material-icons icon">expand_more</i></div>
+            <div class="field">
+              <label class="checkbox">
                 <input type="checkbox" v-model="notifications.loot_tracker_update">
                 Loot Tracker updates your BIS List.
               </label>
@@ -125,7 +135,7 @@
 </template>
 
 <script lang="ts">
-import { Component } from 'vue-property-decorator'
+import { Component, Watch } from 'vue-property-decorator'
 import { SettingsErrors } from '@/interfaces/responses'
 import User from '@/interfaces/user'
 import SavageAimMixin from '@/mixins/savage_aim_mixin'
@@ -156,6 +166,18 @@ export default class Settings extends SavageAimMixin {
   // Return the user object from the store
   get user(): User {
     return this.$store.state.user
+  }
+
+  // Function called on page reload via websockets
+  async load(): Promise<void> {
+    // This function does nothing on purpose
+  }
+
+  // Reset the settings when the User changes
+  @Watch('$store.state.user', { deep: true })
+  reset(): void {
+    this.theme = this.$store.state.user.theme
+    this.notifications = { ...this.$store.state.user.notifications }
   }
 
   // Save the data into a new bis list
