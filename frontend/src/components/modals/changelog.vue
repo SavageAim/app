@@ -39,6 +39,7 @@
 
       <div class="divider"><i class="material-icons icon">expand_more</i> Minor Changes <i class="material-icons icon">expand_more</i></div>
       <p>Added the External URL links to the footer of the cards in the BIS section of the Character page.</p>
+      <p>Added a Notification for when Teams get renamed.</p>
     </div>
   </div>
 </template>
