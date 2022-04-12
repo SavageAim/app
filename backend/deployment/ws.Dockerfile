@@ -8,7 +8,7 @@ RUN mv backend/urls_live.py backend/urls.py
 
 # Install requirements
 RUN pip3 install -r requirements.txt
-RUN pip3 install daphne channels channels_redis
+RUN pip3 install daphne
 
 # Set the gunicorn to run the wsgi file
 EXPOSE 443
