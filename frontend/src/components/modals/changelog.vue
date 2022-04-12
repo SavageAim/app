@@ -31,9 +31,9 @@
       <p>
         Added the following Gear with the release of 6.1;
         <ul>
-          <li>Endsinger's Aria; Item Level 595 Weapons</li>
+          <li>Bluefeather; Item Level 595 Weapons</li>
           <li>Augmented Classical; Item Level 590 Weapons, Armour, Accessories</li>
-          <li>Aglaia; Item Level 590 Armour</li>
+          <li>Panthean; Item Level 590 Armour</li>
         </ul>
       </p>
 

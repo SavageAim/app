@@ -25,8 +25,8 @@ class Command(BaseCommand):
         {'has_accessories': False, 'has_armour': False, 'has_weapon': True, 'item_level': 605, 'name': 'Asphodelos'},
 
         # 6.1
-        {'has_accessories': False, 'has_armour': True, 'has_weapon': False, 'item_level': 590, 'name': 'Aplaia Gear'},
-        {'has_accessories': False, 'has_armour': False, 'has_weapon': True, 'item_level': 595, 'name': 'Endsinger'},
+        {'has_accessories': False, 'has_armour': True, 'has_weapon': False, 'item_level': 590, 'name': 'Panthean'},
+        {'has_accessories': False, 'has_armour': False, 'has_weapon': True, 'item_level': 595, 'name': 'Bluefeather'},
         {'has_accessories': True, 'has_armour': True, 'has_weapon': True, 'item_level': 590, 'name': 'Augmented Classical'},
     ]
 
