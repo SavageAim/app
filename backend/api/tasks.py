@@ -12,6 +12,7 @@ from asgiref.sync import async_to_sync
 from bs4 import BeautifulSoup
 from celery import shared_task
 from celery.utils.log import get_task_logger
+from channels.layers import get_channel_layer
 from django.utils import timezone
 # local
 from . import notifier
@@ -89,6 +90,10 @@ def verify_character(pk: int):
     objs.delete()
     # Then we're done!
     notifier.verify_success(obj)
+    # Also send websocket details
+    channel_layer = get_channel_layer
+    if channel_layer is not None:
+        async_to_sync(channel_layer.group_send(f'user-updates-{obj.user.id}', {'type': 'character', 'id': obj.pk}))
 
 
 @shared_task(name='cleanup')

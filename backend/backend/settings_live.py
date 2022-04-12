@@ -48,6 +48,7 @@ TEMPLATES = [
 INSTALLED_APPS = [
     'api',
     'rest_framework',
+    'channels',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -75,6 +76,7 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'backend.urls'
 
+ASGI_APPLICATION = 'backend.asgi.application'
 WSGI_APPLICATION = 'backend.wsgi.application'
 
 # Database
@@ -176,5 +178,15 @@ sentry_sdk.init(
     # If you wish to associate users to errors (assuming you are using
     # django.contrib.auth) you may enable sending PII data.
     send_default_pii=True,
-    release='savageaim@0.4.3',
+    release='savageaim@20220412',
 )
+
+# Channels
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('redis', 6379)],
+        },
+    },
+}

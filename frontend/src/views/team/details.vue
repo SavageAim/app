@@ -81,6 +81,10 @@ export default class TeamView extends SavageAimMixin {
       this.$notify({ text: `Error ${e} when fetching Team.`, type: 'is-danger' })
     }
   }
+
+  async load(): Promise<void> {
+    this.fetchTeam(true)
+  }
 }
 </script>
 

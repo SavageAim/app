@@ -5,10 +5,10 @@ Characters are tied to requesting users, so implicitly all the views below will 
 """
 
 # lib
-from rest_framework.views import APIView
 from rest_framework.request import Request
 from rest_framework.response import Response
 # local
+from .base import APIView
 from api.models import Character, Team
 from api.serializers import (
     CharacterCollectionSerializer,
@@ -34,15 +34,16 @@ class CharacterCollection(APIView):
 
     def post(self, request: Request) -> Response:
         """
-        Characters are verified via the frontend.
+        Characters are verified via celery.
         This view will create the data in the DB
-
-        No more celery verification.
         """
         # Put the sent data into the serializer for validation
         serializer = CharacterCollectionSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save(user=request.user, token=Character.generate_token())
+
+        # Send WS update
+        self._send_to_user(request.user, {'type': 'character', 'id': serializer.instance.pk})
 
         # Return the id for redirects
         return Response({'id': serializer.instance.pk}, status=201)
@@ -123,9 +124,20 @@ class CharacterDelete(APIView):
         except Character.DoesNotExist:
             return Response(status=404)
 
+        # Save data for the WS update
+        char_id = obj.pk
+        teams = obj.teammember_set.all()
+
         # Call character.remove to cleanup teams first
         obj.remove()
 
         # Then delete the object
         obj.delete()
+
+        # Send WS updates
+        self._send_to_user(request.user, {'type': 'character', 'id': char_id})
+        for tm in teams:
+            self._send_to_team(tm.team, {'type': 'team', 'id': str(tm.team.id)})
+            # Potential need to clean up here, but I don't feel like it's too big of an issue
+
         return Response(status=204)

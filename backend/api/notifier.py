@@ -5,8 +5,12 @@ type used in the system, without having to add messy code elsewhere
 Also will handle sending info to websockets when we get there
 """
 from __future__ import annotations
+from asgiref.sync import async_to_sync
+from channels.layers import get_channel_layer
 from django.contrib.auth.models import User
 from . import models
+
+CHANNEL_LAYER = get_channel_layer()
 
 
 def _create_notif(user: User, text: str, link: str, type: str):
@@ -25,7 +29,8 @@ def _create_notif(user: User, text: str, link: str, type: str):
 
     # If we make it to this point, create the object and then push updates down the web socket
     models.Notification.objects.create(user=user, text=text, link=link, type=type)
-    # TODO - Websocket stuff
+    if CHANNEL_LAYER is not None:
+        async_to_sync(CHANNEL_LAYER.group_send)(f'user-updates-{user.id}', {'type': 'notification'})
 
 
 def loot_tracker_update(bis: models.BISList, team: models.Team):
@@ -74,6 +79,13 @@ def team_leave(member: models.TeamMember):
     link = f'/team/{team.id}/'
     user = team.members.get(lead=True).character.user
     _create_notif(user, text, link, 'team_leave')
+
+
+def team_rename(team: models.Team, new_name: str):
+    text = f'{team.name} has been renamed to {new_name}!'
+    link = f'/team/{team.id}/'
+    for member in team.members.filter(lead=False):
+        _create_notif(member.character.user, text, link, 'team_rename')
 
 
 def verify_fail(char: models.Character, error: str):

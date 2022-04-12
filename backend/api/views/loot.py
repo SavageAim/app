@@ -10,10 +10,10 @@ from datetime import datetime
 # lib
 from django.core.exceptions import ValidationError
 from django.db.models import Q
-from rest_framework.views import APIView
 from rest_framework.request import Request
 from rest_framework.response import Response
 # local
+from .base import APIView
 from api import notifier
 from api.models import BISList, Team, Loot
 from api.serializers import (
@@ -306,9 +306,11 @@ class LootCollection(APIView):
         # Firstly we validate the sent data
         serializer = LootCreateSerializer(data=request.data, context={'team': team})
         serializer.is_valid(raise_exception=True)
-
-        # If the data is valid, save it and return the id
         serializer.save(team=team, tier=team.tier)
+
+        # Send WS updates to the Team channel
+        self._send_to_team(team, {'type': 'loot', 'id': str(team.id)})
+
         return Response({'id': serializer.instance.pk}, status=201)
 
     def delete(self, request: Request, team_id: str) -> Response:
@@ -323,6 +325,9 @@ class LootCollection(APIView):
 
         ids = request.data.get('items', [])
         Loot.objects.filter(team=team, pk__in=ids).delete()
+
+        # Send WS updates to the Team channel
+        self._send_to_team(team, {'type': 'loot', 'id': str(team.id)})
 
         return Response(status=204)
 
@@ -382,5 +387,8 @@ class LootWithBIS(APIView):
 
         # Send a notification
         notifier.loot_tracker_update(bis, team)
+
+        # Send WS updates to the Team channel
+        self._send_to_team(team, {'type': 'loot', 'id': str(team.id)})
 
         return Response({'id': loot.pk}, status=201)

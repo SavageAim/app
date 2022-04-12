@@ -1,25 +1,8 @@
 #!/bin/bash
-# Function to handle getting the bump data
-get_bump() {
-    read -n 1 -p "Version to bump; [m]ajor | m[i]nor | [p]atch: " TO_BUMP
-    if [ "$TO_BUMP" = "p" ] || [ "$TO_BUMP" = "P" ]; then
-        PATCH=$((PATCH + 1))
-    elif [ "$TO_BUMP" = "i" ] || [ "$TO_BUMP" = "I" ]; then
-        MINOR=$(($MINOR + 1))
-        PATCH=0
-    elif [ "$TO_BUMP" = "m" ] || [ "$TO_BUMP" = "M" ]; then
-        MAJOR=$(($MAJOR + 1))
-        MINOR=0
-        PATCH=0
-    else
-        printf "\nIvalid choice. Try again or Ctrl+C to quit.\n"
-        get_bump
-    fi
-}
 
 # Function to handle doing the bump details
 do_bump() {
-    # Just use sed to replace the current version with the new version in shards.yml and bot_of_heart.cr
+    # Just use sed to replace the current version with the new one in the files that need it
     sed -i "s/$CURRENT_VERSION/$NEW_VERSION/" frontend/.env backend/backend/settings_live.py
 }
 
@@ -27,20 +10,11 @@ do_bump() {
 CURRENT_VERSION=`cat frontend/.env | sed s/VUE_APP_VERSION=// | sed s/\"//g`
 echo -e "Current Version: \e[33m$CURRENT_VERSION\e[0m"
 
-# Split up the current version into major, minor and patch
-VERSION_LIST=(`echo $CURRENT_VERSION | tr '.' ' '`)
-MAJOR=${VERSION_LIST[0]}
-MINOR=${VERSION_LIST[1]}
-PATCH=${VERSION_LIST[2]}
-
-# Handle the bumping
-get_bump
-
-# Set the new version
-NEW_VERSION="$MAJOR.$MINOR.$PATCH"
+# Replace the current version with the current date
+printf -v NEW_VERSION '%(%Y%m%d)T' -1
 printf "\n"
 echo -e "New Version: \e[33m$NEW_VERSION\e[0m"
-read -n 1 -p "Is this correct? [y]: " CORRECT
+read -n 1 -p "Is this correct? [Y/n]: " CORRECT
 printf "\n"
 if [ "$CORRECT" = "" ] || [ "$CORRECT" = "y" ] || [ "$CORRECT" = "Y" ]; then
     do_bump

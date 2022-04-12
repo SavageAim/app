@@ -183,3 +183,6 @@ pnpm-debug.log*
 *.njsproj
 *.sln
 *.sw?
+
+# Ignore changelog image directory
+changelogs/*.png

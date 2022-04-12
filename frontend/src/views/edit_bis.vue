@@ -74,6 +74,10 @@ export default class EditBIS extends NewBIS {
 
   // Populate the data
   created(): void {
+    this.load()
+  }
+
+  async load(): Promise<void> {
     this.getChar()
     this.getList()
   }
