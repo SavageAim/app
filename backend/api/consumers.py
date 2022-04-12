@@ -13,6 +13,9 @@ class UpdatesConsumer(WebsocketConsumer):
 
     def connect(self):
         self.user = self.scope['user']
+        if not self.user.is_authenticated:
+            self.accept()
+            return
         self.user_channel_name = f'user-updates-{self.user.id}'
         self.team_channel_names = [
             f'team-updates-{team.id}'
@@ -24,6 +27,8 @@ class UpdatesConsumer(WebsocketConsumer):
         self.accept()
 
     def disconnect(self, close_code):
+        if not self.user.is_authenticated:
+            return
         async_to_sync(self.channel_layer.group_discard)(self.user_channel_name, self.channel_name)
         for team in self.team_channel_names:
             async_to_sync(self.channel_layer.group_discard)(team, self.channel_name)
