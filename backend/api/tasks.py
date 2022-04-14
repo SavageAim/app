@@ -93,7 +93,7 @@ def verify_character(pk: int):
     # Also send websocket details
     channel_layer = get_channel_layer
     if channel_layer is not None:
-        async_to_sync(channel_layer.group_send(f'user-updates-{obj.user.id}', {'type': 'character', 'id': obj.pk}))
+        async_to_sync(channel_layer.group_send)(f'user-updates-{obj.user.id}', {'type': 'character', 'id': obj.pk})
 
 
 @shared_task(name='cleanup')
