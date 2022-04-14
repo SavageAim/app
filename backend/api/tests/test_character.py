@@ -83,7 +83,7 @@ class CharacterCollection(SavageAimTestCase):
             'avatar_url': 'https://img.savageaim.com/test123',
             'lodestone_id': '3412557245',
             'name': 'Create Test',
-            'world': 'Zodiark',
+            'world': 'Zodiark (Light)',
         }
         response = self.client.post(url, data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.content)
@@ -96,6 +96,20 @@ class CharacterCollection(SavageAimTestCase):
         self.assertDictEqual(data, obj_data)
 
         self.assertEqual(response.json()['id'], char.pk)
+        char.delete()
+
+        # Test with the new form of world text we're getting from lodestone and ensure my fix works
+        data = {
+            'avatar_url': 'https://img.savageaim.com/test123',
+            'lodestone_id': '3412557245',
+            'name': 'Create Test 2',
+            'world': 'Lich [Light] ()',
+        }
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.content)
+        self.assertEqual(Character.objects.count(), 1)
+        char = Character.objects.first()
+        self.assertEqual(char.world, 'Lich (Light)')
 
     def test_create_400(self):
         """

@@ -1,6 +1,8 @@
 """
 Serializers for the Character model
 """
+# stdlib
+from re import compile
 # lib
 from rest_framework import serializers
 # local
@@ -12,6 +14,8 @@ __all__ = [
     'CharacterDetailsSerializer',
 ]
 
+NEW_WORLD_PATTERN = compile(r'([a-zA-Z]+) \[([a-zA-Z]+)\] \(\)')
+
 
 class CharacterCollectionSerializer(serializers.ModelSerializer):
     user_id = serializers.IntegerField(required=False)
@@ -20,6 +24,15 @@ class CharacterCollectionSerializer(serializers.ModelSerializer):
         model = Character
         exclude = ['created', 'token', 'user']
         read_only_fields = ['user_id', 'verified']
+
+    def validate_world(self, world: str) -> str:
+        """
+        Handle the new format for world and DC that seems to be cropping up
+        """
+        find = NEW_WORLD_PATTERN.findall(world)
+        if len(find) == 1:
+            world = f'{find[0][0]} ({find[0][1]})'
+        return world
 
     def validate_lodestone_id(self, id: str) -> str:
         """
