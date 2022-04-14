@@ -1,6 +1,5 @@
-from datetime import timezone
 from django.core.management.base import BaseCommand
-from api.models import Character, Notification
+from api.models import Character
 from api.serializers.character import NEW_WORLD_PATTERN
 
 
