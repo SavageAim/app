@@ -13,8 +13,8 @@
     <div class="card-content content">
       <h2 class="has-text-primary subtitle">{{ version }}</h2>
       <div class="divider"><i class="material-icons icon">expand_more</i> Minor Changes <i class="material-icons icon">expand_more</i></div>
-      <p>Fixes for a couple of issues found in the websocket deployment.</p>
-      <p>Fix for issue with characters being pulled from Lodestone with a broken world name string.</p>
+      <p>Fixing performance issues found by some online performance checking tools.</p>
+      <p>Preventing random navigation errors in vue router code.</p>
     </div>
   </div>
 </template>
