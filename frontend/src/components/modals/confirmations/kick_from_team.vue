@@ -13,7 +13,7 @@
         <div class="level is-mobile">
           <div class="level-left">
             <div class="level-item">
-              <span class="icon is-hidden-touch"><img src="/party_member.png" alt="Team Member" title="Team Member" /></span>
+              <span class="icon is-hidden-touch"><img src="/party_member.png" alt="Team Member" title="Team Member" width="24" height="24" /></span>
               <span>{{ details.character.name }} @ {{ details.character.world }}</span>
             </div>
           </div>
@@ -30,7 +30,7 @@
             </div>
             <div class="level-item">
               <span class="icon">
-                <img :src="`/job_icons/${details.bis_list.job.name}.png`" :alt="`${details.bis_list.job.name} job icon`" />
+                <img :src="`/job_icons/${details.bis_list.job.name}.png`" :alt="`${details.bis_list.job.name} job icon`" width="24" height="24" />
               </span>
             </div>
           </div>

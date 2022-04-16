@@ -4,7 +4,7 @@
       <div class="card-header">
         <div class="card-header-title is-centered">
           <figure class="image is-64x64">
-            <img class="is-rounded" src="/materia.png" alt="Savage Aim Materia Logo" />
+            <img class="is-rounded" src="/materia.png" alt="Savage Aim Materia Logo" width="64" height="64" />
           </figure>
           <h2 class="title">Savage <span class="has-text-danger">Aim</span></h2>
         </div>
