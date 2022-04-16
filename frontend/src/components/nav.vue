@@ -54,7 +54,7 @@
           <div class="navbar-item has-dropdown is-hoverable">
             <div class="navbar-link" id="user-item">
               <figure class="image user-image" v-if="user.avatar_url">
-                <img class="is-rounded" id="profile-img" :src="user.avatar_url" alt="Discord Profile Image" />
+                <img class="is-rounded" id="profile-img" :src="user.avatar_url" alt="Discord Profile Image" width="40" height="40" />
               </figure>
               <span>{{ user.username }}</span>
             </div>

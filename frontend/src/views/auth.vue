@@ -11,8 +11,8 @@
       </div>
       <div class="card-content">
         <div class="buttons is-centered">
-          <a :href="LOGIN_URL" class="button is-blurple icon-text">
-            <span class="icon"><img src="/discord.svg" alt="Discord Logo" /></span>
+          <a :href="LOGIN_URL" class="button is-blurple">
+            <span class="icon is-24x24"><img id="discord-logo" src="/discord.svg" alt="Discord Logo" width="24" height="24" /></span>
             <span>Login with Discord</span>
           </a>
         </div>
@@ -53,5 +53,8 @@ export default class Auth extends SavageAimMixin {
 </script>
 
 <style lang="scss">
-
+#discord-logo {
+  height: 24px;
+  width: 24px;
+}
 </style>

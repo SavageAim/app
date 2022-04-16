@@ -2,7 +2,7 @@
   <article class="media">
     <aside class="media-left">
       <figure class="image is-64x64">
-        <img class="is-rounded" :src="character.avatar_url" :alt="`${character.name} Lodestone Profile Picture`">
+        <img class="is-rounded" :src="character.avatar_url" :alt="`${character.name} Lodestone Profile Picture`" height="64" width="64">
       </figure>
     </aside>
     <div class="media-content">
