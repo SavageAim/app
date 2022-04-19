@@ -91,7 +91,7 @@ def verify_character(pk: int):
     # Then we're done!
     notifier.verify_success(obj)
     # Also send websocket details
-    channel_layer = get_channel_layer
+    channel_layer = get_channel_layer()
     if channel_layer is not None:
         async_to_sync(channel_layer.group_send)(f'user-updates-{obj.user.id}', {'type': 'character', 'id': obj.pk})
 
