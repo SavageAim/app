@@ -14,6 +14,7 @@ RANDOM_CHARS = 30
 
 
 class Character(models.Model):
+    alias = models.CharField(max_length=64, default='')
     avatar_url = models.URLField()
     # This is used to delete unverified characters after 24h (celery stuff)
     created = models.DateTimeField(auto_now_add=True)
