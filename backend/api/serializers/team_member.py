@@ -27,7 +27,8 @@ class TeamMemberSerializer(serializers.ModelSerializer):
         """
         If the character has an alias, use that, otherwise combine name and home world
         """
-        if obj.character.alias != '': return obj.character.alias
+        if obj.character.alias != '':
+            return obj.character.alias
         return f'{obj.character.name} @ {obj.character.world}'
 
 

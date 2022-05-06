@@ -3,7 +3,6 @@ Serializers for the Character model
 """
 # stdlib
 from re import compile
-from typing import Optional
 # lib
 from rest_framework import serializers
 # local
