@@ -58,8 +58,8 @@ class LootSerializer(serializers.ModelSerializer):
         """
         We only need a name for the Member in the history so we'll get one
         """
-        if obj.member is None:
-            return 'Old Member'
+        if obj.member is None: return 'Old Member'
+        elif obj.member.character.alias != '': return obj.member.character.alias
         return f'{obj.member.character.name} @ {obj.member.character.world}'
 
 

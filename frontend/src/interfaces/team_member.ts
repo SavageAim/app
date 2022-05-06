@@ -6,4 +6,5 @@ export default interface TeamMember {
   character: Character
   id: number
   lead: boolean
+  name: string
 }
