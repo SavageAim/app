@@ -53,6 +53,11 @@ export interface CharacterDeleteReadResponse {
   name: string
 }
 
+// Errors that can arise from updating characters
+export interface CharacterUpdateErrors {
+  alias?: string[]
+}
+
 // Interface for defining errors that can be returned from Loot create
 export interface LootCreateErrors {
   greed?: string[]

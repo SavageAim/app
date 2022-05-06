@@ -79,8 +79,9 @@ export default class NewChar extends SavageAimMixin {
 
       // Using the data we retrieve from XIVAPI, then send a create request to the API.
       const character = {
-        id: -1,
+        alias: '',
         avatar_url: response.Character.Avatar,
+        id: -1,
         lodestone_id: response.Character.ID,
         name: response.Character.Name,
         world: `${response.Character.Server} (${response.Character.DC})`,

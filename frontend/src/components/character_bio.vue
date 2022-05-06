@@ -7,9 +7,15 @@
     </aside>
     <div class="media-content">
       <p class="title is-4">{{ character.name }}</p>
-      <div class="icon-text subtitle">
-        <span class="icon"><i class="material-icons">public</i></span>
-        <span>{{ character.world }}</span>
+      <div class="subtitle">
+        <div class="icon-text">
+          <span class="icon"><i class="material-icons">public</i></span>
+          <span>{{ character.world }}</span>
+        </div>
+        <div class="icon-text" v-if="character.alias.length > 0">
+          <span class="icon"><i class="material-icons">account_circle</i></span>
+          <span>{{ character.alias }}</span>
+        </div>
       </div>
     </div>
     <div v-if="displayUnverified && !character.verified" class="media-right is-hidden-mobile">
@@ -35,4 +41,7 @@ export default class CharacterBio extends Vue {
 </script>
 
 <style lang="scss">
+.subtitle .icon-text:not(:last-child) {
+  margin-bottom: 0.25rem;
+}
 </style>
