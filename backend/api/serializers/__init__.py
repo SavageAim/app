@@ -1,5 +1,5 @@
 from .bis_list import BISListSerializer, BISListModifySerializer
-from .character import CharacterCollectionSerializer, CharacterDetailsSerializer
+from .character import CharacterCollectionSerializer, CharacterDetailsSerializer, CharacterUpdateSerializer
 from .gear import GearSerializer
 from .job import JobSerializer
 from .loot import LootSerializer, LootCreateSerializer, LootCreateWithBISSerializer
@@ -20,6 +20,7 @@ __all__ = [
 
     'CharacterCollectionSerializer',
     'CharacterDetailsSerializer',
+    'CharacterUpdateSerializer',
 
     'GearSerializer',
 
