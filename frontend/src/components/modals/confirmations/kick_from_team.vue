@@ -14,7 +14,7 @@
           <div class="level-left">
             <div class="level-item">
               <span class="icon is-hidden-touch"><img src="/party_member.png" alt="Team Member" title="Team Member" width="24" height="24" /></span>
-              <span>{{ details.character.name }} @ {{ details.character.world }}</span>
+              <span>{{ details.name }}</span>
             </div>
           </div>
           <div class="level-right">

@@ -6,7 +6,7 @@
           <span class="icon-text">
             <span class="icon is-hidden-touch" v-if="details.lead"><img src="/party_lead.png" alt="Team Lead" title="Team Lead" width="24" height="24" /></span>
             <span class="icon is-hidden-touch" v-else><img src="/party_member.png" alt="Team Member" title="Team Member" width="24" height="24" /></span>
-            <span>{{ details.character.name }} @ {{ details.character.world }}</span>
+            <span>{{ details.name }}</span>
           </span>
         </div>
         <div class="card-header-icon">

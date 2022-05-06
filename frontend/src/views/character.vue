@@ -22,6 +22,7 @@
               <ul class="menu-list">
                 <li><a :class="{ 'is-active': bisShown }" @click="showBIS">View BIS Lists</a></li>
                 <li><a :class="{ 'is-active': teamsShown }" @click="showTeams">View Teams</a></li>
+                <li><a :class="{ 'is-active': settingsShown }" @click="showSettings">View Settings</a></li>
               </ul>
             </aside>
           </div>
@@ -130,6 +131,31 @@
               <p>No Teams here yet!</p>
             </div>
           </div>
+
+          <!-- Settings -->
+          <div v-if="settingsShown">
+            <div class="level">
+              <div class="level-left">
+                <div class="level-item">
+                  <h2 class="title">Settings</h2>
+                </div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-content">
+                <div class="field">
+                  <label class="label" for="alias">Alias</label>
+                  <div class="control">
+                    <input class="input" id="alias" type="text" placeholder="Alias" v-model="character.alias" :class="{'is-danger': errors.alias !== undefined}" />
+                  </div>
+                  <p v-if="errors.alias !== undefined" class="help is-danger">{{ errors.alias[0] }}</p>
+                </div>
+              </div>
+              <footer class="card-footer">
+                <a class="has-text-success card-footer-item" @click="saveDetails">Save</a>
+              </footer>
+            </div>
+          </div>
         </template>
       </div>
     </div>
@@ -146,6 +172,7 @@ import TeamBio from '@/components/team_bio.vue'
 import BISList from '@/interfaces/bis_list'
 import { CharacterDetails } from '@/interfaces/character'
 import Job from '@/interfaces/job'
+import { CharacterUpdateErrors } from '@/interfaces/responses'
 import Team from '@/interfaces/team'
 import TeamMember from '@/interfaces/team_member'
 import SavageAimMixin from '@/mixins/savage_aim_mixin'
@@ -161,6 +188,10 @@ export default class Character extends SavageAimMixin {
   bisShown = true
 
   character!: CharacterDetails
+
+  errors: CharacterUpdateErrors = {}
+
+  settingsShown = false
 
   teams: Team[] = []
 
@@ -240,6 +271,34 @@ export default class Character extends SavageAimMixin {
     this.fetchTeams()
   }
 
+  async saveDetails(): Promise<void> {
+    // Update the alias field for the Character
+    this.errors = {}
+    const body = JSON.stringify(this.character)
+    try {
+      const response = await fetch(this.url, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': this.$cookies.get('csrftoken'),
+        },
+        body,
+      })
+
+      if (response.ok) {
+        this.$notify({ text: 'Successfully updated!', type: 'is-success' })
+        this.$forceUpdate()
+      }
+      else {
+        super.handleError(response.status)
+        this.errors = (await response.json() as CharacterUpdateErrors)
+      }
+    }
+    catch (e) {
+      this.$notify({ text: `Error ${e} when attempting to update Character.`, type: 'is-danger' })
+    }
+  }
+
   async verify(): Promise<void> {
     // Send a verification request to the API. Since it's a celery based system, there's no need to reload
     if (this.character.verified) return // No need running this function if we're already verified
@@ -270,13 +329,24 @@ export default class Character extends SavageAimMixin {
 
   // Show code for the tabs
   showBIS(): void {
+    this.showNone()
     this.bisShown = true
+  }
+
+  showNone(): void {
+    this.bisShown = false
+    this.settingsShown = false
     this.teamsShown = false
   }
 
+  showSettings(): void {
+    this.showNone()
+    this.settingsShown = true
+  }
+
   showTeams(): void {
+    this.showNone()
     this.teamsShown = true
-    this.bisShown = false
   }
 }
 </script>

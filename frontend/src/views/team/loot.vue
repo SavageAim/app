@@ -142,7 +142,7 @@
                           <div class="select is-fullwidth">
                             <select v-model="createData.member">
                               <option value="-1">Select Team Member</option>
-                              <option v-for="member in team.members" :key="member.id" :value="member.id">{{ member.character.name }} @ {{ member.character.world }}</option>
+                              <option v-for="member in team.members" :key="member.id" :value="member.id">{{ member.name }}</option>
                             </select>
                           </div>
                           <p class="help is-danger" v-if="createLootErrors.member_id !== undefined">{{ createLootErrors.member_id[0] }}</p>
@@ -230,7 +230,7 @@
                         <div class="select is-fullwidth">
                           <select v-model="createData.member">
                             <option value="-1">Select Team Member</option>
-                            <option v-for="member in team.members" :key="member.id" :value="member.id">{{ member.character.name }} @ {{ member.character.world }}</option>
+                            <option v-for="member in team.members" :key="member.id" :value="member.id">{{ member.name }}</option>
                           </select>
                         </div>
                         <p class="help is-danger" v-if="createLootErrors.member_id !== undefined">{{ createLootErrors.member_id[0] }}</p>

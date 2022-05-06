@@ -58,3 +58,14 @@ class CharacterDetailsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Character
         exclude = ['created', 'user']
+
+
+class CharacterUpdateSerializer(serializers.ModelSerializer):
+    """
+    Allow only certain fields on Character models to be updated
+    """
+    alias = serializers.CharField(max_length=64, allow_blank=True)
+
+    class Meta:
+        model = Character
+        fields = ['alias']

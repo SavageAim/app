@@ -13,6 +13,7 @@ from api.models import Character, Team
 from api.serializers import (
     CharacterCollectionSerializer,
     CharacterDetailsSerializer,
+    CharacterUpdateSerializer,
 )
 from api.tasks import verify_character
 
@@ -67,6 +68,26 @@ class CharacterResource(APIView):
 
         data = CharacterDetailsSerializer(instance=obj).data
         return Response(data)
+
+    def put(self, request: Request, pk: int) -> Response:
+        """
+        Update certain fields of a Character
+        """
+        try:
+            obj = Character.objects.get(pk=pk, user=request.user, verified=True)
+        except Character.DoesNotExist:
+            return Response(status=404)
+
+        serializer = CharacterUpdateSerializer(instance=obj, data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+
+        # Send WS updates
+        self._send_to_user(request.user, {'type': 'character', 'id': obj.id})
+        for tm in obj.teammember_set.all():
+            self._send_to_team(tm.team, {'type': 'team', 'id': str(tm.team.id)})
+
+        return Response(status=204)
 
 
 class CharacterVerification(APIView):
