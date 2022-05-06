@@ -92,6 +92,7 @@ class CharacterCollection(SavageAimTestCase):
         data['id'] = char.pk
         data['verified'] = False
         data['user_id'] = self._get_user().id
+        data['alias'] = ''
         obj_data = CharacterCollectionSerializer(char).data
         self.assertDictEqual(data, obj_data)
 
@@ -153,34 +154,25 @@ class CharacterCollection(SavageAimTestCase):
 
 class CharacterResource(SavageAimTestCase):
     """
-    Test the read method, and ensure correct data is returned
+    Test the resource methods, read and update, for correct action
     """
 
-    def tearDown(self):
+    def setUp(self):
         """
-        Clean up the DB after each test
+        Create user and BIS List
         """
-        Character.objects.all().delete()
-
-    def test_read(self):
-        """
-        Create a couple of characters for a user and send a list request for them
-        ensure the data is returned as expected
-        """
-        user = self._get_user()
-        self.client.force_authenticate(user)
-
         # Call management commands for the bislist
         call_command('job_seed', stdout=StringIO())
         call_command('gear_seed', stdout=StringIO())
 
         # Create some users, then send a list request and check the data returned is correct
-        char = Character.objects.create(
+        self.char = Character.objects.create(
             avatar_url='https://img.savageaim.com/abcde',
             lodestone_id=1234567890,
-            user=user,
+            user=self._get_user(),
             name='Char 1',
             world='Lich',
+            verified=True,
         )
         # Create a bislist for the character as well
         bis_gear = Gear.objects.first()
@@ -211,16 +203,65 @@ class CharacterResource(SavageAimTestCase):
             current_offhand=curr_gear,
             current_right_ring=curr_gear,
             job=Job.objects.get(pk='DRG'),
-            owner=char,
+            owner=self.char,
         )
-        url = reverse('api:character_resource', kwargs={'pk': char.id})
+
+    def tearDown(self):
+        """
+        Clean up the DB after each test
+        """
+        Character.objects.all().delete()
+
+    def test_read(self):
+        """
+        Create a couple of characters for a user and send a list request for them
+        ensure the data is returned as expected
+        """
+        user = self._get_user()
+        self.client.force_authenticate(user)
+        url = reverse('api:character_resource', kwargs={'pk': self.char.id})
 
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK, response.content)
         content = response.json()
-        self.assertDictEqual(content, CharacterDetailsSerializer(char).data)
+        self.assertDictEqual(content, CharacterDetailsSerializer(self.char).data)
         self.assertIn('bis_lists', content)
         self.assertEqual(len(content['bis_lists']), 1)
+
+    def test_update(self):
+        """
+        Test the update of a character's fields that can be updated
+        """
+        user = self._get_user()
+        self.client.force_authenticate(user)
+        url = reverse('api:character_resource', kwargs={'pk': self.char.id})
+
+        data = {
+            'alias': 'New Alias',
+            'name': 'This should not update',
+        }
+        response = self.client.put(url, data)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        old_name = self.char.name
+        self.char.refresh_from_db()
+        self.assertEqual(self.char.alias, data['alias'])
+        self.assertEqual(self.char.name, old_name)
+
+    def test_update_400(self):
+        """
+        Test that invalid update requests return 400 and the proper errors;
+        - alias longer than 64 characters:
+        """
+        user = self._get_user()
+        self.client.force_authenticate(user)
+        url = reverse('api:character_resource', kwargs={'pk': self.char.id})
+
+        data = {
+            'alias': 'New Alias' * 64,
+        }
+        response = self.client.put(url, data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.json()['alias'], ['Ensure this field has no more than 64 characters.'])
 
     def test_404(self):
         """
@@ -236,8 +277,8 @@ class CharacterResource(SavageAimTestCase):
         url = reverse('api:character_resource', kwargs={'pk': 0000000000000000000000})
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND, response.content)
-        # response = self.client.delete(url)
-        # self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND, response.content)
+        response = self.client.put(url)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND, response.content)
 
         # Character belongs to a different user
         char = Character.objects.create(
@@ -250,8 +291,8 @@ class CharacterResource(SavageAimTestCase):
         url = reverse('api:character_resource', kwargs={'pk': char.id})
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND, response.content)
-        # response = self.client.delete(url)
-        # self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND, response.content)
+        response = self.client.put(url)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND, response.content)
 
 
 class CharacterVerification(SavageAimTestCase):
