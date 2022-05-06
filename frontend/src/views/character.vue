@@ -185,13 +185,13 @@ import SavageAimMixin from '@/mixins/savage_aim_mixin'
   },
 })
 export default class Character extends SavageAimMixin {
-  bisShown = false
+  bisShown = true
 
   character!: CharacterDetails
 
   errors: CharacterUpdateErrors = {}
 
-  settingsShown = true
+  settingsShown = false
 
   teams: Team[] = []
 
