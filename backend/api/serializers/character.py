@@ -3,6 +3,7 @@ Serializers for the Character model
 """
 # stdlib
 from re import compile
+from typing import Optional
 # lib
 from rest_framework import serializers
 # local
@@ -58,3 +59,13 @@ class CharacterDetailsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Character
         exclude = ['created', 'user']
+
+
+class CharacterUpdateSerializer(serializers.ModelSerializer):
+    """
+    Allow only certain fields on Character models to be updated
+    """
+
+    class Meta:
+        model = Character
+        fields = ['alias']
