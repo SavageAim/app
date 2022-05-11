@@ -39,6 +39,15 @@ class Character(models.Model):
 
         return code
 
+    @property
+    def display_name(self) -> str:
+        """
+        Return the display name for the Character, either the name @ world or the alias where possible
+        """
+        if self.alias != '':
+            return self.alias
+        return f'{self.name} @ {self.world}'
+
     def remove(self):
         """
         Do all the cleanup of a Character's Teams before deleting the Character itself

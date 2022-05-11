@@ -60,9 +60,7 @@ class LootSerializer(serializers.ModelSerializer):
         """
         if obj.member is None:
             return 'Old Member'
-        elif obj.member.character.alias != '':
-            return obj.member.character.alias
-        return f'{obj.member.character.name} @ {obj.member.character.world}'
+        return obj.member.character.display_name
 
 
 class LootCreateSerializer(serializers.ModelSerializer):
