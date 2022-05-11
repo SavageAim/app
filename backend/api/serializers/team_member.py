@@ -17,19 +17,11 @@ __all__ = [
 class TeamMemberSerializer(serializers.ModelSerializer):
     bis_list = BISListSerializer()
     character = CharacterCollectionSerializer()
-    name = serializers.SerializerMethodField()
+    name = serializers.CharField(source='character.alias')
 
     class Meta:
         model = TeamMember
         exclude = ['team']
-
-    def get_name(self, obj: TeamMember) -> str:
-        """
-        If the character has an alias, use that, otherwise combine name and home world
-        """
-        if obj.character.alias != '':
-            return obj.character.alias
-        return f'{obj.character.name} @ {obj.character.world}'
 
 
 class TeamMemberModifySerializer(serializers.Serializer):

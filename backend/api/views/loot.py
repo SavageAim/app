@@ -62,7 +62,7 @@ class LootCollection(APIView):
                     # Add details to the list
                     gear[slot]['need'].append({
                         'member_id': tm.id,
-                        'character_name': f'{tm.character.name} @ {tm.character.world}',
+                        'character_name': tm.character.display_name,
                         'current_gear_name': current_gear.name,
                         'current_gear_il': current_gear.item_level,
                         'job_icon_name': tm.bis_list.job.name,
@@ -81,7 +81,7 @@ class LootCollection(APIView):
                 ).exclude(pk=tm.bis_list.id)
                 data = {
                     'member_id': tm.id,
-                    'character_name': f'{tm.character.name} @ {tm.character.world}',
+                    'character_name': tm.character.display_name,
                     'greed_lists': [],
                 }
                 for greed_list in greed_lists:
@@ -106,7 +106,7 @@ class LootCollection(APIView):
         #         # Add details to the list
         #         gear[slot]['need'].append({
         #             'member_id': tm.id,
-        #             'character_name': f'{tm.character.name} @ {tm.character.world}',
+        #             'character_name': tm.character.display_name,
         #             'current_gear_name': current_gear.name,
         #             'current_gear_il': current_gear.item_level,
         #             'job_icon_name': tm.bis_list.job.name,
@@ -126,7 +126,7 @@ class LootCollection(APIView):
         #     ).exclude(pk=tm.bis_list.id)
         #     data = {
         #         'member_id': tm.id,
-        #         'character_name': f'{tm.character.name} @ {tm.character.world}',
+        #         'character_name': tm.character.display_name,
         #         'greed_lists': [],
         #     }
         #     for greed_list in greed_lists:
@@ -156,7 +156,7 @@ class LootCollection(APIView):
                 # Add details to the list
                 gear[slot]['need'].append({
                     'member_id': tm.id,
-                    'character_name': f'{tm.character.name} @ {tm.character.world}',
+                    'character_name': tm.character.display_name,
                     'current_gear_name': current_gear.name,
                     'current_gear_il': current_gear.item_level,
                     'job_icon_name': tm.bis_list.job.name,
@@ -177,7 +177,7 @@ class LootCollection(APIView):
             ).exclude(pk=tm.bis_list.id)
             data = {
                 'member_id': tm.id,
-                'character_name': f'{tm.character.name} @ {tm.character.world}',
+                'character_name': tm.character.display_name,
                 'greed_lists': [],
             }
             for greed_list in greed_lists:
@@ -206,7 +206,7 @@ class LootCollection(APIView):
                 # Add details to the list
                 gear[slot]['need'].append({
                     'member_id': tm.id,
-                    'character_name': f'{tm.character.name} @ {tm.character.world}',
+                    'character_name': tm.character.display_name,
                     'job_icon_name': tm.bis_list.job.name,
                     'job_role': tm.bis_list.job.role,
                     'requires': needs,
@@ -218,11 +218,10 @@ class LootCollection(APIView):
             ).exclude(pk=tm.bis_list.id)
             data = {
                 'member_id': tm.id,
-                'character_name': f'{tm.character.name} @ {tm.character.world}',
+                'character_name': tm.character.display_name,
                 'greed_lists': [],
             }
             for greed_list in greed_lists:
-                current_gear = getattr(greed_list, 'current_offhand')
                 data['greed_lists'].append({
                     'bis_list_id': greed_list.id,
                     'job_icon_name': greed_list.job.name,
@@ -240,7 +239,7 @@ class LootCollection(APIView):
                 # Add details to the list
                 gear[slot]['need'].append({
                     'member_id': tm.id,
-                    'character_name': f'{tm.character.name} @ {tm.character.world}',
+                    'character_name': tm.character.display_name,
                     'job_icon_name': tm.bis_list.job.name,
                     'job_role': tm.bis_list.job.role,
                     'requires': needs,
@@ -252,11 +251,10 @@ class LootCollection(APIView):
             ).exclude(pk=tm.bis_list.id)
             data = {
                 'member_id': tm.id,
-                'character_name': f'{tm.character.name} @ {tm.character.world}',
+                'character_name': tm.character.display_name,
                 'greed_lists': [],
             }
             for greed_list in greed_lists:
-                current_gear = getattr(greed_list, 'current_offhand')
                 data['greed_lists'].append({
                     'bis_list_id': greed_list.id,
                     'job_icon_name': greed_list.job.name,
