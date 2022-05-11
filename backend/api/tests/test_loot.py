@@ -36,6 +36,7 @@ class LootTestSuite(SavageAimTestCase):
             name='Team Lead',
             verified=True,
             world='Lich',
+            alias='Leady Boi',
         )
         self.main_tank = Character.objects.create(
             avatar_url='https://img.savageaim.com/abcde',
@@ -238,7 +239,7 @@ class LootTestSuite(SavageAimTestCase):
                     },
                     {
                         'member_id': self.tl_tm.pk,
-                        'character_name': f'{self.team_lead.name} @ {self.team_lead.world}',
+                        'character_name': self.team_lead.alias,
                         'current_gear_name': self.crafted.name,
                         'current_gear_il': self.crafted.item_level,
                         'job_icon_name': 'sage',
@@ -268,7 +269,7 @@ class LootTestSuite(SavageAimTestCase):
                     },
                     {
                         'member_id': self.tl_tm.pk,
-                        'character_name': f'{self.team_lead.name} @ {self.team_lead.world}',
+                        'character_name': self.team_lead.alias,
                         'greed_lists': [
                             {
                                 'bis_list_id': self.tl_alt_bis.id,
@@ -307,7 +308,7 @@ class LootTestSuite(SavageAimTestCase):
             #         },
             #         {
             #             'member_id': self.tl_tm.pk,
-            #             'character_name': f'{self.team_lead.name} @ {self.team_lead.world}',
+            #             'character_name': self.team_lead.alias,
             #             'greed_lists': [
             #                 {
             #                     'bis_list_id': self.tl_alt_bis.id,
@@ -347,7 +348,7 @@ class LootTestSuite(SavageAimTestCase):
                     },
                     {
                         'member_id': self.tl_tm.pk,
-                        'character_name': f'{self.team_lead.name} @ {self.team_lead.world}',
+                        'character_name': self.team_lead.alias,
                         'greed_lists': [
                             {
                                 'bis_list_id': self.tl_alt_bis.id,
@@ -371,7 +372,7 @@ class LootTestSuite(SavageAimTestCase):
                 'need': [
                     {
                         'member_id': self.tl_tm.pk,
-                        'character_name': f'{self.team_lead.name} @ {self.team_lead.world}',
+                        'character_name': self.team_lead.alias,
                         'current_gear_name': self.crafted.name,
                         'current_gear_il': self.crafted.item_level,
                         'job_icon_name': 'sage',
@@ -394,7 +395,7 @@ class LootTestSuite(SavageAimTestCase):
                     },
                     {
                         'member_id': self.tl_tm.pk,
-                        'character_name': f'{self.team_lead.name} @ {self.team_lead.world}',
+                        'character_name': self.team_lead.alias,
                         'greed_lists': [],
                     },
                 ],
@@ -426,7 +427,7 @@ class LootTestSuite(SavageAimTestCase):
                     },
                     {
                         'member_id': self.tl_tm.pk,
-                        'character_name': f'{self.team_lead.name} @ {self.team_lead.world}',
+                        'character_name': self.team_lead.alias,
                         'greed_lists': [
                             {
                                 'bis_list_id': self.tl_alt_bis.id,
@@ -473,7 +474,7 @@ class LootTestSuite(SavageAimTestCase):
                     },
                     {
                         'member_id': self.tl_tm.pk,
-                        'character_name': f'{self.team_lead.name} @ {self.team_lead.world}',
+                        'character_name': self.team_lead.alias,
                         'greed_lists': [
                             {
                                 'bis_list_id': self.tl_alt_bis.id,
@@ -497,7 +498,7 @@ class LootTestSuite(SavageAimTestCase):
                 'need': [
                     {
                         'member_id': self.tl_tm.pk,
-                        'character_name': f'{self.team_lead.name} @ {self.team_lead.world}',
+                        'character_name': self.team_lead.alias,
                         'current_gear_name': self.crafted.name,
                         'current_gear_il': self.crafted.item_level,
                         'job_icon_name': 'sage',
@@ -520,7 +521,7 @@ class LootTestSuite(SavageAimTestCase):
                     },
                     {
                         'member_id': self.tl_tm.pk,
-                        'character_name': f'{self.team_lead.name} @ {self.team_lead.world}',
+                        'character_name': self.team_lead.alias,
                         'greed_lists': [],
                     },
                 ],
@@ -529,7 +530,7 @@ class LootTestSuite(SavageAimTestCase):
                 'need': [
                     {
                         'member_id': self.tl_tm.pk,
-                        'character_name': f'{self.team_lead.name} @ {self.team_lead.world}',
+                        'character_name': self.team_lead.alias,
                         'current_gear_name': self.crafted.name,
                         'current_gear_il': self.crafted.item_level,
                         'job_icon_name': 'sage',
@@ -552,7 +553,7 @@ class LootTestSuite(SavageAimTestCase):
                     },
                     {
                         'member_id': self.tl_tm.pk,
-                        'character_name': f'{self.team_lead.name} @ {self.team_lead.world}',
+                        'character_name': self.team_lead.alias,
                         'greed_lists': [],
                     },
                 ],
@@ -584,7 +585,7 @@ class LootTestSuite(SavageAimTestCase):
                     },
                     {
                         'member_id': self.tl_tm.pk,
-                        'character_name': f'{self.team_lead.name} @ {self.team_lead.world}',
+                        'character_name': self.team_lead.alias,
                         'greed_lists': [
                             {
                                 'bis_list_id': self.tl_alt_bis.id,
@@ -608,7 +609,7 @@ class LootTestSuite(SavageAimTestCase):
                 'need': [
                     {
                         'member_id': self.tl_tm.pk,
-                        'character_name': f'{self.team_lead.name} @ {self.team_lead.world}',
+                        'character_name': self.team_lead.alias,
                         'current_gear_name': self.crafted.name,
                         'current_gear_il': self.crafted.item_level,
                         'job_icon_name': 'sage',
@@ -631,7 +632,7 @@ class LootTestSuite(SavageAimTestCase):
                     },
                     {
                         'member_id': self.tl_tm.pk,
-                        'character_name': f'{self.team_lead.name} @ {self.team_lead.world}',
+                        'character_name': self.team_lead.alias,
                         'greed_lists': [],
                     },
                 ],
@@ -648,7 +649,7 @@ class LootTestSuite(SavageAimTestCase):
                     },
                     {
                         'member_id': self.tl_tm.pk,
-                        'character_name': f'{self.team_lead.name} @ {self.team_lead.world}',
+                        'character_name': self.team_lead.alias,
                         'current_gear_name': self.crafted.name,
                         'current_gear_il': self.crafted.item_level,
                         'job_icon_name': 'sage',
@@ -678,7 +679,7 @@ class LootTestSuite(SavageAimTestCase):
                     },
                     {
                         'member_id': self.tl_tm.pk,
-                        'character_name': f'{self.team_lead.name} @ {self.team_lead.world}',
+                        'character_name': self.team_lead.alias,
                         'greed_lists': [
                             {
                                 'bis_list_id': self.tl_alt_bis.id,
@@ -709,7 +710,7 @@ class LootTestSuite(SavageAimTestCase):
                     },
                     {
                         'member_id': self.tl_tm.pk,
-                        'character_name': f'{self.team_lead.name} @ {self.team_lead.world}',
+                        'character_name': self.team_lead.alias,
                         'job_icon_name': 'sage',
                         'job_role': 'heal',
                         'requires': 2,
@@ -736,7 +737,7 @@ class LootTestSuite(SavageAimTestCase):
                     },
                     {
                         'member_id': self.tl_tm.pk,
-                        'character_name': f'{self.team_lead.name} @ {self.team_lead.world}',
+                        'character_name': self.team_lead.alias,
                         'greed_lists': [
                             {
                                 'bis_list_id': self.tl_alt_bis.id,
@@ -765,7 +766,7 @@ class LootTestSuite(SavageAimTestCase):
                     },
                     {
                         'member_id': self.tl_tm.pk,
-                        'character_name': f'{self.team_lead.name} @ {self.team_lead.world}',
+                        'character_name': self.team_lead.alias,
                         'job_icon_name': 'sage',
                         'job_role': 'heal',
                         'requires': 3,
@@ -792,7 +793,7 @@ class LootTestSuite(SavageAimTestCase):
                     },
                     {
                         'member_id': self.tl_tm.pk,
-                        'character_name': f'{self.team_lead.name} @ {self.team_lead.world}',
+                        'character_name': self.team_lead.alias,
                         'greed_lists': [
                             {
                                 'bis_list_id': self.tl_alt_bis.id,
@@ -963,28 +964,28 @@ class LootTestSuite(SavageAimTestCase):
             {
                 'greed': True,
                 'item': 'Mainhand',
-                'member': 'Team Lead @ Lich',
+                'member': self.team_lead.alias,
                 'obtained': l1.obtained.strftime('%Y-%m-%d'),
                 'id': l1.pk,
             },
             {
                 'greed': False,
                 'item': 'Body',
-                'member': 'Main Tank @ Lich',
+                'member': f'{self.main_tank.name} @ {self.main_tank.world}',
                 'obtained': l1.obtained.strftime('%Y-%m-%d'),
                 'id': l2.pk,
             },
             {
                 'greed': False,
                 'item': 'Mount',
-                'member': 'Team Lead @ Lich',
+                'member': self.team_lead.alias,
                 'obtained': l1.obtained.strftime('%Y-%m-%d'),
                 'id': l3.pk,
             },
             {
                 'greed': False,
                 'item': 'Tome Armour Augment',
-                'member': 'Main Tank @ Lich',
+                'member': f'{self.main_tank.name} @ {self.main_tank.world}',
                 'obtained': l4.obtained.strftime('%Y-%m-%d'),
                 'id': l4.pk,
             },
