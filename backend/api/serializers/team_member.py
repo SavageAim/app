@@ -17,7 +17,7 @@ __all__ = [
 class TeamMemberSerializer(serializers.ModelSerializer):
     bis_list = BISListSerializer()
     character = CharacterCollectionSerializer()
-    name = serializers.CharField(source='character.alias')
+    name = serializers.CharField(source='character.display_name')
 
     class Meta:
         model = TeamMember
