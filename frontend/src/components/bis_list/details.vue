@@ -22,13 +22,12 @@
       <div class="field">
         <div class="control has-icons-left">
           <div class="select is-fullwidth" :class="{'is-danger': errors.job_id !== undefined}">
-            <select ref="jobPicker" @change="changeJobIcon" v-model="bisList.job_id">
-              <option value="na" disabled data-target="paladin">Select a Job</option>
+            <select ref="jobPicker" @change="changeJob" v-model="bisList.job_id">
               <option v-for="job in jobs" :key="job.name" :data-target="job.name" :value="job.id">{{ job.display_name }}</option>
             </select>
           </div>
           <div class="icon is-small is-left">
-            <img src="/job_icons/paladin.png" alt="Paladin Job Icon" width="24" height="24" ref="jobIcon" />
+            <img :src="`/job_icons/${bisList.job_id}.png`" :alt="`${bisList.job_id} Job Icon`" width="24" height="24" ref="jobIcon" />
           </div>
         </div>
         <p v-if="errors.job_id !== undefined" class="help is-danger">{{ errors.job_id[0] }}</p>
@@ -84,26 +83,11 @@ export default class Details extends Vue {
     return this.$refs.jobPicker as HTMLSelectElement
   }
 
-  changeJobIcon(): void {
+  changeJob(): void {
     const selectedJob = (this.jobPicker.options[this.jobPicker.selectedIndex]).dataset.target as string
 
     // Handle the flag for the offhand
     this.$emit('job-change', selectedJob)
-
-    this.setIcon(selectedJob)
-  }
-
-  // On mount, run the changeJob icon function to update for edit pages
-  mounted(): void {
-    this.changeJobIcon()
-  }
-
-  // Update icons on desktop and mobile view
-  setIcon(job: string): void {
-    const src = `${this.baseImgUrl}${job}.png`
-    const alt = `${job} job icon`
-    this.jobIcon.src = src
-    this.jobIcon.alt = alt
   }
 }
 </script>
