@@ -20,21 +20,21 @@
         </ul>
       </p>
 
-      <div class="divider"><i class="material-icons icon">expand_more</i> Multiple BIS Lists per Job <i class="material-icons icon">expand_more</i></div>
+      <div class="divider"><i class="material-icons icon">expand_more</i> Massive BIS Lists Updates <i class="material-icons icon">expand_more</i></div>
       <p>The limit of one BIS List per Job has finally been removed! You can now have as many BIS Lists as you want per Job, allowing you to keep historical lists as you advance the tiers, or manage two current lists per Job for the current Tier, the options are endless!</p>
       <p>You can also give each list a name, to help differentiate different BIS Lists of the same Job. The name will default to the name of the Job.</p>
       <p>
-        As part of this update, the following functionality has been changed;
-        <!-- <ul>
-          <li>Create / Edit BIS List pages have the ability to pull Current Gear from other BIS Lists of the same Job.</li>
-          <li>Similarly, these pages also have a new second save button allowing you to save Current Gear to any other BIS List of the same Job as you choose.</li>
-          <li>The Greed section of the Loot Manager page has been changed to use modals to avoid extending the page further than it has to be.</li>
-          <li></li>
-        </ul> -->
+        Syncing Current Gear between BIS Lists of the same Job is also possible, in both directions.
+        <ul>
+          <li>When saving a BIS List you have the option to save the Current Gear to other BIS Lists of the same Job.</li>
+          <li>When creating / editing a BIS List you also have the option to pull Current Gear from another List of the same Job.</li>
+        </ul>
       </p>
+      <p>It is also now possible to import BIS Gear from Etro Gearsets by filling in the Extra URL of a BIS List.</p>
 
       <div class="divider"><i class="material-icons icon">expand_more</i> Minor Changes <i class="material-icons icon">expand_more</i></div>
       <p>Minor changes to the breadcrumbs in the BIS Create / Edit pages.</p>
+      <p>The Greed section of the Loot Manager page now uses popups for Characters with more than one BIS List.</p>
     </div>
   </div>
 </template>
