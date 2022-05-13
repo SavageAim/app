@@ -2,8 +2,6 @@
 The main class of the system;
 
 Links together characters, jobs and gear into a single list
-
-Currently is one gear list per character per job for ease, may change later
 """
 from typing import List
 from django.db import models
@@ -42,7 +40,7 @@ class BISList(models.Model):
     owner = models.ForeignKey('Character', on_delete=models.CASCADE, related_name='bis_lists')
 
     class Meta:
-        ordering = ['-job__role', 'job__ordering']
+        ordering = ['-job__role', 'job__ordering', 'name']
 
     def accessory_augments_required(self, gear_name: str) -> int:
         """
