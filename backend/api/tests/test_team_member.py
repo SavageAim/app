@@ -47,7 +47,7 @@ class TeamMemberResource(SavageAimTestCase):
         )
 
         # Next, create two BIS lists for each character
-        raid_weapon = Gear.objects.get(item_level=605)
+        raid_weapon = Gear.objects.get(item_level=605, name='Asphodelos')
         raid_gear = Gear.objects.get(item_level=600, has_weapon=False)
         tome_gear = Gear.objects.get(item_level=600, has_weapon=True)
         crafted = Gear.objects.get(name='Classical')
