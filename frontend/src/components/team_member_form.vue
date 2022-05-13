@@ -30,7 +30,7 @@
               <div class="select is-fullwidth">
                 <select id="bis" v-model="bisListId">
                   <option value="-1">Select BIS List</option>
-                  <option v-for="list in bisLists" :key="list.id" :data-target="list.job.name" :value="list.id">{{ list.job.id }}</option>
+                  <option v-for="list in bisLists" :key="list.id" :data-target="list.job.name" :value="list.id">{{ list.display_name }}</option>
                 </select>
               </div>
               <div class="icon is-small is-left" v-if="bisListId != -1">

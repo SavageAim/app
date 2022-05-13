@@ -129,7 +129,7 @@ export default class DeleteBIS extends Vue {
       if (response.ok) {
         // Attempt to parse the json, get the id, and then redirect
         this.$emit('close')
-        this.$notify({ text: `${this.bis.job.id} BIS deleted successfully!`, type: 'is-success' })
+        this.$notify({ text: `${this.bis.display_name} deleted successfully!`, type: 'is-success' })
       }
       else {
         this.$notify({ text: `Unexpected response ${response.status} when attempting to delete BIS List.`, type: 'is-danger' })
