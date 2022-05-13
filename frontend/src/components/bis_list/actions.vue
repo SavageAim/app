@@ -3,14 +3,18 @@
     <div class="buttons">
       <button class="button is-fullwidth is-success" data-microtip-position="top" role="tooltip" :aria-label="`${saveText} this BIS List.`" @click="save">{{ saveText }} BIS List</button>
 
-      <button class="button is-fullwidth is-success" data-microtip-position="top" role="tooltip" :aria-label="`${saveText} this BIS List, and sync current gear to other ${bisList.job_id} BIS Lists.`" v-if="syncable()">{{ saveText }} and Sync Current Gear</button>
-      <button class="button is-fullwidth is-disabled" data-microtip-position="top" role="tooltip" aria-label="Please select a Job." v-else>{{ saveText }} and Sync Current Gear</button>
+      <template v-if="!simple">
+        <button class="button is-fullwidth is-success" data-microtip-position="top" role="tooltip" :aria-label="`${saveText} this BIS List, and sync current gear to other ${bisList.job_id} BIS Lists.`" v-if="syncable()">{{ saveText }} and Sync Current Gear</button>
+        <button class="button is-fullwidth is-disabled" data-microtip-position="top" role="tooltip" aria-label="Please select a Job." v-else>{{ saveText }} and Sync Current Gear</button>
+      </template>
 
       <button class="button is-fullwidth is-primary" data-microtip-position="top" role="tooltip" aria-label="Import BIS Gear from Etro.gg" v-if="importable()">Import from Etro</button>
       <button class="button is-fullwidth is-disabled" data-microtip-position="top" role="tooltip" aria-label="Please enter an Etro gearset link in the external URL." v-else>Import</button>
 
-      <button class="button is-fullwidth is-primary" data-microtip-position="top" role="tooltip" :aria-label="`Load Current gear from another ${bisList.job_id} BIS List.`" v-if="syncable()">Load Current Gear</button>
-      <button class="button is-fullwidth is-disabled" data-microtip-position="top" role="tooltip" aria-label="Please select a Job." v-else>Load Current Gear</button>
+      <template v-if="!simple">
+        <button class="button is-fullwidth is-primary" data-microtip-position="top" role="tooltip" :aria-label="`Load Current gear from another ${bisList.job_id} BIS List.`" v-if="syncable()">Load Current Gear</button>
+        <button class="button is-fullwidth is-disabled" data-microtip-position="top" role="tooltip" aria-label="Please select a Job." v-else>Load Current Gear</button>
+      </template>
     </div>
   </div>
 </template>
@@ -32,6 +36,10 @@ export default class Actions extends Vue {
 
   @Prop()
   method!: string
+
+  // Hide actions that spawn popups when this flag is true
+  @Prop({ default: false })
+  simple!: boolean
 
   @Prop()
   url!: string
@@ -72,7 +80,11 @@ export default class Actions extends Vue {
       })
 
       if (response.ok) {
-        if (this.create) {
+        if (this.simple) {
+          this.$notify({ text: 'BIS List Created successfully!', type: 'is-success' })
+          this.$emit('close')
+        }
+        else if (this.create) {
           // Redirect back to the new bis list page
           const json = await response.json() as CreateResponse
           this.$router.push(`./${json.id}/`, () => {

@@ -13,7 +13,8 @@
       v-on:update-max-il="updateMaxIl"
       v-on:error-code="emitErrorCode"
       v-on:errors="handleErrors"
-      v-on:save="emitSave"
+      v-on:save="$emit('save')"
+      v-on:close="$emit('close')"
 
       v-if="renderDesktop"
     />
@@ -26,12 +27,14 @@
       :maxIl="maxIl"
       :method="method"
       :url="url"
+      :simpleActions="!renderDesktop"
       v-on:job-change="jobChange"
       v-on:update-min-il="updateMinIl"
       v-on:update-max-il="updateMaxIl"
       v-on:error-code="emitErrorCode"
       v-on:errors="handleErrors"
-      v-on:save="emitSave"
+      v-on:save="$emit('save')"
+      v-on:close="$emit('close')"
       :class="[renderDesktop ? 'is-hidden-desktop' : '']"
     />
   </div>
@@ -88,10 +91,6 @@ export default class BISListForm extends Vue {
 
   emitErrorCode(errorCode: number): void {
     this.$emit('error-code', errorCode)
-  }
-
-  emitSave(): void {
-    this.$emit('save')
   }
 
   handleErrors(errors: BISListErrors): void {

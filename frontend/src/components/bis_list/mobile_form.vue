@@ -62,7 +62,7 @@
           </div>
         </div>
 
-        <Actions :bisList="bisList" :url="url" :method="method" v-on="$listeners" />
+        <Actions :bisList="bisList" :url="url" :method="method" v-on="$listeners" :simple="simpleActions" />
       </div>
     </div>
   </div>
@@ -113,6 +113,10 @@ export default class BISListMobileForm extends Vue {
 
   @Prop()
   minIl!: number
+
+  // Hide actions that spawn a popup, when used in the add bis section
+  @Prop()
+  simpleActions!: boolean
 
   @Prop()
   url!: string

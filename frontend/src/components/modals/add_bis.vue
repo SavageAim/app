@@ -11,7 +11,7 @@
       </div>
     </div>
     <div class="card-content">
-      <BISListForm :bisList="bisList" :url="url" method="POST" v-on:error-code="handleError" :render-desktop="false" />
+      <BISListForm :bisList="bisList" :url="url" method="POST" v-on:error-code="handleError" :render-desktop="false" v-on:close="$emit('close')" />
     </div>
   </div>
 </template>
@@ -42,6 +42,7 @@ export default class AddBIS extends Vue {
   }
 
   handleError(errorCode: number): void {
+    if (errorCode === 400) return
     this.$notify({ text: `Something went wrong; HTTP ${errorCode}. Try adding a new BIS from the standard page instead.`, type: 'is-danger' })
   }
 }
