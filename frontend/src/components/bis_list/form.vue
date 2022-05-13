@@ -100,7 +100,4 @@ export default class BISListForm extends Vue {
 </script>
 
 <style lang="scss">
-.mobile-form {
-  margin-bottom: 1rem;
-}
 </style>

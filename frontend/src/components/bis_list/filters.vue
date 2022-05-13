@@ -1,9 +1,8 @@
 <template>
   <div class="card-content">
-    <p class="subtitle">Item Level Range</p>
     <div class="field is-horizontal">
       <div class="field-label is-normal">
-        <label class="label">Min</label>
+        <label class="label">Min ILvl</label>
       </div>
       <div class="field-body">
         <div class="field">
@@ -20,7 +19,7 @@
 
     <div class="field is-horizontal">
       <div class="field-label is-normal">
-        <label class="label">Max</label>
+        <label class="label">Max ILvl</label>
       </div>
       <div class="field-body">
         <div class="field">
