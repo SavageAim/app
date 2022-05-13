@@ -11,15 +11,14 @@
           <li class="is-active"><a aria-current="page">{{ breadcrumb }}</a></li>
         </ul>
       </div>
-      <BISListForm :bisList="bisList" :errors="errors" />
-      <button class="button is-fullwidth is-success" @click="save">Save</button>
+      <BISListForm :bisList="bisList" :url="url" method="PUT" v-on:error-code="handleError" v-on:save="postSave" />
     </div>
   </div>
 </template>
 
 <script lang="ts">
 import { Component } from 'vue-property-decorator'
-import BISListForm from '@/components/bis_list_form.vue'
+import BISListForm from '@/components/bis_list/form.vue'
 import BISListModify from '@/dataclasses/bis_list_modify'
 import BISList from '@/interfaces/bis_list'
 import { BISListErrors } from '@/interfaces/responses'
@@ -61,7 +60,7 @@ export default class EditBIS extends NewBIS {
         // Parse the list into an array of character interfaces and store them in the character data list
         const data = await response.json() as BISList
         this.bisList = BISListModify.buildEditVersion(data)
-        this.breadcrumb = this.bisList.display_name
+        this.updateBreadcrumb()
         this.listLoaded = true
       }
       else {
@@ -83,30 +82,13 @@ export default class EditBIS extends NewBIS {
     this.getList()
   }
 
-  // Save the data into a new bis list
-  async save(): Promise<void> {
-    const body = JSON.stringify(this.bisList)
-    try {
-      const response = await fetch(this.url, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-CSRFToken': this.$cookies.get('csrftoken'),
-        },
-        body,
-      })
+  updateBreadcrumb(): void {
+    this.breadcrumb = this.bisList.display_name
+  }
 
-      if (response.ok) {
-        this.$notify({ text: 'Successfully updated!', type: 'is-success' })
-      }
-      else {
-        super.handleError(response.status)
-        this.errors = (await response.json() as BISListErrors)
-      }
-    }
-    catch (e) {
-      this.$notify({ text: `Error ${e} when attempting to update BIS List.`, type: 'is-danger' })
-    }
+  async postSave() {
+    await this.getList()
+    this.updateBreadcrumb()
   }
 }
 </script>

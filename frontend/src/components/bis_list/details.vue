@@ -1,0 +1,109 @@
+<template>
+  <div class="card-content">
+  <div class="field is-horizontal">
+    <div class="field-label is-normal">
+      <label class="label">Name</label>
+    </div>
+    <div class="field-body">
+      <div class="field">
+        <div class="control">
+          <input class="input" :class="{'is-danger': errors.name !== undefined}" v-model="bisList.name" placeholder="" />
+        </div>
+        <p v-if="errors.name !== undefined" class="help is-danger">{{ errors.name[0] }}</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="field is-horizontal">
+    <div class="field-label is-normal">
+      <label class="label">Job</label>
+    </div>
+    <div class="field-body">
+      <div class="field">
+        <div class="control has-icons-left">
+          <div class="select is-fullwidth" :class="{'is-danger': errors.job_id !== undefined}">
+            <select ref="jobPicker" @change="changeJobIcon" v-model="bisList.job_id">
+              <option value="na" disabled data-target="paladin">Select a Job</option>
+              <option v-for="job in jobs" :key="job.name" :data-target="job.name" :value="job.id">{{ job.display_name }}</option>
+            </select>
+          </div>
+          <div class="icon is-small is-left">
+            <img src="/job_icons/paladin.png" alt="Paladin Job Icon" width="24" height="24" ref="jobIcon" />
+          </div>
+        </div>
+        <p v-if="errors.job_id !== undefined" class="help is-danger">{{ errors.job_id[0] }}</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="field is-horizontal">
+    <div class="field-label is-normal">
+      <label class="label">Extra URL</label>
+    </div>
+    <div class="field-body">
+      <div class="field">
+        <div class="control">
+          <input class="input" :class="{'is-danger': errors.external_link !== undefined}" v-model="bisList.external_link" placeholder="i.e. Etro, Ariyala, etc" />
+        </div>
+        <p v-if="errors.external_link !== undefined" class="help is-danger">{{ errors.external_link[0] }}</p>
+        <p class="help is-info" v-else>This is just a link to any page you deem would be handy to have attached to the list!</p>
+      </div>
+    </div>
+  </div>
+</div>
+</template>
+
+<script lang="ts">
+import { Component, Prop, Vue } from 'vue-property-decorator'
+import BISListModify from '@/dataclasses/bis_list_modify'
+import { BISListErrors } from '@/interfaces/responses'
+import Job from '@/interfaces/job'
+
+@Component
+export default class Details extends Vue {
+  baseImgUrl = '/job_icons/'
+
+  displayOffhand = true
+
+  @Prop()
+  bisList!: BISListModify
+
+  @Prop()
+  errors!: BISListErrors
+
+  get jobs(): Job[] {
+    return this.$store.state.jobs
+  }
+
+  // Conversion getters for job related refs
+  get jobIcon(): HTMLImageElement {
+    return this.$refs.jobIcon as HTMLImageElement
+  }
+
+  get jobPicker(): HTMLSelectElement {
+    return this.$refs.jobPicker as HTMLSelectElement
+  }
+
+  changeJobIcon(): void {
+    const selectedJob = (this.jobPicker.options[this.jobPicker.selectedIndex]).dataset.target as string
+
+    // Handle the flag for the offhand
+    this.$emit('job-change', selectedJob)
+
+    this.setIcon(selectedJob)
+  }
+
+  // On mount, run the changeJob icon function to update for edit pages
+  mounted(): void {
+    this.changeJobIcon()
+  }
+
+  // Update icons on desktop and mobile view
+  setIcon(job: string): void {
+    const src = `${this.baseImgUrl}${job}.png`
+    const alt = `${job} job icon`
+    this.jobIcon.src = src
+    this.jobIcon.alt = alt
+  }
+}
+</script>

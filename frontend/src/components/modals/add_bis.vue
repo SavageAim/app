@@ -11,15 +11,14 @@
       </div>
     </div>
     <div class="card-content">
-      <BISListForm :bisList="bisList" :errors="errors" :render-desktop="false" />
-      <button class="button is-fullwidth is-success" @click="save">Add</button>
+      <BISListForm :bisList="bisList" :url="url" method="POST" v-on:error-code="handleError" :render-desktop="false" />
     </div>
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
-import BISListForm from '@/components/bis_list_form.vue'
+import BISListForm from '@/components/bis_list/form.vue'
 import BISListModify from '@/dataclasses/bis_list_modify'
 import { CharacterDetails } from '@/interfaces/character'
 import { BISListErrors } from '@/interfaces/responses'
@@ -42,31 +41,8 @@ export default class AddBIS extends Vue {
     return `/backend/api/character/${this.character.id}/bis_lists/`
   }
 
-  // Save the data into a new bis list
-  async save(): Promise<void> {
-    const body = JSON.stringify(this.bisList)
-    try {
-      const response = await fetch(this.url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-CSRFToken': this.$cookies.get('csrftoken'),
-        },
-        body,
-      })
-
-      if (response.ok) {
-        // Redirect back to the new bis list page
-        this.$notify({ text: `New BIS List created successfully! It should appear in your BIS dropdown now!`, type: 'is-success' })
-        this.$emit('close')
-      }
-      else {
-        this.errors = (await response.json() as BISListErrors)
-      }
-    }
-    catch (e) {
-      this.$notify({ text: `Error ${e} when attempting to create BIS List.`, type: 'is-danger' })
-    }
+  handleError(errorCode: number): void {
+    this.$notify({ text: `Something went wrong; HTTP ${errorCode}. Try adding a new BIS from the standard page instead.`, type: 'is-danger' })
   }
 }
 </script>

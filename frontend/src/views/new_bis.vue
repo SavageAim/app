@@ -11,17 +11,15 @@
           <li class="is-active"><a aria-current="page">New</a></li>
         </ul>
       </div>
-      <BISListForm :bisList="bisList" :errors="errors" />
-      <button class="button is-fullwidth is-success" @click="save">Create</button>
+      <BISListForm :bisList="bisList" :url="url" method="POST" v-on:error-code="handleError" />
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
-import BISListForm from '@/components/bis_list_form.vue'
+import { Component } from 'vue-property-decorator'
+import BISListForm from '@/components/bis_list/form.vue'
 import BISListModify from '@/dataclasses/bis_list_modify'
-import { CreateResponse, BISListErrors } from '@/interfaces/responses'
 import { CharacterDetails } from '@/interfaces/character'
 import SavageAimMixin from '@/mixins/savage_aim_mixin'
 
@@ -38,8 +36,6 @@ export default class NewBIS extends SavageAimMixin {
   bisList = new BISListModify()
 
   character!: CharacterDetails
-
-  errors: BISListErrors = {}
 
   // URL to load character data from
   get charUrl(): string {
@@ -82,34 +78,8 @@ export default class NewBIS extends SavageAimMixin {
     this.getChar()
   }
 
-  // Save the data into a new bis list
-  async save(): Promise<void> {
-    const body = JSON.stringify(this.bisList)
-    try {
-      const response = await fetch(this.url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-CSRFToken': this.$cookies.get('csrftoken'),
-        },
-        body,
-      })
-
-      if (response.ok) {
-        // Redirect back to the new bis list page
-        const json = await response.json() as CreateResponse
-        this.$router.push(`./${json.id}/`, () => {
-          Vue.notify({ text: `New BIS List created successfully!`, type: 'is-success' })
-        })
-      }
-      else {
-        super.handleError(response.status)
-        this.errors = (await response.json() as BISListErrors)
-      }
-    }
-    catch (e) {
-      this.$notify({ text: `Error ${e} when attempting to create BIS List.`, type: 'is-danger' })
-    }
+  handleError(errorCode: number): void {
+    super.handleError(errorCode)
   }
 }
 </script>
