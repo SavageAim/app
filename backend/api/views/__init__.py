@@ -1,5 +1,6 @@
 from .bis_list import BISListCollection, BISListDelete, BISListResource
 from .character import CharacterCollection, CharacterDelete, CharacterResource, CharacterVerification
+from .etro import EtroImport
 from .gear import GearCollection, ItemLevels
 from .job import JobCollection
 from .loot import LootCollection, LootWithBIS
@@ -18,6 +19,8 @@ __all__ = [
     'CharacterDelete',
     'CharacterResource',
     'CharacterVerification',
+
+    'EtroImport',
 
     'GearCollection',
     'ItemLevels',
