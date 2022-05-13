@@ -31,6 +31,8 @@ export default class BISListModify {
   public current_offhand_id = -1
   public current_right_ring_id = -1
   public external_link: string | null = null
+  public name = ''
+  public display_name = ''
 
   static buildEditVersion(responseList: BISList): BISListModify {
     // Create an instance of this dataclass from an object with the BISList interface
@@ -64,6 +66,9 @@ export default class BISListModify {
     newList.current_offhand_id = responseList.current_offhand.id
     newList.current_right_ring_id = responseList.current_right_ring.id
     newList.external_link = responseList.external_link
+
+    newList.name = responseList.name
+    newList.display_name = responseList.display_name
 
     return newList
   }

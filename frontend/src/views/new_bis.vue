@@ -7,7 +7,8 @@
       <div class="breadcrumb">
         <ul>
           <li><router-link :to="`/characters/${character.id}/`">{{ character.name }} @ {{ character.world }}</router-link></li>
-          <li class="is-active"><a aria-current="page">New BIS List</a></li>
+          <li class="is-active"><a href="#">BIS Lists</a></li>
+          <li class="is-active"><a aria-current="page">New</a></li>
         </ul>
       </div>
       <BISListForm :bisList="bisList" :errors="errors" />

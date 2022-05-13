@@ -6,7 +6,8 @@
     <div v-else>
       <div class="breadcrumb">
         <ul>
-          <li><router-link :to="`/characters/${character.id}/`">{{ character.name }} @ {{ character.world }}</router-link></li>
+        <li><router-link :to="`/characters/${character.id}/`">{{ character.name }} @ {{ character.world }}</router-link></li>
+          <li class="is-active"><a href="#">BIS Lists</a></li>
           <li class="is-active"><a aria-current="page">{{ breadcrumb }}</a></li>
         </ul>
       </div>
@@ -41,7 +42,7 @@ export default class EditBIS extends NewBIS {
   // Flag indicating if we're ready to display the page
   get loaded(): boolean {
     if (this.charLoaded && this.listLoaded) {
-      document.title = `Edit ${this.bisList.job_id} - ${this.character.name} - Savage Aim`
+      document.title = `Edit ${this.bisList.display_name} - ${this.character.name} - Savage Aim`
       return true
     }
     return false
@@ -60,7 +61,7 @@ export default class EditBIS extends NewBIS {
         // Parse the list into an array of character interfaces and store them in the character data list
         const data = await response.json() as BISList
         this.bisList = BISListModify.buildEditVersion(data)
-        this.breadcrumb = this.bisList.job_id
+        this.breadcrumb = this.bisList.display_name
         this.listLoaded = true
       }
       else {

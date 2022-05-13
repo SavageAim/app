@@ -12,6 +12,20 @@
           <div class="card-content">
             <div class="field is-horizontal">
               <div class="field-label is-normal">
+                <label class="label">Name</label>
+              </div>
+              <div class="field-body">
+                <div class="field">
+                  <div class="control">
+                    <input class="input" :class="{'is-danger': errors.name !== undefined}" v-model="bisList.name" placeholder="" />
+                  </div>
+                  <p v-if="errors.name !== undefined" class="help is-danger">{{ errors.name[0] }}</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="field is-horizontal">
+              <div class="field-label is-normal">
                 <label class="label">Job</label>
               </div>
               <div class="field-body">
@@ -219,6 +233,20 @@
       <div v-if="tabsShown.details">
         <div class="card">
           <div class="card-content">
+            <div class="field is-horizontal">
+              <div class="field-label is-normal">
+                <label class="label">Name</label>
+              </div>
+              <div class="field-body">
+                <div class="field">
+                  <div class="control">
+                    <input class="input" :class="{'is-danger': errors.name !== undefined}" v-model="bisList.name" placeholder="" />
+                  </div>
+                  <p v-if="errors.name !== undefined" class="help is-danger">{{ errors.name[0] }}</p>
+                </div>
+              </div>
+            </div>
+
             <div class="field is-horizontal">
               <div class="field-label is-normal">
                 <label class="label">Job</label>
