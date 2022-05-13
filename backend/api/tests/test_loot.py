@@ -48,7 +48,7 @@ class LootTestSuite(SavageAimTestCase):
         )
 
         # Next, create two BIS lists for each character
-        self.raid_weapon = Gear.objects.get(item_level=605)
+        self.raid_weapon = Gear.objects.get(item_level=605, name='Asphodelos')
         self.raid_gear = Gear.objects.get(item_level=600, has_weapon=False)
         self.tome_gear = Gear.objects.get(item_level=600, has_weapon=True)
         self.crafted = Gear.objects.get(name='Classical')

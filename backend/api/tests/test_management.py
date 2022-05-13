@@ -81,7 +81,7 @@ class ManagementCommandTestSuite(SavageAimTestCase):
         )
 
         # Next, create two BIS lists for each character
-        raid_weapon = models.Gear.objects.get(item_level=605)
+        raid_weapon = models.Gear.objects.get(item_level=605, name='Asphodelos')
         raid_gear = models.Gear.objects.get(item_level=600, has_weapon=False)
         tome_gear = models.Gear.objects.get(item_level=600, has_weapon=True)
         crafted = models.Gear.objects.get(name='Classical')

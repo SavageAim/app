@@ -12,8 +12,13 @@
     </div>
     <div class="card-content content">
       <h2 class="has-text-primary subtitle">{{ version }}</h2>
-      <div class="divider"><i class="material-icons icon">expand_more</i> Minor Changes <i class="material-icons icon">expand_more</i></div>
-      <p>Fixed an issue where using Character aliases would break the history counts in the Loot Manager tiles.</p>
+      <div class="divider"><i class="material-icons icon">expand_more</i> FFXIV 6.1.1 <i class="material-icons icon">expand_more</i></div>
+      <p>
+        Added the following Gear for the release of 6.1.1;
+        <ul>
+          <li>Ultimate of the Heavens; Item Level 605 Weapons</li>
+        </ul>
+      </p>
     </div>
   </div>
 </template>
