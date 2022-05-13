@@ -1,10 +1,11 @@
 // Slight variation on bis_list that is used for sending create / update requests
 // Done as a class instead of an interface to allow for functions and such
 import BISList from '@/interfaces/bis_list'
+import { ImportResponse } from '@/interfaces/imports'
 
 export default class BISListModify {
   public id = -1
-  public job_id = 'na'
+  public job_id = 'PLD'
 
   public bis_body_id = -1
   public bis_bracelet_id = -1
@@ -71,5 +72,21 @@ export default class BISListModify {
     newList.display_name = responseList.display_name
 
     return newList
+  }
+
+  importBIS(data: ImportResponse): void {
+    this.job_id = data.job_id
+    this.bis_mainhand_id = data.mainhand
+    this.bis_offhand_id = data.offhand
+    this.bis_head_id = data.head
+    this.bis_body_id = data.body
+    this.bis_hands_id = data.hands
+    this.bis_legs_id = data.legs
+    this.bis_feet_id = data.feet
+    this.bis_earrings_id = data.earrings
+    this.bis_necklace_id = data.necklace
+    this.bis_bracelet_id = data.bracelet
+    this.bis_left_ring_id = data.left_ring
+    this.bis_right_ring_id = data.right_ring
   }
 }

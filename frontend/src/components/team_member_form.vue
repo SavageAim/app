@@ -88,7 +88,7 @@ export default class TeamMemberForm extends SavageAimMixin {
   get bisIcon(): string {
     const list = this.bisLists.find((bl: BISList) => bl.id === parseInt(this.bisListId, 10))
     if (list != null) {
-      return list.job.name
+      return list.job.id
     }
     return ''
   }
