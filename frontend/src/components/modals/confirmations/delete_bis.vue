@@ -15,7 +15,7 @@
         <div class="level is-mobile">
           <div class="level-left">
             <div class="level-item">
-              {{ bis.job.display_name }}
+              {{ bis.display_name }}
             </div>
           </div>
           <div class="level-right">
