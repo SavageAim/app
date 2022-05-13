@@ -64,10 +64,20 @@ class BISListSerializer(serializers.ModelSerializer):
     current_right_ring = GearSerializer()
     item_level = serializers.IntegerField()
     job = JobSerializer()
+    display_name = serializers.SerializerMethodField()
 
     class Meta:
         exclude = ['owner']
         model = BISList
+
+    def get_display_name(self, obj: BISList) -> str:
+        """
+        Same as Character, use the list name if one exists otherwise use the job name
+        """
+        if obj.name != '':
+            return obj.name
+        else:
+            return obj.job.display_name
 
 
 class BISListModifySerializer(serializers.ModelSerializer):
@@ -99,6 +109,7 @@ class BISListModifySerializer(serializers.ModelSerializer):
     current_offhand_id = serializers.IntegerField()
     current_right_ring_id = serializers.IntegerField(validators=[_validate_gear_type('accessories')])
     external_link = serializers.URLField(required=False, allow_null=True, allow_blank=True)
+    name = serializers.CharField(max_length=64, allow_blank=True)
 
     class Meta:
         model = BISList
@@ -129,6 +140,7 @@ class BISListModifySerializer(serializers.ModelSerializer):
             'current_offhand_id',
             'current_right_ring_id',
             'external_link',
+            'name',
         )
 
     def validate_job_id(self, job_id: str) -> str:
@@ -140,16 +152,6 @@ class BISListModifySerializer(serializers.ModelSerializer):
             Job.objects.get(pk=job_id)
         except Job.DoesNotExist:
             raise serializers.ValidationError('Please select a valid Job.')
-
-        # Ensure that this is the only BISList for the Job
-        test = BISList.objects.filter(job_id=job_id)
-        if self.instance is not None:
-            test = test.filter(owner=self.instance.owner).exclude(pk=self.instance.pk)
-        else:
-            test = test.filter(owner=self.context['owner'])
-
-        if test.exists():
-            raise serializers.ValidationError('Currently SavageAim only supports one BISList per job.')
 
         # Check the flag
         if job_id == 'PLD':

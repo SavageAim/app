@@ -38,10 +38,10 @@ class BISList(models.Model):
     current_right_ring = models.ForeignKey('Gear', on_delete=models.CASCADE, related_name='current_right_ring_set')
     external_link = models.URLField(null=True)
     job = models.ForeignKey('Job', on_delete=models.CASCADE)
+    name = models.CharField(max_length=64, default='')
     owner = models.ForeignKey('Character', on_delete=models.CASCADE, related_name='bis_lists')
 
     class Meta:
-        unique_together = ['job', 'owner']
         ordering = ['-job__role', 'job__ordering']
 
     def accessory_augments_required(self, gear_name: str) -> int:
