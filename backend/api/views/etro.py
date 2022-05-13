@@ -84,8 +84,9 @@ class EtroImport(APIView):
             slot: self._get_gear_id(gear_names, item_name)
             for slot, item_name in gear_details.items()
         }
-        # Add the Job ID
+        # Add the Job ID and display name
         response['job_id'] = job_id
+        response['job_name'] = Job.objects.get(pk=job_id).display_name
         # Check for offhand
         if job_id != 'PLD':
             response['offhand'] = response['mainhand']
