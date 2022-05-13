@@ -86,5 +86,8 @@ class EtroImport(APIView):
         }
         # Add the Job ID
         response['job_id'] = job_id
+        # Check for offhand
+        if job_id != 'PLD':
+            response['offhand'] = response['mainhand']
 
         return Response(response)
