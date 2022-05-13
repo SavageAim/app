@@ -30,7 +30,12 @@
           <li>When creating / editing a BIS List you also have the option to pull Current Gear from another List of the same Job.</li>
         </ul>
       </p>
-      <p>It is also now possible to import BIS Gear from Etro Gearsets by filling in the Extra URL of a BIS List.</p>
+      <p>
+        It is also now possible to import BIS Gear from Etro Gearsets by filling in the Extra URL of a BIS List.
+        <ul>
+          <li class="has-text-warning">Imports may not be perfect as to avoid maintaining a map for different names in the website, it compares names of Gear between Savage Aim and Etro and chooses the closest name.</li>
+        </ul>
+      </p>
 
       <div class="divider"><i class="material-icons icon">expand_more</i> Minor Changes <i class="material-icons icon">expand_more</i></div>
       <p>Minor changes to the breadcrumbs in the BIS Create / Edit pages.</p>
