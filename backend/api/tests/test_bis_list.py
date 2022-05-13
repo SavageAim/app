@@ -132,10 +132,10 @@ class BISListCollection(SavageAimTestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, response.content)
         # Since we checked all the "this field is required" errors above, just check the ones we send now
         content = response.json()
-        invalid_gear = 'The chosen category of Gear does not have an item for this slot.'
+        invalid_gear = 'The chosen type of Gear is invalid for this equipment slot.'
         self.assertEqual(content['job_id'], ['Please select a valid Job.'])
         self.assertEqual(content['bis_mainhand_id'], ['A valid integer is required.'])
-        self.assertEqual(content['bis_body_id'], ['Please ensure your value corresponds with a valid type of Gear.'])
+        self.assertEqual(content['bis_body_id'], ['Please select a valid type of Gear.'])
         self.assertEqual(content['bis_head_id'], [invalid_gear])
         self.assertEqual(content['bis_earrings_id'], [invalid_gear])
         self.assertEqual(content['current_mainhand_id'], [invalid_gear])
@@ -325,10 +325,10 @@ class BISListResource(SavageAimTestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, response.content)
         # Since we checked all the "this field is required" errors above, just check the ones we send now
         content = response.json()
-        invalid_gear = 'The chosen category of Gear does not have an item for this slot.'
+        invalid_gear = 'The chosen type of Gear is invalid for this equipment slot.'
         self.assertEqual(content['job_id'], ['Please select a valid Job.'])
         self.assertEqual(content['bis_mainhand_id'], ['A valid integer is required.'])
-        self.assertEqual(content['bis_body_id'], ['Please ensure your value corresponds with a valid type of Gear.'])
+        self.assertEqual(content['bis_body_id'], ['Please select a valid type of Gear.'])
         self.assertEqual(content['bis_head_id'], [invalid_gear])
         self.assertEqual(content['bis_earrings_id'], [invalid_gear])
         self.assertEqual(content['current_mainhand_id'], [invalid_gear])

@@ -26,11 +26,11 @@ def _validate_gear_type(gear_type: str):
         try:
             obj = Gear.objects.get(pk=value)
         except Gear.DoesNotExist:
-            raise serializers.ValidationError('Please ensure your value corresponds with a valid type of Gear.')
+            raise serializers.ValidationError('Please select a valid type of Gear.')
 
         # Ensure valid Gear for the slot
         if not getattr(obj, f'has_{gear_type}', False):
-            raise serializers.ValidationError('The chosen category of Gear does not have an item for this slot.')
+            raise serializers.ValidationError('The chosen type of Gear is invalid for this equipment slot.')
 
         return value
     return _inner
@@ -142,6 +142,7 @@ class BISListModifySerializer(serializers.ModelSerializer):
             'external_link',
             'name',
         )
+        extra_kwargs = {'bis_head_id': {'error_messages': {'invalid': 'Please select a valid type of Gear.'}}}
 
     def validate_job_id(self, job_id: str) -> str:
         """
