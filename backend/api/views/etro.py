@@ -62,7 +62,6 @@ class EtroImport(APIView):
             response = client.action(schema, ['gearsets', 'read'], params={'id': id})
         except coreapi.exceptions.ErrorMessage as e:
             return Response({'message': e.error.title}, status=400)
-
         job_id = response['jobAbbrev']
 
         # Loop through each slot of the etro gearset, fetch the name and item level and store it in a dict
@@ -70,7 +69,10 @@ class EtroImport(APIView):
         item_levels: Set[int] = set()
 
         for etro_slot, sa_slot in SLOT_MAP.items():
-            item_response = client.action(schema, ['equipment', 'read'], params={'id': response[etro_slot]})
+            gear_id = response[etro_slot]
+            if gear_id is None:
+                continue
+            item_response = client.action(schema, ['equipment', 'read'], params={'id': gear_id})
             gear_details[sa_slot] = item_response['name']
             item_levels.add(item_response['itemLevel'])
 
@@ -79,7 +81,7 @@ class EtroImport(APIView):
 
         # Loop through the slots one final time, and get the gear id for that slot
         response = {
-            slot: _get_gear_id(gear_names, item_name)
+            slot: self._get_gear_id(gear_names, item_name)
             for slot, item_name in gear_details.items()
         }
         # Add the Job ID
