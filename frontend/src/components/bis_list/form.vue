@@ -51,7 +51,6 @@ import BISListMobileForm from '@/components/bis_list/mobile_form.vue'
 import BISListModify from '@/dataclasses/bis_list_modify'
 import BISList from '@/interfaces/bis_list'
 import { CharacterDetails } from '@/interfaces/character'
-import Gear from '@/interfaces/gear'
 import { ImportResponse } from '@/interfaces/imports'
 import { BISListErrors } from '@/interfaces/responses'
 
