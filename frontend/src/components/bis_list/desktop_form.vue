@@ -8,7 +8,7 @@
           </div>
         </div>
 
-        <Details :bisList="bisList" :errors="errors" />
+        <Details :bisList="bisList" :errors="errors" v-on="$listeners" />
       </div>
 
       <!-- Filters -->
@@ -19,7 +19,7 @@
           </div>
         </div>
 
-        <Filters :minIl="minIl" :maxIl="maxIl" v-on:update-min="updateMin" v-on:update-max="updateMax" />
+        <Filters :minIl="minIl" :maxIl="maxIl" v-on="$listeners" />
       </div>
 
       <!-- Actions -->
@@ -103,14 +103,6 @@ export default class BISListDesktopForm extends Vue {
 
   @Prop()
   url!: string
-
-  updateMin(minIl: number): void {
-    this.$emit('update-min-il', minIl)
-  }
-
-  updateMax(maxIl: number): void {
-    this.$emit('update-max-il', maxIl)
-  }
 }
 </script>
 

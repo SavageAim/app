@@ -9,8 +9,9 @@
       :maxIl="maxIl"
       :method="method"
       :url="url"
-      v-on:update-min-il="updateMinIl"
-      v-on:update-max-il="updateMaxIl"
+      v-on:job-change="jobChange"
+      v-on:update-min="updateMinIl"
+      v-on:update-max="updateMaxIl"
       v-on:error-code="emitErrorCode"
       v-on:errors="handleErrors"
       v-on:save="$emit('save')"
@@ -31,8 +32,9 @@
       :method="method"
       :url="url"
       :simpleActions="!renderDesktop"
-      v-on:update-min-il="updateMinIl"
-      v-on:update-max-il="updateMaxIl"
+      v-on:job-change="jobChange"
+      v-on:update-min="updateMinIl"
+      v-on:update-max="updateMaxIl"
       v-on:error-code="emitErrorCode"
       v-on:errors="handleErrors"
       v-on:save="$emit('save')"
@@ -85,6 +87,11 @@ export default class BISListForm extends Vue {
 
   minIl = 580
 
+  jobChange(selectedJob: string): void {
+    console.log('displayOffhand', selectedJob === 'PLD')
+    this.displayOffhand = selectedJob === 'PLD'
+  }
+
   updateMinIl(minIl: number): void {
     this.minIl = minIl
   }
@@ -106,7 +113,7 @@ export default class BISListForm extends Vue {
     if (data.max_il > this.maxIl) this.maxIl = data.max_il
     Vue.nextTick(() => {
       this.bisList.importBIS(data)
-      this.displayOffhand = data.job_id === 'PLD'
+      this.jobChange(data.job_id)
       this.$forceUpdate()
       this.$notify({ text: 'Successfully imported BIS Gear!', type: 'is-success' })
     })

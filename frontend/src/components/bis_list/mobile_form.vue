@@ -32,13 +32,13 @@
       <!-- Filters -->
       <div v-if="tabsShown.filters">
         <div class="card">
-          <Filters :minIl="minIl" :maxIl="maxIl" v-on:update-min="updateMin" v-on:update-max="updateMax" />
+          <Filters :minIl="minIl" :maxIl="maxIl" v-on="$listeners" />
         </div>
       </div>
 
       <div v-if="tabsShown.details">
         <div class="card">
-          <Details :bisList="bisList" :errors="errors" />
+          <Details :bisList="bisList" :errors="errors" v-on="$listeners" />
         </div>
       </div>
 
@@ -124,14 +124,6 @@ export default class BISListMobileForm extends Vue {
 
   @Prop()
   url!: string
-
-  updateMin(minIl: number): void {
-    this.$emit('update-min-il', minIl)
-  }
-
-  updateMax(maxIl: number): void {
-    this.$emit('update-max-il', maxIl)
-  }
 
   // Method toggle for the tabs
   showBIS(): void {

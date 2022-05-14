@@ -23,7 +23,7 @@
         <div class="control has-icons-left">
           <div class="select is-fullwidth" :class="{'is-danger': errors.job_id !== undefined}">
             <select ref="jobPicker" @change="changeJob" v-model="bisList.job_id">
-              <option v-for="job in jobs" :key="job.name" :data-target="job.name" :value="job.id">{{ job.display_name }}</option>
+              <option v-for="job in jobs" :key="job.name" :value="job.id">{{ job.display_name }}</option>
             </select>
           </div>
           <div class="icon is-small is-left">
@@ -84,9 +84,10 @@ export default class Details extends Vue {
   }
 
   changeJob(): void {
-    const selectedJob = (this.jobPicker.options[this.jobPicker.selectedIndex]).dataset.target as string
+    const selectedJob = (this.jobPicker.options[this.jobPicker.selectedIndex]).value as string
 
     // Handle the flag for the offhand
+    console.log('change-job', selectedJob)
     this.$emit('job-change', selectedJob)
   }
 }
