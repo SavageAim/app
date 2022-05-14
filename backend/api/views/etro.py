@@ -2,7 +2,7 @@
 Given an etro id, convert it into a format that uses Savage Aim ids
 """
 # stdlib
-from typing import Dict, Set, Tuple
+from typing import Dict, Set
 # lib
 import coreapi
 import jellyfish
