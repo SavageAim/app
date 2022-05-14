@@ -92,7 +92,7 @@ class LootCreateSerializer(serializers.ModelSerializer):
         Ensure we're not recording loot for the future
         """
         if obtained > datetime.today().date():
-            raise serializers.ValidationError('Cannot record loot for a date in the future.')
+            raise serializers.ValidationError('Cannot record Loot for a date in the future.')
         return obtained
 
 

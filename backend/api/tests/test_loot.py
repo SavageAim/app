@@ -1054,7 +1054,7 @@ class LootTestSuite(SavageAimTestCase):
         Greed not bool: 'Must be a valid boolean.'
         Obtained not sent: 'This field is required.'
         Obtained not valid date: 'Date has wrong format. Use one of these formats instead: YYYY-MM-DD.'
-        Obtained in the future: 'Cannot record loot for a date in the future.'
+        Obtained in the future: 'Cannot record Loot for a date in the future.'
         """
         url = reverse('api:loot_collection', kwargs={'team_id': self.team.pk})
         user = self._get_user()
@@ -1089,7 +1089,7 @@ class LootTestSuite(SavageAimTestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         content = response.json()
         self.assertEqual(content['member_id'], ['Please select a Character that is a member of the Team.'])
-        self.assertEqual(content['obtained'], ['Cannot record loot for a date in the future.'])
+        self.assertEqual(content['obtained'], ['Cannot record Loot for a date in the future.'])
 
     def test_create_with_bis(self):
         """

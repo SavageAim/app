@@ -40,6 +40,7 @@
       <div class="divider"><i class="material-icons icon">expand_more</i> Minor Changes <i class="material-icons icon">expand_more</i></div>
       <p>Minor changes to the breadcrumbs in the BIS Create / Edit pages.</p>
       <p>The Greed section of the Loot Manager page now uses popups for Characters with more than one BIS List.</p>
+      <p>The forms in the Loot History section of the Loot Manager page have been moved to the top of their related sections to prevent large amounts of unnecessary scrolling as History tables fill up.</p>
       <p>Job icons on Team boxes now have a tooltip with the name / alias of the associated Character.</p>
       <p>Minor layout improvements in the Join a Team page.</p>
     </div>
