@@ -3,7 +3,10 @@
     <div class="buttons">
       <button class="button is-fullwidth is-success" data-microtip-position="top" role="tooltip" :aria-label="`${saveText} this BIS List.`" @click="save">{{ saveText }} BIS List</button>
 
-      <button class="button is-fullwidth is-success" data-microtip-position="top" role="tooltip" :aria-label="`${saveText} this BIS List, and sync current gear to other ${bisList.job_id} BIS Lists.`" v-if="!simple">{{ saveText }} and Sync Current Gear</button>
+      <template v-if="!simple">
+        <button class="button is-fullwidth is-success" data-microtip-position="top" role="tooltip" :aria-label="`${saveText} this BIS List, and sync current gear to other ${bisList.job_id} BIS Lists.`" v-if="syncable()">{{ saveText }} and Sync Current Gear</button>
+        <button class="button is-fullwidth is-disabled" data-microtip-position="top" role="tooltip" :aria-label="`You have no other ${bisList.job_id} BIS Lists.`" v-else>{{ saveText }} and Sync Current Gear</button>
+      </template>
 
       <template v-if="!importLoading">
         <button class="button is-fullwidth is-primary" data-microtip-position="top" role="tooltip" aria-label="Import BIS Gear from Etro.gg" v-if="importable()" @click="etroImport">Import from Etro</button>
@@ -11,7 +14,10 @@
       </template>
       <button v-else class="button is-static is-loading is-fullwidth">Loading data.</button>
 
-      <button class="button is-fullwidth is-primary" data-microtip-position="top" role="tooltip" :aria-label="`Load Current gear from another ${bisList.job_id} BIS List.`" v-if="!simple">Load Current Gear</button>
+      <template v-if="!simple">
+        <button class="button is-fullwidth is-primary" data-microtip-position="top" role="tooltip" :aria-label="`Load Current gear from another ${bisList.job_id} BIS List.`" v-if="syncable()">Load Current Gear</button>
+        <button class="button is-fullwidth is-disabled" data-microtip-position="top" role="tooltip" :aria-label="`You have no other ${bisList.job_id} BIS Lists.`" v-else>Load Current Gear</button>
+      </template>
     </div>
   </div>
 </template>
@@ -24,6 +30,7 @@ import {
   Watch,
 } from 'vue-property-decorator'
 import BISListModify from '@/dataclasses/bis_list_modify'
+import BISList from '@/interfaces/bis_list'
 import { CharacterDetails } from '@/interfaces/character'
 import { CreateResponse, BISListErrors } from '@/interfaces/responses'
 import { ImportResponse, ImportError } from '@/interfaces/imports'
@@ -62,6 +69,11 @@ export default class Actions extends Vue {
   @Watch('bisList.external_link', { deep: true })
   importable(): boolean {
     return this.importPattern.exec(this.bisList.external_link || '') !== null
+  }
+
+  @Watch('bisList.job_id', { deep: true })
+  syncable(): boolean {
+    return this.character.bis_lists.some((list: BISList) => list.id !== this.bisList.id && list.job.id === this.bisList.job_id)
   }
 
   // Save the data into a new bis list
