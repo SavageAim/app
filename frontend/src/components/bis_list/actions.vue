@@ -15,7 +15,7 @@
       <button v-else class="button is-static is-loading is-fullwidth">Loading data.</button>
 
       <template v-if="!simple">
-        <button class="button is-fullwidth is-primary" data-microtip-position="top" role="tooltip" :aria-label="`Load Current gear from another ${bisList.job_id} BIS List.`" v-if="syncable()">Load Current Gear</button>
+        <button class="button is-fullwidth is-primary" data-microtip-position="top" role="tooltip" :aria-label="`Load Current gear from another ${bisList.job_id} BIS List.`" v-if="syncable()" @click="loadCurrent">Load Current Gear</button>
         <button class="button is-fullwidth is-disabled" data-microtip-position="top" role="tooltip" :aria-label="`You have no other ${bisList.job_id} BIS Lists.`" v-else>Load Current Gear</button>
       </template>
     </div>
@@ -29,6 +29,7 @@ import {
   Vue,
   Watch,
 } from 'vue-property-decorator'
+import LoadCurrentGear from '@/components/modals/load_current_gear.vue'
 import BISListModify from '@/dataclasses/bis_list_modify'
 import BISList from '@/interfaces/bis_list'
 import { CharacterDetails } from '@/interfaces/character'
@@ -61,9 +62,19 @@ export default class Actions extends Vue {
     return this.method === 'POST'
   }
 
+  get etroImportUrl(): string | null {
+    const match = this.importPattern.exec(this.bisList.external_link || '')
+    if (match === null) return null
+    return `/backend/api/import/etro/${match[1]}/`
+  }
+
   get saveText(): string {
     if (this.create) return 'Create'
     return 'Save'
+  }
+
+  get syncableLists(): BISList[] {
+    return this.character.bis_lists.filter((list: BISList) => list.id !== this.bisList.id && list.job.id === this.bisList.job_id)
   }
 
   @Watch('bisList.external_link', { deep: true })
@@ -73,7 +84,39 @@ export default class Actions extends Vue {
 
   @Watch('bisList.job_id', { deep: true })
   syncable(): boolean {
-    return this.character.bis_lists.some((list: BISList) => list.id !== this.bisList.id && list.job.id === this.bisList.job_id)
+    return this.syncableLists.length > 0
+  }
+
+  loadCurrent(): void {
+    this.$modal.show(LoadCurrentGear, { bisLists: this.syncableLists, loadBIS: this.loadGearFromBIS })
+  }
+
+  loadGearFromBIS(list: BISList): void {
+    console.log(list)
+  }
+
+  async etroImport(): Promise<void> {
+    const url = this.etroImportUrl
+    if (url === null) return
+    this.importLoading = true
+    try {
+      const response = await fetch(url)
+      if (response.ok) {
+        // Handle the import
+        const data = await response.json() as ImportResponse
+        this.$emit('import-bis-data', data)
+      }
+      else {
+        const error = await response.json() as ImportError
+        this.$notify({ text: `Error while importing Etro gearset; ${error.message}`, type: 'is-danger' })
+      }
+    }
+    catch (e) {
+      this.$notify({ text: `Error ${e} when attempting to import Etro data.`, type: 'is-danger' })
+    }
+    finally {
+      this.importLoading = false
+    }
   }
 
   // Save the data into a new bis list
@@ -116,36 +159,6 @@ export default class Actions extends Vue {
     catch (e) {
       this.$notify({ text: `Error ${e} when attempting to create BIS List.`, type: 'is-danger' })
     }
-  }
-
-  async etroImport(): Promise<void> {
-    const url = this.etroImportUrl
-    if (url === null) return
-    this.importLoading = true
-    try {
-      const response = await fetch(url)
-      if (response.ok) {
-        // Handle the import
-        const data = await response.json() as ImportResponse
-        this.$emit('import-bis-data', data)
-      }
-      else {
-        const error = await response.json() as ImportError
-        this.$notify({ text: `Error while importing Etro gearset; ${error.message}`, type: 'is-danger' })
-      }
-    }
-    catch (e) {
-      this.$notify({ text: `Error ${e} when attempting to import Etro data.`, type: 'is-danger' })
-    }
-    finally {
-      this.importLoading = false
-    }
-  }
-
-  get etroImportUrl(): string | null {
-    const match = this.importPattern.exec(this.bisList.external_link || '')
-    if (match === null) return null
-    return `/backend/api/import/etro/${match[1]}/`
   }
 }
 </script>
