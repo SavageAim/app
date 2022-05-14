@@ -253,6 +253,7 @@ class LootTestSuite(SavageAimTestCase):
                         'greed_lists': [
                             {
                                 'bis_list_id': self.mt_alt_bis.id,
+                                'bis_list_name':  self.mt_alt_bis.display_name,
                                 'current_gear_name': self.crafted.name,
                                 'current_gear_il': self.crafted.item_level,
                                 'job_icon_name': 'WHM',
@@ -260,6 +261,7 @@ class LootTestSuite(SavageAimTestCase):
                             },
                             {
                                 'bis_list_id': self.mt_alt_bis2.id,
+                                'bis_list_name':  self.mt_alt_bis2.display_name,
                                 'current_gear_name': self.crafted.name,
                                 'current_gear_il': self.crafted.item_level,
                                 'job_icon_name': 'DNC',
@@ -273,6 +275,7 @@ class LootTestSuite(SavageAimTestCase):
                         'greed_lists': [
                             {
                                 'bis_list_id': self.tl_alt_bis.id,
+                                'bis_list_name':  self.tl_alt_bis.display_name,
                                 'current_gear_name': self.crafted.name,
                                 'current_gear_il': self.crafted.item_level,
                                 'job_icon_name': 'PLD',
@@ -280,6 +283,7 @@ class LootTestSuite(SavageAimTestCase):
                             },
                             {
                                 'bis_list_id': self.tl_alt_bis2.id,
+                                'bis_list_name':  self.tl_alt_bis2.display_name,
                                 'current_gear_name': self.crafted.name,
                                 'current_gear_il': self.crafted.item_level,
                                 'job_icon_name': 'RPR',
@@ -312,6 +316,7 @@ class LootTestSuite(SavageAimTestCase):
             #             'greed_lists': [
             #                 {
             #                     'bis_list_id': self.tl_alt_bis.id,
+            #                     'bis_list_name':  self.tl_alt_bis.display_name,
             #                     'current_gear_name': self.crafted.name,
             #                     'current_gear_il': self.crafted.item_level,
             #                     'job_icon_name': 'PLD',
@@ -339,6 +344,7 @@ class LootTestSuite(SavageAimTestCase):
                         'greed_lists': [
                             {
                                 'bis_list_id': self.mt_alt_bis2.id,
+                                'bis_list_name':  self.mt_alt_bis2.display_name,
                                 'current_gear_name': self.crafted.name,
                                 'current_gear_il': self.crafted.item_level,
                                 'job_icon_name': 'DNC',
@@ -352,6 +358,7 @@ class LootTestSuite(SavageAimTestCase):
                         'greed_lists': [
                             {
                                 'bis_list_id': self.tl_alt_bis.id,
+                                'bis_list_name':  self.tl_alt_bis.display_name,
                                 'current_gear_name': self.crafted.name,
                                 'current_gear_il': self.crafted.item_level,
                                 'job_icon_name': 'PLD',
@@ -359,6 +366,7 @@ class LootTestSuite(SavageAimTestCase):
                             },
                             {
                                 'bis_list_id': self.tl_alt_bis2.id,
+                                'bis_list_name':  self.tl_alt_bis2.display_name,
                                 'current_gear_name': self.crafted.name,
                                 'current_gear_il': self.crafted.item_level,
                                 'job_icon_name': 'RPR',
@@ -386,6 +394,7 @@ class LootTestSuite(SavageAimTestCase):
                         'greed_lists': [
                             {
                                 'bis_list_id': self.mt_alt_bis.id,
+                                'bis_list_name':  self.mt_alt_bis.display_name,
                                 'current_gear_name': self.crafted.name,
                                 'current_gear_il': self.crafted.item_level,
                                 'job_icon_name': 'WHM',
@@ -418,6 +427,7 @@ class LootTestSuite(SavageAimTestCase):
                         'greed_lists': [
                             {
                                 'bis_list_id': self.mt_alt_bis2.id,
+                                'bis_list_name':  self.mt_alt_bis2.display_name,
                                 'current_gear_name': self.crafted.name,
                                 'current_gear_il': self.crafted.item_level,
                                 'job_icon_name': 'DNC',
@@ -431,6 +441,7 @@ class LootTestSuite(SavageAimTestCase):
                         'greed_lists': [
                             {
                                 'bis_list_id': self.tl_alt_bis.id,
+                                'bis_list_name':  self.tl_alt_bis.display_name,
                                 'current_gear_name': self.crafted.name,
                                 'current_gear_il': self.crafted.item_level,
                                 'job_icon_name': 'PLD',
@@ -438,6 +449,7 @@ class LootTestSuite(SavageAimTestCase):
                             },
                             {
                                 'bis_list_id': self.tl_alt_bis2.id,
+                                'bis_list_name':  self.tl_alt_bis2.display_name,
                                 'current_gear_name': self.crafted.name,
                                 'current_gear_il': self.crafted.item_level,
                                 'job_icon_name': 'RPR',
@@ -465,6 +477,7 @@ class LootTestSuite(SavageAimTestCase):
                         'greed_lists': [
                             {
                                 'bis_list_id': self.mt_alt_bis2.id,
+                                'bis_list_name':  self.mt_alt_bis2.display_name,
                                 'current_gear_name': self.crafted.name,
                                 'current_gear_il': self.crafted.item_level,
                                 'job_icon_name': 'DNC',
@@ -478,6 +491,7 @@ class LootTestSuite(SavageAimTestCase):
                         'greed_lists': [
                             {
                                 'bis_list_id': self.tl_alt_bis.id,
+                                'bis_list_name':  self.tl_alt_bis.display_name,
                                 'current_gear_name': self.crafted.name,
                                 'current_gear_il': self.crafted.item_level,
                                 'job_icon_name': 'PLD',
@@ -485,6 +499,7 @@ class LootTestSuite(SavageAimTestCase):
                             },
                             {
                                 'bis_list_id': self.tl_alt_bis2.id,
+                                'bis_list_name':  self.tl_alt_bis2.display_name,
                                 'current_gear_name': self.crafted.name,
                                 'current_gear_il': self.crafted.item_level,
                                 'job_icon_name': 'RPR',
@@ -512,6 +527,7 @@ class LootTestSuite(SavageAimTestCase):
                         'greed_lists': [
                             {
                                 'bis_list_id': self.mt_alt_bis.id,
+                                'bis_list_name':  self.mt_alt_bis.display_name,
                                 'current_gear_name': self.crafted.name,
                                 'current_gear_il': self.crafted.item_level,
                                 'job_icon_name': 'WHM',
@@ -544,6 +560,7 @@ class LootTestSuite(SavageAimTestCase):
                         'greed_lists': [
                             {
                                 'bis_list_id': self.mt_alt_bis.id,
+                                'bis_list_name':  self.mt_alt_bis.display_name,
                                 'current_gear_name': self.crafted.name,
                                 'current_gear_il': self.crafted.item_level,
                                 'job_icon_name': 'WHM',
@@ -576,6 +593,7 @@ class LootTestSuite(SavageAimTestCase):
                         'greed_lists': [
                             {
                                 'bis_list_id': self.mt_alt_bis2.id,
+                                'bis_list_name':  self.mt_alt_bis2.display_name,
                                 'current_gear_name': self.crafted.name,
                                 'current_gear_il': self.crafted.item_level,
                                 'job_icon_name': 'DNC',
@@ -589,6 +607,7 @@ class LootTestSuite(SavageAimTestCase):
                         'greed_lists': [
                             {
                                 'bis_list_id': self.tl_alt_bis.id,
+                                'bis_list_name':  self.tl_alt_bis.display_name,
                                 'current_gear_name': self.crafted.name,
                                 'current_gear_il': self.crafted.item_level,
                                 'job_icon_name': 'PLD',
@@ -596,6 +615,7 @@ class LootTestSuite(SavageAimTestCase):
                             },
                             {
                                 'bis_list_id': self.tl_alt_bis2.id,
+                                'bis_list_name':  self.tl_alt_bis2.display_name,
                                 'current_gear_name': self.crafted.name,
                                 'current_gear_il': self.crafted.item_level,
                                 'job_icon_name': 'RPR',
@@ -623,6 +643,7 @@ class LootTestSuite(SavageAimTestCase):
                         'greed_lists': [
                             {
                                 'bis_list_id': self.mt_alt_bis.id,
+                                'bis_list_name':  self.mt_alt_bis.display_name,
                                 'current_gear_name': self.crafted.name,
                                 'current_gear_il': self.crafted.item_level,
                                 'job_icon_name': 'WHM',
@@ -663,6 +684,7 @@ class LootTestSuite(SavageAimTestCase):
                         'greed_lists': [
                             {
                                 'bis_list_id': self.mt_alt_bis.id,
+                                'bis_list_name':  self.mt_alt_bis.display_name,
                                 'current_gear_name': self.crafted.name,
                                 'current_gear_il': self.crafted.item_level,
                                 'job_icon_name': 'WHM',
@@ -670,6 +692,7 @@ class LootTestSuite(SavageAimTestCase):
                             },
                             {
                                 'bis_list_id': self.mt_alt_bis2.id,
+                                'bis_list_name':  self.mt_alt_bis2.display_name,
                                 'current_gear_name': self.crafted.name,
                                 'current_gear_il': self.crafted.item_level,
                                 'job_icon_name': 'DNC',
@@ -683,6 +706,7 @@ class LootTestSuite(SavageAimTestCase):
                         'greed_lists': [
                             {
                                 'bis_list_id': self.tl_alt_bis.id,
+                                'bis_list_name':  self.tl_alt_bis.display_name,
                                 'current_gear_name': self.crafted.name,
                                 'current_gear_il': self.crafted.item_level,
                                 'job_icon_name': 'PLD',
@@ -690,6 +714,7 @@ class LootTestSuite(SavageAimTestCase):
                             },
                             {
                                 'bis_list_id': self.tl_alt_bis2.id,
+                                'bis_list_name':  self.tl_alt_bis2.display_name,
                                 'current_gear_name': self.crafted.name,
                                 'current_gear_il': self.crafted.item_level,
                                 'job_icon_name': 'RPR',
@@ -723,12 +748,14 @@ class LootTestSuite(SavageAimTestCase):
                         'greed_lists': [
                             {
                                 'bis_list_id': self.mt_alt_bis.id,
+                                'bis_list_name':  self.mt_alt_bis.display_name,
                                 'job_icon_name': 'WHM',
                                 'job_role': 'heal',
                                 'requires': 2,
                             },
                             {
                                 'bis_list_id': self.mt_alt_bis2.id,
+                                'bis_list_name':  self.mt_alt_bis2.display_name,
                                 'job_icon_name': 'DNC',
                                 'job_role': 'dps',
                                 'requires': 3,
@@ -741,12 +768,14 @@ class LootTestSuite(SavageAimTestCase):
                         'greed_lists': [
                             {
                                 'bis_list_id': self.tl_alt_bis.id,
+                                'bis_list_name':  self.tl_alt_bis.display_name,
                                 'job_icon_name': 'PLD',
                                 'job_role': 'tank',
                                 'requires': 3,
                             },
                             {
                                 'bis_list_id': self.tl_alt_bis2.id,
+                                'bis_list_name':  self.tl_alt_bis2.display_name,
                                 'job_icon_name': 'RPR',
                                 'job_role': 'dps',
                                 'requires': 3,
@@ -779,12 +808,14 @@ class LootTestSuite(SavageAimTestCase):
                         'greed_lists': [
                             {
                                 'bis_list_id': self.mt_alt_bis.id,
+                                'bis_list_name':  self.mt_alt_bis.display_name,
                                 'job_icon_name': 'WHM',
                                 'job_role': 'heal',
                                 'requires': 3,
                             },
                             {
                                 'bis_list_id': self.mt_alt_bis2.id,
+                                'bis_list_name':  self.mt_alt_bis2.display_name,
                                 'job_icon_name': 'DNC',
                                 'job_role': 'dps',
                                 'requires': 2,
@@ -797,12 +828,14 @@ class LootTestSuite(SavageAimTestCase):
                         'greed_lists': [
                             {
                                 'bis_list_id': self.tl_alt_bis.id,
+                                'bis_list_name':  self.tl_alt_bis.display_name,
                                 'job_icon_name': 'PLD',
                                 'job_role': 'tank',
                                 'requires': 2,
                             },
                             {
                                 'bis_list_id': self.tl_alt_bis2.id,
+                                'bis_list_name':  self.tl_alt_bis2.display_name,
                                 'job_icon_name': 'RPR',
                                 'job_role': 'dps',
                                 'requires': 2,

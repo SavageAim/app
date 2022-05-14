@@ -64,20 +64,11 @@ class BISListSerializer(serializers.ModelSerializer):
     current_right_ring = GearSerializer()
     item_level = serializers.IntegerField()
     job = JobSerializer()
-    display_name = serializers.SerializerMethodField()
+    display_name = serializers.CharField()
 
     class Meta:
         exclude = ['owner']
         model = BISList
-
-    def get_display_name(self, obj: BISList) -> str:
-        """
-        Same as Character, use the list name if one exists otherwise use the job name
-        """
-        if obj.name != '':
-            return obj.name
-        else:
-            return obj.job.display_name
 
 
 class BISListModifySerializer(serializers.ModelSerializer):

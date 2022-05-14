@@ -100,6 +100,16 @@ class BISList(models.Model):
             self.current_right_ring.item_level,
         ]) / 12
 
+    @property
+    def display_name(self) -> str:
+        """
+        Same as Character, use the list name if one exists otherwise use the job name
+        """
+        if self.name != '':
+            return self.name
+        else:
+            return self.job.display_name
+
     @staticmethod
     def needs_accessory_augments(gear_name: str) -> models.QuerySet:
         """

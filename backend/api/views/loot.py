@@ -87,6 +87,7 @@ class LootCollection(APIView):
                 for greed_list in greed_lists:
                     current_gear = getattr(greed_list, f'current_{slot}')
                     data['greed_lists'].append({
+                        'bis_list_name': greed_list.display_name,
                         'bis_list_id': greed_list.id,
                         'current_gear_name': current_gear.name,
                         'current_gear_il': current_gear.item_level,
@@ -132,6 +133,7 @@ class LootCollection(APIView):
         #     for greed_list in greed_lists:
         #         current_gear = getattr(greed_list, 'current_offhand')
         #         data['greed_lists'].append({
+        #             'bis_list_name': greed_list.display_name,
         #             'bis_list_id': greed_list.id,
         #             'current_gear_name': current_gear.name,
         #             'current_gear_il': current_gear.item_level,
@@ -188,6 +190,7 @@ class LootCollection(APIView):
                     current_gear = greed_list.current_left_ring
 
                 data['greed_lists'].append({
+                    'bis_list_name': greed_list.display_name,
                     'bis_list_id': greed_list.id,
                     'current_gear_name': current_gear.name,
                     'current_gear_il': current_gear.item_level,
@@ -223,6 +226,7 @@ class LootCollection(APIView):
             }
             for greed_list in greed_lists:
                 data['greed_lists'].append({
+                    'bis_list_name': greed_list.display_name,
                     'bis_list_id': greed_list.id,
                     'job_icon_name': greed_list.job.id,
                     'job_role': greed_list.job.role,
@@ -256,6 +260,7 @@ class LootCollection(APIView):
             }
             for greed_list in greed_lists:
                 data['greed_lists'].append({
+                    'bis_list_name': greed_list.display_name,
                     'bis_list_id': greed_list.id,
                     'job_icon_name': greed_list.job.id,
                     'job_role': greed_list.job.role,
