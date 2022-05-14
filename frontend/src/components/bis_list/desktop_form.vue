@@ -30,7 +30,7 @@
           </div>
         </div>
 
-        <Actions :bisList="bisList" :url="url" :method="method" v-on="$listeners" />
+        <Actions :bisList="bisList" :character="character" :url="url" :method="method" v-on="$listeners" />
       </div>
     </div>
 
@@ -66,6 +66,7 @@ import Current from '@/components/bis_list/current.vue'
 import Details from '@/components/bis_list/details.vue'
 import Filters from '@/components/bis_list/filters.vue'
 import BISListModify from '@/dataclasses/bis_list_modify'
+import { CharacterDetails } from '@/interfaces/character'
 import { BISListErrors } from '@/interfaces/responses'
 
 @Component({
@@ -80,6 +81,9 @@ import { BISListErrors } from '@/interfaces/responses'
 export default class BISListDesktopForm extends Vue {
   @Prop()
   bisList!: BISListModify
+
+  @Prop()
+  character!: CharacterDetails
 
   @Prop()
   displayOffhand!: boolean

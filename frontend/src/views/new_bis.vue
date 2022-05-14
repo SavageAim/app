@@ -11,7 +11,7 @@
           <li class="is-active"><a aria-current="page">New</a></li>
         </ul>
       </div>
-      <BISListForm :bisList="bisList" :url="url" method="POST" v-on:error-code="handleError" />
+      <BISListForm :bisList="bisList" :character="character" :url="url" method="POST" v-on:error-code="handleError" />
     </div>
   </div>
 </template>

@@ -11,7 +11,7 @@
           <li class="is-active"><a aria-current="page">{{ breadcrumb }}</a></li>
         </ul>
       </div>
-      <BISListForm :bisList="bisList" :url="url" method="PUT" v-on:error-code="handleError" v-on:save="postSave" />
+      <BISListForm :bisList="bisList" :character="character" :url="url" method="PUT" v-on:error-code="handleError" v-on:save="postSave" />
     </div>
   </div>
 </template>
@@ -21,7 +21,6 @@ import { Component } from 'vue-property-decorator'
 import BISListForm from '@/components/bis_list/form.vue'
 import BISListModify from '@/dataclasses/bis_list_modify'
 import BISList from '@/interfaces/bis_list'
-import { BISListErrors } from '@/interfaces/responses'
 import NewBIS from './new_bis.vue'
 
 @Component({
@@ -86,7 +85,7 @@ export default class EditBIS extends NewBIS {
     this.breadcrumb = this.bisList.display_name
   }
 
-  async postSave() {
+  async postSave(): Promise<void> {
     await this.getList()
     this.updateBreadcrumb()
   }

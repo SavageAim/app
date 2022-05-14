@@ -2,6 +2,7 @@
   <div>
     <BISListDesktopForm
       :bisList="bisList"
+      :character="character"
       :errors="errors"
       :displayOffhand="displayOffhand"
       :minIl="minIl"
@@ -21,6 +22,7 @@
 
     <BISListMobileForm
       :bisList="bisList"
+      :character="character"
       :errors="errors"
       :displayOffhand="displayOffhand"
       :minIl="minIl"
@@ -45,6 +47,7 @@ import { Component, Prop, Vue } from 'vue-property-decorator'
 import BISListDesktopForm from '@/components/bis_list/desktop_form.vue'
 import BISListMobileForm from '@/components/bis_list/mobile_form.vue'
 import BISListModify from '@/dataclasses/bis_list_modify'
+import { CharacterDetails } from '@/interfaces/character'
 import { ImportResponse } from '@/interfaces/imports'
 import { BISListErrors } from '@/interfaces/responses'
 
@@ -59,6 +62,9 @@ export default class BISListForm extends Vue {
 
   @Prop()
   bisList!: BISListModify
+
+  @Prop()
+  character!: CharacterDetails
 
   errors: BISListErrors = {}
 

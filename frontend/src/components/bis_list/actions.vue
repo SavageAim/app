@@ -24,6 +24,7 @@ import {
   Watch,
 } from 'vue-property-decorator'
 import BISListModify from '@/dataclasses/bis_list_modify'
+import { CharacterDetails } from '@/interfaces/character'
 import { CreateResponse, BISListErrors } from '@/interfaces/responses'
 import { ImportResponse, ImportError } from '@/interfaces/imports'
 
@@ -31,6 +32,9 @@ import { ImportResponse, ImportError } from '@/interfaces/imports'
 export default class Actions extends Vue {
   @Prop()
   bisList!: BISListModify
+
+  @Prop()
+  character!: CharacterDetails
 
   importLoading = false
 
