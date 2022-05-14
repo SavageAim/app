@@ -88,7 +88,6 @@ export default class BISListForm extends Vue {
   minIl = 580
 
   jobChange(selectedJob: string): void {
-    console.log('displayOffhand', selectedJob === 'PLD')
     this.displayOffhand = selectedJob === 'PLD'
   }
 

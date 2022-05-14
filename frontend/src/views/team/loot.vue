@@ -84,11 +84,8 @@
               <p>Below are the people that need the chosen item for any other BIS they have, grouped by character.</p>
               <p v-if="editable">Clicking the button beside anyone will add a Loot entry, and update their BIS List accordingly (where possible).</p>
 
-              <template v-if="displayItem.indexOf('augment') !== -1">
-                <GreedTomeItemBox :editable="editable" :items-received="getGreedReceived(entry)" :entry="entry" :requesting="requesting" v-for="entry in loot.gear[displayItem].greed" :key="entry.character_id" v-on:save="() => { giveGreedTomeLoot(entry) }" />
-              </template>
-              <template v-else-if="displayItem !== 'na'">
-                <GreedRaidItemBox :editable="editable" :items-received="getGreedReceived(entry)" :entry="entry" :requesting="requesting" v-for="entry in loot.gear[displayItem].greed" :key="entry.character_id" v-on:save="(list) => { list === null ? giveGreedTomeLoot(entry) : giveGreedRaidLoot(entry, list) }" />
+              <template v-if="displayItem !== 'na'">
+                <GreedCharacterEntry :editable="editable" :items-received="getGreedReceived(entry)" :entry="entry" :requesting="requesting" v-for="entry in loot.gear[displayItem].greed" :key="`greed-${entry.member_id}`" :raid="displayItem.indexOf('augment') === -1"/>
               </template>
             </div>
           </div>
@@ -110,8 +107,7 @@
 <script lang="ts">
 import dayjs from 'dayjs'
 import { Component } from 'vue-property-decorator'
-import GreedRaidItemBox from '@/components/loot/greed_raid_item_box.vue'
-import GreedTomeItemBox from '@/components/loot/greed_tome_item_box.vue'
+import GreedCharacterEntry from '@/components/loot/greed_character_entry.vue'
 import History from '@/components/loot/history.vue'
 import ItemDropdown from '@/components/item_dropdown.vue'
 import NeedRaidItemBox from '@/components/loot/need_raid_item_box.vue'
@@ -136,8 +132,7 @@ import SavageAimMixin from '@/mixins/savage_aim_mixin'
 
 @Component({
   components: {
-    GreedRaidItemBox,
-    GreedTomeItemBox,
+    GreedCharacterEntry,
     History,
     ItemDropdown,
     NeedRaidItemBox,
@@ -347,9 +342,5 @@ export default class TeamLoot extends SavageAimMixin {
 
 .list-actions {
   margin-left: 1.25rem;
-}
-
-.greed-box {
-  position: relative;
 }
 </style>

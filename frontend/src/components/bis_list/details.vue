@@ -87,7 +87,6 @@ export default class Details extends Vue {
     const selectedJob = (this.jobPicker.options[this.jobPicker.selectedIndex]).value as string
 
     // Handle the flag for the offhand
-    console.log('change-job', selectedJob)
     this.$emit('job-change', selectedJob)
   }
 }
