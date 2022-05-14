@@ -38,7 +38,7 @@
 
       <div v-if="tabsShown.details">
         <div class="card">
-          <Details :bisList="bisList" :errors="errors" v-on:job-change="jobChange" />
+          <Details :bisList="bisList" :errors="errors" />
         </div>
       </div>
 
@@ -120,10 +120,6 @@ export default class BISListMobileForm extends Vue {
 
   @Prop()
   url!: string
-
-  jobChange(selectedJob: string): void {
-    this.$emit('job-change', selectedJob)
-  }
 
   updateMin(minIl: number): void {
     this.$emit('update-min-il', minIl)

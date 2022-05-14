@@ -8,13 +8,13 @@
       :maxIl="maxIl"
       :method="method"
       :url="url"
-      v-on:job-change="jobChange"
       v-on:update-min-il="updateMinIl"
       v-on:update-max-il="updateMaxIl"
       v-on:error-code="emitErrorCode"
       v-on:errors="handleErrors"
       v-on:save="$emit('save')"
       v-on:close="$emit('close')"
+      v-on:import-bis-data="importBISData"
 
       v-if="renderDesktop"
     />
@@ -28,13 +28,13 @@
       :method="method"
       :url="url"
       :simpleActions="!renderDesktop"
-      v-on:job-change="jobChange"
       v-on:update-min-il="updateMinIl"
       v-on:update-max-il="updateMaxIl"
       v-on:error-code="emitErrorCode"
       v-on:errors="handleErrors"
       v-on:save="$emit('save')"
       v-on:close="$emit('close')"
+      v-on:import-bis-data="importBISData"
       :class="[renderDesktop ? 'is-hidden-desktop' : '']"
     />
   </div>
@@ -45,6 +45,7 @@ import { Component, Prop, Vue } from 'vue-property-decorator'
 import BISListDesktopForm from '@/components/bis_list/desktop_form.vue'
 import BISListMobileForm from '@/components/bis_list/mobile_form.vue'
 import BISListModify from '@/dataclasses/bis_list_modify'
+import { ImportResponse } from '@/interfaces/imports'
 import { BISListErrors } from '@/interfaces/responses'
 
 @Component({
@@ -75,12 +76,6 @@ export default class BISListForm extends Vue {
 
   minIl = 580
 
-  // Handle the events that change values
-  jobChange(selectedJob: string): void {
-    this.displayOffhand = selectedJob === 'paladin'
-    this.$forceUpdate()
-  }
-
   updateMinIl(minIl: number): void {
     this.minIl = minIl
   }
@@ -95,6 +90,20 @@ export default class BISListForm extends Vue {
 
   handleErrors(errors: BISListErrors): void {
     this.errors = errors
+  }
+
+  importBISData(data: ImportResponse): void {
+    if (data.min_il < this.minIl) this.minIl = data.min_il
+    if (data.max_il > this.maxIl) this.maxIl = data.max_il
+    Vue.nextTick(() => {
+      this.bisList.importBIS(data)
+      this.displayOffhand = data.job_id === 'PLD'
+      this.$forceUpdate()
+    })
+  }
+
+  mounted(): void {
+    this.displayOffhand = this.bisList.job_id === 'PLD'
   }
 }
 </script>

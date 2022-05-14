@@ -10,7 +10,7 @@ from rest_framework.views import APIView
 from rest_framework.request import Request
 from rest_framework.response import Response
 # local
-from api.models import Gear, Job
+from api.models import Gear
 
 
 # Map names of slots from etro to savage aim
@@ -28,6 +28,8 @@ SLOT_MAP = {
     'fingerL': 'left_ring',
     'fingerR': 'right_ring',
 }
+ARMOUR_SLOTS = {'head', 'body', 'hands', 'legs', 'feet'}
+ACCESSORY_SLOTS = {'earrings', 'necklace', 'bracelet', 'left_ring', 'right_ring'}
 
 
 class EtroImport(APIView):
@@ -79,16 +81,25 @@ class EtroImport(APIView):
         # Get the names of all the gear with the specified Item Levels
         gear_names = Gear.objects.filter(item_level__in=item_levels).values('name', 'id')
 
-        # Loop through the slots one final time, and get the gear id for that slot
         response = {
-            slot: self._get_gear_id(gear_names, item_name)
-            for slot, item_name in gear_details.items()
+            'job_id': job_id,
         }
-        # Add the Job ID and display name
-        response['job_id'] = job_id
-        response['job_name'] = Job.objects.get(pk=job_id).display_name
+
+        # Loop through the slots one final time, and get the gear id for that slot
+        for slot, item_name in gear_details.items():
+            if slot in ARMOUR_SLOTS:
+                response[slot] = self._get_gear_id(gear_names.filter(has_armour=True), item_name)
+            elif slot in ACCESSORY_SLOTS:
+                response[slot] = self._get_gear_id(gear_names.filter(has_accessories=True), item_name)
+            else:
+                response[slot] = self._get_gear_id(gear_names.filter(has_weapon=True), item_name)
+
         # Check for offhand
         if job_id != 'PLD':
             response['offhand'] = response['mainhand']
+
+        # Also add item level status
+        response['min_il'] = min(*item_levels)
+        response['max_il'] = max(*item_levels)
 
         return Response(response)

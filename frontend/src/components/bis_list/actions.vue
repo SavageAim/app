@@ -3,18 +3,15 @@
     <div class="buttons">
       <button class="button is-fullwidth is-success" data-microtip-position="top" role="tooltip" :aria-label="`${saveText} this BIS List.`" @click="save">{{ saveText }} BIS List</button>
 
-      <template v-if="!simple">
-        <button class="button is-fullwidth is-success" data-microtip-position="top" role="tooltip" :aria-label="`${saveText} this BIS List, and sync current gear to other ${bisList.job_id} BIS Lists.`" v-if="syncable()">{{ saveText }} and Sync Current Gear</button>
-        <button class="button is-fullwidth is-disabled" data-microtip-position="top" role="tooltip" aria-label="Please select a Job." v-else>{{ saveText }} and Sync Current Gear</button>
-      </template>
+      <button class="button is-fullwidth is-success" data-microtip-position="top" role="tooltip" :aria-label="`${saveText} this BIS List, and sync current gear to other ${bisList.job_id} BIS Lists.`" v-if="!simple">{{ saveText }} and Sync Current Gear</button>
 
-      <button class="button is-fullwidth is-primary" data-microtip-position="top" role="tooltip" aria-label="Import BIS Gear from Etro.gg" v-if="importable()">Import from Etro</button>
-      <button class="button is-fullwidth is-disabled" data-microtip-position="top" role="tooltip" aria-label="Please enter an Etro gearset link in the external URL." v-else>Import</button>
-
-      <template v-if="!simple">
-        <button class="button is-fullwidth is-primary" data-microtip-position="top" role="tooltip" :aria-label="`Load Current gear from another ${bisList.job_id} BIS List.`" v-if="syncable()">Load Current Gear</button>
-        <button class="button is-fullwidth is-disabled" data-microtip-position="top" role="tooltip" aria-label="Please select a Job." v-else>Load Current Gear</button>
+      <template v-if="!importLoading">
+        <button class="button is-fullwidth is-primary" data-microtip-position="top" role="tooltip" aria-label="Import BIS Gear from Etro.gg" v-if="importable()" @click="etroImport">Import from Etro</button>
+        <button class="button is-fullwidth is-disabled" data-microtip-position="top" role="tooltip" aria-label="Please enter an Etro gearset link in the external URL." v-else>Import</button>
       </template>
+      <button v-else class="button is-static is-loading is-fullwidth">Loading data.</button>
+
+      <button class="button is-fullwidth is-primary" data-microtip-position="top" role="tooltip" :aria-label="`Load Current gear from another ${bisList.job_id} BIS List.`" v-if="!simple">Load Current Gear</button>
     </div>
   </div>
 </template>
@@ -28,11 +25,14 @@ import {
 } from 'vue-property-decorator'
 import BISListModify from '@/dataclasses/bis_list_modify'
 import { CreateResponse, BISListErrors } from '@/interfaces/responses'
+import { ImportResponse, ImportError } from '@/interfaces/imports'
 
 @Component
 export default class Actions extends Vue {
   @Prop()
   bisList!: BISListModify
+
+  importLoading = false
 
   @Prop()
   method!: string
@@ -58,11 +58,6 @@ export default class Actions extends Vue {
   @Watch('bisList.external_link', { deep: true })
   importable(): boolean {
     return this.importPattern.exec(this.bisList.external_link || '') !== null
-  }
-
-  @Watch('bisList.job_id', { deep: true })
-  syncable(): boolean {
-    return this.bisList.job_id !== 'na'
   }
 
   // Save the data into a new bis list
@@ -105,6 +100,36 @@ export default class Actions extends Vue {
     catch (e) {
       this.$notify({ text: `Error ${e} when attempting to create BIS List.`, type: 'is-danger' })
     }
+  }
+
+  async etroImport(): Promise<void> {
+    const url = this.etroImportUrl
+    if (url === null) return
+    this.importLoading = true
+    try {
+      const response = await fetch(url)
+      if (response.ok) {
+        // Handle the import
+        const data = await response.json() as ImportResponse
+        this.$emit('import-bis-data', data)
+      }
+      else {
+        const error = await response.json() as ImportError
+        this.$notify({ text: `Error while importing Etro gearset; ${error.message}`, type: 'is-danger' })
+      }
+    }
+    catch (e) {
+      this.$notify({ text: `Error ${e} when attempting to import Etro data.`, type: 'is-danger' })
+    }
+    finally {
+      this.importLoading = false
+    }
+  }
+
+  get etroImportUrl(): string | null {
+    const match = this.importPattern.exec(this.bisList.external_link || '')
+    if (match === null) return null
+    return `/backend/api/import/etro/${match[1]}/`
   }
 }
 </script>

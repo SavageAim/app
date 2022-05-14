@@ -8,7 +8,7 @@
           </div>
         </div>
 
-        <Details :bisList="bisList" :errors="errors" v-on:job-change="jobChange" />
+        <Details :bisList="bisList" :errors="errors" />
       </div>
 
       <!-- Filters -->
@@ -99,10 +99,6 @@ export default class BISListDesktopForm extends Vue {
 
   @Prop()
   url!: string
-
-  jobChange(selectedJob: string): void {
-    this.$emit('job-change', selectedJob)
-  }
 
   updateMin(minIl: number): void {
     this.$emit('update-min-il', minIl)
