@@ -92,7 +92,7 @@ export default class Actions extends Vue {
   }
 
   loadGearFromBIS(list: BISList): void {
-    console.log(list)
+    this.$emit('import-current-data', list)
   }
 
   async etroImport(): Promise<void> {

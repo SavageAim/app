@@ -16,6 +16,7 @@
       v-on:save="$emit('save')"
       v-on:close="$emit('close')"
       v-on:import-bis-data="importBISData"
+      v-on:import-current-data="importCurrentData"
 
       v-if="renderDesktop"
     />
@@ -37,6 +38,7 @@
       v-on:save="$emit('save')"
       v-on:close="$emit('close')"
       v-on:import-bis-data="importBISData"
+      v-on:import-current-data="importCurrentData"
       :class="[renderDesktop ? 'is-hidden-desktop' : '']"
     />
   </div>
@@ -47,7 +49,9 @@ import { Component, Prop, Vue } from 'vue-property-decorator'
 import BISListDesktopForm from '@/components/bis_list/desktop_form.vue'
 import BISListMobileForm from '@/components/bis_list/mobile_form.vue'
 import BISListModify from '@/dataclasses/bis_list_modify'
+import BISList from '@/interfaces/bis_list'
 import { CharacterDetails } from '@/interfaces/character'
+import Gear from '@/interfaces/gear'
 import { ImportResponse } from '@/interfaces/imports'
 import { BISListErrors } from '@/interfaces/responses'
 
@@ -105,11 +109,43 @@ export default class BISListForm extends Vue {
       this.bisList.importBIS(data)
       this.displayOffhand = data.job_id === 'PLD'
       this.$forceUpdate()
+      this.$notify({ text: 'Successfully imported BIS Gear!', type: 'is-success' })
+    })
+  }
+
+  importCurrentData(data: BISList): void {
+    // Calculate min and max item levels
+    const { minIl, maxIl } = this.calculateCurrentILRange(data)
+    if (minIl < this.minIl) this.minIl = minIl
+    if (maxIl > this.maxIl) this.maxIl = maxIl
+    Vue.nextTick(() => {
+      this.bisList.importCurrent(data)
+      this.$forceUpdate()
+      this.$notify({ text: 'Successfully imported Current Gear!', type: 'is-success' })
     })
   }
 
   mounted(): void {
     this.displayOffhand = this.bisList.job_id === 'PLD'
+  }
+
+  calculateCurrentILRange(data: BISList): { minIl: number, maxIl: number } {
+    const itemLevels = [
+      data.current_mainhand.item_level,
+      data.current_offhand.item_level,
+      data.current_head.item_level,
+      data.current_body.item_level,
+      data.current_hands.item_level,
+      data.current_legs.item_level,
+      data.current_feet.item_level,
+      data.current_earrings.item_level,
+      data.current_necklace.item_level,
+      data.current_bracelet.item_level,
+      data.current_left_ring.item_level,
+      data.current_right_ring.item_level,
+    ]
+
+    return { minIl: Math.min(...itemLevels), maxIl: Math.max(...itemLevels) }
   }
 }
 </script>

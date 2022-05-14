@@ -89,4 +89,19 @@ export default class BISListModify {
     this.bis_left_ring_id = data.left_ring
     this.bis_right_ring_id = data.right_ring
   }
+
+  importCurrent(data: BISList): void {
+    this.current_body_id = data.current_body.id
+    this.current_bracelet_id = data.current_bracelet.id
+    this.current_earrings_id = data.current_earrings.id
+    this.current_feet_id = data.current_feet.id
+    this.current_hands_id = data.current_hands.id
+    this.current_head_id = data.current_head.id
+    this.current_left_ring_id = data.current_left_ring.id
+    this.current_legs_id = data.current_legs.id
+    this.current_mainhand_id = data.current_mainhand.id
+    this.current_necklace_id = data.current_necklace.id
+    this.current_offhand_id = data.current_offhand.id
+    this.current_right_ring_id = data.current_right_ring.id
+  }
 }
