@@ -41,6 +41,7 @@
       <p>Minor changes to the breadcrumbs in the BIS Create / Edit pages.</p>
       <p>The Greed section of the Loot Manager page now uses popups for Characters with more than one BIS List.</p>
       <p>Job icons on Team boxes now have a tooltip with the name / alias of the associated Character.</p>
+      <p>Minor layout improvements in the Join a Team page.</p>
     </div>
   </div>
 </template>
