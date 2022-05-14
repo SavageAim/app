@@ -12,15 +12,7 @@
     </div>
     <div class="card-content content">
       <h2 class="has-text-primary subtitle">{{ version }}</h2>
-      <div class="divider"><i class="material-icons icon">expand_more</i> FFXIV 6.1.1 <i class="material-icons icon">expand_more</i></div>
-      <p>
-        Added the following Gear for the release of 6.1.1;
-        <ul>
-          <li>Ultimate of the Heavens; Item Level 605 Weapons</li>
-        </ul>
-      </p>
-
-      <div class="divider"><i class="material-icons icon">expand_more</i> Massive BIS Lists Updates <i class="material-icons icon">expand_more</i></div>
+      <div class="divider"><i class="material-icons icon">expand_more</i> BIS Lists Expansion Update <i class="material-icons icon">expand_more</i></div>
       <p>The limit of one BIS List per Job has finally been removed! You can now have as many BIS Lists as you want per Job, allowing you to keep historical lists as you advance the tiers, or manage two current lists per Job for the current Tier, the options are endless!</p>
       <p>You can also give each list a name, to help differentiate different BIS Lists of the same Job. The name will default to the name of the Job.</p>
       <p>
@@ -36,13 +28,21 @@
           <li class="has-text-warning">Imports may not be perfect as to avoid maintaining a map for different names in the website, it compares names of Gear between Savage Aim and Etro and chooses the closest name.</li>
         </ul>
       </p>
+      <p>To help prevent over-population of pages, the Greed section of the Loot Manager page now uses popups to assign loot to a Greed BIS List instead of displaying all of the Lists for each Character directly on the page itself.</p>
 
       <div class="divider"><i class="material-icons icon">expand_more</i> Minor Changes <i class="material-icons icon">expand_more</i></div>
-      <p>Minor changes to the breadcrumbs in the BIS Create / Edit pages.</p>
-      <p>The Greed section of the Loot Manager page now uses popups for Characters with more than one BIS List.</p>
-      <p>The forms in the Loot History section of the Loot Manager page have been moved to the top of their related sections to prevent large amounts of unnecessary scrolling as History tables fill up.</p>
+      <p>Minor changes to the display of breadcrumbs in the BIS Create / Edit pages.</p>
       <p>Job icons on Team boxes now have a tooltip with the name / alias of the associated Character.</p>
-      <p>Minor layout improvements in the Join a Team page.</p>
+      <p>Minor design improvements in the Join a Team page.</p>
+      <p>The forms in the Loot History section of the Loot Manager page have been moved to the top of their related sections to prevent large amounts of unnecessary scrolling as History tables fill up.</p>
+
+      <div class="divider"><i class="material-icons icon">expand_more</i> Database Additions <i class="material-icons icon">expand_more</i></div>
+      <p>
+        Added the following Gear for the release of 6.11;
+        <ul>
+          <li>Ultimate of the Heavens; Item Level 605 Weapons</li>
+        </ul>
+      </p>
     </div>
   </div>
 </template>
