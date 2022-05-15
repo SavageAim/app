@@ -85,7 +85,19 @@
               <p v-if="editable">Clicking the button beside anyone will add a Loot entry, and update their BIS List accordingly (where possible).</p>
 
               <template v-if="displayItem !== 'na'">
-                <GreedCharacterEntry :editable="editable" :items-received="getGreedReceived(entry)" :entry="entry" :requesting="requesting" v-for="entry in loot.gear[displayItem].greed" :key="`greed-${entry.member_id}`" :raid="displayItem.indexOf('augment') === -1"/>
+                <GreedCharacterEntry
+                  v-for="entry in loot.gear[displayItem].greed"
+                  :key="`greed-${entry.member_id}`"
+
+                  :editable="editable"
+                  :items-received="getGreedReceived(entry)"
+                  :entry="entry"
+                  :requesting="requesting"
+                  :raid="displayItem.indexOf('augment') === -1"
+
+                  v-on:save-tome="() => { giveGreedTomeLoot(entry) }"
+                  v-on:save-raid="(list) => { giveGreedRaidLoot(entry, list) }"
+                />
               </template>
             </div>
           </div>

@@ -48,15 +48,11 @@ export default class GreedCharacterEntry extends Vue {
   requesting!: boolean
 
   saveRaid(list: GreedItem): void {
-    // TODO - Save
-    console.log('save-raid', list)
-    // this.$emit('save-raid', list)
+    this.$emit('save-raid', list)
   }
 
   saveTome(): void {
-    // TODO - Save
-    console.log('save-tome')
-    // this.$emit('save-tome')
+    this.$emit('save-tome')
   }
 
   openCharacter(): void {
