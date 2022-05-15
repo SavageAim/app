@@ -4,7 +4,7 @@
       <button class="button is-fullwidth is-success" data-microtip-position="top" role="tooltip" :aria-label="`${saveText} this BIS List.`" @click="save">{{ saveText }} BIS List</button>
 
       <template v-if="!simple">
-        <button class="button is-fullwidth is-success" data-microtip-position="top" role="tooltip" :aria-label="`${saveText} this BIS List, and sync current gear to other ${bisList.job_id} BIS Lists.`" v-if="syncable()">{{ saveText }} and Sync Current Gear</button>
+        <button class="button is-fullwidth is-success" data-microtip-position="top" role="tooltip" :aria-label="`${saveText} this BIS List, and sync current gear to other ${bisList.job_id} BIS Lists.`" v-if="syncable()" @click="displaySyncModal">{{ saveText }} and Sync Current Gear</button>
         <button class="button is-fullwidth is-disabled" data-microtip-position="top" role="tooltip" :aria-label="`You have no other ${bisList.job_id} BIS Lists.`" v-else>{{ saveText }} and Sync Current Gear</button>
       </template>
 
@@ -15,7 +15,7 @@
       <button v-else class="button is-static is-loading is-fullwidth">Loading data.</button>
 
       <template v-if="!simple">
-        <button class="button is-fullwidth is-primary" data-microtip-position="top" role="tooltip" :aria-label="`Load Current gear from another ${bisList.job_id} BIS List.`" v-if="syncable()" @click="loadCurrent">Load Current Gear</button>
+        <button class="button is-fullwidth is-primary" data-microtip-position="top" role="tooltip" :aria-label="`Load Current gear from another ${bisList.job_id} BIS List.`" v-if="syncable()" @click="displayLoadModal">Load Current Gear</button>
         <button class="button is-fullwidth is-disabled" data-microtip-position="top" role="tooltip" :aria-label="`You have no other ${bisList.job_id} BIS Lists.`" v-else>Load Current Gear</button>
       </template>
     </div>
@@ -30,6 +30,7 @@ import {
   Watch,
 } from 'vue-property-decorator'
 import LoadCurrentGear from '@/components/modals/load_current_gear.vue'
+import SyncCurrentGear from '@/components/modals/sync_current_gear.vue'
 import BISListModify from '@/dataclasses/bis_list_modify'
 import BISList from '@/interfaces/bis_list'
 import { CharacterDetails } from '@/interfaces/character'
@@ -87,11 +88,15 @@ export default class Actions extends Vue {
     return this.syncableLists.length > 0
   }
 
-  loadCurrent(): void {
-    this.$modal.show(LoadCurrentGear, { bisLists: this.syncableLists, loadBIS: this.loadGearFromBIS })
+  displayLoadModal(): void {
+    this.$modal.show(LoadCurrentGear, { bisLists: this.syncableLists, loadBIS: this.loadCurrentGearFromList })
   }
 
-  loadGearFromBIS(list: BISList): void {
+  displaySyncModal(): void {
+    this.$modal.show(SyncCurrentGear, { bisLists: this.syncableLists, save: this.saveAndSync })
+  }
+
+  loadCurrentGearFromList(list: BISList): void {
     this.$emit('import-current-data', list)
   }
 
@@ -119,12 +124,24 @@ export default class Actions extends Vue {
     }
   }
 
+  save(): void {
+    // Send without syncing anything
+    this.sendData(this.url)
+  }
+
+  saveAndSync(listIds: string[]): void {
+    // Build up the search params
+    const params = new URLSearchParams()
+    listIds.forEach((id: string) => params.append('sync', id))
+    this.sendData(`${this.url}?${params.toString()}`)
+  }
+
   // Save the data into a new bis list
-  async save(): Promise<void> {
+  async sendData(url: string): Promise<void> {
     this.$emit('errors', {})
     const body = JSON.stringify(this.bisList)
     try {
-      const response = await fetch(this.url, {
+      const response = await fetch(url, {
         method: this.method,
         headers: {
           'Content-Type': 'application/json',

@@ -84,6 +84,8 @@ class BISList(models.Model):
         """
         Given another list, sync the current gear from it to this one and save this one
         """
+        self.current_mainhand = to_sync.current_mainhand
+        self.current_offhand = to_sync.current_offhand
         self.current_head = to_sync.current_head
         self.current_body = to_sync.current_body
         self.current_hands = to_sync.current_hands

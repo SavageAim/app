@@ -21,11 +21,13 @@ class BISListBaseView(APIView):
     """
 
     def _sync_lists(self, list: BISList, sync_ids: List[int]):
+        print('sync', list.display_name, sync_ids)
         sync_lists = BISList.objects.filter(
             owner=list.owner,
             job=list.job,
             id__in=sync_ids,
         )
+        print(sync_lists)
         for sync_list in sync_lists:
             sync_list.sync(list)
             self._send_to_user(sync_list.owner.user, {'type': 'bis', 'char': sync_list.owner.id, 'id': sync_list.pk})
