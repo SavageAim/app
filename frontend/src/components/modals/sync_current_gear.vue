@@ -40,7 +40,7 @@
       </a>
     </div>
     <footer class="card-footer">
-      <a class="card-footer-item has-text-success" @click="sync">Save and Sync</a>
+      <a class="card-footer-item has-text-success" @click="sync">{{ verb }} and Sync</a>
       <a class="card-footer-item has-text-danger" @click="() => { this.$emit('close') }">Cancel</a>
     </footer>
   </div>
@@ -57,6 +57,9 @@ export default class SyncCurrentGear extends Vue {
 
   @Prop()
   save!: (syncIds: string[]) => void
+
+  @Prop()
+  verb!: string
 
   check(e: MouseEvent, bisId: number): void {
     // First, ignore this function if the target was the checkbox

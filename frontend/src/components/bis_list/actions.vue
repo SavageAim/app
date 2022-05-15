@@ -93,7 +93,7 @@ export default class Actions extends Vue {
   }
 
   displaySyncModal(): void {
-    this.$modal.show(SyncCurrentGear, { bisLists: this.syncableLists, save: this.saveAndSync })
+    this.$modal.show(SyncCurrentGear, { bisLists: this.syncableLists, save: this.saveAndSync, verb: this.saveText })
   }
 
   loadCurrentGearFromList(list: BISList): void {
