@@ -80,6 +80,22 @@ class BISList(models.Model):
                 needed += 1
         return needed
 
+    def sync(self, to_sync: 'BISList'):
+        """
+        Given another list, sync the current gear from it to this one and save this one
+        """
+        self.current_head = to_sync.current_head
+        self.current_body = to_sync.current_body
+        self.current_hands = to_sync.current_hands
+        self.current_legs = to_sync.current_legs
+        self.current_feet = to_sync.current_feet
+        self.current_earrings = to_sync.current_earrings
+        self.current_necklace = to_sync.current_necklace
+        self.current_bracelet = to_sync.current_bracelet
+        self.current_left_ring = to_sync.current_left_ring
+        self.current_right_ring = to_sync.current_right_ring
+        self.save()
+
     @property
     def item_level(self):
         """

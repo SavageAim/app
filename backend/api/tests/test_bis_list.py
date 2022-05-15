@@ -142,6 +142,110 @@ class BISListCollection(SavageAimTestCase):
         self.assertEqual(content['external_link'], ['Enter a valid URL.'])
         self.assertEqual(content['name'], ['Ensure this field has no more than 64 characters.'])
 
+    def test_create_with_sync(self):
+        """
+        Test creating a list and also syncing the gear to another existing list at the same time
+        """
+        self.client.force_authenticate(self.char.user)
+
+        # Create existing BIS Lists; one to sync and one that shouldn't because it's the wrong job
+        sync_bis = BISList.objects.create(
+            bis_body_id=self.gear_id_map['Augmented Radiant Host'],
+            bis_bracelet_id=self.gear_id_map['Augmented Radiant Host'],
+            bis_earrings_id=self.gear_id_map['Augmented Radiant Host'],
+            bis_feet_id=self.gear_id_map['Augmented Radiant Host'],
+            bis_hands_id=self.gear_id_map['Augmented Radiant Host'],
+            bis_head_id=self.gear_id_map['Augmented Radiant Host'],
+            bis_left_ring_id=self.gear_id_map['Augmented Radiant Host'],
+            bis_legs_id=self.gear_id_map['Augmented Radiant Host'],
+            bis_mainhand_id=self.gear_id_map['Augmented Radiant Host'],
+            bis_necklace_id=self.gear_id_map['Augmented Radiant Host'],
+            bis_offhand_id=self.gear_id_map['Augmented Radiant Host'],
+            bis_right_ring_id=self.gear_id_map['Augmented Radiant Host'],
+            current_body_id=self.gear_id_map['Moonward'],
+            current_bracelet_id=self.gear_id_map['Moonward'],
+            current_earrings_id=self.gear_id_map['Moonward'],
+            current_feet_id=self.gear_id_map['Moonward'],
+            current_hands_id=self.gear_id_map['Moonward'],
+            current_head_id=self.gear_id_map['Moonward'],
+            current_left_ring_id=self.gear_id_map['Moonward'],
+            current_legs_id=self.gear_id_map['Moonward'],
+            current_mainhand_id=self.gear_id_map['Moonward'],
+            current_necklace_id=self.gear_id_map['Moonward'],
+            current_offhand_id=self.gear_id_map['Moonward'],
+            current_right_ring_id=self.gear_id_map['Moonward'],
+            job_id='PLD',
+            owner=self.char,
+            external_link='https://etro.gg/',
+        )
+        non_sync_bis = BISList.objects.create(
+            bis_body_id=self.gear_id_map['Augmented Radiant Host'],
+            bis_bracelet_id=self.gear_id_map['Augmented Radiant Host'],
+            bis_earrings_id=self.gear_id_map['Augmented Radiant Host'],
+            bis_feet_id=self.gear_id_map['Augmented Radiant Host'],
+            bis_hands_id=self.gear_id_map['Augmented Radiant Host'],
+            bis_head_id=self.gear_id_map['Augmented Radiant Host'],
+            bis_left_ring_id=self.gear_id_map['Augmented Radiant Host'],
+            bis_legs_id=self.gear_id_map['Augmented Radiant Host'],
+            bis_mainhand_id=self.gear_id_map['Augmented Radiant Host'],
+            bis_necklace_id=self.gear_id_map['Augmented Radiant Host'],
+            bis_offhand_id=self.gear_id_map['Augmented Radiant Host'],
+            bis_right_ring_id=self.gear_id_map['Augmented Radiant Host'],
+            current_body_id=self.gear_id_map['Moonward'],
+            current_bracelet_id=self.gear_id_map['Moonward'],
+            current_earrings_id=self.gear_id_map['Moonward'],
+            current_feet_id=self.gear_id_map['Moonward'],
+            current_hands_id=self.gear_id_map['Moonward'],
+            current_head_id=self.gear_id_map['Moonward'],
+            current_left_ring_id=self.gear_id_map['Moonward'],
+            current_legs_id=self.gear_id_map['Moonward'],
+            current_mainhand_id=self.gear_id_map['Moonward'],
+            current_necklace_id=self.gear_id_map['Moonward'],
+            current_offhand_id=self.gear_id_map['Moonward'],
+            current_right_ring_id=self.gear_id_map['Moonward'],
+            job_id='DRK',
+            owner=self.char,
+            external_link='https://etro.gg/',
+        )
+
+        data = {
+            'job_id': 'PLD',
+            'bis_mainhand_id': self.gear_id_map['Augmented Radiant Host'],
+            'bis_offhand_id': self.gear_id_map['Augmented Radiant Host'],
+            'bis_head_id': self.gear_id_map['Augmented Radiant Host'],
+            'bis_body_id': self.gear_id_map['Augmented Radiant Host'],
+            'bis_hands_id': self.gear_id_map['Augmented Radiant Host'],
+            'bis_legs_id': self.gear_id_map['Augmented Radiant Host'],
+            'bis_feet_id': self.gear_id_map['Augmented Radiant Host'],
+            'bis_earrings_id': self.gear_id_map['Augmented Radiant Host'],
+            'bis_necklace_id': self.gear_id_map['Augmented Radiant Host'],
+            'bis_bracelet_id': self.gear_id_map['Augmented Radiant Host'],
+            'bis_right_ring_id': self.gear_id_map['Augmented Radiant Host'],
+            'bis_left_ring_id': self.gear_id_map['Augmented Radiant Host'],
+            'current_mainhand_id': self.gear_id_map['Radiant Host'],
+            'current_offhand_id': self.gear_id_map['Radiant Host'],
+            'current_head_id': self.gear_id_map['Radiant Host'],
+            'current_body_id': self.gear_id_map['Radiant Host'],
+            'current_hands_id': self.gear_id_map['Radiant Host'],
+            'current_legs_id': self.gear_id_map['Radiant Host'],
+            'current_feet_id': self.gear_id_map['Radiant Host'],
+            'current_earrings_id': self.gear_id_map['Radiant Host'],
+            'current_necklace_id': self.gear_id_map['Radiant Host'],
+            'current_bracelet_id': self.gear_id_map['Radiant Host'],
+            'current_right_ring_id': self.gear_id_map['Radiant Host'],
+            'current_left_ring_id': self.gear_id_map['Radiant Host'],
+            'external_link': '',
+            'name': 'Hello :)',
+        }
+
+        url = reverse('api:bis_collection', kwargs={'character_id': self.char.pk})
+        response = self.client.post(f'{url}?sync={sync_bis.pk}&sync={non_sync_bis.pk}', data)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.content)
+        sync_bis.refresh_from_db()
+        non_sync_bis.refresh_from_db()
+        self.assertEqual(sync_bis.current_body_id, self.gear_id_map['Radiant Host'])
+        self.assertEqual(non_sync_bis.current_body_id, self.gear_id_map['Moonward'])
+
     def test_404(self):
         """
         Test all situations where the endpoint would respond with a 404;
