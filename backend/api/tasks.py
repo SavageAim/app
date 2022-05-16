@@ -25,7 +25,7 @@ USER_AGENT = (
 )
 
 
-async def xivapi_lookup(pk: str, token: str, log) -> Optional[str]:
+def xivapi_lookup(pk: str, token: str, log) -> Optional[str]:
     """
     Actually check XIVAPI for the specified token being present in the specified character's bio
     """
@@ -69,9 +69,9 @@ def verify_character(pk: int):
         return
 
     # Call the xivapi function in a sync context
-    logger.debug('calling async function')
-    err = async_to_sync(xivapi_lookup)(obj.lodestone_id, obj.token, logger)
-    logger.debug('finished async function')
+    logger.debug('calling lookup function')
+    err = xivapi_lookup(obj.lodestone_id, obj.token, logger)
+    logger.debug('finished lookup function')
 
     if err is not None:
         notifier.verify_fail(obj, err)
