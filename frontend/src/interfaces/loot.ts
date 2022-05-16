@@ -2,6 +2,7 @@ import Team from './team'
 
 export interface GreedItem {
   bis_list_id: number
+  bis_list_name: string
   current_gear_name: string
   current_gear_il: number
   job_icon_name: string

@@ -27,8 +27,10 @@ export default interface BISList {
   current_necklace: Gear
   current_offhand: Gear
   current_right_ring: Gear
+  display_name: string
   external_link: string | null
   id: number
   item_level: number
   job: Job
+  name: string
 }

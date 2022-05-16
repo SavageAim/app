@@ -14,13 +14,20 @@
 
       <div class="container">
         <!-- Team display box here -->
-        <div class="box">
-          <TeamBio :team="team" :displayIcons="false" />
+        <div class="card">
+          <div class="card-header">
+            <div class="card-header-title">You have been invited to join;</div>
+          </div>
+          <div class="card-content">
+            <div class="box">
+              <TeamBio :team="team" :displayIcons="false" />
+            </div>
+          </div>
         </div>
 
         <div class="card">
           <div class="card-header">
-            <div class="card-header-title">Select your Character and BIS List to join!</div>
+            <div class="card-header-title">Select your Character and BIS List</div>
           </div>
           <div class="card-content">
             <TeamMemberForm ref="form" :bis-list-id-errors="errors.bis_list_id" :character-id-errors="errors.character_id" />

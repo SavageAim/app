@@ -234,7 +234,7 @@ class LootTestSuite(SavageAimTestCase):
                         'character_name': f'{self.main_tank.name} @ {self.main_tank.world}',
                         'current_gear_name': self.crafted.name,
                         'current_gear_il': self.crafted.item_level,
-                        'job_icon_name': 'paladin',
+                        'job_icon_name': 'PLD',
                         'job_role': 'tank',
                     },
                     {
@@ -242,7 +242,7 @@ class LootTestSuite(SavageAimTestCase):
                         'character_name': self.team_lead.alias,
                         'current_gear_name': self.crafted.name,
                         'current_gear_il': self.crafted.item_level,
-                        'job_icon_name': 'sage',
+                        'job_icon_name': 'SGE',
                         'job_role': 'heal',
                     },
                 ],
@@ -253,16 +253,18 @@ class LootTestSuite(SavageAimTestCase):
                         'greed_lists': [
                             {
                                 'bis_list_id': self.mt_alt_bis.id,
+                                'bis_list_name': self.mt_alt_bis.display_name,
                                 'current_gear_name': self.crafted.name,
                                 'current_gear_il': self.crafted.item_level,
-                                'job_icon_name': 'whitemage',
+                                'job_icon_name': 'WHM',
                                 'job_role': 'heal',
                             },
                             {
                                 'bis_list_id': self.mt_alt_bis2.id,
+                                'bis_list_name': self.mt_alt_bis2.display_name,
                                 'current_gear_name': self.crafted.name,
                                 'current_gear_il': self.crafted.item_level,
-                                'job_icon_name': 'dancer',
+                                'job_icon_name': 'DNC',
                                 'job_role': 'dps',
                             },
                         ],
@@ -273,16 +275,18 @@ class LootTestSuite(SavageAimTestCase):
                         'greed_lists': [
                             {
                                 'bis_list_id': self.tl_alt_bis.id,
+                                'bis_list_name': self.tl_alt_bis.display_name,
                                 'current_gear_name': self.crafted.name,
                                 'current_gear_il': self.crafted.item_level,
-                                'job_icon_name': 'paladin',
+                                'job_icon_name': 'PLD',
                                 'job_role': 'tank',
                             },
                             {
                                 'bis_list_id': self.tl_alt_bis2.id,
+                                'bis_list_name': self.tl_alt_bis2.display_name,
                                 'current_gear_name': self.crafted.name,
                                 'current_gear_il': self.crafted.item_level,
-                                'job_icon_name': 'reaper',
+                                'job_icon_name': 'RPR',
                                 'job_role': 'dps',
                             },
                         ],
@@ -296,7 +300,7 @@ class LootTestSuite(SavageAimTestCase):
             #             'character_name': f'{self.main_tank.name} @ {self.main_tank.world}',
             #             'current_gear_name': self.crafted.name,
             #             'current_gear_il': self.crafted.item_level,
-            #             'job_icon_name': 'paladin',
+            #             'job_icon_name': 'PLD',
             #             'job_role': 'tank',
             #         },
             #     ],
@@ -312,9 +316,10 @@ class LootTestSuite(SavageAimTestCase):
             #             'greed_lists': [
             #                 {
             #                     'bis_list_id': self.tl_alt_bis.id,
+            #                     'bis_list_name': self.tl_alt_bis.display_name,
             #                     'current_gear_name': self.crafted.name,
             #                     'current_gear_il': self.crafted.item_level,
-            #                     'job_icon_name': 'paladin',
+            #                     'job_icon_name': 'PLD',
             #                     'job_role': 'tank',
             #                 },
             #             ],
@@ -328,7 +333,7 @@ class LootTestSuite(SavageAimTestCase):
                         'character_name': f'{self.main_tank.name} @ {self.main_tank.world}',
                         'current_gear_name': self.crafted.name,
                         'current_gear_il': self.crafted.item_level,
-                        'job_icon_name': 'paladin',
+                        'job_icon_name': 'PLD',
                         'job_role': 'tank',
                     },
                 ],
@@ -339,9 +344,10 @@ class LootTestSuite(SavageAimTestCase):
                         'greed_lists': [
                             {
                                 'bis_list_id': self.mt_alt_bis2.id,
+                                'bis_list_name': self.mt_alt_bis2.display_name,
                                 'current_gear_name': self.crafted.name,
                                 'current_gear_il': self.crafted.item_level,
-                                'job_icon_name': 'dancer',
+                                'job_icon_name': 'DNC',
                                 'job_role': 'dps',
                             },
                         ],
@@ -352,16 +358,18 @@ class LootTestSuite(SavageAimTestCase):
                         'greed_lists': [
                             {
                                 'bis_list_id': self.tl_alt_bis.id,
+                                'bis_list_name': self.tl_alt_bis.display_name,
                                 'current_gear_name': self.crafted.name,
                                 'current_gear_il': self.crafted.item_level,
-                                'job_icon_name': 'paladin',
+                                'job_icon_name': 'PLD',
                                 'job_role': 'tank',
                             },
                             {
                                 'bis_list_id': self.tl_alt_bis2.id,
+                                'bis_list_name': self.tl_alt_bis2.display_name,
                                 'current_gear_name': self.crafted.name,
                                 'current_gear_il': self.crafted.item_level,
-                                'job_icon_name': 'reaper',
+                                'job_icon_name': 'RPR',
                                 'job_role': 'dps',
                             },
                         ],
@@ -375,7 +383,7 @@ class LootTestSuite(SavageAimTestCase):
                         'character_name': self.team_lead.alias,
                         'current_gear_name': self.crafted.name,
                         'current_gear_il': self.crafted.item_level,
-                        'job_icon_name': 'sage',
+                        'job_icon_name': 'SGE',
                         'job_role': 'heal',
                     },
                 ],
@@ -386,9 +394,10 @@ class LootTestSuite(SavageAimTestCase):
                         'greed_lists': [
                             {
                                 'bis_list_id': self.mt_alt_bis.id,
+                                'bis_list_name': self.mt_alt_bis.display_name,
                                 'current_gear_name': self.crafted.name,
                                 'current_gear_il': self.crafted.item_level,
-                                'job_icon_name': 'whitemage',
+                                'job_icon_name': 'WHM',
                                 'job_role': 'heal',
                             },
                         ],
@@ -407,7 +416,7 @@ class LootTestSuite(SavageAimTestCase):
                         'character_name': f'{self.main_tank.name} @ {self.main_tank.world}',
                         'current_gear_name': self.crafted.name,
                         'current_gear_il': self.crafted.item_level,
-                        'job_icon_name': 'paladin',
+                        'job_icon_name': 'PLD',
                         'job_role': 'tank',
                     },
                 ],
@@ -418,9 +427,10 @@ class LootTestSuite(SavageAimTestCase):
                         'greed_lists': [
                             {
                                 'bis_list_id': self.mt_alt_bis2.id,
+                                'bis_list_name': self.mt_alt_bis2.display_name,
                                 'current_gear_name': self.crafted.name,
                                 'current_gear_il': self.crafted.item_level,
-                                'job_icon_name': 'dancer',
+                                'job_icon_name': 'DNC',
                                 'job_role': 'dps',
                             },
                         ],
@@ -431,16 +441,18 @@ class LootTestSuite(SavageAimTestCase):
                         'greed_lists': [
                             {
                                 'bis_list_id': self.tl_alt_bis.id,
+                                'bis_list_name': self.tl_alt_bis.display_name,
                                 'current_gear_name': self.crafted.name,
                                 'current_gear_il': self.crafted.item_level,
-                                'job_icon_name': 'paladin',
+                                'job_icon_name': 'PLD',
                                 'job_role': 'tank',
                             },
                             {
                                 'bis_list_id': self.tl_alt_bis2.id,
+                                'bis_list_name': self.tl_alt_bis2.display_name,
                                 'current_gear_name': self.crafted.name,
                                 'current_gear_il': self.crafted.item_level,
-                                'job_icon_name': 'reaper',
+                                'job_icon_name': 'RPR',
                                 'job_role': 'dps',
                             },
                         ],
@@ -454,7 +466,7 @@ class LootTestSuite(SavageAimTestCase):
                         'character_name': f'{self.main_tank.name} @ {self.main_tank.world}',
                         'current_gear_name': self.crafted.name,
                         'current_gear_il': self.crafted.item_level,
-                        'job_icon_name': 'paladin',
+                        'job_icon_name': 'PLD',
                         'job_role': 'tank',
                     },
                 ],
@@ -465,9 +477,10 @@ class LootTestSuite(SavageAimTestCase):
                         'greed_lists': [
                             {
                                 'bis_list_id': self.mt_alt_bis2.id,
+                                'bis_list_name': self.mt_alt_bis2.display_name,
                                 'current_gear_name': self.crafted.name,
                                 'current_gear_il': self.crafted.item_level,
-                                'job_icon_name': 'dancer',
+                                'job_icon_name': 'DNC',
                                 'job_role': 'dps',
                             },
                         ],
@@ -478,16 +491,18 @@ class LootTestSuite(SavageAimTestCase):
                         'greed_lists': [
                             {
                                 'bis_list_id': self.tl_alt_bis.id,
+                                'bis_list_name': self.tl_alt_bis.display_name,
                                 'current_gear_name': self.crafted.name,
                                 'current_gear_il': self.crafted.item_level,
-                                'job_icon_name': 'paladin',
+                                'job_icon_name': 'PLD',
                                 'job_role': 'tank',
                             },
                             {
                                 'bis_list_id': self.tl_alt_bis2.id,
+                                'bis_list_name': self.tl_alt_bis2.display_name,
                                 'current_gear_name': self.crafted.name,
                                 'current_gear_il': self.crafted.item_level,
-                                'job_icon_name': 'reaper',
+                                'job_icon_name': 'RPR',
                                 'job_role': 'dps',
                             },
                         ],
@@ -501,7 +516,7 @@ class LootTestSuite(SavageAimTestCase):
                         'character_name': self.team_lead.alias,
                         'current_gear_name': self.crafted.name,
                         'current_gear_il': self.crafted.item_level,
-                        'job_icon_name': 'sage',
+                        'job_icon_name': 'SGE',
                         'job_role': 'heal',
                     },
                 ],
@@ -512,9 +527,10 @@ class LootTestSuite(SavageAimTestCase):
                         'greed_lists': [
                             {
                                 'bis_list_id': self.mt_alt_bis.id,
+                                'bis_list_name': self.mt_alt_bis.display_name,
                                 'current_gear_name': self.crafted.name,
                                 'current_gear_il': self.crafted.item_level,
-                                'job_icon_name': 'whitemage',
+                                'job_icon_name': 'WHM',
                                 'job_role': 'heal',
                             },
                         ],
@@ -533,7 +549,7 @@ class LootTestSuite(SavageAimTestCase):
                         'character_name': self.team_lead.alias,
                         'current_gear_name': self.crafted.name,
                         'current_gear_il': self.crafted.item_level,
-                        'job_icon_name': 'sage',
+                        'job_icon_name': 'SGE',
                         'job_role': 'heal',
                     },
                 ],
@@ -544,9 +560,10 @@ class LootTestSuite(SavageAimTestCase):
                         'greed_lists': [
                             {
                                 'bis_list_id': self.mt_alt_bis.id,
+                                'bis_list_name': self.mt_alt_bis.display_name,
                                 'current_gear_name': self.crafted.name,
                                 'current_gear_il': self.crafted.item_level,
-                                'job_icon_name': 'whitemage',
+                                'job_icon_name': 'WHM',
                                 'job_role': 'heal',
                             },
                         ],
@@ -565,7 +582,7 @@ class LootTestSuite(SavageAimTestCase):
                         'character_name': f'{self.main_tank.name} @ {self.main_tank.world}',
                         'current_gear_name': self.crafted.name,
                         'current_gear_il': self.crafted.item_level,
-                        'job_icon_name': 'paladin',
+                        'job_icon_name': 'PLD',
                         'job_role': 'tank',
                     },
                 ],
@@ -576,9 +593,10 @@ class LootTestSuite(SavageAimTestCase):
                         'greed_lists': [
                             {
                                 'bis_list_id': self.mt_alt_bis2.id,
+                                'bis_list_name': self.mt_alt_bis2.display_name,
                                 'current_gear_name': self.crafted.name,
                                 'current_gear_il': self.crafted.item_level,
-                                'job_icon_name': 'dancer',
+                                'job_icon_name': 'DNC',
                                 'job_role': 'dps',
                             },
                         ],
@@ -589,16 +607,18 @@ class LootTestSuite(SavageAimTestCase):
                         'greed_lists': [
                             {
                                 'bis_list_id': self.tl_alt_bis.id,
+                                'bis_list_name': self.tl_alt_bis.display_name,
                                 'current_gear_name': self.crafted.name,
                                 'current_gear_il': self.crafted.item_level,
-                                'job_icon_name': 'paladin',
+                                'job_icon_name': 'PLD',
                                 'job_role': 'tank',
                             },
                             {
                                 'bis_list_id': self.tl_alt_bis2.id,
+                                'bis_list_name': self.tl_alt_bis2.display_name,
                                 'current_gear_name': self.crafted.name,
                                 'current_gear_il': self.crafted.item_level,
-                                'job_icon_name': 'reaper',
+                                'job_icon_name': 'RPR',
                                 'job_role': 'dps',
                             },
                         ],
@@ -612,7 +632,7 @@ class LootTestSuite(SavageAimTestCase):
                         'character_name': self.team_lead.alias,
                         'current_gear_name': self.crafted.name,
                         'current_gear_il': self.crafted.item_level,
-                        'job_icon_name': 'sage',
+                        'job_icon_name': 'SGE',
                         'job_role': 'heal',
                     },
                 ],
@@ -623,9 +643,10 @@ class LootTestSuite(SavageAimTestCase):
                         'greed_lists': [
                             {
                                 'bis_list_id': self.mt_alt_bis.id,
+                                'bis_list_name': self.mt_alt_bis.display_name,
                                 'current_gear_name': self.crafted.name,
                                 'current_gear_il': self.crafted.item_level,
-                                'job_icon_name': 'whitemage',
+                                'job_icon_name': 'WHM',
                                 'job_role': 'heal',
                             },
                         ],
@@ -644,7 +665,7 @@ class LootTestSuite(SavageAimTestCase):
                         'character_name': f'{self.main_tank.name} @ {self.main_tank.world}',
                         'current_gear_name': self.crafted.name,
                         'current_gear_il': self.crafted.item_level,
-                        'job_icon_name': 'paladin',
+                        'job_icon_name': 'PLD',
                         'job_role': 'tank',
                     },
                     {
@@ -652,7 +673,7 @@ class LootTestSuite(SavageAimTestCase):
                         'character_name': self.team_lead.alias,
                         'current_gear_name': self.crafted.name,
                         'current_gear_il': self.crafted.item_level,
-                        'job_icon_name': 'sage',
+                        'job_icon_name': 'SGE',
                         'job_role': 'heal',
                     },
                 ],
@@ -663,16 +684,18 @@ class LootTestSuite(SavageAimTestCase):
                         'greed_lists': [
                             {
                                 'bis_list_id': self.mt_alt_bis.id,
+                                'bis_list_name': self.mt_alt_bis.display_name,
                                 'current_gear_name': self.crafted.name,
                                 'current_gear_il': self.crafted.item_level,
-                                'job_icon_name': 'whitemage',
+                                'job_icon_name': 'WHM',
                                 'job_role': 'heal',
                             },
                             {
                                 'bis_list_id': self.mt_alt_bis2.id,
+                                'bis_list_name': self.mt_alt_bis2.display_name,
                                 'current_gear_name': self.crafted.name,
                                 'current_gear_il': self.crafted.item_level,
-                                'job_icon_name': 'dancer',
+                                'job_icon_name': 'DNC',
                                 'job_role': 'dps',
                             },
                         ],
@@ -683,16 +706,18 @@ class LootTestSuite(SavageAimTestCase):
                         'greed_lists': [
                             {
                                 'bis_list_id': self.tl_alt_bis.id,
+                                'bis_list_name': self.tl_alt_bis.display_name,
                                 'current_gear_name': self.crafted.name,
                                 'current_gear_il': self.crafted.item_level,
-                                'job_icon_name': 'paladin',
+                                'job_icon_name': 'PLD',
                                 'job_role': 'tank',
                             },
                             {
                                 'bis_list_id': self.tl_alt_bis2.id,
+                                'bis_list_name': self.tl_alt_bis2.display_name,
                                 'current_gear_name': self.crafted.name,
                                 'current_gear_il': self.crafted.item_level,
-                                'job_icon_name': 'reaper',
+                                'job_icon_name': 'RPR',
                                 'job_role': 'dps',
                             },
                         ],
@@ -704,14 +729,14 @@ class LootTestSuite(SavageAimTestCase):
                     {
                         'member_id': self.mt_tm.pk,
                         'character_name': f'{self.main_tank.name} @ {self.main_tank.world}',
-                        'job_icon_name': 'paladin',
+                        'job_icon_name': 'PLD',
                         'job_role': 'tank',
                         'requires': 3,
                     },
                     {
                         'member_id': self.tl_tm.pk,
                         'character_name': self.team_lead.alias,
-                        'job_icon_name': 'sage',
+                        'job_icon_name': 'SGE',
                         'job_role': 'heal',
                         'requires': 2,
                     },
@@ -723,13 +748,15 @@ class LootTestSuite(SavageAimTestCase):
                         'greed_lists': [
                             {
                                 'bis_list_id': self.mt_alt_bis.id,
-                                'job_icon_name': 'whitemage',
+                                'bis_list_name': self.mt_alt_bis.display_name,
+                                'job_icon_name': 'WHM',
                                 'job_role': 'heal',
                                 'requires': 2,
                             },
                             {
                                 'bis_list_id': self.mt_alt_bis2.id,
-                                'job_icon_name': 'dancer',
+                                'bis_list_name': self.mt_alt_bis2.display_name,
+                                'job_icon_name': 'DNC',
                                 'job_role': 'dps',
                                 'requires': 3,
                             },
@@ -741,13 +768,15 @@ class LootTestSuite(SavageAimTestCase):
                         'greed_lists': [
                             {
                                 'bis_list_id': self.tl_alt_bis.id,
-                                'job_icon_name': 'paladin',
+                                'bis_list_name': self.tl_alt_bis.display_name,
+                                'job_icon_name': 'PLD',
                                 'job_role': 'tank',
                                 'requires': 3,
                             },
                             {
                                 'bis_list_id': self.tl_alt_bis2.id,
-                                'job_icon_name': 'reaper',
+                                'bis_list_name': self.tl_alt_bis2.display_name,
+                                'job_icon_name': 'RPR',
                                 'job_role': 'dps',
                                 'requires': 3,
                             },
@@ -760,14 +789,14 @@ class LootTestSuite(SavageAimTestCase):
                     {
                         'member_id': self.mt_tm.pk,
                         'character_name': f'{self.main_tank.name} @ {self.main_tank.world}',
-                        'job_icon_name': 'paladin',
+                        'job_icon_name': 'PLD',
                         'job_role': 'tank',
                         'requires': 2,
                     },
                     {
                         'member_id': self.tl_tm.pk,
                         'character_name': self.team_lead.alias,
-                        'job_icon_name': 'sage',
+                        'job_icon_name': 'SGE',
                         'job_role': 'heal',
                         'requires': 3,
                     },
@@ -779,13 +808,15 @@ class LootTestSuite(SavageAimTestCase):
                         'greed_lists': [
                             {
                                 'bis_list_id': self.mt_alt_bis.id,
-                                'job_icon_name': 'whitemage',
+                                'bis_list_name': self.mt_alt_bis.display_name,
+                                'job_icon_name': 'WHM',
                                 'job_role': 'heal',
                                 'requires': 3,
                             },
                             {
                                 'bis_list_id': self.mt_alt_bis2.id,
-                                'job_icon_name': 'dancer',
+                                'bis_list_name': self.mt_alt_bis2.display_name,
+                                'job_icon_name': 'DNC',
                                 'job_role': 'dps',
                                 'requires': 2,
                             },
@@ -797,13 +828,15 @@ class LootTestSuite(SavageAimTestCase):
                         'greed_lists': [
                             {
                                 'bis_list_id': self.tl_alt_bis.id,
-                                'job_icon_name': 'paladin',
+                                'bis_list_name': self.tl_alt_bis.display_name,
+                                'job_icon_name': 'PLD',
                                 'job_role': 'tank',
                                 'requires': 2,
                             },
                             {
                                 'bis_list_id': self.tl_alt_bis2.id,
-                                'job_icon_name': 'reaper',
+                                'bis_list_name': self.tl_alt_bis2.display_name,
+                                'job_icon_name': 'RPR',
                                 'job_role': 'dps',
                                 'requires': 2,
                             },
@@ -1054,7 +1087,7 @@ class LootTestSuite(SavageAimTestCase):
         Greed not bool: 'Must be a valid boolean.'
         Obtained not sent: 'This field is required.'
         Obtained not valid date: 'Date has wrong format. Use one of these formats instead: YYYY-MM-DD.'
-        Obtained in the future: 'Cannot record loot for a date in the future.'
+        Obtained in the future: 'Cannot record Loot for a date in the future.'
         """
         url = reverse('api:loot_collection', kwargs={'team_id': self.team.pk})
         user = self._get_user()
@@ -1089,7 +1122,7 @@ class LootTestSuite(SavageAimTestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         content = response.json()
         self.assertEqual(content['member_id'], ['Please select a Character that is a member of the Team.'])
-        self.assertEqual(content['obtained'], ['Cannot record loot for a date in the future.'])
+        self.assertEqual(content['obtained'], ['Cannot record Loot for a date in the future.'])
 
     def test_create_with_bis(self):
         """
@@ -1206,8 +1239,7 @@ class LootTestSuite(SavageAimTestCase):
         self.assertEqual(notif.link, f'/characters/{self.team_lead.id}/bis_list/{self.tl_main_bis.id}/')
         self.assertEqual(
             notif.text,
-            f'"{self.team_lead}"\'s {self.tl_main_bis.job.id} BIS List was updated via '
-            f'"{self.team.name}"\'s Loot Tracker!',
+            f'"{self.team_lead}"\'s BIS List "{self.tl_main_bis}" was updated via "{self.team.name}"\'s Loot Tracker!',
         )
         self.assertEqual(notif.type, 'loot_tracker_update')
         self.assertFalse(notif.read)

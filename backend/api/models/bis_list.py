@@ -2,8 +2,6 @@
 The main class of the system;
 
 Links together characters, jobs and gear into a single list
-
-Currently is one gear list per character per job for ease, may change later
 """
 from typing import List
 from django.db import models
@@ -38,11 +36,14 @@ class BISList(models.Model):
     current_right_ring = models.ForeignKey('Gear', on_delete=models.CASCADE, related_name='current_right_ring_set')
     external_link = models.URLField(null=True)
     job = models.ForeignKey('Job', on_delete=models.CASCADE)
+    name = models.CharField(max_length=64, default='')
     owner = models.ForeignKey('Character', on_delete=models.CASCADE, related_name='bis_lists')
 
     class Meta:
-        unique_together = ['job', 'owner']
-        ordering = ['-job__role', 'job__ordering']
+        ordering = ['-job__role', 'job__ordering', 'name']
+
+    def __str__(self) -> str:
+        return self.display_name
 
     def accessory_augments_required(self, gear_name: str) -> int:
         """
@@ -82,6 +83,24 @@ class BISList(models.Model):
                 needed += 1
         return needed
 
+    def sync(self, to_sync: 'BISList'):
+        """
+        Given another list, sync the current gear from it to this one and save this one
+        """
+        self.current_mainhand = to_sync.current_mainhand
+        self.current_offhand = to_sync.current_offhand
+        self.current_head = to_sync.current_head
+        self.current_body = to_sync.current_body
+        self.current_hands = to_sync.current_hands
+        self.current_legs = to_sync.current_legs
+        self.current_feet = to_sync.current_feet
+        self.current_earrings = to_sync.current_earrings
+        self.current_necklace = to_sync.current_necklace
+        self.current_bracelet = to_sync.current_bracelet
+        self.current_left_ring = to_sync.current_left_ring
+        self.current_right_ring = to_sync.current_right_ring
+        self.save()
+
     @property
     def item_level(self):
         """
@@ -101,6 +120,16 @@ class BISList(models.Model):
             self.current_offhand.item_level,
             self.current_right_ring.item_level,
         ]) / 12
+
+    @property
+    def display_name(self) -> str:
+        """
+        Same as Character, use the list name if one exists otherwise use the job name
+        """
+        if self.name != '':
+            return self.name
+        else:
+            return self.job.display_name
 
     @staticmethod
     def needs_accessory_augments(gear_name: str) -> models.QuerySet:

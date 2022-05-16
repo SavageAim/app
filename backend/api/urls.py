@@ -17,6 +17,9 @@ urlpatterns = [
     path('gear/', views.GearCollection.as_view(), name='gear_collection'),
     path('gear/item_levels/', views.ItemLevels.as_view(), name='item_levels'),
 
+    # Imports
+    path('import/etro/<str:id>/', views.EtroImport.as_view(), name='etro_import'),
+
     # Job
     path('job/', views.JobCollection.as_view(), name='job_collection'),
 

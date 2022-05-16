@@ -28,6 +28,7 @@ export interface BISListErrors {
   current_offhand_id?: string[],
   current_right_ring_id?: string[],
   external_link?: string[],
+  name?: string[],
 }
 
 export interface BISListDeleteReadResponse {

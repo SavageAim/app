@@ -84,201 +84,33 @@
               <p>Below are the people that need the chosen item for any other BIS they have, grouped by character.</p>
               <p v-if="editable">Clicking the button beside anyone will add a Loot entry, and update their BIS List accordingly (where possible).</p>
 
-              <template v-if="displayItem.indexOf('augment') !== -1">
-                <GreedTomeItemBox :editable="editable" :items-received="getGreedReceived(entry)" :entry="entry" :requesting="requesting" v-for="entry in loot.gear[displayItem].greed" :key="entry.character_id" v-on:save="() => { giveGreedTomeLoot(entry) }" />
-              </template>
-              <template v-else-if="displayItem !== 'na'">
-                <GreedRaidItemBox :editable="editable" :items-received="getGreedReceived(entry)" :entry="entry" :requesting="requesting" v-for="entry in loot.gear[displayItem].greed" :key="entry.character_id" v-on:save="(list) => { list === null ? giveGreedTomeLoot(entry) : giveGreedRaidLoot(entry, list) }" />
+              <template v-if="displayItem !== 'na'">
+                <GreedCharacterEntry
+                  v-for="entry in loot.gear[displayItem].greed"
+                  :key="`greed-${entry.member_id}`"
+
+                  :editable="editable"
+                  :items-received="getGreedReceived(entry)"
+                  :entry="entry"
+                  :requesting="requesting"
+                  :raid="displayItem.indexOf('augment') === -1"
+
+                  v-on:save-tome="() => { giveGreedTomeLoot(entry) }"
+                  v-on:save-raid="(list) => { giveGreedRaidLoot(entry, list) }"
+                />
               </template>
             </div>
           </div>
         </div>
 
-        <div class="column is-full">
-          <div class="card">
-            <a class="card-header" @click="toggleHistory">
-              <div class="card-header-title">
-                Loot History
-              </div>
-              <div class="card-header-icon">
-                <span class="icon"><i class="material-icons" ref="historyIcon">expand_more</i></span>
-              </div>
-            </a>
-            <div class="card-content is-hidden" ref="history">
-              <ul class="is-hidden-desktop mobile-history">
-                <li v-for="history in loot.history" :key="`mobile-history-${history.id}`">
-                  <b>Item: </b> {{ history.item }}<br />
-                  <b>Obtained By: </b> {{ history.member }}<br />
-                  <button v-if="editable" class="button is-danger is-pulled-right" @click="() => { deleteEntries([history]) }">
-                    <i class="material-icons">delete</i>
-                  </button>
-                  <b>On: </b> {{ history.obtained }}<br />
-                  <b>Via: </b>
-                  <span class="has-text-info" v-if="history.greed">Greed</span>
-                  <span class="has-text-primary" v-else>Need</span>
-                </li>
-                <li v-if="editable">
-                  <h3 class="subtitle">Add Entry</h3>
-                  <div class="field is-horizontal">
-                    <div class="field-label is-normal">
-                      <label class="label">Obtained</label>
-                    </div>
-                    <div class="field-body">
-                      <div class="field">
-                        <div class="control">
-                          <input class="input" type="date" v-model="createData.obtained" />
-                          <p class="help is-danger" v-if="createLootErrors.obtained !== undefined">{{ createLootErrors.obtained[0] }}</p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="field is-horizontal">
-                    <div class="field-label is-normal">
-                      <label class="label">Team Member</label>
-                    </div>
-                    <div class="field-body">
-                      <div class="field">
-                        <div class="control">
-                          <div class="select is-fullwidth">
-                            <select v-model="createData.member">
-                              <option value="-1">Select Team Member</option>
-                              <option v-for="member in team.members" :key="member.id" :value="member.id">{{ member.name }}</option>
-                            </select>
-                          </div>
-                          <p class="help is-danger" v-if="createLootErrors.member_id !== undefined">{{ createLootErrors.member_id[0] }}</p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="field is-horizontal">
-                    <div class="field-label is-normal">
-                      <label class="label">Item</label>
-                    </div>
-                    <div class="field-body">
-                      <div class="field">
-                        <ItemDropdown v-model="createData.item" :displayNonGear="true" :error="createLootErrors.item" />
-                      </div>
-                    </div>
-                  </div>
-                  <div class="field is-horizontal">
-                    <div class="field-body">
-                      <div class="field">
-                        <div class="control">
-                          <div class="field has-addons" v-if="!requesting">
-                            <div class="control is-expanded">
-                              <button class="button is-primary is-fullwidth" @click="() => { trackExtraLoot(false) }">
-                                <span>Need</span>
-                              </button>
-                            </div>
-                            <div class="control is-expanded">
-                              <button class="button is-info is-fullwidth" @click="() => { trackExtraLoot(true) }">
-                                <span>Greed</span>
-                              </button>
-                            </div>
-                          </div>
-                          <div class="field has-addons" v-else>
-                            <div class="control is-expanded">
-                              <button class="button is-primary is-fullwidth is-loading">
-                                <span>Need</span>
-                              </button>
-                            </div>
-                            <div class="control is-expanded">
-                              <button class="button is-info is-fullwidth is-loading">
-                                <span>Greed</span>
-                              </button>
-                            </div>
-                          </div>
-                          <p class="help is-danger" v-if="createLootErrors.greed !== undefined">{{ createLootErrors.greed[0] }}</p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </li>
-              </ul>
-              <table class="table is-striped is-bordered is-fullwidth is-hidden-touch">
-                <thead>
-                  <tr>
-                    <th>Date</th>
-                    <th>Obtained By</th>
-                    <th>Item</th>
-                    <th>Need / Greed</th>
-                    <th v-if="editable" class="delete-cell has-text-centered">Delete</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr v-for="history in loot.history" :key="`history-${history.id}`">
-                    <td><p>{{ history.obtained }}</p></td>
-                    <td><p>{{ history.member }}</p></td>
-                    <td><p>{{ history.item }}</p></td>
-                    <td>
-                      <p class="has-text-info" v-if="history.greed">Greed</p>
-                      <p class="has-text-primary" v-else>Need</p>
-                    </td>
-                    <td v-if="editable" class="delete-cell has-text-centered">
-                      <input type="checkbox" ref="lootDeleteCheckbox" :data-id="history.id" />
-                    </td>
-                  </tr>
-                  <tr v-if="editable">
-                    <td>
-                      <div class="control">
-                        <input class="input" type="date" v-model="createData.obtained" />
-                        <p class="help is-danger" v-if="createLootErrors.obtained !== undefined">{{ createLootErrors.obtained[0] }}</p>
-                      </div>
-                    </td>
-                    <td>
-                      <div class="control">
-                        <div class="select is-fullwidth">
-                          <select v-model="createData.member">
-                            <option value="-1">Select Team Member</option>
-                            <option v-for="member in team.members" :key="member.id" :value="member.id">{{ member.name }}</option>
-                          </select>
-                        </div>
-                        <p class="help is-danger" v-if="createLootErrors.member_id !== undefined">{{ createLootErrors.member_id[0] }}</p>
-                      </div>
-                    </td>
-                    <td>
-                      <ItemDropdown v-model="createData.item" :displayNonGear="true" :error="createLootErrors.item" />
-                    </td>
-                    <td>
-                      <div class="control">
-                        <div class="field has-addons" v-if="!requesting">
-                          <div class="control is-expanded">
-                            <button class="button is-primary is-fullwidth" @click="() => { trackExtraLoot(false) }">
-                              <span>Need</span>
-                            </button>
-                          </div>
-                          <div class="control is-expanded">
-                            <button class="button is-info is-fullwidth" @click="() => { trackExtraLoot(true) }">
-                              <span>Greed</span>
-                            </button>
-                          </div>
-                        </div>
-                        <div class="field has-addons" v-else>
-                          <div class="control is-expanded">
-                            <button class="button is-primary is-fullwidth is-loading">
-                              <span>Need</span>
-                            </button>
-                          </div>
-                          <div class="control is-expanded">
-                            <button class="button is-info is-fullwidth is-loading">
-                              <span>Greed</span>
-                            </button>
-                          </div>
-                        </div>
-                        <p class="help is-danger" v-if="createLootErrors.greed !== undefined">{{ createLootErrors.greed[0] }}</p>
-                      </div>
-                    </td>
-                    <td>
-                      <button class="button is-danger" @click="deleteMultipleEntries">
-                        <i class="material-icons">delete</i>
-                      </button>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
+        <History
+          :fetch-data="fetchData"
+          :loot="loot"
+          :sendLoot="sendLoot"
+          :requesting="requesting"
+          :team="team"
+          :url="url"
+        />
       </div>
     </template>
   </div>
@@ -287,9 +119,8 @@
 <script lang="ts">
 import dayjs from 'dayjs'
 import { Component } from 'vue-property-decorator'
-import GreedRaidItemBox from '@/components/loot/greed_raid_item_box.vue'
-import GreedTomeItemBox from '@/components/loot/greed_tome_item_box.vue'
-import DeleteLoot from '@/components/modals/confirmations/delete_loot.vue'
+import GreedCharacterEntry from '@/components/loot/greed_character_entry.vue'
+import History from '@/components/loot/history.vue'
 import ItemDropdown from '@/components/item_dropdown.vue'
 import NeedRaidItemBox from '@/components/loot/need_raid_item_box.vue'
 import NeedTomeItemBox from '@/components/loot/need_tome_item_box.vue'
@@ -313,8 +144,8 @@ import SavageAimMixin from '@/mixins/savage_aim_mixin'
 
 @Component({
   components: {
-    GreedRaidItemBox,
-    GreedTomeItemBox,
+    GreedCharacterEntry,
+    History,
     ItemDropdown,
     NeedRaidItemBox,
     NeedTomeItemBox,
@@ -323,16 +154,6 @@ import SavageAimMixin from '@/mixins/savage_aim_mixin'
 })
 export default class TeamLoot extends SavageAimMixin {
   bisLootErrors: LootBISCreateErrors = {}
-
-  createData = {
-    item: 'na',
-    member: -1,
-    obtained: '',
-  }
-
-  createLootErrors: LootCreateErrors = {}
-
-  historyShown = false
 
   displayItem = 'na'
 
@@ -356,18 +177,6 @@ export default class TeamLoot extends SavageAimMixin {
   async created(): Promise<void> {
     await this.fetchData(false)
     document.title = `Loot Tracker - ${this.team.name} - Savage Aim`
-  }
-
-  deleteEntries(items: Loot[]): void {
-    // Prompt deletion first before sending an api request (we'll use a modal instead of javascript alerts)
-    this.$modal.show(DeleteLoot, { team: this.team, items }, { }, { closed: () => { this.fetchData(true) } })
-  }
-
-  deleteMultipleEntries(): void {
-    const checkboxes = this.$refs.lootDeleteCheckbox as HTMLInputElement[]
-    const ids = checkboxes.filter((check: HTMLInputElement) => check.checked).map((check: HTMLInputElement) => parseInt(check.dataset.id!, 10)) as number[]
-    const items = this.loot.history.filter((entry: Loot) => ids.includes(entry.id))
-    this.deleteEntries(items)
   }
 
   async fetchData(reload: boolean): Promise<void> {
@@ -448,9 +257,9 @@ export default class TeamLoot extends SavageAimMixin {
     this.fetchData(true)
   }
 
-  async sendLoot(data: LootPacket): Promise<void> {
+  async sendLoot(data: LootPacket): Promise<LootCreateErrors | null> {
     // Send a request to create loot entry without affecting bis lists
-    if (this.requesting) return
+    if (this.requesting) return null
     this.requesting = true
     const body = JSON.stringify(data)
     try {
@@ -466,11 +275,10 @@ export default class TeamLoot extends SavageAimMixin {
       if (response.ok) {
         await this.fetchData(true)
         this.$notify({ text: 'Loot updated!', type: 'is-success' })
-        this.createData = { obtained: '', member: -1, item: 'na' }
       }
       else {
         super.handleError(response.status)
-        this.createLootErrors = (await response.json() as LootCreateErrors)
+        return await response.json() as LootCreateErrors
       }
     }
     catch (e) {
@@ -479,6 +287,7 @@ export default class TeamLoot extends SavageAimMixin {
     finally {
       this.requesting = false
     }
+    return null
   }
 
   async sendLootWithBis(data: LootWithBISPacket): Promise<void> {
@@ -514,36 +323,6 @@ export default class TeamLoot extends SavageAimMixin {
       this.requesting = false
     }
   }
-
-  // Hide / Show the History body
-  toggleHistory(): void {
-    const icon = this.$refs.historyIcon as Element
-    const history = this.$refs.history as Element
-    if (this.historyShown) {
-      this.historyShown = false
-      icon.innerHTML = 'expand_more'
-    }
-    else {
-      this.historyShown = true
-      icon.innerHTML = 'expand_less'
-    }
-    history.classList.toggle('is-hidden')
-  }
-
-  trackExtraLoot(greed: boolean): void {
-    this.createLootErrors = {}
-    if (this.createData.obtained === '') {
-      this.createLootErrors.obtained = ['Please enter a date.']
-      return
-    }
-    const data = {
-      member_id: this.createData.member,
-      obtained: this.createData.obtained,
-      item: this.createData.item,
-      greed,
-    }
-    this.sendLoot(data)
-  }
 }
 </script>
 
@@ -575,19 +354,5 @@ export default class TeamLoot extends SavageAimMixin {
 
 .list-actions {
   margin-left: 1.25rem;
-}
-
-.mobile-history li:not(:last-child) {
-  margin-bottom: 0.75rem;
-  padding-bottom: 0.75rem;
-  border-bottom: 2px solid #17181c;
-}
-
-.greed-box {
-  position: relative;
-}
-
-.delete-cell {
-  width: 0;
 }
 </style>

@@ -11,7 +11,7 @@ export default class SavageAimMixin extends Vue {
   }
 
   async load(): Promise<void> {
-    console.log('unimplemented')
+    console.error('unimplemented')
   }
 
   get user(): User {

@@ -3,6 +3,8 @@ BIS List interaction views
 
 Can only create and update from these views, no listing since they are returned with a read character
 """
+# stdlib
+from typing import List
 # lib
 from django.db.models.deletion import ProtectedError
 from rest_framework.request import Request
@@ -13,7 +15,23 @@ from api.models import BISList, Character, Team
 from api.serializers import BISListSerializer, BISListModifySerializer
 
 
-class BISListCollection(APIView):
+class BISListBaseView(APIView):
+    """
+    Superclass with the ability to sync BIS Lists and report the sync via websockets
+    """
+
+    def _sync_lists(self, list: BISList, sync_ids: List[int]):
+        sync_lists = BISList.objects.filter(
+            owner=list.owner,
+            job=list.job,
+            id__in=sync_ids,
+        )
+        for sync_list in sync_lists:
+            sync_list.sync(list)
+            self._send_to_user(sync_list.owner.user, {'type': 'bis', 'char': sync_list.owner.id, 'id': sync_list.pk})
+
+
+class BISListCollection(BISListBaseView):
     """
     Allows for the creation of new BIS Lists
     """
@@ -35,11 +53,14 @@ class BISListCollection(APIView):
         # Send a WS update for BIS
         self._send_to_user(char.user, {'type': 'bis', 'char': char.id, 'id': serializer.instance.pk})
 
+        # Sync lists, if any requested
+        self._sync_lists(serializer.instance, request.GET.getlist('sync'))
+
         # Return the id for redirects
         return Response({'id': serializer.instance.pk}, status=201)
 
 
-class BISListResource(APIView):
+class BISListResource(BISListBaseView):
     """
     Allows for the reading and updating of a BISList
     """
@@ -83,6 +104,9 @@ class BISListResource(APIView):
         self._send_to_user(char.user, {'type': 'bis', 'char': char.id, 'id': serializer.instance.pk})
         for tm in obj.teammember_set.all():
             self._send_to_team(tm.team, {'type': 'team', 'id': str(tm.team.id)})
+
+        # Sync lists, if any requested
+        self._sync_lists(serializer.instance, request.GET.getlist('sync'))
 
         return Response(status=204)
 

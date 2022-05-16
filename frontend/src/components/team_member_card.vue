@@ -19,7 +19,7 @@
             </span>
           </div>
           <span class="icon">
-            <img :src="`/job_icons/${details.bis_list.job.name}.png`" :alt="`${details.bis_list.job.name} job icon`" width="24" height="24" />
+            <img :src="`/job_icons/${details.bis_list.job.id}.png`" :alt="`${details.bis_list.job.name} job icon`" width="24" height="24" />
           </span>
         </div>
       </div>

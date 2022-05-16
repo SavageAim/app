@@ -73,6 +73,7 @@ class BISListCollection(SavageAimTestCase):
             'current_right_ring_id': self.gear_id_map['Moonward'],
             'current_left_ring_id': self.gear_id_map['Moonward'],
             'external_link': '',
+            'name': 'Hello :)',
         }
 
         response = self.client.post(url, data)
@@ -101,7 +102,7 @@ class BISListCollection(SavageAimTestCase):
             - Gear pk doesn't exist
             - Gear category is incorrect
             - Job ID doesn't exist
-            - Job already has a BIS List
+            - Name too long
             - Data missing
             - External link isn't a url
         """
@@ -113,7 +114,7 @@ class BISListCollection(SavageAimTestCase):
         content = response.json()
         for field in content:
             self.assertEqual(content[field], ['This field is required.'])
-        self.assertEqual(len(content), 25)
+        self.assertEqual(len(content), 26)
 
         # All gear errors will be run at once since there's only one actual function to test
         data = {
@@ -124,59 +125,126 @@ class BISListCollection(SavageAimTestCase):
             'bis_earrings_id': self.gear_id_map['Divine Light'],
             'current_mainhand_id': self.gear_id_map['The Last'],
             'external_link': 'abcde',
+            'name': 'abcde' * 100,
         }
 
         response = self.client.post(url, data)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, response.content)
         # Since we checked all the "this field is required" errors above, just check the ones we send now
         content = response.json()
-        invalid_gear = 'The chosen category of Gear does not have an item for this slot.'
+        invalid_gear = 'The chosen type of Gear is invalid for this equipment slot.'
         self.assertEqual(content['job_id'], ['Please select a valid Job.'])
         self.assertEqual(content['bis_mainhand_id'], ['A valid integer is required.'])
-        self.assertEqual(content['bis_body_id'], ['Please ensure your value corresponds with a valid type of Gear.'])
+        self.assertEqual(content['bis_body_id'], ['Please select a valid type of Gear.'])
         self.assertEqual(content['bis_head_id'], [invalid_gear])
         self.assertEqual(content['bis_earrings_id'], [invalid_gear])
         self.assertEqual(content['current_mainhand_id'], [invalid_gear])
         self.assertEqual(content['external_link'], ['Enter a valid URL.'])
+        self.assertEqual(content['name'], ['Ensure this field has no more than 64 characters.'])
 
-        # Create a BIS List for a job, then send a request to make one for the same job
-        bis_gear = Gear.objects.first()
-        curr_gear = Gear.objects.last()
-        BISList.objects.create(
-            bis_body=bis_gear,
-            bis_bracelet=bis_gear,
-            bis_earrings=bis_gear,
-            bis_feet=bis_gear,
-            bis_hands=bis_gear,
-            bis_head=bis_gear,
-            bis_left_ring=bis_gear,
-            bis_legs=bis_gear,
-            bis_mainhand=bis_gear,
-            bis_necklace=bis_gear,
-            bis_offhand=bis_gear,
-            bis_right_ring=bis_gear,
-            current_body=curr_gear,
-            current_bracelet=curr_gear,
-            current_earrings=curr_gear,
-            current_feet=curr_gear,
-            current_hands=curr_gear,
-            current_head=curr_gear,
-            current_left_ring=curr_gear,
-            current_legs=curr_gear,
-            current_mainhand=curr_gear,
-            current_necklace=curr_gear,
-            current_offhand=curr_gear,
-            current_right_ring=curr_gear,
-            job_id='DRG',
+    def test_create_with_sync(self):
+        """
+        Test creating a list and also syncing the gear to another existing list at the same time
+        """
+        self.client.force_authenticate(self.char.user)
+
+        # Create existing BIS Lists; one to sync and one that shouldn't because it's the wrong job
+        sync_bis = BISList.objects.create(
+            bis_body_id=self.gear_id_map['Augmented Radiant Host'],
+            bis_bracelet_id=self.gear_id_map['Augmented Radiant Host'],
+            bis_earrings_id=self.gear_id_map['Augmented Radiant Host'],
+            bis_feet_id=self.gear_id_map['Augmented Radiant Host'],
+            bis_hands_id=self.gear_id_map['Augmented Radiant Host'],
+            bis_head_id=self.gear_id_map['Augmented Radiant Host'],
+            bis_left_ring_id=self.gear_id_map['Augmented Radiant Host'],
+            bis_legs_id=self.gear_id_map['Augmented Radiant Host'],
+            bis_mainhand_id=self.gear_id_map['Augmented Radiant Host'],
+            bis_necklace_id=self.gear_id_map['Augmented Radiant Host'],
+            bis_offhand_id=self.gear_id_map['Augmented Radiant Host'],
+            bis_right_ring_id=self.gear_id_map['Augmented Radiant Host'],
+            current_body_id=self.gear_id_map['Moonward'],
+            current_bracelet_id=self.gear_id_map['Moonward'],
+            current_earrings_id=self.gear_id_map['Moonward'],
+            current_feet_id=self.gear_id_map['Moonward'],
+            current_hands_id=self.gear_id_map['Moonward'],
+            current_head_id=self.gear_id_map['Moonward'],
+            current_left_ring_id=self.gear_id_map['Moonward'],
+            current_legs_id=self.gear_id_map['Moonward'],
+            current_mainhand_id=self.gear_id_map['Moonward'],
+            current_necklace_id=self.gear_id_map['Moonward'],
+            current_offhand_id=self.gear_id_map['Moonward'],
+            current_right_ring_id=self.gear_id_map['Moonward'],
+            job_id='PLD',
             owner=self.char,
+            external_link='https://etro.gg/',
+        )
+        non_sync_bis = BISList.objects.create(
+            bis_body_id=self.gear_id_map['Augmented Radiant Host'],
+            bis_bracelet_id=self.gear_id_map['Augmented Radiant Host'],
+            bis_earrings_id=self.gear_id_map['Augmented Radiant Host'],
+            bis_feet_id=self.gear_id_map['Augmented Radiant Host'],
+            bis_hands_id=self.gear_id_map['Augmented Radiant Host'],
+            bis_head_id=self.gear_id_map['Augmented Radiant Host'],
+            bis_left_ring_id=self.gear_id_map['Augmented Radiant Host'],
+            bis_legs_id=self.gear_id_map['Augmented Radiant Host'],
+            bis_mainhand_id=self.gear_id_map['Augmented Radiant Host'],
+            bis_necklace_id=self.gear_id_map['Augmented Radiant Host'],
+            bis_offhand_id=self.gear_id_map['Augmented Radiant Host'],
+            bis_right_ring_id=self.gear_id_map['Augmented Radiant Host'],
+            current_body_id=self.gear_id_map['Moonward'],
+            current_bracelet_id=self.gear_id_map['Moonward'],
+            current_earrings_id=self.gear_id_map['Moonward'],
+            current_feet_id=self.gear_id_map['Moonward'],
+            current_hands_id=self.gear_id_map['Moonward'],
+            current_head_id=self.gear_id_map['Moonward'],
+            current_left_ring_id=self.gear_id_map['Moonward'],
+            current_legs_id=self.gear_id_map['Moonward'],
+            current_mainhand_id=self.gear_id_map['Moonward'],
+            current_necklace_id=self.gear_id_map['Moonward'],
+            current_offhand_id=self.gear_id_map['Moonward'],
+            current_right_ring_id=self.gear_id_map['Moonward'],
+            job_id='DRK',
+            owner=self.char,
+            external_link='https://etro.gg/',
         )
 
-        data = {'job_id': 'DRG'}
-        response = self.client.post(url, data)
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, response.content)
-        # Since we checked all the "this field is required" errors above, just check the ones we send now
-        content = response.json()
-        self.assertEqual(content['job_id'], ['Currently SavageAim only supports one BISList per job.'])
+        data = {
+            'job_id': 'PLD',
+            'bis_mainhand_id': self.gear_id_map['Augmented Radiant Host'],
+            'bis_offhand_id': self.gear_id_map['Augmented Radiant Host'],
+            'bis_head_id': self.gear_id_map['Augmented Radiant Host'],
+            'bis_body_id': self.gear_id_map['Augmented Radiant Host'],
+            'bis_hands_id': self.gear_id_map['Augmented Radiant Host'],
+            'bis_legs_id': self.gear_id_map['Augmented Radiant Host'],
+            'bis_feet_id': self.gear_id_map['Augmented Radiant Host'],
+            'bis_earrings_id': self.gear_id_map['Augmented Radiant Host'],
+            'bis_necklace_id': self.gear_id_map['Augmented Radiant Host'],
+            'bis_bracelet_id': self.gear_id_map['Augmented Radiant Host'],
+            'bis_right_ring_id': self.gear_id_map['Augmented Radiant Host'],
+            'bis_left_ring_id': self.gear_id_map['Augmented Radiant Host'],
+            'current_mainhand_id': self.gear_id_map['Radiant Host'],
+            'current_offhand_id': self.gear_id_map['Radiant Host'],
+            'current_head_id': self.gear_id_map['Radiant Host'],
+            'current_body_id': self.gear_id_map['Radiant Host'],
+            'current_hands_id': self.gear_id_map['Radiant Host'],
+            'current_legs_id': self.gear_id_map['Radiant Host'],
+            'current_feet_id': self.gear_id_map['Radiant Host'],
+            'current_earrings_id': self.gear_id_map['Radiant Host'],
+            'current_necklace_id': self.gear_id_map['Radiant Host'],
+            'current_bracelet_id': self.gear_id_map['Radiant Host'],
+            'current_right_ring_id': self.gear_id_map['Radiant Host'],
+            'current_left_ring_id': self.gear_id_map['Radiant Host'],
+            'external_link': '',
+            'name': 'Hello :)',
+        }
+
+        url = reverse('api:bis_collection', kwargs={'character_id': self.char.pk})
+        response = self.client.post(f'{url}?sync={sync_bis.pk}&sync={non_sync_bis.pk}', data)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.content)
+        sync_bis.refresh_from_db()
+        non_sync_bis.refresh_from_db()
+        self.assertEqual(sync_bis.current_body_id, self.gear_id_map['Radiant Host'])
+        self.assertEqual(non_sync_bis.current_body_id, self.gear_id_map['Moonward'])
 
     def test_404(self):
         """
@@ -315,6 +383,7 @@ class BISListResource(SavageAimTestCase):
             'current_right_ring_id': self.gear_id_map['Moonward'],
             'current_left_ring_id': self.gear_id_map['Moonward'],
             'external_link': None,
+            'name': 'Update c:',
         }
 
         response = self.client.put(url, data)
@@ -332,7 +401,7 @@ class BISListResource(SavageAimTestCase):
             - Gear pk doesn't exist
             - Gear category is incorrect
             - Job ID doesn't exist
-            - Job already has a BIS List
+            - Name is too long
             - Data missing
         """
         url = reverse('api:bis_resource', kwargs={'character_id': self.char.pk, 'pk': self.bis.pk})
@@ -343,7 +412,7 @@ class BISListResource(SavageAimTestCase):
         content = response.json()
         for field in content:
             self.assertEqual(content[field], ['This field is required.'])
-        self.assertEqual(len(content), 25)
+        self.assertEqual(len(content), 26)
 
         # All gear errors will be run at once since there's only one actual function to test
         data = {
@@ -353,58 +422,21 @@ class BISListResource(SavageAimTestCase):
             'bis_head_id': self.gear_id_map['Eternal Dark'],
             'bis_earrings_id': self.gear_id_map['Divine Light'],
             'current_mainhand_id': self.gear_id_map['The Last'],
+            'name': 'abcde' * 64,
         }
 
         response = self.client.put(url, data)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, response.content)
         # Since we checked all the "this field is required" errors above, just check the ones we send now
         content = response.json()
-        invalid_gear = 'The chosen category of Gear does not have an item for this slot.'
+        invalid_gear = 'The chosen type of Gear is invalid for this equipment slot.'
         self.assertEqual(content['job_id'], ['Please select a valid Job.'])
         self.assertEqual(content['bis_mainhand_id'], ['A valid integer is required.'])
-        self.assertEqual(content['bis_body_id'], ['Please ensure your value corresponds with a valid type of Gear.'])
+        self.assertEqual(content['bis_body_id'], ['Please select a valid type of Gear.'])
         self.assertEqual(content['bis_head_id'], [invalid_gear])
         self.assertEqual(content['bis_earrings_id'], [invalid_gear])
         self.assertEqual(content['current_mainhand_id'], [invalid_gear])
-
-        # Create a BIS List for a job, then send a request to make one for the same job
-        bis_gear = Gear.objects.first()
-        curr_gear = Gear.objects.last()
-        BISList.objects.create(
-            bis_body=bis_gear,
-            bis_bracelet=bis_gear,
-            bis_earrings=bis_gear,
-            bis_feet=bis_gear,
-            bis_hands=bis_gear,
-            bis_head=bis_gear,
-            bis_left_ring=bis_gear,
-            bis_legs=bis_gear,
-            bis_mainhand=bis_gear,
-            bis_necklace=bis_gear,
-            bis_offhand=bis_gear,
-            bis_right_ring=bis_gear,
-            current_body=curr_gear,
-            current_bracelet=curr_gear,
-            current_earrings=curr_gear,
-            current_feet=curr_gear,
-            current_hands=curr_gear,
-            current_head=curr_gear,
-            current_left_ring=curr_gear,
-            current_legs=curr_gear,
-            current_mainhand=curr_gear,
-            current_necklace=curr_gear,
-            current_offhand=curr_gear,
-            current_right_ring=curr_gear,
-            job_id='RPR',
-            owner=self.char,
-        )
-
-        data = {'job_id': 'RPR'}
-        response = self.client.put(url, data)
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, response.content)
-        # Since we checked all the "this field is required" errors above, just check the ones we send now
-        content = response.json()
-        self.assertEqual(content['job_id'], ['Currently SavageAim only supports one BISList per job.'])
+        self.assertEqual(content['name'], ['Ensure this field has no more than 64 characters.'])
 
     def test_404(self):
         """

@@ -26,7 +26,7 @@ class Character(models.Model):
     world = models.CharField(max_length=60)
 
     def __str__(self) -> str:
-        return f'{self.name} @ {self.world}'
+        return self.display_name
 
     @staticmethod
     def generate_token() -> str:
