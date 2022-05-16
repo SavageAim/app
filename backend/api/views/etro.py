@@ -57,7 +57,7 @@ class EtroImport(APIView):
         """
         # Instantiate a Client instance for CoreAPI
         client = coreapi.Client()
-        schema = client.get("https://etro.gg/api/docs/")
+        schema = client.get('https://etro.gg/api/docs/')
 
         # First things first, attempt to read the gearset
         try:
