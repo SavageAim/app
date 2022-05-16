@@ -1239,8 +1239,7 @@ class LootTestSuite(SavageAimTestCase):
         self.assertEqual(notif.link, f'/characters/{self.team_lead.id}/bis_list/{self.tl_main_bis.id}/')
         self.assertEqual(
             notif.text,
-            f'"{self.team_lead}"\'s {self.tl_main_bis.job.id} BIS List was updated via '
-            f'"{self.team.name}"\'s Loot Tracker!',
+            f'"{self.team_lead}"\'s BIS List "{self.tl_main_bis}" was updated via "{self.team.name}"\'s Loot Tracker!',
         )
         self.assertEqual(notif.type, 'loot_tracker_update')
         self.assertFalse(notif.read)

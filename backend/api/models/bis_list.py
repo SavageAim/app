@@ -42,6 +42,9 @@ class BISList(models.Model):
     class Meta:
         ordering = ['-job__role', 'job__ordering', 'name']
 
+    def __str__(self) -> str:
+        return self.display_name
+
     def accessory_augments_required(self, gear_name: str) -> int:
         """
         Get a value of how many accessory augment tokens are needed for this BIS List

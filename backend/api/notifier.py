@@ -35,7 +35,7 @@ def _create_notif(user: User, text: str, link: str, type: str):
 
 def loot_tracker_update(bis: models.BISList, team: models.Team):
     char = bis.owner
-    text = f'"{char}"\'s {bis.job.id} BIS List was updated via "{team.name}"\'s Loot Tracker!'
+    text = f'"{char}"\'s BIS List "{bis}" was updated via "{team.name}"\'s Loot Tracker!'
     link = f'/characters/{char.id}/bis_list/{bis.id}/'
     user = char.user
     _create_notif(user, text, link, 'loot_tracker_update')
