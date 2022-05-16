@@ -69,6 +69,8 @@ class EtroImport(APIView):
         # Loop through each slot of the etro gearset, fetch the name and item level and store it in a dict
         gear_details: Dict[str, str] = {}
         item_levels: Set[int] = set()
+        min_il = float('inf')
+        max_il = float('-inf')
 
         for etro_slot, sa_slot in SLOT_MAP.items():
             gear_id = response[etro_slot]
@@ -76,7 +78,14 @@ class EtroImport(APIView):
                 continue
             item_response = client.action(schema, ['equipment', 'read'], params={'id': gear_id})
             gear_details[sa_slot] = item_response['name']
-            item_levels.add(item_response['itemLevel'])
+
+            # item level stuff
+            il = item_response['itemLevel']
+            item_levels.add(il)
+            if il < min_il:
+                min_il = il
+            if il > max_il:
+                max_il = il
 
         # Get the names of all the gear with the specified Item Levels
         gear_names = Gear.objects.filter(item_level__in=item_levels).values('name', 'id')
@@ -99,7 +108,7 @@ class EtroImport(APIView):
             response['offhand'] = response['mainhand']
 
         # Also add item level status
-        response['min_il'] = min(*item_levels)
-        response['max_il'] = max(*item_levels)
+        response['min_il'] = min_il
+        response['max_il'] = max_il
 
         return Response(response)
