@@ -39,8 +39,6 @@ def get_empty_response(url: str, headers: Dict[str, str]):
     """
     Return a faked http response object for a site that doesn't contain the token we need
     """
-    char_id = url.split('/')[-1]
-    obj = Character.objects.filter(lodestone_id=char_id).first()
     body = '<html><head></head><body><div class="character__character_profile"></div></body></html>'
     return type('response', (), {'status_code': 200, 'content': body})
 
@@ -170,7 +168,6 @@ class TasksTestSuite(SavageAimTestCase):
         error = 'Lodestone may be down.'
         message = f'The verification of {char} has failed! Reason: {error}'
         self.assertEqual(notif.text, message)
-
 
     @patch('requests.get', side_effect=get_desktop_response)
     def test_xivapi_lookup_desktop(self, mocked_get):
