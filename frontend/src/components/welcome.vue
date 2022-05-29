@@ -4,9 +4,9 @@
       <div class="card-header">
         <div class="card-header-title is-centered">
           <figure class="image is-64x64">
-            <img class="is-rounded" src="/materia.png" alt="Savage Aim Materia Logo" width="64" height="64" />
+            <img ref="materia" class="is-rounded" :src="`/materia/${cls}.png`" alt="Savage Aim Materia Logo" width="64" height="64" @click="changeMateria" />
           </figure>
-          <h2 class="title">Savage <span class="has-text-danger">Aim</span></h2>
+          <h2 class="title">Savage <span :class="`has-text-${cls}`" class="ease">Aim</span></h2>
         </div>
       </div>
       <div class="card-content has-text-centered">
@@ -23,14 +23,76 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 
-// TODO - Make getting feedback possible, either a discord or some other thing idk
 @Component
-export default class Welcome extends Vue {}
+export default class Welcome extends Vue {
+  cls = 'danger'
+
+  clsList = [
+    'danger',
+    'info',
+    'primary',
+    'success',
+    'warning',
+  ]
+
+  get materia(): HTMLElement {
+    return this.$refs.materia as HTMLElement
+  }
+
+  changeMateria(): void {
+    if (this.materia.classList.contains('spin')) return
+    this.materia.classList.add('spin')
+    window.setTimeout(this.clsChange, 350)
+    window.setTimeout(this.stopSpin, 1200)
+  }
+
+  clsChange(): void {
+    // Record the current cls so we don't pick it again
+    const current = this.clsList.indexOf(this.cls)
+    let newIndex = current
+    while (newIndex === current) {
+      newIndex = Math.floor(Math.random() * this.clsList.length)
+    }
+    this.cls = this.clsList[newIndex]
+  }
+
+  stopSpin(): void {
+    this.materia.classList.remove('spin')
+  }
+}
 </script>
 
 <style lang="scss" scoped>
+@-moz-keyframes spin {
+    10% { -moz-transform: rotate(15deg); }
+    100% { -moz-transform: rotate(-360deg); }
+}
+@-webkit-keyframes spin {
+    10% { -webkit-transform: rotate(15deg); }
+    100% { -webkit-transform: rotate(-360deg); }
+}
+@keyframes spin {
+    10% {
+        -webkit-transform: rotate(15deg);
+        transform:rotate(15deg);
+    }
+    100% {
+        -webkit-transform: rotate(-360deg);
+        transform:rotate(-360deg);
+    }
+}
+
 .card-header-title .title {
   font-weight: 300;
   padding-left: 1rem;
+}
+
+img.spin {
+  animation-name: spin;
+  animation-duration: 1.2s;
+}
+
+span.ease {
+  transition: color 0.4s ease;
 }
 </style>
