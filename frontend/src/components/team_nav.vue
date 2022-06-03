@@ -26,6 +26,19 @@
         </span>
       </router-link>
     </p>
+    <p class="control">
+      <router-link :to="managementUrl" class="button is-link" :class="{ 'is-outlined': !isActive(managementUrl) }">
+        <div class="icon-text is-hidden-touch">
+          <span class="icon is-small">
+            <i class="material-icons">manage_accounts</i>
+          </span>
+          <span>Management</span>
+        </div>
+        <span class="icon is-small is-hidden-desktop">
+          <i class="material-icons">manage_accounts</i>
+        </span>
+      </router-link>
+    </p>
     <p class="control" v-if="editable">
       <router-link :to="settingsUrl" class="button is-link" :class="{ 'is-outlined': !isActive(settingsUrl) }">
         <div class="icon-text is-hidden-touch">
@@ -52,6 +65,10 @@ export default class TeamNav extends Vue {
 
   get mainUrl(): string {
     return `/team/${this.$route.params.id}/`
+  }
+
+  get managementUrl(): string {
+    return `/team/${this.$route.params.id}/management/`
   }
 
   get lootUrl(): string {
