@@ -43,6 +43,7 @@ const routes = [
   { path: '/team/new/', component: () => import('@/views/team/create.vue'), name: 'newTeam' },
   { path: '/team/:id/', component: () => import('@/views/team/details.vue'), name: 'teamDetails' },
   { path: '/team/:id/loot/', component: () => import('@/views/team/loot.vue'), name: 'teamLoot' },
+  { path: '/team/:id/management/', component: () => import('@/views/team/management.vue'), name: 'teamManage' },
   {
     path: '/team/:teamId/member/:id/',
     component: () => import('@/views/team/manage_membership.vue'),
