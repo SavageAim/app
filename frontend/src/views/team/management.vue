@@ -23,32 +23,9 @@
         </div>
       </div>
 
-      <div class="container is-fluid">
-        <div class="card">
-          <div class="card-header">
-            <div class="card-header-title">
-              Member Permissions
-            </div>
-          </div>
-          <div class="card-content">
-            <table class="table is-fullwidth is-bordered">
-              <thead>
-                <tr>
-                  <th></th>
-                  <th class="has-text-centered">Loot Manager Control</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="member in team.members" :key="member.id">
-                  <th>{{ member.name }}</th>
-                  <td class="has-text-centered"><input type="checkbox" /></td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-          <div class="card-footer">
-            <a class="has-text-success card-footer-item">Save</a>
-          </div>
+      <div class="columns">
+        <div class="column is-half">
+          <TeamPermissions :team="team" />
         </div>
       </div>
     </template>
@@ -57,7 +34,8 @@
 
 <script lang="ts">
 import { Component } from 'vue-property-decorator'
-import TeamNav from '@/components/team_nav.vue'
+import TeamNav from '@/components/team/nav.vue'
+import TeamPermissions from '@/components/team/permissions.vue'
 import { TeamUpdateErrors } from '@/interfaces/responses'
 import Team from '@/interfaces/team'
 import TeamMember from '@/interfaces/team_member'
@@ -66,6 +44,7 @@ import SavageAimMixin from '@/mixins/savage_aim_mixin'
 @Component({
   components: {
     TeamNav,
+    TeamPermissions,
   },
 })
 export default class TeamManagement extends SavageAimMixin {

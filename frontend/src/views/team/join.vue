@@ -42,7 +42,7 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 import TeamBio from '@/components/team_bio.vue'
-import TeamMemberForm from '@/components/team_member_form.vue'
+import TeamMemberForm from '@/components/team/member_form.vue'
 import { TeamCreateResponse, TeamMemberUpdateErrors } from '@/interfaces/responses'
 import Team from '@/interfaces/team'
 import SavageAimMixin from '@/mixins/savage_aim_mixin'

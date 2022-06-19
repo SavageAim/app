@@ -32,8 +32,8 @@
 
 <script lang="ts">
 import { Component } from 'vue-property-decorator'
-import TeamMemberCard from '@/components/team_member_card.vue'
-import TeamNav from '@/components/team_nav.vue'
+import TeamMemberCard from '@/components/team/member_card.vue'
+import TeamNav from '@/components/team/nav.vue'
 import Team from '@/interfaces/team'
 import TeamMember from '@/interfaces/team_member'
 import SavageAimMixin from '@/mixins/savage_aim_mixin'
