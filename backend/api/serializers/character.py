@@ -18,6 +18,7 @@ NEW_WORLD_PATTERN = compile(r'([a-zA-Z]+) \[([a-zA-Z]+)\] \(\)')
 
 
 class CharacterCollectionSerializer(serializers.ModelSerializer):
+    alias = serializers.CharField(allow_blank=True, required=False)
     user_id = serializers.IntegerField(required=False)
 
     class Meta:

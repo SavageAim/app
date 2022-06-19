@@ -45,6 +45,7 @@ export interface CreateResponse {
 // Interface defining the potential error responses that can come from the Character.create method
 export interface CharacterCreateErrors {
   lodestone_id: string[]
+  [key: string]: string[]
 }
 
 // Information about deleting Characters

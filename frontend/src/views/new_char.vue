@@ -136,6 +136,10 @@ export default class NewChar extends SavageAimMixin {
         if (json.lodestone_id != null) {
           this.errors = json.lodestone_id
         }
+        // Catch all error message for anything other than lodestone id
+        else if (Object.keys(json).length > 0) {
+          this.errors = ['Something went wrong that shouldn\'t have, please inform Eri on the Discord. Sorry for the inconvenience!']
+        }
       }
     }
     catch (e) {
