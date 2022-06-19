@@ -7,6 +7,7 @@ from rest_framework import serializers
 from api.models import BISList, Character, TeamMember
 from .bis_list import BISListSerializer
 from .character import CharacterCollectionSerializer
+from .team_member_permissions import TeamMemberPermissionsSerializer
 
 __all__ = [
     'TeamMemberSerializer',
@@ -18,6 +19,7 @@ class TeamMemberSerializer(serializers.ModelSerializer):
     bis_list = BISListSerializer()
     character = CharacterCollectionSerializer()
     name = serializers.CharField(source='character.display_name')
+    permissions = TeamMemberPermissionsSerializer()
 
     class Meta:
         model = TeamMember
