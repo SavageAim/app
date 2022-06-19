@@ -6,10 +6,8 @@ from django.db import models
 
 
 class TeamMember(models.Model):
-    # TODO - Gotta warn about leaving teams or deleting BISLists (which can't be done yet)
     bis_list = models.ForeignKey('BISList', on_delete=models.PROTECT)
     character = models.ForeignKey('Character', on_delete=models.CASCADE)
-    # TODO - Can't delete if you're the team lead / move teamlead to someone else if character is deleted
     lead = models.BooleanField(default=False)
     team = models.ForeignKey('Team', on_delete=models.CASCADE, related_name='members')
 
