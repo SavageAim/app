@@ -3,8 +3,6 @@ Serializer for TeamMember Permissions
 
 Overwrites the flags with TeamLead status
 """
-# stdlib
-from typing import Dict
 # lib
 from rest_framework import serializers
 # local
@@ -38,4 +36,3 @@ class TeamMemberPermissionsSerializer(serializers.ModelSerializer):
         if obj.member.lead:
             return True
         return obj.team_characters
-
