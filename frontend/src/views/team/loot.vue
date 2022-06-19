@@ -167,7 +167,7 @@ export default class TeamLoot extends SavageAimMixin {
 
   // Flag stating whether the currently logged user can edit the Team
   get editable(): boolean {
-    return this.team.members.find((teamMember: TeamMember) => teamMember.character.user_id === this.$store.state.user.id)?.lead ?? false
+    return this.team.members.find((teamMember: TeamMember) => teamMember.character.user_id === this.$store.state.user.id)?.permissions.loot_manager ?? false
   }
 
   get url(): string {
