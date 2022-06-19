@@ -7,7 +7,8 @@
         </div>
       </div>
       <div class="card-content">
-        <table class="table is-fullwidth is-bordered">
+        <!-- Desktop -->
+        <table class="table is-fullwidth is-bordered is-hidden-touch">
           <thead>
             <tr>
               <th></th>
@@ -18,14 +19,29 @@
           <tbody>
             <tr v-for="member in team.members" :key="member.id">
               <th>{{ member.name }}</th>
-              <td class="has-text-centered"><input type="checkbox" /></td>
-              <td class="has-text-centered"><input type="checkbox" /></td>
+              <td class="has-text-centered">
+                <PermissionInput label="Loot Manager Control" :display-label="false" :enabled="editable" v-model="member.permissions.loot_manager" />
+              </td>
+              <td class="has-text-centered">
+                <PermissionInput label="Team Character Management" :display-label="false" :enabled="editable" v-model="member.permissions.team_characters" />
+              </td>
             </tr>
           </tbody>
         </table>
+
+        <!-- Mobile -->
+        <ul class="mobile-list is-hidden-desktop">
+          <li v-for="member in team.members" :key="member.id">
+            <h3 class="subtitle">
+              {{ member.name }}
+            </h3>
+            <PermissionInput label="Loot Manager Control" :enabled="editable" v-model="member.permissions.loot_manager" />
+            <PermissionInput label="Team Character Management" :enabled="editable" v-model="member.permissions.team_characters" />
+          </li>
+        </ul>
       </div>
       <div class="card-footer">
-        <a class="has-text-success card-footer-item">Save</a>
+        <a class="has-text-success card-footer-item" @click="save">Save</a>
       </div>
     </div>
   </div>
@@ -33,21 +49,48 @@
 
 <script lang="ts">
 import { Component, Prop } from 'vue-property-decorator'
-import { TeamUpdateErrors } from '@/interfaces/responses'
+import PermissionInput from '@/components/team/permission_input.vue'
 import Team from '@/interfaces/team'
-import TeamMember from '@/interfaces/team_member'
 import SavageAimMixin from '@/mixins/savage_aim_mixin'
 
-@Component
+@Component({
+  components: {
+    PermissionInput,
+  },
+})
 export default class TeamPermissions extends SavageAimMixin {
+  @Prop()
+  editable!: boolean
+
   @Prop()
   team!: Team
 
   get url(): string {
     return `/backend/api/team/${this.$route.params.id}/`
   }
+
+  save(): void {
+    console.log(this.team.members)
+  }
 }
 </script>
 
 <style lang="scss">
+.mobile-list {
+  & li {
+    & label {
+      margin-left: 2rem;
+    }
+
+    &:not(:last-child) {
+      padding-bottom: 1rem;
+      margin-bottom: 1rem;
+      border-bottom: 1px solid;
+    }
+
+    & .subtitle {
+      margin-bottom: 0.75rem;
+    }
+  }
+}
 </style>

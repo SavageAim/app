@@ -25,7 +25,7 @@
 
       <div class="columns">
         <div class="column is-half">
-          <TeamPermissions :team="team" />
+          <TeamPermissions :team="team" :editable="editable" />
         </div>
       </div>
     </template>
@@ -59,7 +59,7 @@ export default class TeamManagement extends SavageAimMixin {
   team!: Team
 
   // Flag stating whether the currently logged user can edit the Team
-  editable(): boolean {
+  get editable(): boolean {
     return this.team.members.find((teamMember: TeamMember) => teamMember.character.user_id === this.$store.state.user.id)?.lead ?? false
   }
 
