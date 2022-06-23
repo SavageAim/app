@@ -11,7 +11,7 @@ from .team import (
     TeamUpdateSerializer,
 )
 from .team_member import TeamMemberSerializer, TeamMemberModifySerializer
-from .team_member_permissions import TeamMemberPermissionsSerializer
+from .team_member_permissions import TeamMemberPermissionsSerializer, TeamMemberPermissionsUpdateSerializer
 from .tier import TierSerializer
 from .user import UserSerializer
 
@@ -43,6 +43,7 @@ __all__ = [
     'TeamMemberModifySerializer',
 
     'TeamMemberPermissionsSerializer',
+    'TeamMemberPermissionsUpdateSerializer',
 
     'TierSerializer',
 
