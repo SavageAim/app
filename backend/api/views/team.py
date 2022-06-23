@@ -12,12 +12,13 @@ from rest_framework.response import Response
 # local
 from .base import APIView
 from api import notifier
-from api.models import Team, TeamMember
+from api.models import Team, TeamMember, TeamMemberPermissions
 from api.serializers import (
     TeamSerializer,
     TeamCreateSerializer,
     TeamUpdateSerializer,
     TeamMemberModifySerializer,
+    TeamMemberPermissionsUpdateSerializer,
 )
 
 
@@ -215,3 +216,35 @@ class TeamInvite(APIView):
 
         # Return the team id to redirect to the page
         return Response({'id': obj.id}, status=201)
+
+
+class TeamPermissions(APIView):
+    """
+    Handling for updating Team Members' permissions
+    """
+
+    def put(self, request: Request, pk: str) -> Response:
+        """
+        Update the permissions of the members of the Team
+        This request can only be run by the user whose character is the team lead
+        """
+        try:
+            obj = Team.objects.get(pk=pk, members__character__user=request.user, members__lead=True)
+        except (Team.DoesNotExist, ValidationError):
+            return Response(status=404)
+
+        serializer = TeamMemberPermissionsUpdateSerializer(data=request.data, context={'team': obj})
+        serializer.is_valid(raise_exception=True)
+
+        # Handle the updates
+        loot_manager_perms = set(serializer.validated_data['loot_manager'])
+        team_character_perms = set(serializer.validated_data['team_character'])
+        for member in obj.members.select_related('permissions'):
+            member.permissions.loot_manager = member.lead or member.pk in loot_manager_perms
+            member.permissions.team_characters = member.lead or member.pk in team_character_perms
+            member.permissions.save()
+
+        # Websocket stuff
+        self._send_to_team(obj, {'type': 'team', 'id': str(obj.id)})
+
+        return Response(status=204)

@@ -41,8 +41,8 @@ class TeamMemberPermissionsSerializer(serializers.ModelSerializer):
 
 
 class TeamMemberPermissionsUpdateSerializer(serializers.Serializer):
-    loot_manager = serializers.ListField(child=serializers.IntegerField())
-    team_characters = serializers.ListField(child=serializers.IntegerField())
+    loot_manager = serializers.ListField(child=serializers.IntegerField(), allow_empty=True)
+    team_characters = serializers.ListField(child=serializers.IntegerField(), allow_empty=True)
 
     def validate_loot_manager(self, loot_manager_ids: List[int]) -> List[int]:
         """

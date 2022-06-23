@@ -36,6 +36,7 @@ urlpatterns = [
     path('team/<str:pk>/', views.TeamResource.as_view(), name='team_resource'),
     path('team/<str:team_id>/member/<int:pk>/', views.TeamMemberResource.as_view(), name='team_member_resource'),
     path('team/join/<str:invite_code>/', views.TeamInvite.as_view(), name='team_invite'),
+    path('team/<str:pk>/permissions/', views.TeamPermissions.as_view(), name='team_permissions'),
 
     # Tier
     path('tier/', views.TierCollection.as_view(), name='tier_collection'),
