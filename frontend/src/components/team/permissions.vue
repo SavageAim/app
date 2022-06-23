@@ -50,7 +50,9 @@
 <script lang="ts">
 import { Component, Prop } from 'vue-property-decorator'
 import PermissionInput from '@/components/team/permission_input.vue'
+import { PermissionsPayload } from '@/interfaces/management'
 import Team from '@/interfaces/team'
+import TeamMember from '@/interfaces/team_member'
 import SavageAimMixin from '@/mixins/savage_aim_mixin'
 
 @Component({
@@ -70,7 +72,12 @@ export default class TeamPermissions extends SavageAimMixin {
   }
 
   save(): void {
-    console.log(this.team.members)
+    // Send the data as a pivoted table
+    const payload: PermissionsPayload = {
+      loot_manager: this.team.members.filter((tm: TeamMember) => tm.permissions.loot_manager).map((tm: TeamMember) => tm.id),
+      team_characters: this.team.members.filter((tm: TeamMember) => tm.permissions.team_characters).map((tm: TeamMember) => tm.id),
+    }
+    console.log(payload)
   }
 }
 </script>
