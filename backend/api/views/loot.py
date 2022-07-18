@@ -302,7 +302,11 @@ class LootCollection(APIView):
         Any updates sent here will also update Character's BIS Lists
         """
         try:
-            team = Team.objects.get(pk=team_id, members__character__user=request.user, members__lead=True)
+            team = Team.objects.get(
+                pk=team_id,
+                members__character__user=request.user,
+                members__lead=True,
+            )
         except (Team.DoesNotExist, ValidationError):
             return Response(status=404)
 

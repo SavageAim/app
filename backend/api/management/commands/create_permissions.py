@@ -11,7 +11,7 @@ class Command(BaseCommand):
                 tm.permissions
             except TeamMemberPermissions.DoesNotExist:
                 TeamMemberPermissions.objects.create(
-                    loot_manager=False,
-                    team_characters=False,
+                    loot_manager=tm.lead,
+                    team_characters=tm.lead,
                     member=tm,
                 )
