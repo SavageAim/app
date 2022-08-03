@@ -259,6 +259,25 @@ class TeamMemberResource(SavageAimTestCase):
         self.assertEqual(notifs.count(), 1)
         self.assertEqual(notifs.first().text, f'{self.char} has been kicked from {self.team.name}!')
 
+    def test_delete_proxy(self):
+        """
+        Make a Proxy character to ensure they can be kicked and will be deleted
+        """
+        self.char2.user = None
+        self.char2.verified = False
+        self.char2.save()
+        tm2 = self.team.members.create(character=self.char2, bis_list=self.mt_main_bis, lead=False)
+        # Char 2 is a proxy, now if we kick them they should be deleted entirely
+        url = reverse('api:team_member_resource', kwargs={'team_id': self.team.pk, 'pk': tm2.pk})
+        self.client.force_authenticate(self.char.user)
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT, response.content)
+
+        self.team.refresh_from_db()
+        self.assertEqual(self.team.members.count(), 1)
+        with self.assertRaises(Character.DoesNotExist):
+            Character.objects.get(pk=self.char2.pk)
+
     def test_404(self):
         """
         Test 404 responses for bad requests

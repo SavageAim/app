@@ -90,4 +90,9 @@ class TeamMemberResource(APIView):
         self._send_to_team(team, {'type': 'team', 'id': str(team.id)})
         for tm in team.members.all():
             self._send_to_user(tm.character.user, {'type': 'character', 'id': tm.character.pk})
+
+        # Special handling for Proxy characters, we should delete them here
+        if obj.character.user is None:
+            obj.character.delete()
+
         return Response(status=204)
