@@ -65,7 +65,7 @@
                 <!-- If proxy, provide edit link (TODO - move this to management page in the permissions update) -->
                 <template v-if="details.character.proxy">
                   <hr class="dropdown-divider" />
-                  <router-link :to="`./proxies/${details.id}/`" class="card-footer-item">
+                  <router-link :to="`./proxies/${details.character.id}/`" class="card-footer-item">
                     Edit Proxy
                   </router-link>
                 </template>
