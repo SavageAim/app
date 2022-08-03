@@ -70,7 +70,7 @@
               <label class="label has-text-warning" for="teamLead">Team Lead</label>
               <div class="select is-fullwidth" :class="[errors.team_lead !== undefined ? 'is-danger' : 'is-warning']">
                 <select v-model="teamLeadId" id="teamLead">
-                  <option v-for="member in team.members" :key="member.id" :value="member.character.id">{{ member.name }}</option>
+                  <option v-for="member in realMembers" :key="member.id" :value="member.character.id">{{ member.name }}</option>
                 </select>
               </div>
               <p class="help is-warning">Changing this will lock you out of this page. Please be sure you want to hand over leadership before changing this value.</p>
@@ -119,6 +119,11 @@ export default class TeamSettings extends SavageAimMixin {
 
   get inviteUrl(): string {
     return `${process.env.VUE_APP_URL}/team/join`
+  }
+
+  get realMembers(): TeamMember[] {
+    // Return all Members of the Team that aren't Proxies, because Proxies cannot be made lead
+    return this.team.members.filter((tm: TeamMember) => !tm.character.proxy)
   }
 
   get url(): string {
