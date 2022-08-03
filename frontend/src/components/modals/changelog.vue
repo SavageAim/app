@@ -23,6 +23,7 @@
       <div class="divider"><i class="material-icons icon">expand_more</i> Proxy Character Verification <i class="material-icons icon">expand_more</i></div>
       <p>Whenever a Character is verified, if Proxies of the same Character exist they will now be replaced with the verified, User owned version.</p>
       <p>This allows Users to come later, claim their Character, and pick up where the Proxy was left!</p>
+      <p>Proxies can also be claimed via the Join a Team page for ease.</p>
 
     </div>
   </div>
