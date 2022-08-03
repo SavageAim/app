@@ -52,6 +52,10 @@ class TeamProxyCollection(APIView):
         char_serializer.save(token=Character.generate_token())
         bis_serializer.save(owner=char_serializer.instance)
 
+        # Ensure character has no user id set
+        char_serializer.instance.user = None
+        char_serializer.instance.save()
+
         # Ensure BIS has no name (for future record)
         bis_serializer.instance.name = ''
         bis_serializer.instance.save()

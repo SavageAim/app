@@ -89,6 +89,7 @@ class TeamProxyCollection(SavageAimTestCase):
                 'lodestone_id': '3412557245',
                 'name': 'New Proxy',
                 'world': 'Zodiark (Light)',
+                'user_id': user.pk,
             },
             'bis': {
                 'job_id': 'PLD',
@@ -136,6 +137,7 @@ class TeamProxyCollection(SavageAimTestCase):
         # Ensure the BIS List has the Job name as the name
         self.assertEqual(content['members'][0]['character']['id'], proxy_id)
         self.assertEqual(content['members'][0]['bis_list']['display_name'], 'Paladin')
+        self.assertIsNone(Character.objects.get(pk=proxy_id).user)
 
     def test_create_400(self):
         """
