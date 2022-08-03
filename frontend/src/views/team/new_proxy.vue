@@ -32,7 +32,7 @@
         </div>
       </div>
 
-      <BISListForm :bisList="bis" :external-errors="bisApiErrors" :character="character" :url="''" method="" v-if="character !== null" :char-is-proxy="true" />
+      <BISListForm :bisList="bis" :external-errors="bisApiErrors" :character="character" :url="''" method="" :char-is-proxy="true" />
     </template>
   </div>
 </template>
