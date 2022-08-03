@@ -2,8 +2,8 @@ from io import StringIO
 from django.core.management import call_command
 from django.urls import reverse
 from rest_framework import status
-from api.models import BISList, Character, Gear, Notification, Team, Tier
-from api.serializers import CharacterCollectionSerializer, TeamMemberSerializer
+from api.models import BISList, Character, Gear, Team, Tier
+from api.serializers import CharacterCollectionSerializer
 from .test_base import SavageAimTestCase
 
 

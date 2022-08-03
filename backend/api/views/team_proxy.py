@@ -11,7 +11,6 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 # local
 from .base import APIView
-from api import notifier
 from api.models import Character, Team, TeamMember
 from api.serializers import (
     BISListModifySerializer,
