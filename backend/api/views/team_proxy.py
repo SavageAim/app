@@ -49,16 +49,8 @@ class TeamProxyCollection(APIView):
             return Response({'character': char_serializer.errors, 'bis': bis_serializer.errors}, status=400)
 
         # Create objects
-        char_serializer.save(token=Character.generate_token())
-        bis_serializer.save(owner=char_serializer.instance)
-
-        # Ensure character has no user id set
-        char_serializer.instance.user = None
-        char_serializer.instance.save()
-
-        # Ensure BIS has no name (for future record)
-        bis_serializer.instance.name = ''
-        bis_serializer.instance.save()
+        char_serializer.save(user_id=None, token=Character.generate_token())
+        bis_serializer.save(name='', owner=char_serializer.instance)
 
         # Add proxy to team
         obj.members.create(character=char_serializer.instance, bis_list=bis_serializer.instance)
