@@ -12,10 +12,12 @@ from rest_framework.response import Response
 # local
 from .base import APIView
 from api import notifier
-from api.models import Character, Team
+from api.models import Character, Team, TeamMember
 from api.serializers import (
     BISListModifySerializer,
     CharacterCollectionSerializer,
+    TeamSerializer,
+    TeamMemberSerializer,
 )
 
 
@@ -64,3 +66,63 @@ class TeamProxyCollection(APIView):
             self._send_to_user(tm.character.user, {'type': 'character', 'id': tm.character.pk})
 
         return Response({'id': char_serializer.instance.pk}, status=201)
+
+
+class TeamProxyResource(APIView):
+    """
+    Handle a single Proxy Character record (read / update)
+    """
+
+    def get(self, request: Request, team_id: str, pk: int) -> Response:
+        """
+        Read the details of a single Proxy record.
+        Can only be performed by a Team Lead
+        """
+        try:
+            team = Team.objects.filter(
+                members__character__user=request.user,
+                members__lead=True,
+            ).distinct().get(pk=team_id)
+        except (Team.DoesNotExist, ValidationError):
+            return Response(status=404)
+
+        try:
+            obj = team.members.filter(character__user__isnull=True).distinct().get(character_id=pk)
+        except (TeamMember.DoesNotExist, ValidationError):
+            return Response(status=404)
+
+        # Return Team, Character and BIS data separately for ease of use
+        team_data = TeamSerializer(instance=team).data
+        member_data = TeamMemberSerializer(instance=obj).data
+        return Response({'team': team_data, 'member': member_data})
+
+    def put(self, request: Request, team_id: str, pk: int) -> Response:
+        """
+        Update the details of a single Proxy record.
+        Can only be performed by a Team Lead.
+        Only really updates the BIS List since there's not much need to update anything else.
+        """
+        try:
+            team = Team.objects.filter(
+                members__character__user=request.user,
+                members__lead=True,
+            ).distinct().get(pk=team_id)
+        except (Team.DoesNotExist, ValidationError):
+            return Response(status=404)
+
+        try:
+            obj = team.members.filter(character__user__isnull=True).distinct().get(character_id=pk)
+        except (TeamMember.DoesNotExist, ValidationError):
+            return Response(status=404)
+
+        # Validate the new BIS List data
+        serializer = BISListModifySerializer(instance=obj.bis_list, data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save(name='')
+
+        # Send a WS updates for BIS and Teams
+        self._send_to_user(obj.character.user, {'type': 'bis', 'char': obj.character.id, 'id': serializer.instance.pk})
+        for tm in team.members.all():
+            self._send_to_team(team, {'type': 'team', 'id': str(tm.team.id)})
+
+        return Response(status=204)
