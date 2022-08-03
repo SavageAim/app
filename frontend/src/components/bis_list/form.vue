@@ -83,9 +83,9 @@ export default class BISListForm extends Vue {
   url!: string
 
   // Set up default values for min and max IL, will change as new tiers are released
-  maxIl = 605
+  maxIl = 635
 
-  minIl = 580
+  minIl = 610
 
   jobChange(selectedJob: string): void {
     this.displayOffhand = selectedJob === 'PLD'

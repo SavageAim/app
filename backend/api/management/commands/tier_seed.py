@@ -7,11 +7,20 @@ class Command(BaseCommand):
     help = 'Seed the DB with initial data for Tiers'
 
     tiers = [
+        # 6.0
         {
             'max_item_level': 605,
             'name': 'Pandæmonium: Asphodelos',
             'raid_gear_name': 'Asphodelos',
             'tome_gear_name': 'Augmented Radiant Host',
+        },
+
+        # 6.2
+        {
+            'max_item_level': 635,
+            'name': 'Pandæmonium: Abyssos',
+            'raid_gear_name': 'Abyssos',
+            'tome_gear_name': 'Augmented Tome',
         },
     ]
 

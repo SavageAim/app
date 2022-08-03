@@ -31,6 +31,13 @@ class Command(BaseCommand):
 
         # 6.1.1
         {'has_accessories': False, 'has_armour': False, 'has_weapon': True, 'item_level': 605, 'name': 'Ultimate of the Heavens'},
+
+        # 6.2
+        {'has_accessories': True, 'has_armour': True, 'has_weapon': True, 'item_level': 610, 'name': 'Crafted'},
+        {'has_accessories': True, 'has_armour': True, 'has_weapon': True, 'item_level': 620, 'name': 'Tome'},
+        {'has_accessories': True, 'has_armour': True, 'has_weapon': True, 'item_level': 630, 'name': 'Augmented Tome'},
+        {'has_accessories': True, 'has_armour': True, 'has_weapon': False, 'item_level': 630, 'name': 'Abyssos'},
+        {'has_accessories': False, 'has_armour': False, 'has_weapon': True, 'item_level': 635, 'name': 'Abyssos'},
     ]
 
     def handle(self, *args, **options):
