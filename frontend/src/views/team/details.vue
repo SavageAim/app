@@ -25,7 +25,7 @@
 
       <div class="columns is-multiline is-desktop">
         <!-- TODO - Remove when management page is added -->
-        <div class="column is-full has-text-centered">
+        <div class="column is-full has-text-centered" v-if="editable">
           <router-link to="./proxies/" class="button is-success">
             <span class="icon is-small"><i class="material-icons">person_add</i></span>
             <span>Add Proxy Character</span>
