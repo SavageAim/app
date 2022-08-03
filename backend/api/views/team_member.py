@@ -75,7 +75,7 @@ class TeamMemberResource(APIView):
         # Check permissions and kick status;
         # Character owner is making request; valid and is leave request
         kick: bool
-        if obj.character.user.id == request.user.id:
+        if obj.character.user is None or obj.character.user.id == request.user.id:
             kick = False
         # Team Leader making request; valid and is kick request
         elif obj.team.members.get(lead=True).character.user.id == request.user.id:
