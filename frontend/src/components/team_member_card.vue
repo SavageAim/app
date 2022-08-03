@@ -5,6 +5,7 @@
         <div class="card-header-title">
           <span class="icon-text">
             <span class="icon is-hidden-touch" v-if="details.lead"><img src="/party_lead.png" alt="Team Lead" title="Team Lead" width="24" height="24" /></span>
+            <span class="icon is-hidden-touch" v-if="details.character.proxy"><img src="/proxy.png" alt="Proxy Character" title="Proxy Character" width="24" height="24" /></span>
             <span class="icon is-hidden-touch" v-else><img src="/party_member.png" alt="Team Member" title="Team Member" width="24" height="24" /></span>
             <span>{{ details.name }}</span>
           </span>
@@ -61,6 +62,13 @@
               </template>
               <!-- Admin Commands -->
               <template v-if="!owner && editable">
+                <!-- If proxy, provide edit link (TODO - move this to management page in the permissions update) -->
+                <template v-if="details.character.proxy">
+                  <hr class="dropdown-divider" />
+                  <router-link :to="`./proxies/${details.id}/`" class="card-footer-item">
+                    Edit Proxy
+                  </router-link>
+                </template>
                 <!-- Modal to confirm, kick from team -->
                 <hr class="dropdown-divider" />
                 <a class="card-footer-item has-text-danger" @click="kick">Kick from Team</a>
