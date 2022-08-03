@@ -85,6 +85,15 @@ def team_leave(member: models.TeamMember):
     _create_notif(user, text, link, 'team_leave')
 
 
+def team_proxy_claim(member: models.TeamMember):
+    char = member.character
+    team = member.team
+    text = f'Proxy {char} has been claimed by a user!'
+    link = f'/team/{team.id}/'
+    user = team.members.get(lead=True).character.user
+    _create_notif(user, text, link, 'team_proxy_claim')
+
+
 def team_rename(team: models.Team, new_name: str):
     text = f'{team.name} has been renamed to {new_name}!'
     link = f'/team/{team.id}/'

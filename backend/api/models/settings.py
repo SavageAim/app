@@ -17,6 +17,7 @@ class Settings(models.Model):
         'team_kick',
         'team_lead',
         'team_leave',
+        'team_proxy_claim',
         'team_rename',
         'verify_fail',
         'verify_success',
