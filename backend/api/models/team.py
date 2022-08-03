@@ -75,7 +75,7 @@ class Team(models.Model):
 
         char_member = self.members.get(character=char)
         if char_member.lead:
-            self.make_lead(self.members.filter(lead=False).first())
+            self.make_lead(self.members.filter(lead=False, character__user__isnull=False).distinct().first())
 
         if kick:
             notifier.team_kick(char_member)
