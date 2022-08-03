@@ -30,7 +30,10 @@ class TeamProxyCollection(APIView):
         Can currently only be done by the Team Lead.
         """
         try:
-            obj = Team.objects.get(pk=team_id, members__character__user=request.user, members__lead=True)
+            obj = Team.objects.filter(
+                members__character__user=request.user,
+                members__lead=True,
+            ).distinct().get(pk=team_id)
         except (Team.DoesNotExist, ValidationError):
             return Response(status=404)
 
