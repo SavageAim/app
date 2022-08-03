@@ -53,6 +53,7 @@ const routes = [
 
   // Proxies
   { path: '/team/:id/proxies/', component: () => import('@/views/team/new_proxy.vue'), name: 'teamNewProxy' },
+  { path: '/team/:teamId/proxies/:id/', component: () => import('@/views/team/edit_proxy.vue'), name: 'teamEditProxy' },
 
   // Errors
   { path: '/errors/500/', component: () => import('@/views/errors/500.vue'), name: 'errors/500' },
