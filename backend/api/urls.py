@@ -40,6 +40,7 @@ urlpatterns = [
     # Team Proxy
     path('team/<str:team_id>/proxies/', views.TeamProxyCollection.as_view(), name='team_proxy_collection'),
     path('team/<str:team_id>/proxies/<int:pk>/', views.TeamProxyResource.as_view(), name='team_proxy_resource'),
+    path('team/<str:team_id>/proxies/<int:pk>/claim/', views.TeamProxyClaim.as_view(), name='team_proxy_claim'),
 
     # Tier
     path('tier/', views.TierCollection.as_view(), name='tier_collection'),

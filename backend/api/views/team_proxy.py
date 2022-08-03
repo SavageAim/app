@@ -126,3 +126,39 @@ class TeamProxyResource(APIView):
             self._send_to_team(team, {'type': 'team', 'id': str(tm.team.id)})
 
         return Response(status=204)
+
+
+class TeamProxyClaim(APIView):
+    """
+    A separate view that handles User attempts to claim a Proxy.
+    For a little security, the view will expect the invite code to be sent in the data.
+    """
+
+    def post(self, request: Request, team_id: str, pk: int) -> Response:
+        """
+        Make an attempt to claim a Proxy Character
+        """
+        invite_code = request.data.get('invite_code', '')
+        try:
+            team = Team.objects.get(pk=team_id, invite_code=invite_code)
+        except (Team.DoesNotExist, ValidationError):
+            return Response(status=404)
+
+        try:
+            obj = team.members.filter(character__user__isnull=True).distinct().get(character_id=pk)
+        except (TeamMember.DoesNotExist, ValidationError):
+            return Response(status=404)
+
+        # Make a copy of the Proxy Character that belongs to the requesting user
+        old_char = obj.character
+        new_char = Character.objects.create(
+            avatar_url=old_char.avatar_url,
+            lodestone_id=old_char.lodestone_id,
+            name=old_char.name,
+            token=Character.generate_token(),
+            user=request.user,
+            world=old_char.world,
+        )
+
+        # Send the new id back to the requesting user
+        return Response({'id': new_char.id}, status=201)

@@ -3,7 +3,7 @@ from django.core.management import call_command
 from django.urls import reverse
 from rest_framework import status
 from api.models import BISList, Character, Gear, Notification, Team, Tier
-from api.serializers import TeamMemberSerializer
+from api.serializers import CharacterCollectionSerializer, TeamMemberSerializer
 from .test_base import SavageAimTestCase
 
 
@@ -436,3 +436,161 @@ class TeamProxyResource(SavageAimTestCase):
         self.assertEqual(self.client.get(url).status_code, status.HTTP_404_NOT_FOUND)
         self.assertEqual(self.client.put(url).status_code, status.HTTP_404_NOT_FOUND)
 
+
+class TeamProxyClaim(SavageAimTestCase):
+    """
+    Tests related to claiming Proxy Characters
+    """
+
+    def setUp(self):
+        """
+        Prepopulate the DB with known data we can calculate off of
+        """
+        self.maxDiff = None
+        call_command('all_seed', stdout=StringIO())
+
+        # Create a Team first
+        self.team = Team.objects.create(
+            invite_code=Team.generate_invite_code(),
+            name='Les Jambons',
+            tier=Tier.objects.get(max_item_level=605),
+        )
+
+        # Create a Team lead and a proxy character
+        self.char = Character.objects.create(
+            avatar_url='https://img.savageaim.com/abcde',
+            lodestone_id=1234567890,
+            user=self._get_user(),
+            name='Team Lead',
+            verified=True,
+            world='Lich',
+        )
+        raid_weapon = Gear.objects.get(item_level=605, name='Asphodelos')
+        raid_gear = Gear.objects.get(item_level=600, has_weapon=False)
+        tome_gear = Gear.objects.get(item_level=600, has_weapon=True)
+        crafted = Gear.objects.get(name='Classical')
+        self.tl_main_bis = BISList.objects.create(
+            bis_body=raid_gear,
+            bis_bracelet=raid_gear,
+            bis_earrings=raid_gear,
+            bis_feet=raid_gear,
+            bis_hands=tome_gear,
+            bis_head=tome_gear,
+            bis_left_ring=tome_gear,
+            bis_legs=tome_gear,
+            bis_mainhand=raid_weapon,
+            bis_necklace=tome_gear,
+            bis_offhand=raid_weapon,
+            bis_right_ring=raid_gear,
+            current_body=crafted,
+            current_bracelet=crafted,
+            current_earrings=crafted,
+            current_feet=crafted,
+            current_hands=crafted,
+            current_head=crafted,
+            current_left_ring=crafted,
+            current_legs=crafted,
+            current_mainhand=crafted,
+            current_necklace=crafted,
+            current_offhand=crafted,
+            current_right_ring=crafted,
+            job_id='SGE',
+            owner=self.char,
+        )
+        self.proxy = Character.objects.create(
+            avatar_url='https://img.savageaim.com/abcde',
+            lodestone_id=1234567890,
+            user=None,
+            name='Proxy Char',
+            verified=False,
+            world='Lich',
+        )
+        raid_weapon = Gear.objects.get(item_level=605, name='Asphodelos')
+        raid_gear = Gear.objects.get(item_level=600, has_weapon=False)
+        tome_gear = Gear.objects.get(item_level=600, has_weapon=True)
+        crafted = Gear.objects.get(name='Classical')
+        self.proxy_bis = BISList.objects.create(
+            bis_body=raid_gear,
+            bis_bracelet=raid_gear,
+            bis_earrings=raid_gear,
+            bis_feet=raid_gear,
+            bis_hands=tome_gear,
+            bis_head=tome_gear,
+            bis_left_ring=tome_gear,
+            bis_legs=tome_gear,
+            bis_mainhand=raid_weapon,
+            bis_necklace=tome_gear,
+            bis_offhand=raid_weapon,
+            bis_right_ring=raid_gear,
+            current_body=crafted,
+            current_bracelet=crafted,
+            current_earrings=crafted,
+            current_feet=crafted,
+            current_hands=crafted,
+            current_head=crafted,
+            current_left_ring=crafted,
+            current_legs=crafted,
+            current_mainhand=crafted,
+            current_necklace=crafted,
+            current_offhand=crafted,
+            current_right_ring=crafted,
+            job_id='WHM',
+            owner=self.proxy,
+        )
+
+        # Lastly, link the characters to the team
+        self.tm = self.team.members.create(character=self.char, bis_list=self.tl_main_bis, lead=True)
+        self.proxy_tm = self.team.members.create(character=self.proxy, bis_list=self.proxy_bis, lead=False)
+
+        # Map gear names to ids for ease
+        self.gear_id_map = {g.name: g.id for g in Gear.objects.all()}
+
+    def test_create(self):
+        """
+        Send a request as a completely new User to claim a Proxy Character
+        """
+        url = reverse('api:team_proxy_claim', kwargs={'team_id': self.team.pk, 'pk': self.proxy.pk})
+        user = self._create_user()
+        self.client.force_authenticate(user)
+
+        # Ensure we have no characters
+        self.assertEqual(Character.objects.filter(user=user).count(), 0)
+
+        # Add the invite code to the payload for safety
+        data = {'invite_code': self.team.invite_code}
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        # Check that we have a Character that matches the Proxy in (nearly) every way
+        self.assertEqual(Character.objects.filter(user=user).count(), 1)
+        new_char = Character.objects.filter(user=user).first()
+
+        new_data = CharacterCollectionSerializer(instance=new_char).data
+        old_data = CharacterCollectionSerializer(instance=self.proxy).data
+
+        # Remove changed keys
+        for key in ['proxy', 'user_id', 'id']:
+            new_data.pop(key)
+            old_data.pop(key)
+
+        self.assertDictEqual(old_data, new_data)
+
+    def test_404(self):
+        """
+        Test the cases that cause a 404 to be returned;
+
+        - ID doesn't exist
+        - Request from someone who doesn't have a character in the Team
+        - Update request from someone who doesn't have a character in the Team
+        - Update request from someone that isn't the team lead
+        """
+        user = self._get_user()
+        self.client.force_authenticate(user)
+
+        # ID doesn't exist
+        url = reverse('api:team_proxy_claim', kwargs={'team_id': 'abcde-abcde-abcde-abcde', 'pk': 1})
+        self.assertEqual(self.client.post(url).status_code, status.HTTP_404_NOT_FOUND)
+
+        url = reverse('api:team_proxy_claim', kwargs={'team_id': self.team.pk, 'pk': 999999999999999999})
+        # Check as team lead
+        self.assertEqual(self.client.post(url).status_code, status.HTTP_404_NOT_FOUND)

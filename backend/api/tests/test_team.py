@@ -498,7 +498,10 @@ class TeamResource(SavageAimTestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, response.content)
         content = response.json()
         self.assertEqual(content['tier_id'], ['Please select a valid Tier.'])
-        self.assertEqual(content['team_lead'], ['Please select a member of the Team to be the new team lead.'])
+        self.assertEqual(
+            content['team_lead'],
+            ['Please select a non-proxy Member of the Team to be the new team lead.'],
+        )
 
         # Run the team lead test again with a valid character id that isn't on the team
         char = Character.objects.create(
@@ -516,7 +519,10 @@ class TeamResource(SavageAimTestCase):
         response = self.client.put(url, data)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, response.content)
         content = response.json()
-        self.assertEqual(content['team_lead'], ['Please select a member of the Team to be the new team lead.'])
+        self.assertEqual(
+            content['team_lead'],
+            ['Please select a non-proxy Member of the Team to be the new team lead.'],
+        )
 
     def test_delete(self):
         """
