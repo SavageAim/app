@@ -24,6 +24,14 @@
       </div>
 
       <div class="columns is-multiline is-desktop">
+        <!-- TODO - Remove when management page is added -->
+        <div class="column is-full has-text-centered">
+          <router-link to="./proxies/" class="button is-success">
+            <span class="icon is-small"><i class="material-icons">person_add</i></span>
+            <span>Add Proxy Character</span>
+          </router-link>
+        </div>
+
         <TeamMemberCard v-for="tm in team.members" :key="tm.id" :team-id="team.id" :details="tm" :max-item-level="team.tier.max_item_level" :editable="editable" v-on:reload="() => { fetchTeam(true) }" />
       </div>
     </template>
