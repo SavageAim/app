@@ -25,14 +25,14 @@
                 <button class="button is-danger is-fullwidth" @click="() => { this.character = null }">Change Character</button>
               </div>
               <div class="control is-expanded">
-                <button class="button is-success is-fullwidth">Create Proxy</button>
+                <button class="button is-success is-fullwidth" @click="createProxy">Create Proxy</button>
               </div>
             </div>
           </template>
         </div>
       </div>
 
-      <BISListForm :bisList="bis" :character="character" :url="''" method="" v-if="character !== null" :char-is-proxy="true" />
+      <BISListForm :bisList="bis" :external-errors="bisApiErrors" :character="character" :url="''" method="" v-if="character !== null" :char-is-proxy="true" />
     </template>
   </div>
 </template>
@@ -46,7 +46,12 @@ import BISListModify from '@/dataclasses/bis_list_modify'
 import { Character } from '@/interfaces/character'
 import Team from '@/interfaces/team'
 import TeamMember from '@/interfaces/team_member'
-import { BISListErrors } from '@/interfaces/responses'
+import {
+  BISListErrors,
+  CharacterCreateErrors,
+  CreateResponse,
+  ProxyCreateErrors,
+} from '@/interfaces/responses'
 import SavageAimMixin from '@/mixins/savage_aim_mixin'
 
 @Component({
@@ -59,10 +64,11 @@ import SavageAimMixin from '@/mixins/savage_aim_mixin'
 export default class NewProxy extends SavageAimMixin {
   bis = new BISListModify()
 
-  bisAPIErrors: BISListErrors = {}
+  bisApiErrors: BISListErrors = {}
 
   character: Character | null = null
 
+  // This just comes from response.lodestone_id
   characterApiErrors: string[] = []
 
   loading = true
@@ -76,8 +82,12 @@ export default class NewProxy extends SavageAimMixin {
     return this.team.members.find((teamMember: TeamMember) => teamMember.character.user_id === this.$store.state.user.id)?.lead ?? false
   }
 
-  get url(): string {
+  get readUrl(): string {
     return `/backend/api/team/${this.$route.params.id}/`
+  }
+
+  get writeUrl(): string {
+    return `/backend/api/team/${this.$route.params.id}/proxies/`
   }
 
   checkPermissions(): void {
@@ -98,10 +108,51 @@ export default class NewProxy extends SavageAimMixin {
   }
 
   // API Interaction
+  async createProxy(): Promise<void> {
+    // Don't allow multiple requests
+    if (this.character === null || this.requesting) return
+    this.requesting = true
+
+    const body = JSON.stringify({ character: this.character, bis: this.bis })
+    try {
+      const response = await fetch(this.writeUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': Vue.$cookies.get('csrftoken'),
+        },
+        body,
+      })
+
+      if (response.ok) {
+        // Attempt to parse the json, get the id, and then redirect
+        const json = await response.json() as CreateResponse
+        this.$store.dispatch('fetchCharacters')
+        this.$router.push(`/team/${this.team.id}/`, () => {
+          Vue.notify({ text: `New Proxy Character created successfully!`, type: 'is-success' })
+        })
+      }
+      else {
+        super.handleError(response.status)
+        const json = await response.json() as ProxyCreateErrors
+        if (json.character.lodestone_id != null) {
+          this.characterApiErrors = json.character.lodestone_id
+        }
+        this.bisApiErrors = json.bis
+      }
+    }
+    catch (e) {
+      this.$notify({ text: `Error ${e} when attempting to create proxy Character.`, type: 'is-danger' })
+    }
+    finally {
+      this.requesting = false
+    }
+  }
+
   async fetchTeam(reload: boolean): Promise<void> {
     // Load the team data from the API
     try {
-      const response = await fetch(this.url)
+      const response = await fetch(this.readUrl)
       if (response.ok) {
         // Parse the JSON into a team and save it
         this.team = (await response.json()) as Team
