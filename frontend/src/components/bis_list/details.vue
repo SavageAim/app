@@ -1,6 +1,6 @@
 <template>
   <div class="card-content">
-  <div class="field is-horizontal">
+  <div class="field is-horizontal" v-if="!charIsProxy">
     <div class="field-label is-normal">
       <label class="label">Name</label>
     </div>
@@ -66,6 +66,9 @@ export default class Details extends Vue {
 
   @Prop()
   bisList!: BISListModify
+
+  @Prop()
+  charIsProxy!: boolean
 
   @Prop()
   errors!: BISListErrors
