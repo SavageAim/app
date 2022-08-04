@@ -6,7 +6,7 @@ from api.models import Gear
 from api.serializers import GearSerializer
 from .test_base import SavageAimTestCase
 
-MAX_ITEM_LEVEL = 605
+MAX_ITEM_LEVEL = 635
 MIN_ITEM_LEVEL = 560
 
 

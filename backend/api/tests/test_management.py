@@ -154,5 +154,5 @@ class ManagementCommandTestSuite(SavageAimTestCase):
         call_command('tier_seed', stdout=StringIO())
 
         self.assertTrue(models.Tier.objects.exists())
-        self.assertEqual(models.Tier.objects.count(), 1)
-        self.assertEqual(models.Tier.objects.first().max_item_level, 605)  # Asphodelos
+        self.assertEqual(models.Tier.objects.count(), 2)
+        self.assertEqual(models.Tier.objects.filter(name__icontains='Asphodelos').first().max_item_level, 605)
