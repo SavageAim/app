@@ -1,8 +1,7 @@
 """
-Team interaction views
+Team Proxy Management Views
 
-Teams have TeamMember objects that are used to define what characters are involved in them.
-This links to requesting users, which is how we check permissions
+This adjusted views give access to the proxy system and allow users to create and edit proxy characters
 """
 
 # lib
