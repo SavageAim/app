@@ -1,0 +1,111 @@
+# 6.2
+# - has_accessories: True
+#   has_armour: True
+#   has_weapon: True
+#   item_level: 610
+#   name: 'Crafted'
+# - has_accessories: True
+#   has_armour: True
+#   has_weapon: True
+#   item_level: 620
+#   name: 'Tome'
+# - has_accessories: True
+#   has_armour: True
+#   has_weapon: True
+#   item_level: 630
+#   name: 'Augmented Tome'
+# - has_accessories: True
+#   has_armour: True
+#   has_weapon: False
+#   item_level: 630
+#   name: 'Abyssos'
+# - has_accessories: False
+#   has_armour: False
+#   has_weapon: True
+#   item_level: 635
+#   name: 'Abyssos'
+
+# 6.1.1
+- has_accessories: False
+  has_armour: False
+  has_weapon: True
+  item_level: 605
+  name: 'Ultimate of the Heavens'
+
+# 6.1
+- has_accessories: False
+  has_armour: True
+  has_weapon: False
+  item_level: 590
+  name: 'Panthean'
+- has_accessories: False
+  has_armour: False
+  has_weapon: True
+  item_level: 595
+  name: 'Bluefeather'
+- has_accessories: True
+  has_armour: True
+  has_weapon: True
+  item_level: 590
+  name: 'Augmented Classical'
+
+# 6.0.5
+- has_accessories: True
+  has_armour: True
+  has_weapon: True
+  item_level: 580
+  name: 'Classical'
+- has_accessories: True
+  has_armour: True
+  has_weapon: True
+  item_level: 590
+  name: 'Radiant Host'
+- has_accessories: True
+  has_armour: True
+  has_weapon: True
+  item_level: 600
+  name: 'Augmented Radiant Host'
+- has_accessories: True
+  has_armour: True
+  has_weapon: False
+  item_level: 600
+  name: 'Asphodelos'
+- has_accessories: False
+  has_armour: False
+  has_weapon: True
+  item_level: 605
+  name: 'Asphodelos'
+
+# 6.0.1
+- has_accessories: True
+  has_armour: True
+  has_weapon: False
+  item_level: 580
+  name: 'Limbo'
+
+# 6.0
+- has_accessories: true
+  has_armour: false
+  has_weapon: false
+  item_level: 560
+  name: 'The Last'
+- has_accessories: false
+  has_armour: True
+  has_weapon: True
+  item_level: 560
+  name: 'Endwalker AF'
+- has_accessories: True
+  has_armour: True
+  has_weapon: True
+  item_level: 570
+  name: 'Moonward'
+- has_accessories: True
+  has_armour: False
+  has_weapon: False
+  item_level: 580
+  name: 'Eternal Dark'
+- has_accessories: False
+  has_armour: False
+  has_weapon: True
+  item_level: 580
+  name: 'Divine Light'
