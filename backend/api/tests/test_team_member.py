@@ -287,7 +287,7 @@ class TeamMemberResource(SavageAimTestCase):
         """
         self.char2.user = None
         self.char2.save()
-        tm2 = self.team.members.create(character=self.char2, bis_list=self.mt_main_bis, lead=False)
+        self.team.members.create(character=self.char2, bis_list=self.mt_main_bis, lead=False)
 
         # Part 1 - Have the leader leave the Team, ensure that the Team and all Proxy data are gone
         url = reverse('api:team_member_resource', kwargs={'team_id': self.team.pk, 'pk': self.tm.pk})
