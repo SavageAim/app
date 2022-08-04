@@ -16,7 +16,7 @@ class TierCollection(SavageAimTestCase):
         """
         Call the Tier seed command to prepopulate the DB
         """
-        call_command('tier_seed', stdout=StringIO())
+        call_command('seed', stdout=StringIO())
 
     def test_list(self):
         """

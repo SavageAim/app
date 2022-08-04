@@ -17,7 +17,7 @@ class EtroImport(SavageAimTestCase):
         """
         Call the Gear seed command to prepopulate the DB
         """
-        call_command('gear_seed', stdout=StringIO())
+        call_command('seed', stdout=StringIO())
 
     def test_import(self):
         """

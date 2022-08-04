@@ -19,9 +19,7 @@ class TeamCollection(SavageAimTestCase):
         """
         Run the seed commands, and create some necessary data
         """
-        call_command('job_seed', stdout=StringIO())
-        call_command('gear_seed', stdout=StringIO())
-        call_command('tier_seed', stdout=StringIO())
+        call_command('seed', stdout=StringIO())
 
         self.char = Character.objects.create(
             avatar_url='https://img.savageaim.com/abcde',
@@ -290,9 +288,7 @@ class TeamResource(SavageAimTestCase):
         """
         Run the seed commands, and create some necessary data
         """
-        call_command('job_seed', stdout=StringIO())
-        call_command('gear_seed', stdout=StringIO())
-        call_command('tier_seed', stdout=StringIO())
+        call_command('seed', stdout=StringIO())
 
         self.char = Character.objects.create(
             avatar_url='https://img.savageaim.com/abcde',
@@ -680,9 +676,7 @@ class TeamInvite(SavageAimTestCase):
         """
         Run the seed commands, and create some necessary data
         """
-        call_command('job_seed', stdout=StringIO())
-        call_command('gear_seed', stdout=StringIO())
-        call_command('tier_seed', stdout=StringIO())
+        call_command('seed', stdout=StringIO())
 
         self.char = Character.objects.create(
             avatar_url='https://img.savageaim.com/abcde',

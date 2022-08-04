@@ -158,7 +158,7 @@ class TasksTestSuite(SavageAimTestCase):
 
         Ensure that Proxy Characters get properly assimilated.
         """
-        call_command('all_seed', stdout=StringIO())
+        call_command('seed', stdout=StringIO())
         char = Character.objects.create(
             avatar_url='https://img.savageaim.com/abcde',
             lodestone_id=1234567890,
