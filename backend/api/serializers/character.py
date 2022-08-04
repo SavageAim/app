@@ -19,12 +19,19 @@ NEW_WORLD_PATTERN = compile(r'([a-zA-Z]+) \[([a-zA-Z]+)\] \(\)')
 
 class CharacterCollectionSerializer(serializers.ModelSerializer):
     alias = serializers.CharField(allow_blank=True, required=False)
+    proxy = serializers.SerializerMethodField()
     user_id = serializers.IntegerField(required=False)
 
     class Meta:
         model = Character
         exclude = ['created', 'token', 'user']
-        read_only_fields = ['user_id', 'verified']
+        read_only_fields = ['proxy', 'user_id', 'verified']
+
+    def get_proxy(self, char: Character) -> bool:
+        """
+        Return flag stating if the Character is a proxy char or not
+        """
+        return char.user is None
 
     def validate_world(self, world: str) -> str:
         """

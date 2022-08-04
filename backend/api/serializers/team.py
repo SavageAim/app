@@ -52,9 +52,9 @@ class TeamUpdateSerializer(serializers.ModelSerializer):
         """
         # Ensure it corresponds with a member of this team
         try:
-            member = self.instance.members.get(character__pk=team_lead_id)
+            member = self.instance.members.filter(character__user__isnull=False).get(character__pk=team_lead_id)
         except TeamMember.DoesNotExist:
-            raise serializers.ValidationError('Please select a member of the Team to be the new team lead.')
+            raise serializers.ValidationError('Please select a non-proxy Member of the Team to be the new team lead.')
 
         return member.id
 

@@ -8,7 +8,7 @@
           </div>
         </div>
 
-        <Details :bisList="bisList" :errors="errors" v-on="$listeners" />
+        <Details :bisList="bisList" :char-is-proxy="charIsProxy" :errors="errors" v-on="$listeners" />
       </div>
 
       <!-- Filters -->
@@ -30,7 +30,7 @@
           </div>
         </div>
 
-        <Actions :bisList="bisList" :character="character" :url="url" :method="method" v-on="$listeners" />
+        <Actions :bisList="bisList" :character="character" :char-is-proxy="charIsProxy" :url="url" :method="method" v-on="$listeners" />
       </div>
     </div>
 
@@ -84,6 +84,9 @@ export default class BISListDesktopForm extends Vue {
 
   @Prop()
   character!: CharacterDetails
+
+  @Prop()
+  charIsProxy!: boolean
 
   @Prop()
   displayOffhand!: boolean

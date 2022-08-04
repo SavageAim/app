@@ -5,6 +5,7 @@ export interface Character {
   avatar_url: string
   id: number
   lodestone_id: string
+  proxy: boolean
   name: string
   user_id: number
   verified: boolean
