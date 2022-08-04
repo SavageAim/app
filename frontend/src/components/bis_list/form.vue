@@ -3,6 +3,7 @@
     <BISListDesktopForm
       :bisList="bisList"
       :character="character"
+      :char-is-proxy="charIsProxy"
       :errors="errors"
       :displayOffhand="displayOffhand"
       :minIl="minIl"
@@ -25,6 +26,7 @@
     <BISListMobileForm
       :bisList="bisList"
       :character="character"
+      :char-is-proxy="charIsProxy"
       :errors="errors"
       :displayOffhand="displayOffhand"
       :minIl="minIl"
@@ -71,7 +73,13 @@ export default class BISListForm extends Vue {
   @Prop()
   character!: CharacterDetails
 
-  errors: BISListErrors = {}
+  @Prop({ default: false })
+  charIsProxy!: boolean
+
+  @Prop({ default() { return {} } })
+  externalErrors!: BISListErrors
+
+  internalErrors: BISListErrors = {}
 
   @Prop()
   method!: string
@@ -86,6 +94,13 @@ export default class BISListForm extends Vue {
   maxIl = 635
 
   minIl = 610
+
+  get errors(): BISListErrors {
+    return {
+      ...this.internalErrors,
+      ...this.externalErrors,
+    }
+  }
 
   jobChange(selectedJob: string): void {
     this.displayOffhand = selectedJob === 'PLD'
@@ -104,7 +119,7 @@ export default class BISListForm extends Vue {
   }
 
   handleErrors(errors: BISListErrors): void {
-    this.errors = errors
+    this.internalErrors = errors
   }
 
   importBISData(data: ImportResponse): void {

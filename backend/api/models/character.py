@@ -21,12 +21,21 @@ class Character(models.Model):
     lodestone_id = models.TextField()
     name = models.CharField(max_length=60)
     token = models.CharField(max_length=40)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     verified = models.BooleanField(default=False)
     world = models.CharField(max_length=60)
 
     def __str__(self) -> str:
         return self.display_name
+
+    @property
+    def display_name(self) -> str:
+        """
+        Return the display name for the Character, either the name @ world or the alias where possible
+        """
+        if self.alias != '':
+            return self.alias
+        return f'{self.name} @ {self.world}'
 
     @staticmethod
     def generate_token() -> str:
@@ -38,15 +47,6 @@ class Character(models.Model):
             code = 'savageaim-' + ''.join(choice(CHARACTERS) for _ in range(RANDOM_CHARS))
 
         return code
-
-    @property
-    def display_name(self) -> str:
-        """
-        Return the display name for the Character, either the name @ world or the alias where possible
-        """
-        if self.alias != '':
-            return self.alias
-        return f'{self.name} @ {self.world}'
 
     def remove(self):
         """

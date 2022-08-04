@@ -10,19 +10,7 @@
         <p>Paste the Lodestone URL into the box below and hit Import to import your character.</p>
         <p>After importing, there will be a necessary verification step before you can start making lists and/or teams.</p>
         <hr />
-        <form @submit="submitChar">
-          <div class="field">
-            <label class="label">Lodestone Character URL</label>
-            <div class="control">
-              <input class="input" :class="{'is-danger': errors.length > 0}" type="url" placeholder="https://eu.finalfantasyxiv.com/lodestone/character/xxxxxxxxx/" ref="url" />
-            </div>
-            <p v-for="(error, i) in errors" :key="i" class="help is-danger">{{ error }}</p>
-          </div>
-
-          <div class="buttons is-right">
-            <button class="button is-primary" :class="{'is-loading': loading}">Import</button>
-          </div>
-        </form>
+        <CharacterForm :api-errors="errors" :api-loading="loading" @fetched="sendCharacter" />
       </div>
     </div>
   </div>
@@ -30,12 +18,16 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import XIVAPI from '@xivapi/js'
+import CharacterForm from '@/components/character_form.vue'
 import { Character } from '@/interfaces/character'
 import { CreateResponse, CharacterCreateErrors } from '@/interfaces/responses'
 import SavageAimMixin from '@/mixins/savage_aim_mixin'
 
-@Component
+@Component({
+  components: {
+    CharacterForm,
+  },
+})
 export default class NewChar extends SavageAimMixin {
   errors: string[] = []
 
@@ -53,64 +45,10 @@ export default class NewChar extends SavageAimMixin {
     document.title = 'Add New Character - Savage Aim'
   }
 
-  async submitChar(e: Event): Promise<void> {
-    e.preventDefault()
-    // Don't allow multiple runs of this command
-    if (this.loading) return
-
-    // Run the thing
-    this.loading = true
-    this.errors = []
-
-    // Start by sending an xivapi request to ensure that the url is valid
-    const lodestoneUrl = this.urlInput.value
-    const match = this.regex.exec(lodestoneUrl)
-    if (match === null) {
-      this.errors = ['The given url is invalid. Please make sure to copy a character url and try again.']
-      this.loading = false
-      return
-    }
-
-    // If we're okay here, we can grab the id and use XIVAPI to check that the ID is correct
-    const id = match[1]
-    const xiv = new XIVAPI()
-    try {
-      const response = await xiv.character.get(id)
-
-      // Using the data we retrieve from XIVAPI, then send a create request to the API.
-      const character = {
-        alias: '',
-        avatar_url: response.Character.Avatar,
-        id: -1,
-        lodestone_id: response.Character.ID,
-        name: response.Character.Name,
-        world: `${response.Character.Server} (${response.Character.DC})`,
-        user_id: this.$store.state.user.id,
-        token: '',
-        verified: false,
-      }
-
-      // Stringify this, attempt to send it and handle correct or incorrect responses as necessary
-      await this.sendCharacter(character)
-    }
-    catch (err) {
-      if (err.error != null) {
-        // XIVAPI Error
-        this.errors = [err.error.Message]
-      }
-      else {
-        // Normal JS error
-        this.errors = [err.message]
-      }
-    }
-    finally {
-      this.loading = false
-    }
-  }
-
   async sendCharacter(char: Character): Promise<void> {
     // Function that is solely for handling interacting with the savageaim api
     // No need for try / catch since it's called inside a try catch block already
+    this.loading = true
     const body = JSON.stringify(char)
     try {
       const response = await fetch(this.url, {
@@ -144,6 +82,9 @@ export default class NewChar extends SavageAimMixin {
     }
     catch (e) {
       this.$notify({ text: `Error ${e} when attempting to create Character.`, type: 'is-danger' })
+    }
+    finally {
+      this.loading = false
     }
   }
 }

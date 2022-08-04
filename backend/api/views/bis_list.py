@@ -46,7 +46,7 @@ class BISListCollection(BISListBaseView):
             return Response(status=404)
 
         # Since we have a valid character, try to create the BISList
-        serializer = BISListModifySerializer(data=request.data, context={'owner': char})
+        serializer = BISListModifySerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save(owner=char)
 

@@ -302,7 +302,10 @@ class LootCollection(APIView):
         Any updates sent here will also update Character's BIS Lists
         """
         try:
-            team = Team.objects.get(pk=team_id, members__character__user=request.user, members__lead=True)
+            team = Team.objects.filter(
+                members__character__user=request.user,
+                members__lead=True,
+            ).distinct().get(pk=team_id)
         except (Team.DoesNotExist, ValidationError):
             return Response(status=404)
 
@@ -322,7 +325,10 @@ class LootCollection(APIView):
         Entries to delete are specified in the request body.
         """
         try:
-            team = Team.objects.get(pk=team_id, members__character__user=request.user, members__lead=True)
+            team = Team.objects.filter(
+                members__character__user=request.user,
+                members__lead=True,
+            ).distinct().get(pk=team_id)
         except (Team.DoesNotExist, ValidationError):
             return Response(status=404)
 
@@ -347,7 +353,10 @@ class LootWithBIS(APIView):
         Any updates sent here will also update Character's BIS Lists
         """
         try:
-            team = Team.objects.get(pk=team_id, members__character__user=request.user, members__lead=True)
+            team = Team.objects.filter(
+                members__character__user=request.user,
+                members__lead=True,
+            ).distinct().get(pk=team_id)
         except (Team.DoesNotExist, ValidationError):
             return Response(status=404)
 

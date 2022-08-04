@@ -5,6 +5,7 @@ type used in the system, without having to add messy code elsewhere
 Also will handle sending info to websockets when we get there
 """
 from __future__ import annotations
+from typing import Optional
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
 from django.contrib.auth.models import User
@@ -13,12 +14,15 @@ from . import models
 CHANNEL_LAYER = get_channel_layer()
 
 
-def _create_notif(user: User, text: str, link: str, type: str):
+def _create_notif(user: Optional[User], text: str, link: str, type: str):
     """
     Actually does the work of creating a Notification (and sending it down the websockets later)
     Also is where the notification settings are checked, we won't save notifications that the User doesn't want
     """
     # First we ensure that the User is set up to receive the notification type
+    if user is None:
+        return
+
     try:
         send = user.settings.notifications[type]
     except (AttributeError, models.Settings.DoesNotExist, KeyError):
@@ -79,6 +83,15 @@ def team_leave(member: models.TeamMember):
     link = f'/team/{team.id}/'
     user = team.members.get(lead=True).character.user
     _create_notif(user, text, link, 'team_leave')
+
+
+def team_proxy_claim(member: models.TeamMember):
+    char = member.character
+    team = member.team
+    text = f'Proxy {char} has been claimed by a user!'
+    link = f'/team/{team.id}/'
+    user = team.members.get(lead=True).character.user
+    _create_notif(user, text, link, 'team_proxy_claim')
 
 
 def team_rename(team: models.Team, new_name: str):

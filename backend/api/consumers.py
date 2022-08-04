@@ -96,10 +96,6 @@ class UpdatesConsumer(WebsocketConsumer):
         """
         payload = {
             'model': 'team',
-            'reloadUrls': [
-                f'/team/{event["id"]}/',
-                f'/team/{event["id"]}/loot/',
-                f'/team/{event["id"]}/settings/',
-            ],
+            'reloadUrls': [f'/team/{event["id"]}/'],
         }
         self.send(text_data=json.dumps(payload))

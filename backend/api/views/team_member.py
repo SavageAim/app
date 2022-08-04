@@ -72,10 +72,12 @@ class TeamMemberResource(APIView):
 
         team = obj.team
 
-        # Check permissions and kick status;
-        # Character owner is making request; valid and is leave request
+        # Check permissions and kick status - Request is valid if;
+        #   - The Team Leader is kicking someone *else* from the Team.
+        #   - Someone themselves is choosing to leave the team.
         kick: bool
-        if obj.character.user.id == request.user.id:
+        # Non Proxy Character attempting to leave
+        if obj.character.user is not None and obj.character.user.id == request.user.id:
             kick = False
         # Team Leader making request; valid and is kick request
         elif obj.team.members.get(lead=True).character.user.id == request.user.id:
@@ -90,4 +92,9 @@ class TeamMemberResource(APIView):
         self._send_to_team(team, {'type': 'team', 'id': str(team.id)})
         for tm in team.members.all():
             self._send_to_user(tm.character.user, {'type': 'character', 'id': tm.character.pk})
+
+        # Special handling for Proxy characters, we should delete them here
+        if obj.character.user is None:
+            obj.character.delete()
+
         return Response(status=204)

@@ -114,6 +114,12 @@
             </div>
             <div class="field">
               <label class="checkbox">
+                <input type="checkbox" v-model="notifications.team_proxy_claim">
+                A Proxy Character in one of your Teams has been claimed by a user.
+              </label>
+            </div>
+            <div class="field">
+              <label class="checkbox">
                 <input type="checkbox" v-model="notifications.team_rename">
                 A Team that one of your Characters is in has been renamed.
               </label>

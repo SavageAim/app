@@ -1,4 +1,4 @@
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 # lib
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
@@ -15,7 +15,10 @@ class APIView(RFView):
     Base class for all views with websocket code handling built in
     """
 
-    def _send_to_user(self, user: User, event: Dict[str, Any]):
+    def _send_to_user(self, user: Optional[User], event: Dict[str, Any]):
+        if user is None:
+            return
+
         if CHANNEL_LAYER is not None:
             async_to_sync(CHANNEL_LAYER.group_send)(f'user-updates-{user.id}', event)
 

@@ -32,7 +32,7 @@ class TeamCollection(APIView):
         Return a list of teams for the User.
         Returns a list of all teams the User has characters in, which can be filtered further by query params
         """
-        objs = Team.objects.filter(members__character__user=request.user).order_by('name')
+        objs = Team.objects.filter(members__character__user=request.user).order_by('name').distinct()
 
         # Filter to a specific character
         character = request.query_params.get('char_id', None)
@@ -86,7 +86,7 @@ class TeamResource(APIView):
         It must be a Team that the requesting user controls a character in, or the request will fail
         """
         try:
-            obj = Team.objects.get(pk=pk, members__character__user=request.user)
+            obj = Team.objects.filter(members__character__user=request.user).distinct().get(pk=pk)
         except (Team.DoesNotExist, ValidationError):
             return Response(status=404)
 
@@ -99,7 +99,7 @@ class TeamResource(APIView):
         This request can only be run by the user whose character is the team lead
         """
         try:
-            obj = Team.objects.get(pk=pk, members__character__user=request.user, members__lead=True)
+            obj = Team.objects.filter(members__character__user=request.user, members__lead=True).distinct().get(pk=pk)
         except (Team.DoesNotExist, ValidationError):
             return Response(status=404)
 
@@ -127,7 +127,7 @@ class TeamResource(APIView):
         Regenerate the Team's token
         """
         try:
-            obj = Team.objects.get(pk=pk, members__character__user=request.user, members__lead=True)
+            obj = Team.objects.filter(members__character__user=request.user, members__lead=True).distinct().get(pk=pk)
         except (Team.DoesNotExist, ValidationError):
             return Response(status=404)
 
@@ -142,7 +142,7 @@ class TeamResource(APIView):
         Notify all non leader members of the Team being disbanded
         """
         try:
-            obj = Team.objects.get(pk=pk, members__character__user=request.user, members__lead=True)
+            obj = Team.objects.filter(members__character__user=request.user, members__lead=True).distinct().get(pk=pk)
         except (Team.DoesNotExist, ValidationError):
             return Response(status=404)
 

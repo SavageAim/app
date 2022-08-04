@@ -53,6 +53,27 @@ def xivapi_lookup(pk: str, token: str, log) -> Optional[str]:
     return 'Could not find the verification code in the Lodestone profile.'
 
 
+def assimilate_proxies(real_char: Character):
+    # Find all Proxy characters that have the same lodestone ID as this one
+    proxies = Character.objects.filter(user__isnull=True, lodestone_id=real_char.lodestone_id)
+
+    # For each Character (which should only ever be in one team each);
+    #   - Notify the Team Leader that the claim has happened
+    #   - Move the BIS List to the real Character, name it using the Team's name
+    #   - Update the TeamMember object to point to this character
+    for char in proxies:
+        for tm in char.teammember_set.all():
+            notifier.team_proxy_claim(tm)
+
+            bis = tm.bis_list
+            bis.owner = real_char
+            bis.name = f'BIS From {tm.team.name}'
+            bis.save()
+
+            tm.character = real_char
+            tm.save()
+
+
 @shared_task(name='verify_character')
 def verify_character(pk: int):
     """
@@ -83,7 +104,10 @@ def verify_character(pk: int):
     obj.verified = True
     obj.save()
 
-    # Next delete all unverified instances of the character
+    # Before we go deleting any Characters, we need to sort all the Proxies that share the lodestone ID
+    assimilate_proxies(obj)
+
+    # Next delete all unverified instances of the character (this includes proxies)
     logger.debug(f'Deleting unverified instances of Character #{obj.lodestone_id} (#{pk}).')
     objs = Character.objects.filter(verified=False, lodestone_id=obj.lodestone_id).exclude(pk=pk)
     logger.debug(f'Found {objs.count()} instances of Character #{obj.lodestone_id} to delete.')
@@ -99,12 +123,12 @@ def verify_character(pk: int):
 @shared_task(name='cleanup')
 def cleanup():
     """
-    Cleanup the DB of all unverified characters made more than 24h ago
+    Cleanup the DB of all unverified (non-proxy) characters made more than 24h ago
     """
     logger.debug(f'Running at: {timezone.now()}')
     older_than = timezone.now() - timedelta(hours=24)
     logger.debug(f'Deleting unverified characters older than {older_than}.')
 
-    objs = Character.objects.filter(verified=False, created__lt=older_than)
+    objs = Character.objects.filter(verified=False, user__isnull=False, created__lt=older_than)
     logger.debug(f'Found {objs.count()} characters. Deleting them.')
     objs.delete()

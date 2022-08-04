@@ -76,6 +76,12 @@ export interface LootBISCreateErrors {
   member_id?: string[]
 }
 
+// Interface for combining errors that come from Proxy Creation / Update
+export interface ProxyCreateErrors {
+  bis: BISListErrors
+  character: CharacterCreateErrors
+}
+
 // Settings errors response
 export interface SettingsErrors {
   theme?: string[]
