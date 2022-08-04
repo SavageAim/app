@@ -6,9 +6,6 @@ from api.models import Gear
 from api.serializers import GearSerializer
 from .test_base import SavageAimTestCase
 
-MAX_ITEM_LEVEL = 635
-MIN_ITEM_LEVEL = 560
-
 
 class GearCollection(SavageAimTestCase):
     """
@@ -20,6 +17,8 @@ class GearCollection(SavageAimTestCase):
         Call the Gear seed command to prepopulate the DB
         """
         call_command('seed', stdout=StringIO())
+        self.max_item_level = Gear.objects.order_by('-item_level').first().item_level
+        self.min_item_level = Gear.objects.order_by('item_level').first().item_level
 
     def test_list(self):
         """
@@ -74,6 +73,5 @@ class GearCollection(SavageAimTestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         content = response.json()
-        # TODO - Change these as needed, hardcoding numbers so I can ensure my logic is right
-        self.assertEqual(content['min'], MIN_ITEM_LEVEL)
-        self.assertEqual(content['max'], MAX_ITEM_LEVEL)
+        self.assertEqual(content['min'], self.min_item_level)
+        self.assertEqual(content['max'], self.max_item_level)
