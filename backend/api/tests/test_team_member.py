@@ -267,6 +267,7 @@ class TeamMemberResource(SavageAimTestCase):
         self.char2.verified = False
         self.char2.save()
         tm2 = self.team.members.create(character=self.char2, bis_list=self.mt_main_bis, lead=False)
+        self.assertIsNotNone(self.char.user)
         # Char 2 is a proxy, now if we kick them they should be deleted entirely
         url = reverse('api:team_member_resource', kwargs={'team_id': self.team.pk, 'pk': tm2.pk})
         self.client.force_authenticate(self.char.user)
@@ -277,6 +278,28 @@ class TeamMemberResource(SavageAimTestCase):
         self.assertEqual(self.team.members.count(), 1)
         with self.assertRaises(Character.DoesNotExist):
             Character.objects.get(pk=self.char2.pk)
+
+    def test_leave_with_proxy(self):
+        """
+        Have one real and one proxy in a Team.
+        Send a request for the real character to leave the team.
+        Ensure that the proxy character is completely deleted along with the Team.
+        """
+        self.char2.user = None
+        self.char2.save()
+        tm2 = self.team.members.create(character=self.char2, bis_list=self.mt_main_bis, lead=False)
+
+        # Part 1 - Have the leader leave the Team, ensure that the Team and all Proxy data are gone
+        url = reverse('api:team_member_resource', kwargs={'team_id': self.team.pk, 'pk': self.tm.pk})
+        self.client.force_authenticate(self.char.user)
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT, response.content)
+
+        with self.assertRaises(Team.DoesNotExist):
+            Team.objects.get(pk=self.team.pk)
+        with self.assertRaises(Character.DoesNotExist):
+            Character.objects.get(pk=self.char2.pk)
+        self.assertTrue(Character.objects.filter(pk=self.char.pk).exists())
 
     def test_404(self):
         """

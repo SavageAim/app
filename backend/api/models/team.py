@@ -31,6 +31,14 @@ class Team(models.Model):
         """
         # Send notification and then delete the object I guess
         notifier.team_disband(self)
+
+        # Clean up any proxy characters
+        for tm in self.members.filter(character__user__isnull=True):
+            char = tm.character
+            tm.delete()
+            char.delete()
+
+        # Wipe the Team from the DB
         self.delete()
 
     @staticmethod
@@ -65,7 +73,7 @@ class Team(models.Model):
         """
         Remove a character from the Team. This comes with some clauses;
             - Firstly, we assume this is called by someone with permission.
-            - If they are the only character, we disband the team instead
+            - If they are the only non-proxy character, we disband the team instead
             - If they are the leader, we pass leader to someone else, including sending the notification
             - Finally, remove the character and send notification
         """
@@ -75,7 +83,17 @@ class Team(models.Model):
 
         char_member = self.members.get(character=char)
         if char_member.lead:
-            self.make_lead(self.members.filter(lead=False, character__user__isnull=False).distinct().first())
+            # Find the first non-proxy non-leader Member in the Team
+            new_lead = self.members.filter(lead=False, character__user__isnull=False).distinct().first()
+
+            # If new_lead is None then there are no more non proxy non leader members
+            # That means the team is empty, so disband
+            if new_lead is None:
+                self.disband()
+                return
+
+            # If not, make them the new leader
+            self.make_lead(new_lead)
 
         if kick:
             notifier.team_kick(char_member)
