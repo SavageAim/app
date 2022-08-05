@@ -29,7 +29,7 @@
           <div class="column">
             <div class="card">
               <div class="card-header">
-                <div class="card-header-title">Select your Character and BIS List</div>
+                <div class="card-header-title">Select a Character and BIS List</div>
               </div>
               <div class="card-content">
                 <TeamMemberForm ref="form" :bis-list-id-errors="errors.bis_list_id" :character-id-errors="errors.character_id" />
@@ -50,6 +50,9 @@
                 <p>These are Characters that are currently managed by the Team.</p>
                 <p>If any of these are yours, just click them to attempt to claim and verify them as such!</p>
                 <hr />
+                <div class="box" v-if="teamProxies.length === 0">
+                  <p>This team has no Proxy Characters, please sign up with one of your own!</p>
+                </div>
                 <a class="box" v-for="proxy in teamProxies" :key="proxy.id" @click="() => { claim(proxy.character) }">
                   <CharacterBio :character="proxy.character" :displayUnverified="false" />
                 </a>
