@@ -93,6 +93,7 @@ class CharacterCollection(SavageAimTestCase):
         data['verified'] = False
         data['user_id'] = self._get_user().id
         data['alias'] = ''
+        data['proxy'] = False
         obj_data = CharacterCollectionSerializer(char).data
         self.assertDictEqual(data, obj_data)
 

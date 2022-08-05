@@ -464,7 +464,8 @@ class TeamResource(SavageAimTestCase):
         Tier ID Invalid: 'Please select a valid Tier.'
         Team Lead Not Sent: 'This field is required.'
         Team Lead Not Int: 'A valid integer is required.'
-        Team Lead Invalid: 'Please select a member of the Team to be the new team lead.'
+        Team Lead Invalid: 'Please select a non-proxy Member of the Team to be the new team lead.'
+        Proxy Team Lead: 'Please select a non-proxy Member of the Team to be the new team lead.'
         """
         user = self._get_user()
         self.client.force_authenticate(user)
@@ -498,7 +499,10 @@ class TeamResource(SavageAimTestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, response.content)
         content = response.json()
         self.assertEqual(content['tier_id'], ['Please select a valid Tier.'])
-        self.assertEqual(content['team_lead'], ['Please select a member of the Team to be the new team lead.'])
+        self.assertEqual(
+            content['team_lead'],
+            ['Please select a non-proxy Member of the Team to be the new team lead.'],
+        )
 
         # Run the team lead test again with a valid character id that isn't on the team
         char = Character.objects.create(
@@ -516,7 +520,51 @@ class TeamResource(SavageAimTestCase):
         response = self.client.put(url, data)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, response.content)
         content = response.json()
-        self.assertEqual(content['team_lead'], ['Please select a member of the Team to be the new team lead.'])
+        self.assertEqual(
+            content['team_lead'],
+            ['Please select a non-proxy Member of the Team to be the new team lead.'],
+        )
+
+        # Make the above Character a Member of the Team, but make them a proxy
+        char.user = None
+        char.save()
+        g = Gear.objects.first()
+        bis = BISList.objects.create(
+            bis_body=g,
+            bis_bracelet=g,
+            bis_earrings=g,
+            bis_feet=g,
+            bis_hands=g,
+            bis_head=g,
+            bis_left_ring=g,
+            bis_legs=g,
+            bis_mainhand=g,
+            bis_necklace=g,
+            bis_offhand=g,
+            bis_right_ring=g,
+            current_body=g,
+            current_bracelet=g,
+            current_earrings=g,
+            current_feet=g,
+            current_hands=g,
+            current_head=g,
+            current_left_ring=g,
+            current_legs=g,
+            current_mainhand=g,
+            current_necklace=g,
+            current_offhand=g,
+            current_right_ring=g,
+            job=Job.objects.first(),
+            owner=char,
+        )
+        self.team.members.create(character=char, bis_list=bis, lead=False)
+        response = self.client.put(url, data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, response.content)
+        content = response.json()
+        self.assertEqual(
+            content['team_lead'],
+            ['Please select a non-proxy Member of the Team to be the new team lead.'],
+        )
 
     def test_delete(self):
         """

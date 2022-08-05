@@ -7,6 +7,7 @@ from .loot import LootCollection, LootWithBIS
 from .notification import NotificationCollection, NotificationResource
 from .team import TeamCollection, TeamResource, TeamInvite, TeamPermissions
 from .team_member import TeamMemberResource
+from .team_proxy import TeamProxyCollection, TeamProxyResource, TeamProxyClaim
 from .tier import TierCollection
 from .user import UserView
 
@@ -39,6 +40,10 @@ __all__ = [
     'TeamPermissions',
 
     'TeamMemberResource',
+
+    'TeamProxyCollection',
+    'TeamProxyResource',
+    'TeamProxyClaim',
 
     'TierCollection',
 

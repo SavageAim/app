@@ -25,13 +25,39 @@
           </div>
         </div>
 
-        <div class="card">
-          <div class="card-header">
-            <div class="card-header-title">Select your Character and BIS List</div>
+        <div class="columns">
+          <div class="column">
+            <div class="card">
+              <div class="card-header">
+                <div class="card-header-title">Select a Character and BIS List</div>
+              </div>
+              <div class="card-content">
+                <TeamMemberForm ref="form" :bis-list-id-errors="errors.bis_list_id" :character-id-errors="errors.character_id" />
+                <button class="button is-success" @click="join">Join!</button>
+              </div>
+            </div>
           </div>
-          <div class="card-content">
-            <TeamMemberForm ref="form" :bis-list-id-errors="errors.bis_list_id" :character-id-errors="errors.character_id" />
-            <button class="button is-success" @click="join">Join!</button>
+
+          <div class="divider is-vertical is-hidden-touch">OR</div>
+          <div class="divider is-hidden-desktop">OR</div>
+
+          <div class="column">
+            <div class="card">
+              <div class="card-header">
+                <div class="card-header-title">Claim a Proxy Character</div>
+              </div>
+              <div class="card-content">
+                <p>These are Characters that are currently managed by the Team.</p>
+                <p>If any of these are yours, just click them to attempt to claim and verify them as such!</p>
+                <hr />
+                <div class="box" v-if="teamProxies.length === 0">
+                  <p>This team has no Proxy Characters, please sign up with one of your own!</p>
+                </div>
+                <a class="box" v-for="proxy in teamProxies" :key="proxy.id" @click="() => { claim(proxy.character) }">
+                  <CharacterBio :character="proxy.character" :displayUnverified="false" />
+                </a>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -41,14 +67,19 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
+import CharacterBio from '@/components/character_bio.vue'
+import ClaimCharacterModal from '@/components/modals/confirmations/claim_character.vue'
 import TeamBio from '@/components/team_bio.vue'
 import TeamMemberForm from '@/components/team/member_form.vue'
+import { Character } from '@/interfaces/character'
 import { TeamCreateResponse, TeamMemberUpdateErrors } from '@/interfaces/responses'
 import Team from '@/interfaces/team'
+import TeamMember from '@/interfaces/team_member'
 import SavageAimMixin from '@/mixins/savage_aim_mixin'
 
 @Component({
   components: {
+    CharacterBio,
     TeamBio,
     TeamMemberForm,
   },
@@ -69,8 +100,17 @@ export default class TeamJoin extends SavageAimMixin {
     return (this.$refs.form as TeamMemberForm).characterId
   }
 
+  get teamProxies(): TeamMember[] {
+    return this.team.members.filter((tm: TeamMember) => tm.character.proxy)
+  }
+
   get url(): string {
     return `/backend/api/team/join/${this.$route.params.id}/`
+  }
+
+  claim(character: Character): void {
+    // Open the modal which will handle it all for us
+    this.$modal.show(ClaimCharacterModal, { details: character, teamId: this.team.id, code: this.team.invite_code })
   }
 
   created(): void {
@@ -136,5 +176,8 @@ export default class TeamJoin extends SavageAimMixin {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
+.columns .divider.is-vertical {
+  margin: 0;
+}
 </style>

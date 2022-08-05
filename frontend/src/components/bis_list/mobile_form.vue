@@ -38,7 +38,7 @@
 
       <div v-if="tabsShown.details">
         <div class="card">
-          <Details :bisList="bisList" :errors="errors" v-on="$listeners" />
+          <Details :bisList="bisList" :char-is-proxy="charIsProxy" :errors="errors" v-on="$listeners" />
         </div>
       </div>
 
@@ -62,7 +62,7 @@
           </div>
         </div>
 
-        <Actions :bisList="bisList" :character="character" :url="url" :method="method" v-on="$listeners" :simple="simpleActions" />
+        <Actions :bisList="bisList" :character="character" :char-is-proxy="charIsProxy" :url="url" :method="method" v-on="$listeners" :simple="simpleActions" />
       </div>
     </div>
   </div>
@@ -101,6 +101,9 @@ export default class BISListMobileForm extends Vue {
 
   @Prop()
   character!: CharacterDetails
+
+  @Prop()
+  charIsProxy!: boolean
 
   @Prop()
   displayOffhand!: boolean
