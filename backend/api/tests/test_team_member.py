@@ -179,6 +179,57 @@ class TeamMemberResource(SavageAimTestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         expected = TeamMemberSerializer(self.tm).data
         self.assertDictEqual(response.json(), expected)
+        self.assertTrue(response.json()['permissions']['loot_manager'])
+        self.assertTrue(response.json()['permissions']['proxy_manager'])
+
+    def test_read_permissions(self):
+        """
+        Check each value of permissions to ensure the correct response is returned from the api
+        """
+        url = reverse('api:team_member_resource', kwargs={'team_id': self.team.pk, 'pk': self.tm.pk})
+        user = self._get_user()
+        self.client.force_authenticate(user)
+        self.tm.lead = False
+        self.tm.permissions = 2
+        self.tm.save()
+
+        expected = {
+            'loot_manager': False,
+            'proxy_manager': True,
+        }
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertDictEqual(response.json()['permissions'], expected)
+
+        self.tm.permissions = 1
+        self.tm.save()
+        expected = {
+            'loot_manager': True,
+            'proxy_manager': False,
+        }
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertDictEqual(response.json()['permissions'], expected)
+
+        self.tm.permissions = 0
+        self.tm.save()
+        expected = {
+            'loot_manager': False,
+            'proxy_manager': False,
+        }
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertDictEqual(response.json()['permissions'], expected)
+
+        self.tm.permissions = 3
+        self.tm.save()
+        expected = {
+            'loot_manager': True,
+            'proxy_manager': True,
+        }
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertDictEqual(response.json()['permissions'], expected)
 
     def test_update(self):
         """
