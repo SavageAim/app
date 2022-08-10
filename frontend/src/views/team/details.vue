@@ -32,7 +32,7 @@
           </router-link>
         </div>
 
-        <TeamMemberCard v-for="tm in team.members" :key="tm.id" :team-id="team.id" :details="tm" :max-item-level="team.tier.max_item_level" :is-lead="editable" v-on:reload="() => { fetchTeam(true) }" />
+        <TeamMemberCard v-for="tm in team.members" :key="tm.id" :team-id="team.id" :details="tm" :max-item-level="team.tier.max_item_level" v-on:reload="() => { fetchTeam(true) }" />
       </div>
     </template>
   </div>
