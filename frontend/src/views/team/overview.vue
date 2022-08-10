@@ -24,14 +24,6 @@
       </div>
 
       <div class="columns is-multiline is-desktop">
-        <!-- TODO - Remove when management page is added -->
-        <div class="column is-full has-text-centered" v-if="editable">
-          <router-link to="./proxies/" class="button is-success">
-            <span class="icon is-small"><i class="material-icons">person_add</i></span>
-            <span>Add Proxy Character</span>
-          </router-link>
-        </div>
-
         <TeamMemberCard v-for="tm in team.members" :key="tm.id" :team-id="team.id" :details="tm" :max-item-level="team.tier.max_item_level" v-on:reload="() => { fetchTeam(true) }" />
       </div>
     </template>
@@ -52,7 +44,7 @@ import SavageAimMixin from '@/mixins/savage_aim_mixin'
     TeamNav,
   },
 })
-export default class TeamView extends SavageAimMixin {
+export default class TeamOverview extends SavageAimMixin {
   loading = true
 
   team!: Team
