@@ -4,6 +4,11 @@
   has_weapon: True
   item_level: 610
   name: 'Crafted'
+- has_accessories: False
+  has_armour: False
+  has_weapon: True
+  item_level: 615
+  name: 'Trial'
 - has_accessories: True
   has_armour: True
   has_weapon: True
