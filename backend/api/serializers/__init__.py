@@ -40,6 +40,7 @@ __all__ = [
 
     'TeamMemberSerializer',
     'TeamMemberModifySerializer',
+    'TeamMemberPermissionsModifySerializer',
 
     'TierSerializer',
 

@@ -39,6 +39,7 @@ __all__ = [
     'TeamInvite',
 
     'TeamMemberResource',
+    'TeamMemberPermissionsResource',
 
     'TeamProxyCollection',
     'TeamProxyResource',

@@ -12,6 +12,7 @@ from .character import CharacterCollectionSerializer
 __all__ = [
     'TeamMemberSerializer',
     'TeamMemberModifySerializer',
+    'TeamMemberPermissionsModifySerializer',
 ]
 
 
@@ -86,3 +87,17 @@ class TeamMemberModifySerializer(serializers.Serializer):
             })
 
         return data
+
+
+class TeamMemberPermissionsModifySerializer(serializers.Serializer):
+    permissions = serializers.IntegerField()
+
+    def validate_permissions(self, permissions: int) -> int:
+        """
+        Ensure that the permissions value is within the allowed range of integers for permissions
+        """
+        upper_bound = sum(TeamMember.PERMISSION_FLAGS.values())
+        if permissions < 0 or permissions > upper_bound:
+            raise serializers.ValidationError('Invalid permissions value, this is more than likely a server error.')
+
+        return permissions

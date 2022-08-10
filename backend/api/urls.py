@@ -35,6 +35,11 @@ urlpatterns = [
     path('team/', views.TeamCollection.as_view(), name='team_collection'),
     path('team/<str:pk>/', views.TeamResource.as_view(), name='team_resource'),
     path('team/<str:team_id>/member/<int:pk>/', views.TeamMemberResource.as_view(), name='team_member_resource'),
+    path(
+        'team/<str:team_id>/member/<int:pk>/permissions/',
+        views.TeamMemberPermissionsResource.as_view(),
+        name='team_member_permissions',
+    ),
     path('team/join/<str:invite_code>/', views.TeamInvite.as_view(), name='team_invite'),
 
     # Team Proxy

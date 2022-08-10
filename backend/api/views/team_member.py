@@ -13,10 +13,11 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 # local
 from .base import APIView
-from api.models import TeamMember
+from api.models import Team, TeamMember
 from api.serializers import (
     TeamMemberSerializer,
     TeamMemberModifySerializer,
+    TeamMemberPermissionsModifySerializer,
 )
 
 
@@ -96,5 +97,36 @@ class TeamMemberResource(APIView):
         # Special handling for Proxy characters, we should delete them here
         if obj.character.user is None:
             obj.character.delete()
+
+        return Response(status=204)
+
+
+class TeamMemberPermissionsResource(APIView):
+    """
+    Allow for the updating of Team Member permissions by the Team Lead
+    """
+
+    def put(self, request: Request, team_id: str, pk: id) -> Response:
+        """
+        Update a pre-existing Team Member object, potentially changing both the linked character and bis list
+        """
+        try:
+            # Make sure the user in question is the Team Leader
+            team = Team.objects.filter(members__character__user=request.user, members__lead=True).distinct().get(pk=pk)
+            # Attempt to get a valid member of the specified Team
+            obj = team.members.get(pk=pk)
+        except (Team.DoesNotExist, TeamMember.DoesNotExist, ValidationError):
+            return Response(status=404)
+
+        serializer = TeamMemberPermissionsModifySerializer(instance=obj, data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        obj.permissions = serializer.validated_data['permissions']
+        obj.save()
+
+        # Websocket stuff
+        self._send_to_team(obj.team, {'type': 'team', 'id': str(obj.team.id)})
+        for tm in obj.team.members.all():
+            self._send_to_user(tm.character.user, {'type': 'character', 'id': tm.character.pk})
 
         return Response(status=204)
