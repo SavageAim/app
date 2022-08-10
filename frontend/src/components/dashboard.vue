@@ -58,7 +58,7 @@
 <script lang="ts">
 import { Component } from 'vue-property-decorator'
 import CharacterBio from '@/components/character_bio.vue'
-import TeamBio from '@/components/team_bio.vue'
+import TeamBio from '@/components/team/bio.vue'
 import { Character } from '@/interfaces/character'
 import Team from '@/interfaces/team'
 import SavageAimMixin from '@/mixins/savage_aim_mixin'

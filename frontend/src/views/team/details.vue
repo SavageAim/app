@@ -18,7 +18,7 @@
 
         <div class="level-right">
           <div class="level-item">
-            <TeamNav :editable="editable" />
+            <TeamNav :is-lead="editable" />
           </div>
         </div>
       </div>
@@ -32,7 +32,7 @@
           </router-link>
         </div>
 
-        <TeamMemberCard v-for="tm in team.members" :key="tm.id" :team-id="team.id" :details="tm" :max-item-level="team.tier.max_item_level" :editable="editable" v-on:reload="() => { fetchTeam(true) }" />
+        <TeamMemberCard v-for="tm in team.members" :key="tm.id" :team-id="team.id" :details="tm" :max-item-level="team.tier.max_item_level" :is-lead="editable" v-on:reload="() => { fetchTeam(true) }" />
       </div>
     </template>
   </div>
@@ -40,8 +40,8 @@
 
 <script lang="ts">
 import { Component } from 'vue-property-decorator'
-import TeamMemberCard from '@/components/team_member_card.vue'
-import TeamNav from '@/components/team_nav.vue'
+import TeamMemberCard from '@/components/team/member_card.vue'
+import TeamNav from '@/components/team/nav.vue'
 import Team from '@/interfaces/team'
 import TeamMember from '@/interfaces/team_member'
 import SavageAimMixin from '@/mixins/savage_aim_mixin'

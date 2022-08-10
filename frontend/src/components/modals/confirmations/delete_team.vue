@@ -28,7 +28,7 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
-import TeamBio from '@/components/team_bio.vue'
+import TeamBio from '@/components/team/bio.vue'
 import Team from '@/interfaces/team'
 
 @Component({

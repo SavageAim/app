@@ -18,7 +18,7 @@
 
         <div class="level-right">
           <div class="level-item">
-            <TeamNav :editable="editable" />
+            <TeamNav :is-lead="editable" />
           </div>
         </div>
       </div>
@@ -63,10 +63,10 @@
               <p>Below are the people that need the chosen item for their Team BIS.</p>
               <p v-if="editable">Clicking the button beside anyone will add a Loot entry, and update their BIS List accordingly (where possible).</p>
               <template v-if="displayItem.indexOf('augment') !== -1">
-                <NeedTomeItemBox :editable="editable" :items-received="getNeedReceived(entry)" :entry="entry" :requesting="requesting" v-for="entry in loot.gear[displayItem].need" :key="entry.character_id" v-on:save="() => { giveNeedTomeLoot(entry) }" />
+                <NeedTomeItemBox :is-lead="editable" :items-received="getNeedReceived(entry)" :entry="entry" :requesting="requesting" v-for="entry in loot.gear[displayItem].need" :key="entry.character_id" v-on:save="() => { giveNeedTomeLoot(entry) }" />
               </template>
               <template v-else-if="displayItem !== 'na'">
-                <NeedRaidItemBox :editable="editable" :items-received="getNeedReceived(entry)" :entry="entry" :requesting="requesting" v-for="entry in loot.gear[displayItem].need" :key="entry.character_id" v-on:save="() => { giveNeedRaidLoot(entry) }" />
+                <NeedRaidItemBox :is-lead="editable" :items-received="getNeedReceived(entry)" :entry="entry" :requesting="requesting" v-for="entry in loot.gear[displayItem].need" :key="entry.character_id" v-on:save="() => { giveNeedRaidLoot(entry) }" />
               </template>
             </div>
           </div>
@@ -89,7 +89,7 @@
                   v-for="entry in loot.gear[displayItem].greed"
                   :key="`greed-${entry.member_id}`"
 
-                  :editable="editable"
+                  :is-lead="editable"
                   :items-received="getGreedReceived(entry)"
                   :entry="entry"
                   :requesting="requesting"
@@ -124,7 +124,7 @@ import History from '@/components/loot/history.vue'
 import ItemDropdown from '@/components/item_dropdown.vue'
 import NeedRaidItemBox from '@/components/loot/need_raid_item_box.vue'
 import NeedTomeItemBox from '@/components/loot/need_tome_item_box.vue'
-import TeamNav from '@/components/team_nav.vue'
+import TeamNav from '@/components/team/nav.vue'
 import {
   GreedGear,
   GreedItem,

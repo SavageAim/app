@@ -39,7 +39,7 @@
         </span>
       </router-link>
     </p>
-    <p class="control" v-if="editable">
+    <p class="control" v-if="isLead">
       <router-link :to="settingsUrl" class="button is-link" :class="{ 'is-outlined': !isActive(settingsUrl) }">
         <div class="icon-text is-hidden-touch">
           <span class="icon is-small">
@@ -61,7 +61,7 @@ import { Component, Prop, Vue } from 'vue-property-decorator'
 @Component
 export default class TeamNav extends Vue {
   @Prop()
-  editable!: boolean
+  isLead!: boolean
 
   get mainUrl(): string {
     return `/team/${this.$route.params.id}/`

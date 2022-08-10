@@ -18,7 +18,7 @@
 
         <div class="level-right">
           <div class="level-item">
-            <TeamNav :editable="editable" />
+            <TeamNav :is-lead="editable" />
           </div>
         </div>
       </div>
@@ -89,7 +89,7 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import TeamNav from '@/components/team_nav.vue'
+import TeamNav from '@/components/team/nav.vue'
 import DeleteTeam from '@/components/modals/confirmations/delete_team.vue'
 import { TeamUpdateErrors } from '@/interfaces/responses'
 import Team from '@/interfaces/team'
