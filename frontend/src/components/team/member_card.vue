@@ -5,7 +5,7 @@
         <div class="card-header-title">
           <span class="icon-text">
             <span class="icon is-hidden-touch" v-if="details.lead"><img src="/party_lead.png" alt="Team Lead" title="Team Lead" width="24" height="24" /></span>
-            <span class="icon is-hidden-touch" v-if="details.character.proxy"><img src="/proxy.png" alt="Proxy Character" title="Proxy Character" width="24" height="24" /></span>
+            <span class="icon is-hidden-touch" v-else-if="details.character.proxy"><img src="/proxy.png" alt="Proxy Character" title="Proxy Character" width="24" height="24" /></span>
             <span class="icon is-hidden-touch" v-else><img src="/party_member.png" alt="Team Member" title="Team Member" width="24" height="24" /></span>
             <span>{{ details.name }}</span>
           </span>
