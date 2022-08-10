@@ -25,7 +25,7 @@ class TeamMember(models.Model):
         ordering = ['-bis_list__job__role', 'bis_list__job__ordering']
         unique_together = ['character', 'team']
 
-    def check_permission(self, permission: str) -> bool:
+    def has_permission(self, permission: str) -> bool:
         """
         Given a permission name to check, see if this member has permission for it
         """

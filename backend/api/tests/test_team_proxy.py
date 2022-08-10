@@ -148,6 +148,11 @@ class TeamProxyCollection(SavageAimTestCase):
         user = self._get_user()
         self.client.force_authenticate(user)
 
+        # Test as a non-lead with permission, should still get 400s instead of 404s
+        self.tm.lead = False
+        self.tm.permissions = 3
+        self.tm.save()
+
         # Test sending nothing, ensure both dicts are full
         response = self.client.post(url)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
@@ -223,8 +228,9 @@ class TeamProxyCollection(SavageAimTestCase):
         self.assertEqual(self.client.post(url).status_code, status.HTTP_404_NOT_FOUND)
 
         url = reverse('api:team_proxy_collection', kwargs={'team_id': self.team.id})
-        # Check update as non-team lead
+        # Check update as non-team lead without permission
         self.tm.lead = False
+        self.tm.permissions = 1
         self.tm.save()
         response = self.client.post(url)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND, response.content)
