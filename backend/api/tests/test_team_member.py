@@ -330,6 +330,73 @@ class TeamMemberResource(SavageAimTestCase):
         with self.assertRaises(Character.DoesNotExist):
             Character.objects.get(pk=self.char2.pk)
 
+    def test_delete_proxy_with_permission(self):
+        """
+        Make a Proxy character to ensure they can be kicked and will be deleted
+        Run this test as a non lead user with the proxy manager permission
+        """
+        self.char2.user = None
+        self.char2.verified = False
+        self.char2.save()
+        tm2 = self.team.members.create(character=self.char2, bis_list=self.mt_main_bis, lead=False)
+        self.assertIsNotNone(self.char.user)
+
+        # Create a non lead user that has permission to use proxy manager
+        char3 = Character.objects.create(
+            avatar_url='https://img.savageaim.com/abcde',
+            lodestone_id=1234567890,
+            user=self._create_user(),
+            name='Main Tank',
+            verified=True,
+            world='Lich',
+        )
+
+        # Next, create two BIS lists for each character
+        raid_weapon = Gear.objects.get(item_level=605, name='Asphodelos')
+        raid_gear = Gear.objects.get(item_level=600, has_weapon=False)
+        tome_gear = Gear.objects.get(item_level=600, has_weapon=True)
+        crafted = Gear.objects.get(name='Classical')
+        bis = BISList.objects.create(
+            bis_body=raid_gear,
+            bis_bracelet=raid_gear,
+            bis_earrings=raid_gear,
+            bis_feet=raid_gear,
+            bis_hands=tome_gear,
+            bis_head=tome_gear,
+            bis_left_ring=tome_gear,
+            bis_legs=tome_gear,
+            bis_mainhand=raid_weapon,
+            bis_necklace=tome_gear,
+            bis_offhand=raid_weapon,
+            bis_right_ring=raid_gear,
+            current_body=crafted,
+            current_bracelet=crafted,
+            current_earrings=crafted,
+            current_feet=crafted,
+            current_hands=crafted,
+            current_head=crafted,
+            current_left_ring=crafted,
+            current_legs=crafted,
+            current_mainhand=crafted,
+            current_necklace=crafted,
+            current_offhand=crafted,
+            current_right_ring=crafted,
+            job_id='SGE',
+            owner=char3,
+        )
+        self.team.members.create(character=char3, bis_list=bis, lead=False, permissions=3)
+
+        # Ensure deletion still works
+        url = reverse('api:team_member_resource', kwargs={'team_id': self.team.pk, 'pk': tm2.pk})
+        self.client.force_authenticate(char3.user)
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT, response.content)
+
+        self.team.refresh_from_db()
+        self.assertEqual(self.team.members.count(), 2)
+        with self.assertRaises(Character.DoesNotExist):
+            Character.objects.get(pk=self.char2.pk)
+
     def test_leave_with_proxy(self):
         """
         Have one real and one proxy in a Team.
@@ -362,6 +429,7 @@ class TeamMemberResource(SavageAimTestCase):
 
         Delete specific:
         - User isn't team leader
+        - Attempt to delete proxy without valid credentials
         """
         user = self._get_user()
         self.client.force_authenticate(user)
@@ -381,6 +449,13 @@ class TeamMemberResource(SavageAimTestCase):
         url = reverse('api:team_member_resource', kwargs={'team_id': self.team.pk, 'pk': self.tm.pk})
         self.assertEqual(self.client.get(url).status_code, status.HTTP_404_NOT_FOUND)
         self.assertEqual(self.client.put(url).status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(self.client.delete(url).status_code, status.HTTP_404_NOT_FOUND)
+
+        self.char2.user = None
+        self.char2.verified = False
+        self.char2.save()
+        tm2 = self.team.members.create(character=self.char2, bis_list=self.mt_main_bis, lead=False)
+        url = reverse('api:team_member_resource', kwargs={'team_id': self.team.pk, 'pk': tm2.pk})
         self.assertEqual(self.client.delete(url).status_code, status.HTTP_404_NOT_FOUND)
 
 

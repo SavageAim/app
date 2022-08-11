@@ -74,18 +74,34 @@ class TeamMemberResource(APIView):
         team = obj.team
 
         # Check permissions and kick status - Request is valid if;
+        #   - Anyone with the Proxy Manager permission is kicking a proxy
         #   - The Team Leader is kicking someone *else* from the Team.
         #   - Someone themselves is choosing to leave the team.
         kick: bool
-        # Non Proxy Character attempting to leave
-        if obj.character.user is not None and obj.character.user.id == request.user.id:
-            kick = False
-        # Team Leader making request; valid and is kick request
-        elif obj.team.members.get(lead=True).character.user.id == request.user.id:
+
+        # Branch off between a targeted Proxy Character vs non-Proxy
+        if obj.character.user is None:
+            # Proxy Character being kicked, check requesting user's permissions
             kick = True
-        # If anything else, return a 404
+            user_members = obj.team.members.filter(character__user=request.user)
+            valid = False
+            for member in user_members:
+                if member.has_permission('proxy_manager'):
+                    valid = True
+                    break
+            if not valid:
+                return Response(status=404)
         else:
-            return Response(status=404)
+            # The character in question is not a Proxy so handle the permissions as before
+            if obj.character.user is not None and obj.character.user.id == request.user.id:
+                # Non Proxy Character attempting to leave
+                kick = False
+            elif obj.team.members.get(lead=True).character.user.id == request.user.id:
+                # Team Leader making request; valid and is kick request
+                kick = True
+            else:
+                # If anything else, return a 404
+                return Response(status=404)
 
         obj.team.remove_character(obj.character, kick)
 
