@@ -66,6 +66,7 @@ class Team(models.Model):
         curr_lead.lead = False
         curr_lead.save()
         new_lead.lead = True
+        new_lead.permissions = 0
         new_lead.save()
         notifier.team_lead(new_lead.character, self)
 
