@@ -602,7 +602,7 @@ class TeamProxyClaim(SavageAimTestCase):
         self.assertEqual(self.client.post(url).status_code, status.HTTP_404_NOT_FOUND)
 
         # Specified character doesn't exist
-        url = reverse('api:team_proxy_claim', kwargs={'team_id': self.team.pk, 'pk': 9999999999999999999999999})
+        url = reverse('api:team_proxy_claim', kwargs={'team_id': self.team.pk, 'pk': 999999})
         response = self.client.post(url, {'invite_code': self.team.invite_code})
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
