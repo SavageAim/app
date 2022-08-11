@@ -426,7 +426,7 @@ class TeamProxyResource(SavageAimTestCase):
         self.assertEqual(self.client.get(url).status_code, status.HTTP_404_NOT_FOUND)
         self.assertEqual(self.client.put(url).status_code, status.HTTP_404_NOT_FOUND)
 
-        url = reverse('api:team_proxy_resource', kwargs={'team_id': self.team.pk, 'pk': 999999999999999999})
+        url = reverse('api:team_proxy_resource', kwargs={'team_id': self.team.pk, 'pk': 9999999})
         # Check as team lead
         self.assertEqual(self.client.get(url).status_code, status.HTTP_404_NOT_FOUND)
         self.assertEqual(self.client.put(url).status_code, status.HTTP_404_NOT_FOUND)
