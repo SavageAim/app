@@ -13,7 +13,7 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 # local
 from .base import APIView
-from api.models import Team, TeamMember
+from api.models import TeamMember
 from api.serializers import (
     TeamMemberSerializer,
     TeamMemberModifySerializer,
