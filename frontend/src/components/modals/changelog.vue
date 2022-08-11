@@ -54,6 +54,7 @@
         </ul>
       </p>
       <p>Fixed issue where Team Leaders would have both the Leader and Member icon displayed in the Overview page.</p>
+      <p>Fixed issue where live reloading wasn't happening when intended.</p>
 
     </div>
   </div>
