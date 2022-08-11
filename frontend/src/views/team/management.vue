@@ -120,6 +120,7 @@ export default class TeamManagement extends TeamViewMixin {
   }
 
   async load(): Promise<void> {
+    console.log('loading from websocket packet')
     this.fetchTeam(true)
   }
 }

@@ -28,7 +28,7 @@ import KickFromTeam from '@/components/modals/confirmations/kick_from_team.vue'
 import TeamMember from '@/interfaces/team_member'
 
 @Component
-export default class TeamMemberManager extends Vue {
+export default class ProxyMemberManager extends Vue {
   @Prop()
   member!: TeamMember
 

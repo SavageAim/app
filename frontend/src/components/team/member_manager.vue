@@ -21,7 +21,7 @@
       </div>
     </div>
     <div class="buttons is-grouped" v-if="userIsLead && !member.lead">
-      <button class="button is-primary is-outlined is-fullwidth">
+      <button class="button is-primary is-outlined is-fullwidth" @click="editPermissions">
         <span>Edit Permissions</span>
       </button>
       <button class="button is-danger is-outlined is-fullwidth" @click="kick">
@@ -34,6 +34,7 @@
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
 import KickFromTeam from '@/components/modals/confirmations/kick_from_team.vue'
+import Permissions from '@/components/modals/permissions.vue'
 import TeamMember from '@/interfaces/team_member'
 
 @Component
@@ -43,6 +44,10 @@ export default class TeamMemberManager extends Vue {
 
   @Prop()
   member!: TeamMember
+
+  editPermissions(): void {
+    this.$modal.show(Permissions, { member: this.member, teamId: this.$route.params.id }, { }, { closed: () => { this.$emit('reload') } })
+  }
 
   kick(): void {
     this.$modal.show(KickFromTeam, { details: this.member, teamId: this.$route.params.id }, { }, { closed: () => { this.$emit('reload') } })
