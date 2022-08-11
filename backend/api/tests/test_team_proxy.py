@@ -585,18 +585,30 @@ class TeamProxyClaim(SavageAimTestCase):
         """
         Test the cases that cause a 404 to be returned;
 
-        - ID doesn't exist
-        - Request from someone who doesn't have a character in the Team
-        - Update request from someone who doesn't have a character in the Team
-        - Update request from someone that isn't the team lead
+        - Team ID doesn't exist
+        - Invalid invite code
+        - Specified character doesn't exist
+        - Specified character isn't a proxy
         """
         user = self._get_user()
         self.client.force_authenticate(user)
 
-        # ID doesn't exist
-        url = reverse('api:team_proxy_claim', kwargs={'team_id': 'abcde-abcde-abcde-abcde', 'pk': 1})
+        # Team ID doesn't exist
+        url = reverse('api:team_proxy_claim', kwargs={'team_id': 'abcde-abcde-abcde-abcde', 'pk': self.proxy.pk})
         self.assertEqual(self.client.post(url).status_code, status.HTTP_404_NOT_FOUND)
 
-        url = reverse('api:team_proxy_claim', kwargs={'team_id': self.team.pk, 'pk': 999999999999999999})
-        # Check as team lead
+        # Invalid invite code
+        url = reverse('api:team_proxy_claim', kwargs={'team_id': self.team.pk, 'pk': self.proxy.pk})
         self.assertEqual(self.client.post(url).status_code, status.HTTP_404_NOT_FOUND)
+
+        # Specified character doesn't exist
+        url = reverse('api:team_proxy_claim', kwargs={'team_id': self.team.pk, 'pk': 9999999999999999999999999})
+        response = self.client.post(url, {'invite_code': self.team.invite_code})
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+        # Specified character isn't a proxy
+        self.proxy.user = self._create_user()
+        self.proxy.save()
+        url = reverse('api:team_proxy_claim', kwargs={'team_id': self.team.pk, 'pk': self.proxy.pk})
+        response = self.client.post(url, {'invite_code': self.team.invite_code})
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)

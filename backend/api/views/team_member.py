@@ -110,13 +110,20 @@ class TeamMemberPermissionsResource(APIView):
         """
         Update a pre-existing Team Member object, potentially changing both the linked character and bis list
         """
+        # Make sure the user in question is the Team Leader
+        team = self._get_team_as_leader(request, team_id)
+        if team is None:
+            return Response(status=404)
+
         try:
-            # Make sure the user in question is the Team Leader
-            team = Team.objects.filter(members__character__user=request.user, members__lead=True).distinct().get(pk=pk)
             # Attempt to get a valid member of the specified Team
             obj = team.members.get(pk=pk)
-        except (Team.DoesNotExist, TeamMember.DoesNotExist, ValidationError):
+        except (TeamMember.DoesNotExist, ValidationError):
             return Response(status=404)
+
+        # Silently return for leader since their permissions shouldn't be updated
+        if obj.lead:
+            return Response(status=204)
 
         serializer = TeamMemberPermissionsModifySerializer(instance=obj, data=request.data)
         serializer.is_valid(raise_exception=True)

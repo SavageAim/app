@@ -18,6 +18,32 @@ class APIView(RFView):
     Base class for all views with extra handling built in
     """
 
+    def _get_team_as_leader(self, request: Request, team_id: str) -> Optional[Team]:
+        """
+        Given a team id, check if the request to use a Team Leader restricted API method is valid
+        """
+        try:
+            team = Team.objects.get(pk=team_id)
+        except (Team.DoesNotExist, ValidationError):
+            return None
+
+        # Check Team Member permissions
+        try:
+            # Handling multiple members per character
+            members = team.members.filter(character__user=request.user)
+            valid = False
+            for member in members:
+                if member.lead:
+                    valid = True
+                    break
+
+            if not valid:
+                raise InvalidMemberPermissionsError()
+        except (TeamMember.DoesNotExist, InvalidMemberPermissionsError):
+            return None
+
+        return team
+
     def _get_team_with_permission(self, request: Request, team_id: str, permission: str) -> Optional[Team]:
         """
         Given a Team ID, check if the request to use a restricted command is allowed
