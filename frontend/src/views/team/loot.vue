@@ -18,7 +18,7 @@
 
         <div class="level-right">
           <div class="level-item">
-            <TeamNav :is-lead="editable" />
+            <TeamNav :is-lead="userIsTeamLead" />
           </div>
         </div>
       </div>
@@ -61,12 +61,12 @@
             </div>
             <div class="card-content">
               <p>Below are the people that need the chosen item for their Team BIS.</p>
-              <p v-if="editable">Clicking the button beside anyone will add a Loot entry, and update their BIS List accordingly (where possible).</p>
+              <p v-if="userHasLootManagerPermission">Clicking the button beside anyone will add a Loot entry, and update their BIS List accordingly (where possible).</p>
               <template v-if="displayItem.indexOf('augment') !== -1">
-                <NeedTomeItemBox :is-lead="editable" :items-received="getNeedReceived(entry)" :entry="entry" :requesting="requesting" v-for="entry in loot.gear[displayItem].need" :key="entry.character_id" v-on:save="() => { giveNeedTomeLoot(entry) }" />
+                <NeedTomeItemBox :user-has-permission="userHasLootManagerPermission" :items-received="getNeedReceived(entry)" :entry="entry" :requesting="requesting" v-for="entry in loot.gear[displayItem].need" :key="entry.character_id" v-on:save="() => { giveNeedTomeLoot(entry) }" />
               </template>
               <template v-else-if="displayItem !== 'na'">
-                <NeedRaidItemBox :is-lead="editable" :items-received="getNeedReceived(entry)" :entry="entry" :requesting="requesting" v-for="entry in loot.gear[displayItem].need" :key="entry.character_id" v-on:save="() => { giveNeedRaidLoot(entry) }" />
+                <NeedRaidItemBox :user-has-permission="userHasLootManagerPermission" :items-received="getNeedReceived(entry)" :entry="entry" :requesting="requesting" v-for="entry in loot.gear[displayItem].need" :key="entry.character_id" v-on:save="() => { giveNeedRaidLoot(entry) }" />
               </template>
             </div>
           </div>
@@ -82,14 +82,14 @@
             </div>
             <div class="card-content">
               <p>Below are the people that need the chosen item for any other BIS they have, grouped by character.</p>
-              <p v-if="editable">Clicking the button beside anyone will add a Loot entry, and update their BIS List accordingly (where possible).</p>
+              <p v-if="userHasLootManagerPermission">Clicking the button beside anyone will add a Loot entry, and update their BIS List accordingly (where possible).</p>
 
               <template v-if="displayItem !== 'na'">
                 <GreedCharacterEntry
                   v-for="entry in loot.gear[displayItem].greed"
                   :key="`greed-${entry.member_id}`"
 
-                  :is-lead="editable"
+                  :user-has-permission="userHasLootManagerPermission"
                   :items-received="getGreedReceived(entry)"
                   :entry="entry"
                   :requesting="requesting"
@@ -110,6 +110,7 @@
           :requesting="requesting"
           :team="team"
           :url="url"
+          :user-has-permission="userHasLootManagerPermission"
         />
       </div>
     </template>
@@ -140,7 +141,7 @@ import {
 import { LootCreateErrors, LootBISCreateErrors } from '@/interfaces/responses'
 import Team from '@/interfaces/team'
 import TeamMember from '@/interfaces/team_member'
-import SavageAimMixin from '@/mixins/savage_aim_mixin'
+import TeamViewMixin from '@/mixins/team_view_mixin'
 
 @Component({
   components: {
@@ -152,7 +153,7 @@ import SavageAimMixin from '@/mixins/savage_aim_mixin'
     TeamNav,
   },
 })
-export default class TeamLoot extends SavageAimMixin {
+export default class TeamLoot extends TeamViewMixin {
   bisLootErrors: LootBISCreateErrors = {}
 
   displayItem = 'na'
@@ -164,11 +165,6 @@ export default class TeamLoot extends SavageAimMixin {
   requesting = false
 
   team!: Team
-
-  // Flag stating whether the currently logged user can edit the Team
-  get editable(): boolean {
-    return this.team.members.find((teamMember: TeamMember) => teamMember.character.user_id === this.$store.state.user.id)?.lead ?? false
-  }
 
   get url(): string {
     return `/backend/api/team/${this.$route.params.id}/loot/`

@@ -18,7 +18,7 @@
 
         <div class="level-right">
           <div class="level-item">
-            <TeamNav :is-lead="isLead" />
+            <TeamNav :is-lead="userIsTeamLead" />
           </div>
         </div>
       </div>
@@ -31,7 +31,7 @@
               <div class="card-header-title">Team Members</div>
             </div>
             <div class="card-content">
-              <TeamMemberManager :member="member" :is-lead="isLead" :permissions="randomPermissions()" v-for="member in realMembers" :key="member.id" />
+              <TeamMemberManager :member="member" :user-is-lead="userIsTeamLead" v-for="member in realMembers" :key="member.id" />
             </div>
           </div>
         </div>
@@ -41,7 +41,7 @@
             <div class="card-header">
               <div class="card-header-title">Proxy Characters</div>
               <!-- Replace with check for the perm -->
-              <div class="card-header-icon" v-if="isLead">
+              <div class="card-header-icon" v-if="userHasProxyManagerPermission">
                 <button class="button is-small is-success">
                   <span>Add New</span>
                 </button>
@@ -57,7 +57,7 @@
                   </div>
                   <div class="level-right">
                     <div class="level-item">
-                      <div class="buttons is-grouped" v-if="isLead">
+                      <div class="buttons is-grouped" v-if="userHasProxyManagerPermission">
                         <button class="button is-primary is-outlined">
                           <span>Edit BIS List</span>
                         </button>
@@ -83,7 +83,7 @@ import TeamMemberManager from '@/components/team/member_manager.vue'
 import TeamNav from '@/components/team/nav.vue'
 import Team from '@/interfaces/team'
 import TeamMember from '@/interfaces/team_member'
-import SavageAimMixin from '@/mixins/savage_aim_mixin'
+import TeamViewMixin from '@/mixins/team_view_mixin'
 
 @Component({
   components: {
@@ -91,15 +91,10 @@ import SavageAimMixin from '@/mixins/savage_aim_mixin'
     TeamNav,
   },
 })
-export default class TeamView extends SavageAimMixin {
+export default class TeamManagement extends TeamViewMixin {
   loading = true
 
   team!: Team
-
-  // Flag stating whether the currently logged user is the leader
-  get isLead(): boolean {
-    return this.team.members.find((teamMember: TeamMember) => teamMember.character.user_id === this.$store.state.user.id)?.lead ?? false
-  }
 
   get realMembers(): TeamMember[] {
     return this.team.members.filter((tm: TeamMember) => !tm.character.proxy)

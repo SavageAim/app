@@ -18,7 +18,7 @@
 
         <div class="level-right">
           <div class="level-item">
-            <TeamNav :is-lead="editable" />
+            <TeamNav :is-lead="userIsTeamLead" />
           </div>
         </div>
       </div>
@@ -94,14 +94,14 @@ import DeleteTeam from '@/components/modals/confirmations/delete_team.vue'
 import { TeamUpdateErrors } from '@/interfaces/responses'
 import Team from '@/interfaces/team'
 import TeamMember from '@/interfaces/team_member'
-import SavageAimMixin from '@/mixins/savage_aim_mixin'
+import TeamViewMixin from '@/mixins/team_view_mixin'
 
 @Component({
   components: {
     TeamNav,
   },
 })
-export default class TeamSettings extends SavageAimMixin {
+export default class TeamSettings extends TeamViewMixin {
   errors: TeamUpdateErrors = {}
 
   firstLoad = true
@@ -111,11 +111,6 @@ export default class TeamSettings extends SavageAimMixin {
   teamLeadId!: number
 
   team!: Team
-
-  // Flag stating whether the currently logged user can edit the Team
-  editable(): boolean {
-    return this.team.members.find((teamMember: TeamMember) => teamMember.character.user_id === this.$store.state.user.id)?.lead ?? false
-  }
 
   get inviteUrl(): string {
     return `${process.env.VUE_APP_URL}/team/join`
@@ -132,7 +127,7 @@ export default class TeamSettings extends SavageAimMixin {
 
   checkPermissions(displayWarning: boolean): void {
     // Ensure that the person on this page is the team leader and not anybody else
-    if (!this.editable()) {
+    if (!this.userIsTeamLead) {
       this.$router.push(`/team/${this.$route.params.id}/`, () => {
         if (displayWarning) Vue.notify({ text: 'Only the team leader can edit a Team\'s settings.', type: 'is-warning' })
       })

@@ -13,14 +13,14 @@
               <span class="tag is-primary">Leader</span>
             </template>
             <template v-else>
-              <span class="tag is-info" v-if="lootManager">Loot Manager</span>
-              <span class="tag is-info" v-if="proxyManager">Proxy Manager</span>
+              <span class="tag is-info" v-if="member.permissions.loot_manager">Loot Manager</span>
+              <span class="tag is-info" v-if="member.permissions.proxy_manager">Proxy Manager</span>
             </template>
           </div>
         </div>
       </div>
     </div>
-    <div class="buttons is-grouped" v-if="isLead && !member.lead">
+    <div class="buttons is-grouped" v-if="userIsLead && !member.lead">
       <button class="button is-primary is-outlined is-fullwidth">
         <span>Edit Permissions</span>
       </button>
@@ -38,23 +38,10 @@ import TeamMember from '@/interfaces/team_member'
 @Component
 export default class TeamMemberManager extends Vue {
   @Prop()
-  isLead!: boolean
+  userIsLead!: boolean
 
   @Prop()
   member!: TeamMember
-
-  @Prop()
-  permissions!: number
-
-  get lootManager(): boolean {
-    // Determine if the character can use the loot manager (1st bit of the permission number)
-    return (this.permissions & 1) === 1
-  }
-
-  get proxyManager(): boolean {
-    // Determine if the character can manage proxies (2nd bit of the permission number)
-    return (this.permissions & 2) === 2
-  }
 }
 </script>
 

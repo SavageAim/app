@@ -18,7 +18,7 @@
 
         <div class="level-right">
           <div class="level-item">
-            <TeamNav :is-lead="editable" />
+            <TeamNav :is-lead="userIsTeamLead" />
           </div>
         </div>
       </div>
@@ -36,7 +36,7 @@ import TeamMemberCard from '@/components/team/member_card.vue'
 import TeamNav from '@/components/team/nav.vue'
 import Team from '@/interfaces/team'
 import TeamMember from '@/interfaces/team_member'
-import SavageAimMixin from '@/mixins/savage_aim_mixin'
+import TeamViewMixin from '@/mixins/team_view_mixin'
 
 @Component({
   components: {
@@ -44,15 +44,10 @@ import SavageAimMixin from '@/mixins/savage_aim_mixin'
     TeamNav,
   },
 })
-export default class TeamOverview extends SavageAimMixin {
+export default class TeamOverview extends TeamViewMixin {
   loading = true
 
   team!: Team
-
-  // Flag stating whether the currently logged user can edit the Team
-  get editable(): boolean {
-    return this.team.members.find((teamMember: TeamMember) => teamMember.character.user_id === this.$store.state.user.id)?.lead ?? false
-  }
 
   get url(): string {
     return `/backend/api/team/${this.$route.params.id}/`
