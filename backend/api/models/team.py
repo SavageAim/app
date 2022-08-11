@@ -59,7 +59,7 @@ class Team(models.Model):
         Does nothing if the specified Character is the current leader.
         """
         curr_lead = self.members.get(lead=True)
-        if curr_lead.id == new_lead.id:
+        if curr_lead.id == new_lead.id:  # pragma: no cover
             # Make sure we have to do this before we run any code (don't do any unnecessary database hits)
             return
 
