@@ -24,7 +24,7 @@
       </div>
 
       <div class="columns is-multiline is-desktop">
-        <TeamMemberCard v-for="tm in team.members" :key="tm.id" :team-id="team.id" :details="tm" :max-item-level="team.tier.max_item_level" v-on:reload="() => { fetchTeam(true) }" />
+        <TeamMemberCard v-for="tm in team.members" :key="tm.id" :team-id="team.id" :details="tm" :max-item-level="team.tier.max_item_level" />
       </div>
     </template>
   </div>

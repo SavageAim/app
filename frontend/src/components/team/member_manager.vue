@@ -24,7 +24,7 @@
       <button class="button is-primary is-outlined is-fullwidth">
         <span>Edit Permissions</span>
       </button>
-      <button class="button is-danger is-outlined is-fullwidth">
+      <button class="button is-danger is-outlined is-fullwidth" @click="kick">
         <span>Kick From Team</span>
       </button>
     </div>
@@ -33,6 +33,7 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
+import KickFromTeam from '@/components/modals/confirmations/kick_from_team.vue'
 import TeamMember from '@/interfaces/team_member'
 
 @Component
@@ -42,6 +43,10 @@ export default class TeamMemberManager extends Vue {
 
   @Prop()
   member!: TeamMember
+
+  kick(): void {
+    this.$modal.show(KickFromTeam, { details: this.member, teamId: this.$route.params.id }, { }, { closed: () => { this.$emit('reload') } })
+  }
 }
 </script>
 

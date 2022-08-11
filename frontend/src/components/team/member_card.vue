@@ -71,7 +71,6 @@
 <script lang="ts">
 import { Component, Vue, Prop } from 'vue-property-decorator'
 import BISTable from '@/components/bis_table.vue'
-import KickFromTeam from '@/components/modals/confirmations/kick_from_team.vue'
 import LeaveTeam from '@/components/modals/confirmations/leave_team.vue'
 import TeamMember from '@/interfaces/team_member'
 
@@ -102,10 +101,6 @@ export default class TeamMemberCard extends Vue {
 
   get dropdown(): HTMLElement {
     return this.$refs.dropdown as HTMLElement
-  }
-
-  kick(): void {
-    this.$modal.show(KickFromTeam, { details: this.details, teamId: this.teamId }, { }, { closed: () => { this.$emit('reload') } })
   }
 
   leave(): void {

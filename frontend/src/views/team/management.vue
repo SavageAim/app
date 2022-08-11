@@ -31,7 +31,7 @@
               <div class="card-header-title">Team Members</div>
             </div>
             <div class="card-content">
-              <TeamMemberManager :member="member" :user-is-lead="userIsTeamLead" v-for="member in realMembers" :key="member.id" />
+              <TeamMemberManager :member="member" :user-is-lead="userIsTeamLead" v-for="member in realMembers()" :key="member.id" v-on:reload="() => { fetchTeam(true) }" />
             </div>
           </div>
         </div>
@@ -42,33 +42,13 @@
               <div class="card-header-title">Proxy Characters</div>
               <!-- Replace with check for the perm -->
               <div class="card-header-icon" v-if="userHasProxyManagerPermission">
-                <button class="button is-small is-success">
-                  <span>Add New</span>
-                </button>
+                <router-link to="../proxies/" class="button is-small is-success">
+                  <span>Add Proxy Character</span>
+                </router-link>
               </div>
             </div>
             <div class="card-content">
-              <div class="box" v-for="member in proxyMembers" :key="member.id">
-                <div class="level">
-                  <div class="level-left">
-                    <div class="level-item">
-                      <div class="content">{{ member.name }}</div>
-                    </div>
-                  </div>
-                  <div class="level-right">
-                    <div class="level-item">
-                      <div class="buttons is-grouped" v-if="userHasProxyManagerPermission">
-                        <button class="button is-primary is-outlined">
-                          <span>Edit BIS List</span>
-                        </button>
-                        <button class="button is-danger is-outlined">
-                          <span>Kick From Team</span>
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              <ProxyMemberManager :member="member" :user-has-permission="userHasProxyManagerPermission" v-for="member in proxyMembers()" :key="member.id" v-on:reload="() => { fetchTeam(true) }" />
             </div>
           </div>
         </div>
@@ -81,6 +61,7 @@
 import { Component } from 'vue-property-decorator'
 import TeamMemberManager from '@/components/team/member_manager.vue'
 import TeamNav from '@/components/team/nav.vue'
+import ProxyMemberManager from '@/components/team/proxy_manager.vue'
 import Team from '@/interfaces/team'
 import TeamMember from '@/interfaces/team_member'
 import TeamViewMixin from '@/mixins/team_view_mixin'
@@ -89,20 +70,13 @@ import TeamViewMixin from '@/mixins/team_view_mixin'
   components: {
     TeamMemberManager,
     TeamNav,
+    ProxyMemberManager,
   },
 })
 export default class TeamManagement extends TeamViewMixin {
   loading = true
 
   team!: Team
-
-  get realMembers(): TeamMember[] {
-    return this.team.members.filter((tm: TeamMember) => !tm.character.proxy)
-  }
-
-  get proxyMembers(): TeamMember[] {
-    return this.team.members.filter((tm: TeamMember) => tm.character.proxy)
-  }
 
   get url(): string {
     return `/backend/api/team/${this.$route.params.id}/`
@@ -117,9 +91,12 @@ export default class TeamManagement extends TeamViewMixin {
     this.fetchTeam(false)
   }
 
-  randomPermissions(): number {
-    // Return a random permission value to be converted into a flag set (0 - 3)
-    return Math.floor(Math.random() * 4)
+  proxyMembers(): TeamMember[] {
+    return this.team.members.filter((tm: TeamMember) => tm.character.proxy)
+  }
+
+  realMembers(): TeamMember[] {
+    return this.team.members.filter((tm: TeamMember) => !tm.character.proxy)
   }
 
   async fetchTeam(reload: boolean): Promise<void> {
