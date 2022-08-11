@@ -45,7 +45,6 @@ import CharacterForm from '@/components/character_form.vue'
 import BISListModify from '@/dataclasses/bis_list_modify'
 import { Character } from '@/interfaces/character'
 import Team from '@/interfaces/team'
-import TeamMember from '@/interfaces/team_member'
 import {
   BISListErrors,
   ProxyCreateErrors,

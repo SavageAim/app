@@ -35,7 +35,6 @@ import { Component } from 'vue-property-decorator'
 import TeamMemberCard from '@/components/team/member_card.vue'
 import TeamNav from '@/components/team/nav.vue'
 import Team from '@/interfaces/team'
-import TeamMember from '@/interfaces/team_member'
 import TeamViewMixin from '@/mixins/team_view_mixin'
 
 @Component({

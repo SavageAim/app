@@ -140,7 +140,6 @@ import {
 } from '@/interfaces/loot'
 import { LootCreateErrors, LootBISCreateErrors } from '@/interfaces/responses'
 import Team from '@/interfaces/team'
-import TeamMember from '@/interfaces/team_member'
 import TeamViewMixin from '@/mixins/team_view_mixin'
 
 @Component({

@@ -1,5 +1,6 @@
 // Not your standard mixin, needs to be extended
 import Team from '@/interfaces/team'
+import TeamMember from '@/interfaces/team_member'
 import SavageAimMixin from '@/mixins/savage_aim_mixin'
 
 export default class TeamViewMixin extends SavageAimMixin {
