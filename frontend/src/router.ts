@@ -28,9 +28,24 @@ const routes = [
 
   // Character
   { path: '/characters/new/', component: () => import('@/views/new_char.vue'), name: 'newChar' },
-  { path: '/characters/:id/', component: () => import('@/views/character.vue'), name: 'viewChar' },
-  { path: '/characters/:characterId/bis_list/', component: () => import('@/views/new_bis.vue'), name: 'newBIS' },
-  { path: '/characters/:characterId/bis_list/:id/', component: () => import('@/views/edit_bis.vue'), name: 'editBIS' },
+  {
+    path: '/characters/:characterId/',
+    component: () => import('@/views/character.vue'),
+    name: 'viewChar',
+    props: true,
+  },
+  {
+    path: '/characters/:characterId/bis_list/',
+    component: () => import('@/views/new_bis.vue'),
+    name: 'newBIS',
+    props: true,
+  },
+  {
+    path: '/characters/:characterId/bis_list/:bisId/',
+    component: () => import('@/views/edit_bis.vue'),
+    name: 'editBIS',
+    props: true,
+  },
 
   // Notifications
   { path: '/notifications/', component: () => import('@/views/notifications.vue'), name: 'userNotifs' },

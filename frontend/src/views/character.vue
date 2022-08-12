@@ -163,7 +163,7 @@
 </template>
 
 <script lang="ts">
-import { Component } from 'vue-property-decorator'
+import { Component, Prop } from 'vue-property-decorator'
 import BISTable from '@/components/bis_table.vue'
 import CharacterBio from '@/components/character_bio.vue'
 import DeleteBIS from '@/components/modals/confirmations/delete_bis.vue'
@@ -189,6 +189,9 @@ export default class Character extends SavageAimMixin {
 
   character!: CharacterDetails
 
+  @Prop()
+  characterId!: number
+
   errors: CharacterUpdateErrors = {}
 
   settingsShown = false
@@ -200,11 +203,11 @@ export default class Character extends SavageAimMixin {
   loading = true
 
   get teamsUrl(): string {
-    return `/backend/api/team/?char_id=${this.$route.params.id}`
+    return `/backend/api/team/?char_id=${this.characterId}`
   }
 
   get url(): string {
-    return `/backend/api/character/${this.$route.params.id}/`
+    return `/backend/api/character/${this.characterId}/`
   }
 
   created(): void {
@@ -262,7 +265,7 @@ export default class Character extends SavageAimMixin {
 
   // Return the details of the Job the character plays in the given Team
   getJob(team: Team): Job {
-    return team.members.find((tm: TeamMember) => tm.character.id === parseInt(this.$route.params.id, 10))!.bis_list.job
+    return team.members.find((tm: TeamMember) => tm.character.id === parseInt(this.characterId, 10))!.bis_list.job
   }
 
   // WS reload

@@ -17,7 +17,7 @@
 </template>
 
 <script lang="ts">
-import { Component } from 'vue-property-decorator'
+import { Component, Prop } from 'vue-property-decorator'
 import BISListForm from '@/components/bis_list/form.vue'
 import BISListModify from '@/dataclasses/bis_list_modify'
 import { CharacterDetails } from '@/interfaces/character'
@@ -37,9 +37,12 @@ export default class NewBIS extends SavageAimMixin {
 
   character!: CharacterDetails
 
+  @Prop()
+  characterId!: number
+
   // URL to load character data from
   get charUrl(): string {
-    return `/backend/api/character/${this.$route.params.characterId}/`
+    return `/backend/api/character/${this.characterId}/`
   }
 
   // Flag indicating if we're ready to display the page
@@ -52,7 +55,7 @@ export default class NewBIS extends SavageAimMixin {
 
   // Url to send data to
   get url(): string {
-    return `/backend/api/character/${this.$route.params.characterId}/bis_lists/`
+    return `/backend/api/character/${this.characterId}/bis_lists/`
   }
 
   // Load functions
