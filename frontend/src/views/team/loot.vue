@@ -18,7 +18,7 @@
 
         <div class="level-right">
           <div class="level-item">
-            <TeamNav :is-lead="userIsTeamLead" />
+            <TeamNav :is-lead="userIsTeamLead" :team-id="teamId" />
           </div>
         </div>
       </div>
