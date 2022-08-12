@@ -190,7 +190,7 @@ export default class Character extends SavageAimMixin {
   character!: CharacterDetails
 
   @Prop()
-  characterId!: number
+  characterId!: string
 
   errors: CharacterUpdateErrors = {}
 

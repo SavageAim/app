@@ -79,7 +79,7 @@ export default class TeamManagement extends TeamViewMixin {
   team!: Team
 
   get url(): string {
-    return `/backend/api/team/${this.$route.params.id}/`
+    return `/backend/api/team/${this.teamId}/`
   }
 
   // Retrieve the User's Character in the Team

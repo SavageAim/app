@@ -75,11 +75,11 @@ export default class NewProxy extends TeamViewMixin {
   team!: Team
 
   get readUrl(): string {
-    return `/backend/api/team/${this.$route.params.id}/`
+    return `/backend/api/team/${this.teamId}/`
   }
 
   get writeUrl(): string {
-    return `/backend/api/team/${this.$route.params.id}/proxies/`
+    return `/backend/api/team/${this.teamId}/proxies/`
   }
 
   checkPermissions(): void {

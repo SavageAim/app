@@ -32,7 +32,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
+import { Component, Prop, Vue } from 'vue-property-decorator'
 import BISListForm from '@/components/bis_list/form.vue'
 import CharacterBio from '@/components/character_bio.vue'
 import BISListModify from '@/dataclasses/bis_list_modify'
@@ -60,6 +60,9 @@ export default class NewProxy extends TeamViewMixin {
 
   character!: Character
 
+  @Prop()
+  charId!: string
+
   loading = true
 
   requesting = false
@@ -67,7 +70,7 @@ export default class NewProxy extends TeamViewMixin {
   team!: Team
 
   get url(): string {
-    return `/backend/api/team/${this.$route.params.teamId}/proxies/${this.$route.params.id}/`
+    return `/backend/api/team/${this.teamId}/proxies/${this.charId}/`
   }
 
   checkPermissions(): void {

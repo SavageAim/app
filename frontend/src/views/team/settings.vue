@@ -122,7 +122,7 @@ export default class TeamSettings extends TeamViewMixin {
   }
 
   get url(): string {
-    return `/backend/api/team/${this.$route.params.id}/`
+    return `/backend/api/team/${this.teamId}/`
   }
 
   checkPermissions(displayWarning: boolean): void {

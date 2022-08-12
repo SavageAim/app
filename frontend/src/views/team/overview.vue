@@ -46,10 +46,8 @@ import TeamViewMixin from '@/mixins/team_view_mixin'
 export default class TeamOverview extends TeamViewMixin {
   loading = true
 
-  team!: Team
-
   get url(): string {
-    return `/backend/api/team/${this.$route.params.id}/`
+    return `/backend/api/team/${this.teamId}/`
   }
 
   created(): void {

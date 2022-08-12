@@ -166,7 +166,7 @@ export default class TeamLoot extends TeamViewMixin {
   team!: Team
 
   get url(): string {
-    return `/backend/api/team/${this.$route.params.id}/loot/`
+    return `/backend/api/team/${this.teamId}/loot/`
   }
 
   async created(): Promise<void> {
