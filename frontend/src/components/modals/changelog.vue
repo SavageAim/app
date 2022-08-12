@@ -13,6 +13,11 @@
     <div class="card-content content">
       <h2 class="has-text-primary subtitle">{{ version }}</h2>
 
+      <div class="divider"><i class="material-icons icon">expand_more</i> FFXIV Patch 6.2 Released! <i class="material-icons icon">expand_more</i></div>
+      <p>A new Tier, Pandæmonium: Abyssos, has been added. Please ensure to update your Team to the new Tier to have BIS Table colours display correctly!</p>
+      <p>All the gear added with Patch 6.2 has been added to the site, please enjoy updating your BIS Lists for the new Tier!</p>
+      <p>The default values for the Item Level filters in BIS pages have been updated to the new range for Abyssos. (610 - 635)</p>
+
       <div class="divider"><i class="material-icons icon">expand_more</i> Team Member Permissions <i class="material-icons icon">expand_more</i></div>
       <p>The ability to give extra permissions within a Team has been added.</p>
       <p>These can be controlled via the "Manage Members" page of a Team.</p>
