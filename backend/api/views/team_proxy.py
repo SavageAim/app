@@ -18,6 +18,8 @@ from api.serializers import (
     TeamMemberSerializer,
 )
 
+PERMISSION_NAME = 'proxy_manager'
+
 
 class TeamProxyCollection(APIView):
     """
@@ -29,12 +31,8 @@ class TeamProxyCollection(APIView):
         Create a new Proxy Character in the specified Team.
         Can currently only be done by the Team Lead.
         """
-        try:
-            obj = Team.objects.filter(
-                members__character__user=request.user,
-                members__lead=True,
-            ).distinct().get(pk=team_id)
-        except (Team.DoesNotExist, ValidationError):
+        team = self._get_team_with_permission(request, team_id, PERMISSION_NAME)
+        if team is None:
             return Response(status=404)
 
         # Check both serializers against the separate parts of the data
@@ -56,11 +54,11 @@ class TeamProxyCollection(APIView):
         bis_serializer.save(name='', owner=char_serializer.instance)
 
         # Add proxy to team
-        obj.members.create(character=char_serializer.instance, bis_list=bis_serializer.instance)
+        team.members.create(character=char_serializer.instance, bis_list=bis_serializer.instance)
 
         # Websocket stuff
-        self._send_to_team(obj, {'type': 'team', 'id': str(obj.id)})
-        for tm in obj.members.all():
+        self._send_to_team(team, {'type': 'team', 'id': str(team.id)})
+        for tm in team.members.all():
             self._send_to_user(tm.character.user, {'type': 'character', 'id': tm.character.pk})
 
         return Response({'id': char_serializer.instance.pk}, status=201)
@@ -76,12 +74,8 @@ class TeamProxyResource(APIView):
         Read the details of a single Proxy record.
         Can only be performed by a Team Lead
         """
-        try:
-            team = Team.objects.filter(
-                members__character__user=request.user,
-                members__lead=True,
-            ).distinct().get(pk=team_id)
-        except (Team.DoesNotExist, ValidationError):
+        team = self._get_team_with_permission(request, team_id, PERMISSION_NAME)
+        if team is None:
             return Response(status=404)
 
         try:
@@ -100,12 +94,8 @@ class TeamProxyResource(APIView):
         Can only be performed by a Team Lead.
         Only really updates the BIS List since there's not much need to update anything else.
         """
-        try:
-            team = Team.objects.filter(
-                members__character__user=request.user,
-                members__lead=True,
-            ).distinct().get(pk=team_id)
-        except (Team.DoesNotExist, ValidationError):
+        team = self._get_team_with_permission(request, team_id, PERMISSION_NAME)
+        if team is None:
             return Response(status=404)
 
         try:

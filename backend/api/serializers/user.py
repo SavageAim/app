@@ -24,7 +24,7 @@ class UserSerializer(serializers.Serializer):
         """
         Given a User, get the avatar url, if one exists, or return None if not
         """
-        if hasattr(obj, 'socialaccount_set') and obj.socialaccount_set.exists():
+        if hasattr(obj, 'socialaccount_set') and obj.socialaccount_set.exists():  # pragma: no cover
             return obj.socialaccount_set.first().get_avatar_url()
         return ''
 

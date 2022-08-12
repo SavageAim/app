@@ -221,7 +221,7 @@ class LootTestSuite(SavageAimTestCase):
 
         # Lastly, link the characters to the team
         self.tl_tm = self.team.members.create(character=self.team_lead, bis_list=self.tl_main_bis, lead=True)
-        self.mt_tm = self.team.members.create(character=self.main_tank, bis_list=self.mt_main_bis)
+        self.mt_tm = self.team.members.create(character=self.main_tank, bis_list=self.mt_main_bis, permissions=2)
 
         # Set up expected response (store it here to avoid redefining it)
         self.expected_gear = {
@@ -1059,6 +1059,11 @@ class LootTestSuite(SavageAimTestCase):
         }
         need_response = self.client.post(url, data)
         self.assertEqual(need_response.status_code, status.HTTP_201_CREATED, need_response.content)
+
+        # Test with non leader with permissions
+        self.tl_tm.lead = False
+        self.tl_tm.permissions = TeamMember.PERMISSION_FLAGS['loot_manager']
+        self.tl_tm.save()
         greed_response = self.client.post(url, greed_data)
         self.assertEqual(greed_response.status_code, status.HTTP_201_CREATED, greed_response.content)
 

@@ -13,7 +13,8 @@
         <div class="level is-mobile">
           <div class="level-left">
             <div class="level-item">
-              <span class="icon is-hidden-touch"><img src="/party_member.png" alt="Team Member" title="Team Member" width="24" height="24" /></span>
+              <span class="icon is-hidden-touch" v-if="details.character.proxy"><img src="/proxy.png" alt="Proxy Character" title="Proxy Character" width="24" height="24" /></span>
+              <span class="icon is-hidden-touch" v-else><img src="/party_member.png" alt="Team Member" title="Team Member" width="24" height="24" /></span>
               <span>{{ details.name }}</span>
             </div>
           </div>

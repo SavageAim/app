@@ -18,7 +18,7 @@ def _fake_task(pk: int):
     """
     try:
         obj = Character.objects.get(pk=pk)
-    except Character.DoesNotExist:
+    except Character.DoesNotExist:  # pragma: no cover
         return
     if not obj.verified:
         obj.verified = True

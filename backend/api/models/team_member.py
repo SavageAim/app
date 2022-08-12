@@ -6,11 +6,16 @@ from django.db import models
 
 
 class TeamMember(models.Model):
-    # TODO - Gotta warn about leaving teams or deleting BISLists (which can't be done yet)
+    # Map of permission name to the number to compare against bitwise
+    PERMISSION_FLAGS = {
+        'loot_manager': 1,
+        'proxy_manager': 2,
+    }
+
     bis_list = models.ForeignKey('BISList', on_delete=models.PROTECT)
     character = models.ForeignKey('Character', on_delete=models.CASCADE)
-    # TODO - Can't delete if you're the team lead / move teamlead to someone else if character is deleted
     lead = models.BooleanField(default=False)
+    permissions = models.IntegerField(default=0)
     team = models.ForeignKey('Team', on_delete=models.CASCADE, related_name='members')
 
     def __str__(self):
@@ -19,3 +24,9 @@ class TeamMember(models.Model):
     class Meta:
         ordering = ['-bis_list__job__role', 'bis_list__job__ordering']
         unique_together = ['character', 'team']
+
+    def has_permission(self, permission: str) -> bool:
+        """
+        Given a permission name to check, see if this member has permission for it
+        """
+        return self.lead or bool(self.permissions & self.PERMISSION_FLAGS.get(permission, 0))

@@ -148,6 +148,11 @@ class TeamProxyCollection(SavageAimTestCase):
         user = self._get_user()
         self.client.force_authenticate(user)
 
+        # Test as a non-lead with permission, should still get 400s instead of 404s
+        self.tm.lead = False
+        self.tm.permissions = 3
+        self.tm.save()
+
         # Test sending nothing, ensure both dicts are full
         response = self.client.post(url)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
@@ -223,8 +228,9 @@ class TeamProxyCollection(SavageAimTestCase):
         self.assertEqual(self.client.post(url).status_code, status.HTTP_404_NOT_FOUND)
 
         url = reverse('api:team_proxy_collection', kwargs={'team_id': self.team.id})
-        # Check update as non-team lead
+        # Check update as non-team lead without permission
         self.tm.lead = False
+        self.tm.permissions = 1
         self.tm.save()
         response = self.client.post(url)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND, response.content)
@@ -420,7 +426,7 @@ class TeamProxyResource(SavageAimTestCase):
         self.assertEqual(self.client.get(url).status_code, status.HTTP_404_NOT_FOUND)
         self.assertEqual(self.client.put(url).status_code, status.HTTP_404_NOT_FOUND)
 
-        url = reverse('api:team_proxy_resource', kwargs={'team_id': self.team.pk, 'pk': 999999999999999999})
+        url = reverse('api:team_proxy_resource', kwargs={'team_id': self.team.pk, 'pk': 9999999})
         # Check as team lead
         self.assertEqual(self.client.get(url).status_code, status.HTTP_404_NOT_FOUND)
         self.assertEqual(self.client.put(url).status_code, status.HTTP_404_NOT_FOUND)
@@ -579,18 +585,30 @@ class TeamProxyClaim(SavageAimTestCase):
         """
         Test the cases that cause a 404 to be returned;
 
-        - ID doesn't exist
-        - Request from someone who doesn't have a character in the Team
-        - Update request from someone who doesn't have a character in the Team
-        - Update request from someone that isn't the team lead
+        - Team ID doesn't exist
+        - Invalid invite code
+        - Specified character doesn't exist
+        - Specified character isn't a proxy
         """
         user = self._get_user()
         self.client.force_authenticate(user)
 
-        # ID doesn't exist
-        url = reverse('api:team_proxy_claim', kwargs={'team_id': 'abcde-abcde-abcde-abcde', 'pk': 1})
+        # Team ID doesn't exist
+        url = reverse('api:team_proxy_claim', kwargs={'team_id': 'abcde-abcde-abcde-abcde', 'pk': self.proxy.pk})
         self.assertEqual(self.client.post(url).status_code, status.HTTP_404_NOT_FOUND)
 
-        url = reverse('api:team_proxy_claim', kwargs={'team_id': self.team.pk, 'pk': 999999999999999999})
-        # Check as team lead
+        # Invalid invite code
+        url = reverse('api:team_proxy_claim', kwargs={'team_id': self.team.pk, 'pk': self.proxy.pk})
         self.assertEqual(self.client.post(url).status_code, status.HTTP_404_NOT_FOUND)
+
+        # Specified character doesn't exist
+        url = reverse('api:team_proxy_claim', kwargs={'team_id': self.team.pk, 'pk': 999999})
+        response = self.client.post(url, {'invite_code': self.team.invite_code})
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+        # Specified character isn't a proxy
+        self.proxy.user = self._create_user()
+        self.proxy.save()
+        url = reverse('api:team_proxy_claim', kwargs={'team_id': self.team.pk, 'pk': self.proxy.pk})
+        response = self.client.post(url, {'invite_code': self.team.invite_code})
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)

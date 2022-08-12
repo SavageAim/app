@@ -24,7 +24,7 @@ cryptography==36.0.1
 daphne==3.0.2
 defusedxml==0.7.1
 Deprecated==1.2.13
-Django==3.2.13
+Django==3.2.14
 django-allauth==0.47.0
 django-rest-framework==0.1.0
 djangorestframework==3.13.1

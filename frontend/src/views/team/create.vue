@@ -40,7 +40,7 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import TeamMemberForm from '@/components/team_member_form.vue'
+import TeamMemberForm from '@/components/team/member_form.vue'
 import { TeamCreateErrors, TeamCreateResponse } from '@/interfaces/responses'
 import SavageAimMixin from '@/mixins/savage_aim_mixin'
 

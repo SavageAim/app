@@ -167,7 +167,7 @@ class LootCreateWithBISSerializer(serializers.Serializer):
         else:
             bis = self.context['team'].members.get(pk=data['member_id']).bis_list
 
-        if data['item'] == 'offhand' and bis.job.id != 'PLD':
+        if data['item'] == 'offhand' and bis.job.id != 'PLD':  # pragma: no cover
             raise serializers.ValidationError({'item': 'Offhand items can only be obtained by a PLD.'})
 
         # Also ensure that the requested item on bis in the list is actually the raid item

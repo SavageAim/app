@@ -30,7 +30,7 @@
 
 <script lang="ts">
 import { Component } from 'vue-property-decorator'
-import TeamMemberForm from '@/components/team_member_form.vue'
+import TeamMemberForm from '@/components/team/member_form.vue'
 import { TeamMemberUpdateErrors } from '@/interfaces/responses'
 import Team from '@/interfaces/team'
 import TeamMember from '@/interfaces/team_member'

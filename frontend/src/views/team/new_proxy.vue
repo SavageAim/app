@@ -45,12 +45,11 @@ import CharacterForm from '@/components/character_form.vue'
 import BISListModify from '@/dataclasses/bis_list_modify'
 import { Character } from '@/interfaces/character'
 import Team from '@/interfaces/team'
-import TeamMember from '@/interfaces/team_member'
 import {
   BISListErrors,
   ProxyCreateErrors,
 } from '@/interfaces/responses'
-import SavageAimMixin from '@/mixins/savage_aim_mixin'
+import TeamViewMixin from '@/mixins/team_view_mixin'
 
 @Component({
   components: {
@@ -59,7 +58,7 @@ import SavageAimMixin from '@/mixins/savage_aim_mixin'
     CharacterForm,
   },
 })
-export default class NewProxy extends SavageAimMixin {
+export default class NewProxy extends TeamViewMixin {
   bis = new BISListModify()
 
   bisApiErrors: BISListErrors = {}
@@ -75,11 +74,6 @@ export default class NewProxy extends SavageAimMixin {
 
   team!: Team
 
-  // Flag stating whether the currently logged user can edit the Team
-  get editable(): boolean {
-    return this.team.members.find((teamMember: TeamMember) => teamMember.character.user_id === this.$store.state.user.id)?.lead ?? false
-  }
-
   get readUrl(): string {
     return `/backend/api/team/${this.$route.params.id}/`
   }
@@ -90,9 +84,9 @@ export default class NewProxy extends SavageAimMixin {
 
   checkPermissions(): void {
     // Ensure that the person on this page is the team leader and not anybody else
-    if (!this.editable) {
+    if (!this.userHasProxyManagerPermission) {
       this.$router.push(`/team/${this.team.id}/`, () => {
-        Vue.notify({ text: 'Only the team leader can manage proxies.', type: 'is-warning' })
+        Vue.notify({ text: 'You do not have permission to manage Proxy Characters.', type: 'is-warning' })
       })
     }
   }

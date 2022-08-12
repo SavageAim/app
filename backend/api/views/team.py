@@ -98,9 +98,8 @@ class TeamResource(APIView):
         Update some data about the Team
         This request can only be run by the user whose character is the team lead
         """
-        try:
-            obj = Team.objects.filter(members__character__user=request.user, members__lead=True).distinct().get(pk=pk)
-        except (Team.DoesNotExist, ValidationError):
+        obj = self._get_team_as_leader(request, pk)
+        if obj is None:
             return Response(status=404)
 
         serializer = TeamUpdateSerializer(instance=obj, data=request.data)
@@ -126,9 +125,8 @@ class TeamResource(APIView):
         """
         Regenerate the Team's token
         """
-        try:
-            obj = Team.objects.filter(members__character__user=request.user, members__lead=True).distinct().get(pk=pk)
-        except (Team.DoesNotExist, ValidationError):
+        obj = self._get_team_as_leader(request, pk)
+        if obj is None:
             return Response(status=404)
 
         obj.invite_code = Team.generate_invite_code()
@@ -141,9 +139,8 @@ class TeamResource(APIView):
 
         Notify all non leader members of the Team being disbanded
         """
-        try:
-            obj = Team.objects.filter(members__character__user=request.user, members__lead=True).distinct().get(pk=pk)
-        except (Team.DoesNotExist, ValidationError):
+        obj = self._get_team_as_leader(request, pk)
+        if obj is None:
             return Response(status=404)
 
         team_id = str(obj.pk)

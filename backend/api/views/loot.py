@@ -15,13 +15,15 @@ from rest_framework.response import Response
 # local
 from .base import APIView
 from api import notifier
-from api.models import BISList, Team, Loot
+from api.models import BISList, Loot, Team
 from api.serializers import (
     LootSerializer,
     LootCreateSerializer,
     LootCreateWithBISSerializer,
     TeamSerializer,
 )
+
+PERMISSION_NAME = 'loot_manager'
 
 
 class LootCollection(APIView):
@@ -301,12 +303,8 @@ class LootCollection(APIView):
         Attempt to create new Loot entries.
         Any updates sent here will also update Character's BIS Lists
         """
-        try:
-            team = Team.objects.filter(
-                members__character__user=request.user,
-                members__lead=True,
-            ).distinct().get(pk=team_id)
-        except (Team.DoesNotExist, ValidationError):
+        team = self._get_team_with_permission(request, team_id, PERMISSION_NAME)
+        if team is None:
             return Response(status=404)
 
         # Firstly we validate the sent data
@@ -324,12 +322,8 @@ class LootCollection(APIView):
         Remove Loot entries from the Team's history.
         Entries to delete are specified in the request body.
         """
-        try:
-            team = Team.objects.filter(
-                members__character__user=request.user,
-                members__lead=True,
-            ).distinct().get(pk=team_id)
-        except (Team.DoesNotExist, ValidationError):
+        team = self._get_team_with_permission(request, team_id, PERMISSION_NAME)
+        if team is None:
             return Response(status=404)
 
         ids = request.data.get('items', [])
@@ -352,12 +346,8 @@ class LootWithBIS(APIView):
         Attempt to create new Loot entries.
         Any updates sent here will also update Character's BIS Lists
         """
-        try:
-            team = Team.objects.filter(
-                members__character__user=request.user,
-                members__lead=True,
-            ).distinct().get(pk=team_id)
-        except (Team.DoesNotExist, ValidationError):
+        team = self._get_team_with_permission(request, team_id, PERMISSION_NAME)
+        if team is None:
             return Response(status=404)
 
         # Firstly we validate the sent data

@@ -18,21 +18,13 @@
 
         <div class="level-right">
           <div class="level-item">
-            <TeamNav :editable="editable" />
+            <TeamNav :is-lead="userIsTeamLead" />
           </div>
         </div>
       </div>
 
       <div class="columns is-multiline is-desktop">
-        <!-- TODO - Remove when management page is added -->
-        <div class="column is-full has-text-centered" v-if="editable">
-          <router-link to="./proxies/" class="button is-success">
-            <span class="icon is-small"><i class="material-icons">person_add</i></span>
-            <span>Add Proxy Character</span>
-          </router-link>
-        </div>
-
-        <TeamMemberCard v-for="tm in team.members" :key="tm.id" :team-id="team.id" :details="tm" :max-item-level="team.tier.max_item_level" :editable="editable" v-on:reload="() => { fetchTeam(true) }" />
+        <TeamMemberCard v-for="tm in team.members" :key="tm.id" :team-id="team.id" :details="tm" :max-item-level="team.tier.max_item_level" />
       </div>
     </template>
   </div>
@@ -40,11 +32,10 @@
 
 <script lang="ts">
 import { Component } from 'vue-property-decorator'
-import TeamMemberCard from '@/components/team_member_card.vue'
-import TeamNav from '@/components/team_nav.vue'
+import TeamMemberCard from '@/components/team/member_card.vue'
+import TeamNav from '@/components/team/nav.vue'
 import Team from '@/interfaces/team'
-import TeamMember from '@/interfaces/team_member'
-import SavageAimMixin from '@/mixins/savage_aim_mixin'
+import TeamViewMixin from '@/mixins/team_view_mixin'
 
 @Component({
   components: {
@@ -52,15 +43,10 @@ import SavageAimMixin from '@/mixins/savage_aim_mixin'
     TeamNav,
   },
 })
-export default class TeamView extends SavageAimMixin {
+export default class TeamOverview extends TeamViewMixin {
   loading = true
 
   team!: Team
-
-  // Flag stating whether the currently logged user can edit the Team
-  get editable(): boolean {
-    return this.team.members.find((teamMember: TeamMember) => teamMember.character.user_id === this.$store.state.user.id)?.lead ?? false
-  }
 
   get url(): string {
     return `/backend/api/team/${this.$route.params.id}/`

@@ -33,7 +33,7 @@ class NotificationCollection(APIView):
         if limit is not None:
             try:
                 objs = objs[:int(limit)]
-            except ValueError:
+            except ValueError:  # pragma: no cover
                 pass
 
         data = NotificationSerializer(objs, many=True).data

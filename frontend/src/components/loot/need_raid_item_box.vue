@@ -19,7 +19,7 @@
         </span>
       </div>
     </div>
-    <div v-if="editable" class="list-actions">
+    <div v-if="userHasPermission" class="list-actions">
       <button class="button is-success" @click="save" v-if="!requesting">Give Item</button>
       <button class="button is-success is-loading" v-else>Give Item</button>
     </div>
@@ -33,9 +33,6 @@ import { NeedGear } from '@/interfaces/loot'
 @Component
 export default class NeedRaidItem extends Vue {
   @Prop()
-  editable!: boolean
-
-  @Prop()
   entry!: NeedGear
 
   @Prop()
@@ -43,6 +40,9 @@ export default class NeedRaidItem extends Vue {
 
   @Prop()
   requesting!: boolean
+
+  @Prop()
+  userHasPermission!: boolean
 
   save(): void {
     this.$emit('save')

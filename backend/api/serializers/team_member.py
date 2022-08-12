@@ -1,6 +1,7 @@
 """
 Serializers for the Team Member model
 """
+from typing import Dict
 # lib
 from rest_framework import serializers
 # local
@@ -11,6 +12,7 @@ from .character import CharacterCollectionSerializer
 __all__ = [
     'TeamMemberSerializer',
     'TeamMemberModifySerializer',
+    'TeamMemberPermissionsModifySerializer',
 ]
 
 
@@ -18,10 +20,20 @@ class TeamMemberSerializer(serializers.ModelSerializer):
     bis_list = BISListSerializer()
     character = CharacterCollectionSerializer()
     name = serializers.CharField(source='character.display_name')
+    permissions = serializers.SerializerMethodField()
 
     class Meta:
         model = TeamMember
         exclude = ['team']
+
+    def get_permissions(self, obj: TeamMember) -> Dict[str, bool]:
+        """
+        Generate a dictionary of permission classes to a flag stating whether or not this character has that permission
+        """
+        return {
+            permission: obj.lead or bool(obj.permissions & flag)
+            for permission, flag in TeamMember.PERMISSION_FLAGS.items()
+        }
 
 
 class TeamMemberModifySerializer(serializers.Serializer):
@@ -75,3 +87,17 @@ class TeamMemberModifySerializer(serializers.Serializer):
             })
 
         return data
+
+
+class TeamMemberPermissionsModifySerializer(serializers.Serializer):
+    permissions = serializers.IntegerField()
+
+    def validate_permissions(self, permissions: int) -> int:
+        """
+        Ensure that the permissions value is within the allowed range of integers for permissions
+        """
+        upper_bound = sum(TeamMember.PERMISSION_FLAGS.values())
+        if permissions < 0 or permissions > upper_bound:
+            raise serializers.ValidationError('Invalid permissions value, this is more than likely a server error.')
+
+        return permissions

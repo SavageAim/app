@@ -41,8 +41,9 @@ const routes = [
   // Team
   { path: '/team/', component: () => import('@/views/team/add.vue'), name: 'addTeam' },
   { path: '/team/new/', component: () => import('@/views/team/create.vue'), name: 'newTeam' },
-  { path: '/team/:id/', component: () => import('@/views/team/details.vue'), name: 'teamDetails' },
+  { path: '/team/:id/', component: () => import('@/views/team/overview.vue'), name: 'teamOverview' },
   { path: '/team/:id/loot/', component: () => import('@/views/team/loot.vue'), name: 'teamLoot' },
+  { path: '/team/:id/management/', component: () => import('@/views/team/management.vue'), name: 'teamManagement' },
   {
     path: '/team/:teamId/member/:id/',
     component: () => import('@/views/team/manage_membership.vue'),

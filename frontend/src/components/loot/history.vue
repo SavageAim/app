@@ -12,7 +12,7 @@
       <div class="card-content is-hidden" ref="history">
         <ul class="is-hidden-desktop mobile-history">
           <!-- Edit row -->
-          <li v-if="editable">
+          <li v-if="userHasPermission">
             <h3 class="subtitle">Add Entry</h3>
             <div class="field is-horizontal">
               <div class="field-label is-normal">
@@ -93,7 +93,7 @@
           <li v-for="history in loot.history" :key="`mobile-history-${history.id}`">
             <b>Item: </b> {{ history.item }}<br />
             <b>Obtained By: </b> {{ history.member }}<br />
-            <button v-if="editable" class="button is-danger is-pulled-right" @click="() => { deleteEntries([history]) }">
+            <button v-if="userHasPermission" class="button is-danger is-pulled-right" @click="() => { deleteEntries([history]) }">
               <i class="material-icons">delete</i>
             </button>
             <b>On: </b> {{ history.obtained }}<br />
@@ -111,12 +111,12 @@
               <th>Obtained By</th>
               <th>Item</th>
               <th>Need / Greed</th>
-              <th v-if="editable" class="delete-cell has-text-centered">Delete</th>
+              <th v-if="userHasPermission" class="delete-cell has-text-centered">Delete</th>
             </tr>
           </thead>
           <tbody>
             <!-- Edit Row -->
-            <tr v-if="editable">
+            <tr v-if="userHasPermission">
               <td>
                 <div class="control">
                   <input class="input" type="date" v-model="createData.obtained" />
@@ -179,13 +179,13 @@
                 <p class="has-text-info" v-if="history.greed">Greed</p>
                 <p class="has-text-primary" v-else>Need</p>
               </td>
-              <td v-if="editable" class="delete-cell has-text-centered">
+              <td v-if="userHasPermission" class="delete-cell has-text-centered">
                 <input type="checkbox" ref="lootDeleteCheckbox" :data-id="history.id" />
               </td>
             </tr>
 
             <!-- Delete Button -->
-            <tr v-if="editable">
+            <tr v-if="userHasPermission">
               <td></td>
               <td></td>
               <td></td>
@@ -214,7 +214,6 @@ import {
 } from '@/interfaces/loot'
 import { LootCreateErrors } from '@/interfaces/responses'
 import Team from '@/interfaces/team'
-import TeamMember from '@/interfaces/team_member'
 import SavageAimMixin from '@/mixins/savage_aim_mixin'
 
 @Component({
@@ -251,10 +250,8 @@ export default class History extends SavageAimMixin {
   @Prop()
   url!: string
 
-  // Flag stating whether the currently logged user can edit the Team
-  get editable(): boolean {
-    return this.team.members.find((teamMember: TeamMember) => teamMember.character.user_id === this.$store.state.user.id)?.lead ?? false
-  }
+  @Prop()
+  userHasPermission!: boolean
 
   deleteEntries(items: Loot[]): void {
     // Prompt deletion first before sending an api request (we'll use a modal instead of javascript alerts)
