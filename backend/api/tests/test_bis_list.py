@@ -393,6 +393,7 @@ class BISListResource(SavageAimTestCase):
         self.assertEqual(self.bis.job_id, 'PLD')
         self.assertNotEqual(self.bis.bis_mainhand, self.bis.bis_offhand)
         self.assertIsNone(self.bis.external_link)
+        self.assertEqual(self.bis.display_name, data['name'])
 
     def test_update_400(self):
         """

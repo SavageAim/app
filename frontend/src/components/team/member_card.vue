@@ -5,7 +5,7 @@
         <div class="card-header-title">
           <span class="icon-text">
             <span class="icon is-hidden-touch" v-if="details.lead"><img src="/party_lead.png" alt="Team Lead" title="Team Lead" width="24" height="24" /></span>
-            <span class="icon is-hidden-touch" v-if="details.character.proxy"><img src="/proxy.png" alt="Proxy Character" title="Proxy Character" width="24" height="24" /></span>
+            <span class="icon is-hidden-touch" v-else-if="details.character.proxy"><img src="/proxy.png" alt="Proxy Character" title="Proxy Character" width="24" height="24" /></span>
             <span class="icon is-hidden-touch" v-else><img src="/party_member.png" alt="Team Member" title="Team Member" width="24" height="24" /></span>
             <span>{{ details.name }}</span>
           </span>
@@ -47,31 +47,18 @@
                 <!-- Quick link to edit this bis list -->
                 <hr class="dropdown-divider" />
                 <router-link :to="`/characters/${details.character.id}/bis_list/${details.bis_list.id}/`" class="card-footer-item">
-                  Edit List
+                  Edit BIS List
                 </router-link>
                 <hr class="dropdown-divider" />
                 <!-- Link to update the TeamMember details with new character / bislist -->
                 <router-link :to="`./member/${details.id}/`" class="card-footer-item">
-                  Change Character
+                  Change Linked Character / BIS List
                 </router-link>
                 <hr class="dropdown-divider" />
                 <!-- Modal to confirm, leave team -->
                 <a class="card-footer-item has-text-danger" @click="leave">
                   Leave Team
                 </a>
-              </template>
-              <!-- Admin Commands -->
-              <template v-if="!owner && editable">
-                <!-- If proxy, provide edit link (TODO - move this to management page in the permissions update) -->
-                <template v-if="details.character.proxy">
-                  <hr class="dropdown-divider" />
-                  <router-link :to="`./proxies/${details.character.id}/`" class="card-footer-item">
-                    Edit Proxy
-                  </router-link>
-                </template>
-                <!-- Modal to confirm, kick from team -->
-                <hr class="dropdown-divider" />
-                <a class="card-footer-item has-text-danger" @click="kick">Kick from Team</a>
               </template>
             </div>
           </div>
@@ -84,7 +71,6 @@
 <script lang="ts">
 import { Component, Vue, Prop } from 'vue-property-decorator'
 import BISTable from '@/components/bis_table.vue'
-import KickFromTeam from '@/components/modals/confirmations/kick_from_team.vue'
 import LeaveTeam from '@/components/modals/confirmations/leave_team.vue'
 import TeamMember from '@/interfaces/team_member'
 
@@ -95,10 +81,6 @@ import TeamMember from '@/interfaces/team_member'
 })
 export default class TeamMemberCard extends Vue {
   active = false
-
-  // Allows rendering other team member's cards with the kick button below
-  @Prop()
-  editable!: boolean
 
   @Prop()
   details!: TeamMember
@@ -114,16 +96,11 @@ export default class TeamMemberCard extends Vue {
     return (
       this.details.bis_list.external_link != null
       || this.owner
-      || (!this.owner && this.editable)
     )
   }
 
   get dropdown(): HTMLElement {
     return this.$refs.dropdown as HTMLElement
-  }
-
-  kick(): void {
-    this.$modal.show(KickFromTeam, { details: this.details, teamId: this.teamId }, { }, { closed: () => { this.$emit('reload') } })
   }
 
   leave(): void {

@@ -17,6 +17,7 @@ from api.models import TeamMember
 from api.serializers import (
     TeamMemberSerializer,
     TeamMemberModifySerializer,
+    TeamMemberPermissionsModifySerializer,
 )
 
 
@@ -73,18 +74,34 @@ class TeamMemberResource(APIView):
         team = obj.team
 
         # Check permissions and kick status - Request is valid if;
+        #   - Anyone with the Proxy Manager permission is kicking a proxy
         #   - The Team Leader is kicking someone *else* from the Team.
         #   - Someone themselves is choosing to leave the team.
         kick: bool
-        # Non Proxy Character attempting to leave
-        if obj.character.user is not None and obj.character.user.id == request.user.id:
-            kick = False
-        # Team Leader making request; valid and is kick request
-        elif obj.team.members.get(lead=True).character.user.id == request.user.id:
+
+        # Branch off between a targeted Proxy Character vs non-Proxy
+        if obj.character.user is None:
+            # Proxy Character being kicked, check requesting user's permissions
             kick = True
-        # If anything else, return a 404
+            user_members = obj.team.members.filter(character__user=request.user)
+            valid = False
+            for member in user_members:
+                if member.has_permission('proxy_manager'):
+                    valid = True
+                    break
+            if not valid:
+                return Response(status=404)
         else:
-            return Response(status=404)
+            # The character in question is not a Proxy so handle the permissions as before
+            if obj.character.user is not None and obj.character.user.id == request.user.id:
+                # Non Proxy Character attempting to leave
+                kick = False
+            elif obj.team.members.get(lead=True).character.user.id == request.user.id:
+                # Team Leader making request; valid and is kick request
+                kick = True
+            else:
+                # If anything else, return a 404
+                return Response(status=404)
 
         obj.team.remove_character(obj.character, kick)
 
@@ -96,5 +113,43 @@ class TeamMemberResource(APIView):
         # Special handling for Proxy characters, we should delete them here
         if obj.character.user is None:
             obj.character.delete()
+
+        return Response(status=204)
+
+
+class TeamMemberPermissionsResource(APIView):
+    """
+    Allow for the updating of Team Member permissions by the Team Lead
+    """
+
+    def put(self, request: Request, team_id: str, pk: id) -> Response:
+        """
+        Update a pre-existing Team Member object, potentially changing both the linked character and bis list
+        """
+        # Make sure the user in question is the Team Leader
+        team = self._get_team_as_leader(request, team_id)
+        if team is None:
+            return Response(status=404)
+
+        try:
+            # Attempt to get a valid member of the specified Team
+            obj = team.members.get(pk=pk)
+        except (TeamMember.DoesNotExist, ValidationError):
+            return Response(status=404)
+
+        # Silently return for leader since their permissions shouldn't be updated
+        if obj.lead:
+            return Response(status=204)
+
+        serializer = TeamMemberPermissionsModifySerializer(instance=obj, data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        obj.permissions = serializer.validated_data['permissions']
+        obj.save()
+
+        # Websocket stuff
+        self._send_to_team(obj.team, {'type': 'team', 'id': str(obj.team.id)})
+        for tm in obj.team.members.all():
+            self._send_to_user(tm.character.user, {'type': 'character', 'id': tm.character.pk})
 
         return Response(status=204)

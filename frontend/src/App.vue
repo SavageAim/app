@@ -105,7 +105,9 @@ export default class App extends Vue {
       default:
         Vue.notify({ text: `Unexpected packet model "${payload.model}" received.`, type: 'is-warning' })
       }
-      if (payload.reloadUrls.includes(this.$route.path)) this.reloadView()
+      payload.reloadUrls.forEach((url: string) => {
+        if (this.$route.path.includes(url)) this.reloadView()
+      })
     }
 
     this.updateSocket = sock

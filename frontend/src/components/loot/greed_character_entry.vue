@@ -16,7 +16,7 @@
         </div>
       </div>
     </div>
-    <div v-if="editable" class="list-actions">
+    <div v-if="userHasPermission" class="list-actions">
       <button class="button is-success is-loading" v-if="requesting">Give Item</button>
       <button class="button is-success" @click="openCharacter" v-else-if="entry.greed_lists.length > 0">Select BIS</button>
       <button class="button is-success" @click="saveTome" v-else>Give Item</button>
@@ -33,9 +33,6 @@ import { GreedGear, GreedItem } from '@/interfaces/loot'
 @Component
 export default class GreedCharacterEntry extends Vue {
   @Prop()
-  editable!: boolean
-
-  @Prop()
   entry!: GreedGear
 
   @Prop()
@@ -46,6 +43,9 @@ export default class GreedCharacterEntry extends Vue {
 
   @Prop()
   requesting!: boolean
+
+  @Prop()
+  userHasPermission!: boolean
 
   saveRaid(list: GreedItem): void {
     this.$emit('save-raid', list)

@@ -13,17 +13,48 @@
     <div class="card-content content">
       <h2 class="has-text-primary subtitle">{{ version }}</h2>
 
-      <div class="divider"><i class="material-icons icon">expand_more</i> Proxy Characters <i class="material-icons icon">expand_more</i></div>
-      <p>Proxy Characters have been added!</p>
-      <p>This feature allows Team Leaders to manage Characters even without the players signing up / joining a Team.</p>
-      <p>Proxies can be claimed and verified by the appropriate User at a point in the future as needed as well.</p>
-      <p>For all intents and purposes, these Proxies will be usable just like owned Characters, in Loot Manager and Team Details, etc.</p>
-      <p>However they cannot be promoted to Team Leader since they have no owner.</p>
+      <div class="divider"><i class="material-icons icon">expand_more</i> Team Member Permissions <i class="material-icons icon">expand_more</i></div>
+      <p>The ability to give extra permissions within a Team has been added.</p>
+      <p>These can be controlled via the "Manage Members" page of a Team.</p>
+      <p>
+        Currently the available permissions are;
+        <ul>
+          <li>Loot Manager - Allow a Member to track and hand out Loot via the Loot Manager!</li>
+          <li>Proxy Manager - Allow a Member to add / edit / remove Proxy Characters from the Team!</li>
+        </ul>
+      </p>
 
-      <div class="divider"><i class="material-icons icon">expand_more</i> Proxy Character Verification <i class="material-icons icon">expand_more</i></div>
-      <p>Whenever a Character is verified, if Proxies of the same Character exist they will now be replaced with the verified, User owned version.</p>
-      <p>This allows Users to come later, claim their Character, and pick up where the Proxy was left!</p>
-      <p>Proxies can also be claimed via the Join a Team page for ease.</p>
+      <div class="divider"><i class="material-icons icon">expand_more</i> Team Member Management Page <i class="material-icons icon">expand_more</i></div>
+      <p>A new page has been added to Teams; Manage Members!</p>
+      <p>This page is solely responsible for the management of all Members of a Team.</p>
+      <p>
+        Team Members can use this page to;
+        <ul>
+          <li>See their and other Members' permissions within the Team.</li>
+        </ul>
+      </p>
+      <p>
+        Team Leaders can also use this page to;
+        <ul>
+          <li>Manage Permissions of non-Proxy Members.</li>
+          <li>Kick Members from the Team.</li>
+        </ul>
+      </p>
+      <p>Members with the "Proxy Manager" permission will also have the ability to Add, Edit, and Kick Proxy Characters.</p>
+
+      <div class="divider"><i class="material-icons icon">expand_more</i> Minor Changes <i class="material-icons icon">expand_more</i></div>
+      <p>Renamed "Team Details" to "Team Overview" in the Team Navigation bar.</p>
+      <p>Removed the "Add Proxy Character" from the Overview page as it is now handled in the Management page.</p>
+      <p>Removed the "Edit Proxy" and "Kick from Team" items from the "Actions" dropdown in "Team Overview" as these have been moved to Management page.</p>
+      <p>
+        Changed some text of remaining items in the "Actions" dropdown to be more clear;
+        <ul>
+          <li>"Edit List" -> "Edit BIS List"</li>
+          <li>"Change Character" -> "Change Linked Character / BIS List"</li>
+        </ul>
+      </p>
+      <p>Fixed issue where Team Leaders would have both the Leader and Member icon displayed in the Overview page.</p>
+      <p>Fixed issue where live reloading wasn't happening when intended.</p>
 
     </div>
   </div>
