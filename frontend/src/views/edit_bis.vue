@@ -36,8 +36,6 @@ export default class EditBIS extends NewBIS {
   @Prop()
   bisId!: number
 
-  bisList!: BISListModify
-
   breadcrumb!: string
 
   @Prop()

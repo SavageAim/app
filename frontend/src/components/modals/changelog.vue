@@ -61,6 +61,7 @@
           <li>I added as many as I could get to realistically work and still be noticeable, but if you have suggestions for others then please let me know in the Discord! &lt;3</li>
         </ul>
       </p>
+      <p>Fixed issue where certain parts of the Edit Proxy page were not displaying information correctly.</p>
 
     </div>
   </div>

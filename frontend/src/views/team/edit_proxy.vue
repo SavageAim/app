@@ -53,8 +53,10 @@ interface ReadResponse {
     CharacterBio,
   },
 })
-export default class NewProxy extends TeamViewMixin {
-  bis!: BISListModify
+export default class EditProxy extends TeamViewMixin {
+  // Need this to be declared as a new one *first* before the load
+  // Or else watchers cannot set up correctly
+  bis: BISListModify = new BISListModify()
 
   bisApiErrors: BISListErrors = {}
 
