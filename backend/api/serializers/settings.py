@@ -14,16 +14,6 @@ __all__ = [
 
 NOTIFICATION_VALUES = {True, False}
 
-THEMES = {
-    'beta',
-    'blue',
-    'green',
-    'purple',
-    'red',
-    'traffic',
-    'trans',
-}
-
 
 class SettingsSerializer(serializers.ModelSerializer):
 
@@ -42,11 +32,3 @@ class SettingsSerializer(serializers.ModelSerializer):
             if value not in NOTIFICATION_VALUES:
                 raise serializers.ValidationError(f'"{key}" does not have a boolean for a value.')
         return notifications
-
-    def validate_theme(self, theme: str) -> str:
-        """
-        Ensure the theme is in the set of allowed themes
-        """
-        if theme not in THEMES:
-            raise serializers.ValidationError(f'"{theme}" is not a valid choice.')
-        return theme
