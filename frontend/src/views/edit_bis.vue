@@ -17,7 +17,7 @@
 </template>
 
 <script lang="ts">
-import { Component } from 'vue-property-decorator'
+import { Component, Prop } from 'vue-property-decorator'
 import BISListForm from '@/components/bis_list/form.vue'
 import BISListModify from '@/dataclasses/bis_list_modify'
 import BISList from '@/interfaces/bis_list'
@@ -33,9 +33,13 @@ export default class EditBIS extends NewBIS {
   listLoaded = false
 
   // Data
-  bisList!: BISListModify
+  @Prop()
+  bisId!: number
 
   breadcrumb!: string
+
+  @Prop()
+  characterId!: number
 
   // Flag indicating if we're ready to display the page
   get loaded(): boolean {
@@ -48,7 +52,7 @@ export default class EditBIS extends NewBIS {
 
   // URL for reading and writing
   get url(): string {
-    return `/backend/api/character/${this.$route.params.characterId}/bis_lists/${this.$route.params.id}/`
+    return `/backend/api/character/${this.characterId}/bis_lists/${this.bisId}/`
   }
 
   // Load functions

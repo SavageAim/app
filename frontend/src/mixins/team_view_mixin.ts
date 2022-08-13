@@ -1,10 +1,14 @@
 // Not your standard mixin, needs to be extended
+import { Prop } from 'vue-property-decorator'
 import Team from '@/interfaces/team'
 import TeamMember from '@/interfaces/team_member'
 import SavageAimMixin from '@/mixins/savage_aim_mixin'
 
 export default class TeamViewMixin extends SavageAimMixin {
   team!: Team
+
+  @Prop()
+  teamId!: string
 
   // Flag stating whether the currently logged user can control the Loot Manager
   get userHasLootManagerPermission(): boolean {

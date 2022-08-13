@@ -75,11 +75,11 @@ export default class NewProxy extends TeamViewMixin {
   team!: Team
 
   get readUrl(): string {
-    return `/backend/api/team/${this.$route.params.id}/`
+    return `/backend/api/team/${this.teamId}/`
   }
 
   get writeUrl(): string {
-    return `/backend/api/team/${this.$route.params.id}/proxies/`
+    return `/backend/api/team/${this.teamId}/proxies/`
   }
 
   checkPermissions(): void {
@@ -119,7 +119,7 @@ export default class NewProxy extends TeamViewMixin {
       if (response.ok) {
         // Redirect back to Team Details
         this.$store.dispatch('fetchCharacters')
-        this.$router.push(`/team/${this.team.id}/`, () => {
+        this.$router.push(`/team/${this.team.id}/management/`, () => {
           Vue.notify({ text: `New Proxy Character created successfully!`, type: 'is-success' })
         })
       }
