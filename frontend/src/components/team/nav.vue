@@ -63,20 +63,23 @@ export default class TeamNav extends Vue {
   @Prop()
   isLead!: boolean
 
+  @Prop()
+  teamId!: string
+
   get mainUrl(): string {
-    return `/team/${this.$route.params.id}/`
+    return `/team/${this.teamId}/`
   }
 
   get lootUrl(): string {
-    return `/team/${this.$route.params.id}/loot/`
+    return `/team/${this.teamId}/loot/`
   }
 
   get managementUrl(): string {
-    return `/team/${this.$route.params.id}/management/`
+    return `/team/${this.teamId}/management/`
   }
 
   get settingsUrl(): string {
-    return `/team/${this.$route.params.id}/settings/`
+    return `/team/${this.teamId}/settings/`
   }
 
   isActive(path: string): boolean {

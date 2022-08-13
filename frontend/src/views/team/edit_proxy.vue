@@ -32,7 +32,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
+import { Component, Prop, Vue } from 'vue-property-decorator'
 import BISListForm from '@/components/bis_list/form.vue'
 import CharacterBio from '@/components/character_bio.vue'
 import BISListModify from '@/dataclasses/bis_list_modify'
@@ -53,12 +53,17 @@ interface ReadResponse {
     CharacterBio,
   },
 })
-export default class NewProxy extends TeamViewMixin {
-  bis!: BISListModify
+export default class EditProxy extends TeamViewMixin {
+  // Need this to be declared as a new one *first* before the load
+  // Or else watchers cannot set up correctly
+  bis: BISListModify = new BISListModify()
 
   bisApiErrors: BISListErrors = {}
 
   character!: Character
+
+  @Prop()
+  charId!: string
 
   loading = true
 
@@ -67,7 +72,7 @@ export default class NewProxy extends TeamViewMixin {
   team!: Team
 
   get url(): string {
-    return `/backend/api/team/${this.$route.params.teamId}/proxies/${this.$route.params.id}/`
+    return `/backend/api/team/${this.teamId}/proxies/${this.charId}/`
   }
 
   checkPermissions(): void {
@@ -103,7 +108,7 @@ export default class NewProxy extends TeamViewMixin {
       if (response.ok) {
         // Attempt to parse the json, get the id, and then redirect
         this.$store.dispatch('fetchCharacters')
-        this.$router.push(`/team/${this.team.id}/`, () => {
+        this.$router.push(`/team/${this.team.id}/management/`, () => {
           Vue.notify({ text: `Proxy Character ${this.character.name} updated successfully!`, type: 'is-success' })
         })
       }

@@ -66,7 +66,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
+import { Component, Prop, Vue } from 'vue-property-decorator'
 import CharacterBio from '@/components/character_bio.vue'
 import ClaimCharacterModal from '@/components/modals/confirmations/claim_character.vue'
 import TeamBio from '@/components/team/bio.vue'
@@ -91,6 +91,9 @@ export default class TeamJoin extends SavageAimMixin {
 
   team!: Team
 
+  @Prop()
+  teamId!: string
+
   // Values for sending
   get bisListId(): string {
     return (this.$refs.form as TeamMemberForm).bisListId
@@ -105,7 +108,7 @@ export default class TeamJoin extends SavageAimMixin {
   }
 
   get url(): string {
-    return `/backend/api/team/join/${this.$route.params.id}/`
+    return `/backend/api/team/join/${this.teamId}/`
   }
 
   claim(character: Character): void {

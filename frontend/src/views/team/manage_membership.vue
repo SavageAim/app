@@ -29,7 +29,7 @@
 </template>
 
 <script lang="ts">
-import { Component } from 'vue-property-decorator'
+import { Component, Prop } from 'vue-property-decorator'
 import TeamMemberForm from '@/components/team/member_form.vue'
 import { TeamMemberUpdateErrors } from '@/interfaces/responses'
 import Team from '@/interfaces/team'
@@ -41,7 +41,7 @@ import SavageAimMixin from '@/mixins/savage_aim_mixin'
     TeamMemberForm,
   },
 })
-export default class TeamJoin extends SavageAimMixin {
+export default class TeamManageMembership extends SavageAimMixin {
   memberLoaded = false
 
   teamLoaded = false
@@ -50,7 +50,13 @@ export default class TeamJoin extends SavageAimMixin {
 
   member!: TeamMember
 
+  @Prop()
+  memberId!: string
+
   team!: Team
+
+  @Prop()
+  teamId!: string
 
   // Values for sending
   get bisListId(): string {
@@ -66,11 +72,11 @@ export default class TeamJoin extends SavageAimMixin {
   }
 
   get teamUrl(): string {
-    return `/backend/api/team/${this.$route.params.teamId}/`
+    return `/backend/api/team/${this.teamId}/`
   }
 
   get url(): string {
-    return `${this.teamUrl}member/${this.$route.params.id}/`
+    return `${this.teamUrl}member/${this.memberId}/`
   }
 
   created(): void {

@@ -22,7 +22,13 @@
                     <option value="purple">Purple</option>
                     <option value="red">Red</option>
                     <option value="traffic">Traffic Lights</option>
-                    <option value="trans">Trans Pride</option>
+                    <option disabled>----- Pride Flag Schemes -----</option>
+                    <option value="ace">Asexual</option>
+                    <option value="lesbian">Lesbian</option>
+                    <option value="nb">Nonbinary</option>
+                    <option value="pan">Pan</option>
+                    <option value="rainbow">Rainbow</option>
+                    <option value="trans">Trans</option>
                   </select>
                 </div>
                 <p class="help is-danger" v-if="errors.theme !== undefined">{{ errors.theme[0] }}</p>
@@ -216,6 +222,3 @@ export default class Settings extends SavageAimMixin {
   }
 }
 </script>
-
-<style lang="scss">
-</style>

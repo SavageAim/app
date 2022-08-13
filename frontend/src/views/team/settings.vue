@@ -18,7 +18,7 @@
 
         <div class="level-right">
           <div class="level-item">
-            <TeamNav :is-lead="userIsTeamLead" />
+            <TeamNav :is-lead="userIsTeamLead" :team-id="teamId" />
           </div>
         </div>
       </div>
@@ -122,7 +122,7 @@ export default class TeamSettings extends TeamViewMixin {
   }
 
   get url(): string {
-    return `/backend/api/team/${this.$route.params.id}/`
+    return `/backend/api/team/${this.teamId}/`
   }
 
   checkPermissions(displayWarning: boolean): void {

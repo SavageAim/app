@@ -76,7 +76,6 @@ class User(SavageAimTestCase):
         data = {'theme': 'abcde', 'notifications': {'abcde': 'abcde'}}
         response = self.client.put(url, data)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.json()['theme'], ['"abcde" is not a valid choice.'])
         self.assertEqual(response.json()['notifications'], ['"abcde" is not a valid choice.'])
 
         data['notifications'] = {'team_lead': 'abcde'}

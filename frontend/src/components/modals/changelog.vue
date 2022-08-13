@@ -60,6 +60,13 @@
       </p>
       <p>Fixed issue where Team Leaders would have both the Leader and Member icon displayed in the Overview page.</p>
       <p>Fixed issue where live reloading wasn't happening when intended.</p>
+      <p>
+        Added some more pride flag colour schemes.
+        <ul>
+          <li>I added as many as I could get to realistically work and still be noticeable, but if you have suggestions for others then please let me know in the Discord! &lt;3</li>
+        </ul>
+      </p>
+      <p>Fixed issue where certain parts of the Edit Proxy page were not displaying information correctly.</p>
 
     </div>
   </div>

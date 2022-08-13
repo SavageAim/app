@@ -28,9 +28,24 @@ const routes = [
 
   // Character
   { path: '/characters/new/', component: () => import('@/views/new_char.vue'), name: 'newChar' },
-  { path: '/characters/:id/', component: () => import('@/views/character.vue'), name: 'viewChar' },
-  { path: '/characters/:characterId/bis_list/', component: () => import('@/views/new_bis.vue'), name: 'newBIS' },
-  { path: '/characters/:characterId/bis_list/:id/', component: () => import('@/views/edit_bis.vue'), name: 'editBIS' },
+  {
+    path: '/characters/:characterId/',
+    component: () => import('@/views/character.vue'),
+    name: 'viewChar',
+    props: true,
+  },
+  {
+    path: '/characters/:characterId/bis_list/',
+    component: () => import('@/views/new_bis.vue'),
+    name: 'newBIS',
+    props: true,
+  },
+  {
+    path: '/characters/:characterId/bis_list/:bisId/',
+    component: () => import('@/views/edit_bis.vue'),
+    name: 'editBIS',
+    props: true,
+  },
 
   // Notifications
   { path: '/notifications/', component: () => import('@/views/notifications.vue'), name: 'userNotifs' },
@@ -41,20 +56,56 @@ const routes = [
   // Team
   { path: '/team/', component: () => import('@/views/team/add.vue'), name: 'addTeam' },
   { path: '/team/new/', component: () => import('@/views/team/create.vue'), name: 'newTeam' },
-  { path: '/team/:id/', component: () => import('@/views/team/overview.vue'), name: 'teamOverview' },
-  { path: '/team/:id/loot/', component: () => import('@/views/team/loot.vue'), name: 'teamLoot' },
-  { path: '/team/:id/management/', component: () => import('@/views/team/management.vue'), name: 'teamManagement' },
   {
-    path: '/team/:teamId/member/:id/',
+    path: '/team/:teamId/',
+    component: () => import('@/views/team/overview.vue'),
+    name: 'teamOverview',
+    props: true,
+  },
+  {
+    path: '/team/:teamId/loot/',
+    component: () => import('@/views/team/loot.vue'),
+    name: 'teamLoot',
+    props: true,
+  },
+  {
+    path: '/team/:teamId/management/',
+    component: () => import('@/views/team/management.vue'),
+    name: 'teamManagement',
+    props: true,
+  },
+  {
+    path: '/team/:teamId/member/:memberId/',
     component: () => import('@/views/team/manage_membership.vue'),
     name: 'teamMemberManage',
+    props: true,
   },
-  { path: '/team/:id/settings/', component: () => import('@/views/team/settings.vue'), name: 'teamSettings' },
-  { path: '/team/join/:id/', component: () => import('@/views/team/join.vue'), name: 'teamJoin' },
+  {
+    path: '/team/:teamId/settings/',
+    component: () => import('@/views/team/settings.vue'),
+    name: 'teamSettings',
+    props: true,
+  },
+  {
+    path: '/team/join/:teamId/',
+    component: () => import('@/views/team/join.vue'),
+    name: 'teamJoin',
+    props: true,
+  },
 
   // Proxies
-  { path: '/team/:id/proxies/', component: () => import('@/views/team/new_proxy.vue'), name: 'teamNewProxy' },
-  { path: '/team/:teamId/proxies/:id/', component: () => import('@/views/team/edit_proxy.vue'), name: 'teamEditProxy' },
+  {
+    path: '/team/:teamId/proxies/',
+    component: () => import('@/views/team/new_proxy.vue'),
+    name: 'teamNewProxy',
+    props: true,
+  },
+  {
+    path: '/team/:teamId/proxies/:charId/',
+    component: () => import('@/views/team/edit_proxy.vue'),
+    name: 'teamEditProxy',
+    props: true,
+  },
 
   // Errors
   { path: '/errors/500/', component: () => import('@/views/errors/500.vue'), name: 'errors/500' },
