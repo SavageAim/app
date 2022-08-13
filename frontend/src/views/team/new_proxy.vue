@@ -119,7 +119,7 @@ export default class NewProxy extends TeamViewMixin {
       if (response.ok) {
         // Redirect back to Team Details
         this.$store.dispatch('fetchCharacters')
-        this.$router.push(`/team/${this.team.id}/`, () => {
+        this.$router.push(`/team/${this.team.id}/management/`, () => {
           Vue.notify({ text: `New Proxy Character created successfully!`, type: 'is-success' })
         })
       }

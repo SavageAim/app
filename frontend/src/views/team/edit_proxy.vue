@@ -108,7 +108,7 @@ export default class EditProxy extends TeamViewMixin {
       if (response.ok) {
         // Attempt to parse the json, get the id, and then redirect
         this.$store.dispatch('fetchCharacters')
-        this.$router.push(`/team/${this.team.id}/`, () => {
+        this.$router.push(`/team/${this.team.id}/management/`, () => {
           Vue.notify({ text: `Proxy Character ${this.character.name} updated successfully!`, type: 'is-success' })
         })
       }
