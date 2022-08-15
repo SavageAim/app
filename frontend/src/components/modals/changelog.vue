@@ -49,8 +49,7 @@
 
       <div class="divider"><i class="material-icons icon">expand_more</i> Minor Changes <i class="material-icons icon">expand_more</i></div>
       <p>Renamed "Team Details" to "Team Overview" in the Team Navigation bar.</p>
-      <p>Removed the "Add Proxy Character" from the Overview page as it is now handled in the Management page.</p>
-      <p>Removed the "Edit Proxy" and "Kick from Team" items from the "Actions" dropdown in "Team Overview" as these have been moved to Management page.</p>
+      <p>Moved all items related to managing Proxy Characters from Team Overview to the new Manage Members page.</p>
       <p>
         Changed some text of remaining items in the "Actions" dropdown to be more clear;
         <ul>
