@@ -43,10 +43,13 @@ export default class ProxyMemberManager extends Vue {
   member!: TeamMember
 
   @Prop()
+  teamId!: string
+
+  @Prop()
   userHasPermission!: boolean
 
   kick(): void {
-    this.$modal.show(KickFromTeam, { details: this.member, teamId: this.$route.params.id }, { }, { closed: () => { this.$emit('reload') } })
+    this.$modal.show(KickFromTeam, { details: this.member, teamId: this.teamId }, { }, { closed: () => { this.$emit('reload') } })
   }
 }
 </script>

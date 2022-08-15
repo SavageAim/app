@@ -40,17 +40,20 @@ import TeamMember from '@/interfaces/team_member'
 @Component
 export default class TeamMemberManager extends Vue {
   @Prop()
-  userIsLead!: boolean
-
-  @Prop()
   member!: TeamMember
 
+  @Prop()
+  teamId!: string
+
+  @Prop()
+  userIsLead!: boolean
+
   editPermissions(): void {
-    this.$modal.show(Permissions, { member: this.member, teamId: this.$route.params.id }, { }, { closed: () => { this.$emit('reload') } })
+    this.$modal.show(Permissions, { member: this.member, teamId: this.teamId }, { }, { closed: () => { this.$emit('reload') } })
   }
 
   kick(): void {
-    this.$modal.show(KickFromTeam, { details: this.member, teamId: this.$route.params.id }, { }, { closed: () => { this.$emit('reload') } })
+    this.$modal.show(KickFromTeam, { details: this.member, teamId: this.teamId }, { }, { closed: () => { this.$emit('reload') } })
   }
 }
 </script>

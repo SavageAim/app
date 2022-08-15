@@ -31,7 +31,7 @@
               <div class="card-header-title">Team Members</div>
             </div>
             <div class="card-content">
-              <TeamMemberManager :member="member" :user-is-lead="userIsTeamLead" v-for="member in realMembers()" :key="member.id" v-on:reload="() => { fetchTeam(true) }" />
+              <TeamMemberManager :team-id="teamId" :member="member" :user-is-lead="userIsTeamLead" v-for="member in realMembers()" :key="member.id" v-on:reload="() => { fetchTeam(true) }" />
             </div>
           </div>
         </div>
@@ -48,7 +48,7 @@
               </div>
             </div>
             <div class="card-content">
-              <ProxyMemberManager :member="member" :user-has-permission="userHasProxyManagerPermission" v-for="member in proxyMembers()" :key="member.id" v-on:reload="() => { fetchTeam(true) }" />
+              <ProxyMemberManager :team-id="teamId" :member="member" :user-has-permission="userHasProxyManagerPermission" v-for="member in proxyMembers()" :key="member.id" v-on:reload="() => { fetchTeam(true) }" />
             </div>
           </div>
         </div>
