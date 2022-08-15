@@ -31,32 +31,9 @@
               <div class="card-header">
                 <div class="card-header-title">Select a Character and BIS List</div>
               </div>
-              <div class="card-content" v-if="characters.length">
+              <div class="card-content">
                 <TeamMemberForm ref="form" :bis-list-id-errors="errors.bis_list_id" :character-id-errors="errors.character_id" />
                 <button class="button is-success" @click="join">Join!</button>
-              </div>
-              <div class="card-content content" v-else>
-                <p>
-                  Your account currently has no Characters. You have two choices as to how you proceed;
-                  <ol>
-                    <li>
-                      If a Character you own is listed in the Claim a Proxy card <span class="is-hidden-desktop">below</span><span class="is-hidden-touch">to the right</span>, you may click on them to attempt to claim them.
-                      <br />
-                      When verified, you will have automatically joined the Team and will not need to visit this page again.
-                    </li>
-                    <li>
-                      If your Character isn't present as a Proxy, you may click the button below to open the Add Character page in a new tab.
-                      <br />
-                      When added and verified, return to this tab and this page should have instantly updated to display a dropdown with your new Character in it.
-                    </li>
-                  </ol>
-                </p>
-                <a href="/characters/new/" target="_blank" class="button is-success is-fullwidth">
-                  <span class="icon-text">
-                    <span class="icon"><i class="material-icons">open_in_new</i></span>
-                    <span>Add Character</span>
-                  </span>
-                </a>
               </div>
             </div>
           </div>
@@ -122,11 +99,6 @@ export default class TeamJoin extends SavageAimMixin {
     return (this.$refs.form as TeamMemberForm).bisListId
   }
 
-  get characters(): Character[] {
-    return this.$store.state.characters.filter((c: Character) => c.id !== 1)
-    // return this.$store.state.characters
-  }
-
   get characterId(): string {
     return (this.$refs.form as TeamMemberForm).characterId
   }
@@ -145,10 +117,10 @@ export default class TeamJoin extends SavageAimMixin {
   }
 
   created(): void {
-    this.fetchTeam(false)
+    this.fetchTeam()
   }
 
-  async fetchTeam(reload: boolean): Promise<void> {
+  async fetchTeam(): Promise<void> {
     // Load the team data from the API
     try {
       const response = await fetch(this.url)
@@ -157,7 +129,6 @@ export default class TeamJoin extends SavageAimMixin {
         this.team = (await response.json()) as Team
         this.teamLoaded = true
         document.title = `Join ${this.team.name} - Savage Aim`
-        if (reload) this.$forceUpdate()
       }
       else if (response.status === 404) {
         // Handle 404s ourselves to go back to the create/join page with a warning
@@ -204,10 +175,6 @@ export default class TeamJoin extends SavageAimMixin {
     catch (e) {
       this.$notify({ text: `Error ${e} when attempting to create BIS List.`, type: 'is-danger' })
     }
-  }
-
-  async load(): Promise<void> {
-    this.fetchTeam(true)
   }
 }
 </script>
