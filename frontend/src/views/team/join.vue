@@ -123,8 +123,7 @@ export default class TeamJoin extends SavageAimMixin {
   }
 
   get characters(): Character[] {
-    return this.$store.state.characters.filter((c: Character) => c.id !== 1)
-    // return this.$store.state.characters
+    return this.$store.state.characters
   }
 
   get characterId(): string {
