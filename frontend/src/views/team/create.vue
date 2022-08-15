@@ -20,18 +20,31 @@
             </div>
           </div>
           <div class="field">
-              <label class="label" for="tier">Tier</label>
-              <div class="select is-fullwidth" :class="{'is-danger': errors.tier_id !== undefined}">
-                <select v-model="tierId" id="tier">
-                  <option value="-1">Select a Tier</option>
-                  <option v-for="tier in $store.state.tiers" :key="tier.id" :value="tier.id">{{ tier.name }}</option>
-                </select>
-              </div>
-              <p v-if="errors.tier_id !== undefined" class="help is-danger">{{ errors.tier_id[0] }}</p>
+            <label class="label" for="tier">Tier</label>
+            <div class="select is-fullwidth" :class="{'is-danger': errors.tier_id !== undefined}">
+              <select v-model="tierId" id="tier">
+                <option value="-1">Select a Tier</option>
+                <option v-for="tier in $store.state.tiers" :key="tier.id" :value="tier.id">{{ tier.name }}</option>
+              </select>
             </div>
-            <div class="divider"><i class="material-icons icon">expand_more</i> Team Leader <i class="material-icons icon">expand_more</i></div>
-          <TeamMemberForm ref="form" :bis-list-id-errors="errors.bis_list_id" :character-id-errors="errors.character_id" />
-          <button class="button is-success" @click="create">Create!</button>
+            <p v-if="errors.tier_id !== undefined" class="help is-danger">{{ errors.tier_id[0] }}</p>
+          </div>
+          <div class="divider"><i class="material-icons icon">expand_more</i> Team Leader <i class="material-icons icon">expand_more</i></div>
+          <TeamMemberForm ref="form" :bis-list-id-errors="errors.bis_list_id" :character-id-errors="errors.character_id" v-if="characters.length" />
+          <template v-else>
+            <p class="no-chars-message">Your account currently has no Characters.</p>
+            <p class="no-chars-message">Clicking the "Add Character" button below will open the page to add a new Character to your account in another tab.</p>
+            <p class="no-chars-message">When your Character has been imported and verified this page will automatically update with them to allow you to select them to be your Team Leader Character!</p>
+            <a href="/characters/new/" target="_blank" class="button is-success is-fullwidth">
+              <span class="icon-text">
+                <span class="icon"><i class="material-icons">open_in_new</i></span>
+                <span>Add Character</span>
+              </span>
+            </a>
+          </template>
+        </div>
+        <div class="card-footer">
+          <a class="card-footer-item has-text-success" @click="create">Create Team</a>
         </div>
       </div>
     </div>
@@ -41,6 +54,7 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 import TeamMemberForm from '@/components/team/member_form.vue'
+import { Character } from '@/interfaces/character'
 import { TeamCreateErrors, TeamCreateResponse } from '@/interfaces/responses'
 import SavageAimMixin from '@/mixins/savage_aim_mixin'
 
@@ -61,6 +75,10 @@ export default class TeamJoin extends SavageAimMixin {
   // Values for sending
   get bisListId(): string {
     return (this.$refs.form as TeamMemberForm).bisListId
+  }
+
+  get characters(): Character[] {
+    return this.$store.state.characters
   }
 
   get characterId(): string {
@@ -105,8 +123,15 @@ export default class TeamJoin extends SavageAimMixin {
       this.$notify({ text: `Error ${e} when attempting to create a Team.`, type: 'is-danger' })
     }
   }
+
+  async load(): Promise<void> {
+    this.$forceUpdate()
+  }
 }
 </script>
 
 <style lang="scss">
+.no-chars-message {
+  margin-bottom: 0.25rem;
+}
 </style>
