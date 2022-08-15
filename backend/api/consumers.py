@@ -46,7 +46,6 @@ class UpdatesConsumer(WebsocketConsumer):
             'reloadUrls': [
                 f'/characters/{event["char"]}/',
                 f'/characters/{event["char"]}/bis_list/{event["id"]}/',
-                '/team/join/',
             ],
         }
         self.send(text_data=json.dumps(payload))
@@ -57,10 +56,7 @@ class UpdatesConsumer(WebsocketConsumer):
         """
         payload = {
             'model': 'character',
-            'reloadUrls': [
-                f'/characters/{event["id"]}/',
-                '/team/join/',
-            ],
+            'reloadUrls': [f'/characters/{event["id"]}/'],
         }
         self.send(text_data=json.dumps(payload))
 
@@ -100,9 +96,6 @@ class UpdatesConsumer(WebsocketConsumer):
         """
         payload = {
             'model': 'team',
-            'reloadUrls': [
-                f'/team/{event["id"]}/',
-                f'/team/join/{event["invite_code"]}/',
-            ],
+            'reloadUrls': [f'/team/{event["id"]}/'],
         }
         self.send(text_data=json.dumps(payload))

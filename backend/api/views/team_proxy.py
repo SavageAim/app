@@ -57,7 +57,7 @@ class TeamProxyCollection(APIView):
         team.members.create(character=char_serializer.instance, bis_list=bis_serializer.instance)
 
         # Websocket stuff
-        self._send_to_team(team, {'type': 'team', 'id': str(team.id), 'invite_code': str(team.invite_code)})
+        self._send_to_team(team, {'type': 'team', 'id': str(team.id)})
         for tm in team.members.all():
             self._send_to_user(tm.character.user, {'type': 'character', 'id': tm.character.pk})
 
@@ -111,7 +111,7 @@ class TeamProxyResource(APIView):
         # Send a WS updates for BIS and Teams
         self._send_to_user(obj.character.user, {'type': 'bis', 'char': obj.character.id, 'id': serializer.instance.pk})
         for tm in team.members.all():
-            self._send_to_team(team, {'type': 'team', 'id': str(team.id), 'invite_code': str(team.invite_code)})
+            self._send_to_team(team, {'type': 'team', 'id': str(tm.team.id)})
 
         return Response(status=204)
 

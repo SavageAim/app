@@ -103,10 +103,7 @@ class BISListResource(BISListBaseView):
         # Send a WS updates for BIS and Teams
         self._send_to_user(char.user, {'type': 'bis', 'char': char.id, 'id': serializer.instance.pk})
         for tm in obj.teammember_set.all():
-            self._send_to_team(
-                tm.team,
-                {'type': 'team', 'id': str(tm.team.id), 'invite_code': str(tm.team.invite_code)},
-            )
+            self._send_to_team(tm.team, {'type': 'team', 'id': str(tm.team.id)})
 
         # Sync lists, if any requested
         self._sync_lists(serializer.instance, request.GET.getlist('sync'))

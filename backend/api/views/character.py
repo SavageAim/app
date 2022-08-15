@@ -85,10 +85,7 @@ class CharacterResource(APIView):
         # Send WS updates
         self._send_to_user(request.user, {'type': 'character', 'id': obj.id})
         for tm in obj.teammember_set.all():
-            self._send_to_team(
-                tm.team,
-                {'type': 'team', 'id': str(tm.team.id), 'invite_code': str(tm.team.invite_code)},
-            )
+            self._send_to_team(tm.team, {'type': 'team', 'id': str(tm.team.id)})
 
         return Response(status=204)
 
@@ -161,10 +158,7 @@ class CharacterDelete(APIView):
         # Send WS updates
         self._send_to_user(request.user, {'type': 'character', 'id': char_id})
         for tm in teams:
-            self._send_to_team(
-                tm.team,
-                {'type': 'team', 'id': str(tm.team.id), 'invite_code': str(tm.team.invite_code)},
-            )
+            self._send_to_team(tm.team, {'type': 'team', 'id': str(tm.team.id)})
             # Potential need to clean up here, but I don't feel like it's too big of an issue
 
         return Response(status=204)
