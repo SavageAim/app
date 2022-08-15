@@ -62,7 +62,6 @@
         </ul>
       </p>
       <p>Fixed issue where certain parts of the Edit Proxy page were not displaying information correctly.</p>
-      <p>Team Join page now has special handling for when the user has no Characters yet.</p>
 
     </div>
   </div>
