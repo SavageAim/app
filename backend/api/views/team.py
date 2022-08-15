@@ -69,7 +69,7 @@ class TeamCollection(APIView):
         )
 
         # Websocket stuff
-        self._send_to_user(request.user, {'type': 'team', 'id': str(obj.id)})
+        self._send_to_user(request.user, {'type': 'team', 'id': str(obj.id), 'invite_code': str(obj.invite_code)})
 
         # With everything created, return the Team ID
         return Response({'id': obj.id}, status=201)
@@ -116,7 +116,7 @@ class TeamResource(APIView):
         obj.make_lead(obj.members.get(pk=team_lead_id))
 
         # Websocket stuff
-        self._send_to_team(obj, {'type': 'team', 'id': str(obj.id)})
+        self._send_to_team(obj, {'type': 'team', 'id': str(obj.id), 'invite_code': str(obj.invite_code)})
         for tm in obj.members.all():
             self._send_to_user(tm.character.user, {'type': 'character', 'id': tm.character.pk})
         return Response(status=204)
@@ -149,7 +149,7 @@ class TeamResource(APIView):
         obj.disband()
 
         # Websocket stuff
-        self._send_to_team(obj, {'type': 'team', 'id': team_id})
+        self._send_to_team(obj, {'type': 'team', 'id': team_id, 'invite_code': str(obj.invite_code)})
         for tm in members:
             self._send_to_user(tm.character.user, {'type': 'character', 'id': tm.character.pk})
         return Response(status=204)
@@ -206,7 +206,7 @@ class TeamInvite(APIView):
         notifier.team_join(tm.character, obj)
 
         # Websocket stuff
-        self._send_to_team(obj, {'type': 'team', 'id': str(obj.id)})
+        self._send_to_team(obj, {'type': 'team', 'id': str(obj.id), 'invite_code': str(obj.invite_code)})
         for tm in obj.members.all():
             self._send_to_user(tm.character.user, {'type': 'character', 'id': tm.character.pk})
 

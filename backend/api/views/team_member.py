@@ -55,7 +55,7 @@ class TeamMemberResource(APIView):
         obj.save()
 
         # Websocket stuff
-        self._send_to_team(obj.team, {'type': 'team', 'id': str(obj.team.id)})
+        self._send_to_team(obj.team, {'type': 'team', 'id': str(obj.team.id), 'invite_code': str(obj.team.invite_code)})
         for tm in obj.team.members.all():
             self._send_to_user(tm.character.user, {'type': 'character', 'id': tm.character.pk})
 
@@ -106,7 +106,7 @@ class TeamMemberResource(APIView):
         obj.team.remove_character(obj.character, kick)
 
         # Websocket stuff
-        self._send_to_team(team, {'type': 'team', 'id': str(team.id)})
+        self._send_to_team(team, {'type': 'team', 'id': str(team.id), 'invite_code': str(team.invite_code)})
         for tm in team.members.all():
             self._send_to_user(tm.character.user, {'type': 'character', 'id': tm.character.pk})
 
@@ -148,7 +148,7 @@ class TeamMemberPermissionsResource(APIView):
         obj.save()
 
         # Websocket stuff
-        self._send_to_team(obj.team, {'type': 'team', 'id': str(obj.team.id)})
+        self._send_to_team(obj.team, {'type': 'team', 'id': str(obj.team.id), 'invite_code': str(obj.team.invite_code)})
         for tm in obj.team.members.all():
             self._send_to_user(tm.character.user, {'type': 'character', 'id': tm.character.pk})
 
