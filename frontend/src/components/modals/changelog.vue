@@ -29,6 +29,9 @@
       </p>
       <p>The default values for the Item Level filters in BIS pages have been updated to the new range for Abyssos. (610 - 635)</p>
 
+      <div class="divider"><i class="material-icons icon">expand_more</i> Minor Changes <i class="material-icons icon">expand_more</i></div>
+      <p>Fixed issue where Permission tags rendered outside their container on smaller desktop screens.</p>
+
     </div>
   </div>
 </template>
