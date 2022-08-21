@@ -1,26 +1,20 @@
 <template>
   <div class="box">
-    <div class="level">
-      <div class="media-left">
-        <div class="level-item">
-          {{ member.name }}
-        </div>
-      </div>
-      <div class="level-right">
-        <div class="level-item">
-          <div class="tags is-grouped is-grouped-multiline">
-            <template v-if="member.lead">
-              <span class="tag is-primary">Leader</span>
-            </template>
-            <template v-else>
-              <span class="tag is-info" v-if="member.permissions.loot_manager">Loot Manager</span>
-              <span class="tag is-info" v-if="member.permissions.proxy_manager">Proxy Manager</span>
-            </template>
-          </div>
-        </div>
+    <div class="member-name">
+      {{ member.name }}
+    </div>
+    <div class="permission-tags">
+      <div class="tags">
+        <template v-if="member.lead">
+          <span class="tag is-primary">Leader</span>
+        </template>
+        <template v-else>
+          <span class="tag is-info" v-if="member.permissions.loot_manager">Loot Manager</span>
+          <span class="tag is-info" v-if="member.permissions.proxy_manager">Proxy Manager</span>
+        </template>
       </div>
     </div>
-    <div class="buttons is-grouped" v-if="userIsLead && !member.lead">
+    <div class="management-buttons buttons is-grouped" v-if="userIsLead && !member.lead">
       <button class="button is-primary is-outlined is-fullwidth" @click="editPermissions">
         <span>Edit Permissions</span>
       </button>
@@ -59,5 +53,23 @@ export default class TeamMemberManager extends Vue {
 </script>
 
 <style lang="scss">
+.permission-tags {
+  margin-top: 0.25rem;
+}
 
+.management-buttons {
+  margin-top: 1rem;
+}
+
+@media screen and (min-width: 1024px) {
+  .member-name {
+    display: inline-block;
+  }
+
+  .permission-tags {
+    margin-top: 0;
+    display: inline-block;
+    float: right;
+  }
+}
 </style>
