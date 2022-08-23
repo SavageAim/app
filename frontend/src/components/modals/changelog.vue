@@ -18,12 +18,13 @@
       <p>
         All the gear added with Patch 6.2 has been added to the site, please enjoy updating your BIS Lists for the new Tier!
         <ul>
-          <li>Crafted Weapon, Armour and Accessories (iL 610)</li>
+          <li>Rinascita Weapon, Armour and Accessories (iL 610)</li>
+          <li>Purgatory Normal Mode Raid Armour and Accessories (iL 610)</li>
           <li>
             ????? Trial Weapon (iL 615)<br />
             <span class="has-text-warning">(correct name used in database so be careful re: spoilers)</span>
           </li>
-          <li>Moonshine and Augmented Moonshine Tome Weapon, Armour and Accessories (iL 620 / 630)</li>
+          <li>Lunar Envoy and Augmented Lunar Envoy Tome Weapon, Armour and Accessories (iL 620 / 630)</li>
           <li>Abyssos Weapon, Armour and Accessories (iL 630 / 635)</li>
         </ul>
       </p>

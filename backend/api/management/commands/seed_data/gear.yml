@@ -3,22 +3,27 @@
   has_armour: True
   has_weapon: True
   item_level: 610
-  name: 'Crafted'
+  name: 'Rinascita'
+- has_accessories: True
+  has_armour: True
+  has_weapon: False
+  item_level: 610
+  name: 'Purgatory'
 - has_accessories: False
   has_armour: False
   has_weapon: True
   item_level: 615
-  name: 'Trial'
+  name: 'Windswept'
 - has_accessories: True
   has_armour: True
   has_weapon: True
   item_level: 620
-  name: 'Moonshine'
+  name: 'Lunar Envoy'
 - has_accessories: True
   has_armour: True
   has_weapon: True
   item_level: 630
-  name: 'Augmented Moonshine'
+  name: 'Augmented Lunar Envoy'
 - has_accessories: True
   has_armour: True
   has_weapon: False
