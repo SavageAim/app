@@ -17,9 +17,7 @@ class LootTestSuite(SavageAimTestCase):
         Prepopulate the DB with known data we can calculate off of
         """
         self.maxDiff = None
-        call_command('tier_seed', stdout=StringIO())
-        call_command('gear_seed', stdout=StringIO())
-        call_command('job_seed', stdout=StringIO())
+        call_command('seed', stdout=StringIO())
 
         # Create a Team first
         self.team = Team.objects.create(

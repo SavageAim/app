@@ -163,8 +163,7 @@ class CharacterResource(SavageAimTestCase):
         Create user and BIS List
         """
         # Call management commands for the bislist
-        call_command('job_seed', stdout=StringIO())
-        call_command('gear_seed', stdout=StringIO())
+        call_command('seed', stdout=StringIO())
 
         # Create some users, then send a list request and check the data returned is correct
         self.char = Character.objects.create(
@@ -424,9 +423,7 @@ class CharacterDelete(SavageAimTestCase):
         """
         Notification.objects.all().delete()
         # Call management commands for the bislist
-        call_command('tier_seed', stdout=StringIO())
-        call_command('job_seed', stdout=StringIO())
-        call_command('gear_seed', stdout=StringIO())
+        call_command('seed', stdout=StringIO())
 
         # Create some users, then send a list request and check the data returned is correct
         self.char = Character.objects.create(

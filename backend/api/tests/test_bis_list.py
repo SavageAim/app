@@ -27,8 +27,7 @@ class BISListCollection(SavageAimTestCase):
             world='Lich',
             verified=True,
         )
-        call_command('job_seed', stdout=StringIO())
-        call_command('gear_seed', stdout=StringIO())
+        call_command('seed', stdout=StringIO())
 
         self.gear_id_map = {g.name: g.id for g in Gear.objects.all()}
 
@@ -294,8 +293,7 @@ class BISListResource(SavageAimTestCase):
             world='Lich',
             verified=True,
         )
-        call_command('job_seed', stdout=StringIO())
-        call_command('gear_seed', stdout=StringIO())
+        call_command('seed', stdout=StringIO())
 
         self.gear_id_map = {g.name: g.id for g in Gear.objects.all()}
 
@@ -521,9 +519,7 @@ class BISListDelete(SavageAimTestCase):
             world='Lich',
             verified=True,
         )
-        call_command('job_seed', stdout=StringIO())
-        call_command('tier_seed', stdout=StringIO())
-        call_command('gear_seed', stdout=StringIO())
+        call_command('seed', stdout=StringIO())
 
         self.gear_id_map = {g.name: g.id for g in Gear.objects.all()}
 

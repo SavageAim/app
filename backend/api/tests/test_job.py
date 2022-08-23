@@ -16,7 +16,7 @@ class JobCollection(SavageAimTestCase):
         """
         Call the job seed command to prepopulate the DB
         """
-        call_command('job_seed', stdout=StringIO())
+        call_command('seed', stdout=StringIO())
 
     def test_list(self):
         """

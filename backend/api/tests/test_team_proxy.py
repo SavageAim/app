@@ -17,7 +17,7 @@ class TeamProxyCollection(SavageAimTestCase):
         Prepopulate the DB with known data we can calculate off of
         """
         self.maxDiff = None
-        call_command('all_seed', stdout=StringIO())
+        call_command('seed', stdout=StringIO())
 
         # Create a Team first
         self.team = Team.objects.create(
@@ -251,7 +251,7 @@ class TeamProxyResource(SavageAimTestCase):
         Prepopulate the DB with known data we can calculate off of
         """
         self.maxDiff = None
-        call_command('all_seed', stdout=StringIO())
+        call_command('seed', stdout=StringIO())
 
         # Create a Team first
         self.team = Team.objects.create(
@@ -453,7 +453,7 @@ class TeamProxyClaim(SavageAimTestCase):
         Prepopulate the DB with known data we can calculate off of
         """
         self.maxDiff = None
-        call_command('all_seed', stdout=StringIO())
+        call_command('seed', stdout=StringIO())
 
         # Create a Team first
         self.team = Team.objects.create(
