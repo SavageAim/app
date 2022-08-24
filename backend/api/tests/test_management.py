@@ -9,6 +9,42 @@ __all__ = ['ManagementCommandTestSuite']
 
 class ManagementCommandTestSuite(SavageAimTestCase):
 
+    def test_integrity(self):
+        """
+        Seed the DB and ensure seeded data maintains integrity in various ways;
+
+        - Any gear names mentioned by Tiers should exist
+        - Any item levels mentioned by Tiers should exist
+        - Ordering numbers should be unique per role
+        """
+        call_command('seed', stdout=StringIO())
+
+        for tier in models.Tier.objects.all():
+            self.assertTrue(
+                models.Gear.objects.filter(item_level=tier.max_item_level).exists(),
+                f'Found no Gear of item level {tier.max_item_level} for Tier "{tier.name}".',
+            )
+            self.assertTrue(
+                models.Gear.objects.filter(name=tier.tome_gear_name).exists(),
+                f'"{tier.tome_gear_name}" is not a valid Gear name for Tier "{tier.name}".',
+            )
+            self.assertTrue(
+                models.Gear.objects.filter(name=tier.raid_gear_name).exists(),
+                f'"{tier.raid_gear_name}" is not a valid Gear name for Tier "{tier.name}".',
+            )
+
+        # Get ordering values from DB
+        cap = models.Job.objects.order_by('-ordering').first().ordering
+        for value in range(cap + 1):
+            roles = models.Job.objects.filter(ordering=value).values_list('role', flat=True)
+            expected = len(set(roles))
+            self.assertEqual(
+                len(roles),
+                expected,
+                f'Found {len(roles)} Jobs with ordering {value}, expected {expected}.\n\t'
+                f'Found {list(roles)} expected {list(set(roles))}.',
+            )
+
     def test_loot_team_link(self):
         """
         Create a Loot object with team=None, run the command and ensure the correct team was created
