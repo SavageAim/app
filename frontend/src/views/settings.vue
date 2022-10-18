@@ -18,6 +18,7 @@
                   <select v-model="theme" ref="dropdown">
                     <option value="beta">Beta</option>
                     <option value="blue">Blue</option>
+                    <option value="fflogs">FFLogs</option>
                     <option value="green">Green</option>
                     <option value="purple">Purple</option>
                     <option value="red">Red</option>
