@@ -1,3 +1,10 @@
+# 6.25
+- has_accessories: False
+  has_armour: False
+  has_weapon: True
+  item_level: 615
+  name: 'Manderville'
+
 # 6.2
 - has_accessories: True
   has_armour: True
