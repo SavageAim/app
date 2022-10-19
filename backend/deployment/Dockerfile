@@ -3,12 +3,12 @@ FROM python:3
 WORKDIR /savage-aim
 
 COPY . .
-RUN mv backend/settings_live.py backend/settings.py
-RUN mv backend/urls_live.py backend/urls.py
 
-# Install requirements
-RUN pip3 install -r requirements.txt
-RUN pip3 install gunicorn
+# Install requirements and move live files to the correct spot
+RUN pip3 install -r requirements.txt && \
+    pip3 install gunicorn && \
+    mv backend/urls_live.py backend/urls.py && \
+    mv backend/settings_live.py backend/settings.py
 
 # Set the gunicorn to run the wsgi file
 EXPOSE 443

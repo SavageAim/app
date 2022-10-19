@@ -11,7 +11,7 @@
       </div>
     </div>
     <div class="card-content">
-      <BISListForm :bisList="bisList" :url="url" method="POST" v-on:error-code="handleError" :render-desktop="false" v-on:close="$emit('close')" />
+      <BISListForm :bisList="bisList" :character="character" :url="url" method="POST" v-on:error-code="handleError" :render-desktop="false" v-on:close="$emit('close')" />
     </div>
   </div>
 </template>

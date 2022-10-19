@@ -66,8 +66,8 @@ export default class NotificationCard extends Vue {
     // Open a Notification, marking it as read in the process
     this.markAsRead()
 
-    // Open the link contained in the notification, using the router
-    this.$router.push(this.notification.link)
+    // Open the link contained in the notification, using the router (if not already on the page)
+    if (this.$route.path !== this.notification.link) this.$router.push(this.notification.link)
     this.$emit('close')
   }
 }
