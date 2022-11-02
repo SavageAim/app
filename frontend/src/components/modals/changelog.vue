@@ -12,6 +12,13 @@
     </div>
     <div class="card-content content">
       <h2 class="has-text-primary subtitle">{{ version }}</h2>
+      <div class="divider"><i class="material-icons icon">expand_more</i> Minor Changes <i class="material-icons icon">expand_more</i></div>
+      <p>
+        Added a new "Update" button on Character pages to refresh Character data from the Lodestone.
+        <ul>
+          <li>This allows Characters who have moved worlds or changed names to have the current information on Savage Aim.</li>
+        </ul>
+      </p>
 
       <div class="divider"><i class="material-icons icon">expand_more</i> Minor Changes <i class="material-icons icon">expand_more</i></div>
       <p>Fixed some under-the-hood errors that may have had minor effects on the website.</p>
