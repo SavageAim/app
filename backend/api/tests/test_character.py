@@ -238,19 +238,25 @@ class CharacterResource(SavageAimTestCase):
 
         data = {
             'alias': 'New Alias',
-            'name': 'This should not update',
+            'name': 'Test Character',
+            'world': 'Lich 2 Electric Boogaloo',
+            'avatar_url': 'https://savageaim.com',
         }
         response = self.client.put(url, data)
-        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
-        old_name = self.char.name
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT, response.content)
         self.char.refresh_from_db()
         self.assertEqual(self.char.alias, data['alias'])
-        self.assertEqual(self.char.name, old_name)
+        self.assertEqual(self.char.avatar_url, data['avatar_url'])
+        self.assertEqual(self.char.name, data['name'])
+        self.assertEqual(self.char.world, data['world'])
 
     def test_update_400(self):
         """
         Test that invalid update requests return 400 and the proper errors;
-        - alias longer than 64 characters:
+        - alias longer than 64 characters
+        - avatar_url not a url
+        - name longer than 60 characters
+        - world longer than 60 characters
         """
         user = self._get_user()
         self.client.force_authenticate(user)
@@ -260,8 +266,27 @@ class CharacterResource(SavageAimTestCase):
             'alias': 'New Alias' * 64,
         }
         response = self.client.put(url, data)
+        response_data = response.json()
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.json()['alias'], ['Ensure this field has no more than 64 characters.'])
+        self.assertEqual(response_data['alias'], ['Ensure this field has no more than 64 characters.'])
+        self.assertEqual(response_data['avatar_url'], ['This field is required.'])
+        self.assertEqual(response_data['name'], ['This field is required.'])
+        self.assertEqual(response_data['world'], ['This field is required.'])
+
+        data = {'avatar_url': 'abcde' * 120}
+        response = self.client.patch(url, data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.json()['avatar_url'], ['Enter a valid URL.'])
+
+        data = {'name': 'abcde' * 120}
+        response = self.client.patch(url, data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.json()['name'], ['Ensure this field has no more than 60 characters.'])
+
+        data = {'world': 'abcde' * 120}
+        response = self.client.patch(url, data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.json()['world'], ['Ensure this field has no more than 60 characters.'])
 
     def test_404(self):
         """
