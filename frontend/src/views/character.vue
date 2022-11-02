@@ -11,6 +11,8 @@
             <CharacterBio :character="character" :displayUnverified="false" />
           </div>
           <footer class="card-footer">
+            <button class="card-footer-item is-loading is-ghost button" v-if="updating"></button>
+            <a class="card-footer-item" @click="updateChar" v-else>Update</a>
             <a class="has-text-danger card-footer-item" @click="deleteChar">Delete</a>
           </footer>
         </div>
@@ -164,6 +166,7 @@
 
 <script lang="ts">
 import { Component, Prop } from 'vue-property-decorator'
+import XIVAPI from '@xivapi/js'
 import BISTable from '@/components/bis_table.vue'
 import CharacterBio from '@/components/character_bio.vue'
 import DeleteBIS from '@/components/modals/confirmations/delete_bis.vue'
@@ -201,6 +204,8 @@ export default class Character extends SavageAimMixin {
   teamsShown = false
 
   loading = true
+
+  updating = false
 
   get teamsUrl(): string {
     return `/backend/api/team/?char_id=${this.characterId}`
@@ -275,12 +280,12 @@ export default class Character extends SavageAimMixin {
   }
 
   async saveDetails(): Promise<void> {
-    // Update the alias field for the Character
+    // Update fields for the Character
     this.errors = {}
     const body = JSON.stringify(this.character)
     try {
       const response = await fetch(this.url, {
-        method: 'PUT',
+        method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
           'X-CSRFToken': this.$cookies.get('csrftoken'),
@@ -299,6 +304,38 @@ export default class Character extends SavageAimMixin {
     }
     catch (e) {
       this.$notify({ text: `Error ${e} when attempting to update Character.`, type: 'is-danger' })
+    }
+  }
+
+  async updateChar(): Promise<void> {
+    if (!this.character.verified || this.updating) return
+
+    this.updating = true
+    // Reload data from the Lodestone, and send an update request to the API.
+    // We just need to update the name, world, and image url
+    const xiv = new XIVAPI()
+    try {
+      const response = (await xiv.character.get(this.character.lodestone_id))
+      // Update the local character and use the same function for updating alias
+      this.character.avatar_url = response.Character.Avatar
+      this.character.name = response.Character.Name
+      this.character.world = `${response.Character.Server} (${response.Character.DC})`
+      await this.saveDetails()
+    }
+    catch (err) {
+      let errorMessage: string
+      if (err.error != null) {
+        // XIVAPI Error
+        errorMessage = err.error.Message
+      }
+      else {
+        // Normal JS error
+        errorMessage = err.message
+      }
+      this.$notify({ text: `Received error when attempting to update Character details from Lodestone; ${errorMessage}`, type: 'is-danger' })
+    }
+    finally {
+      this.updating = false
     }
   }
 
@@ -369,5 +406,10 @@ export default class Character extends SavageAimMixin {
   & .tag {
     margin-bottom: 0;
   }
+}
+
+button.is-loading.is-ghost {
+  // Fixing a slight centering issue
+  margin-top: 4px;
 }
 </style>
