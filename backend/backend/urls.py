@@ -16,15 +16,15 @@ Including another URLconf
 from allauth.socialaccount.providers.discord.urls import urlpatterns as discord_urls
 from django.contrib import admin
 from django.contrib.auth.views import LogoutView
-from django.views.generic import TemplateView
+from django.http import HttpResponse
 from django.urls import path, include
 
 patterns = [
     path('admin/', admin.site.urls),
     path('api/', include(('api.urls', 'api'))),
-
     # Auth stuff (TODO - replace this because it's sorta workaroundy)
     path('accounts/', include(discord_urls)),
+    path('health/', lambda _: HttpResponse()),
     path('logout/', LogoutView.as_view()),
 ]
 

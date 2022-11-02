@@ -25,6 +25,7 @@ patterns = [
     path('accounts/', include(discord_urls)),
     path('auth/cancelled/', login_cancelled, name='socialaccount_login_cancelled'),
     path('auth/error/', login_error, name='socialaccount_login_error'),
+    path('health/', lambda _: HttpResponse()),
     path('logout/', LogoutView.as_view()),
 ]
 
