@@ -16,6 +16,7 @@ Including another URLconf
 from allauth.socialaccount.providers.discord.urls import urlpatterns as discord_urls
 from allauth.socialaccount.views import login_cancelled, login_error
 from django.contrib.auth.views import LogoutView
+from django.http import HttpResponse
 from django.urls import path, include
 
 patterns = [
@@ -25,6 +26,7 @@ patterns = [
     path('accounts/', include(discord_urls)),
     path('auth/cancelled/', login_cancelled, name='socialaccount_login_cancelled'),
     path('auth/error/', login_error, name='socialaccount_login_error'),
+    path('health/', lambda _: HttpResponse()),
     path('logout/', LogoutView.as_view()),
 ]
 

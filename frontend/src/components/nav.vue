@@ -14,7 +14,7 @@
       </a>
     </div>
 
-    <div ref="navbar" class="navbar-menu" v-if="!maintenance">
+    <div ref="navbar" class="navbar-menu">
       <div class="navbar-start">
         <router-link to="/" class="navbar-item">
           <div class="icon-text">
@@ -97,9 +97,6 @@ import NotificationsModal from './modals/notifications.vue'
 
 @Component
 export default class Nav extends SavageAimMixin {
-  @Prop({ default: false })
-  maintenance!: boolean
-
   // Only check for the refs after we've been mounted
   isMounted = false
 

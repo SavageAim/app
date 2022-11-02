@@ -13,6 +13,7 @@
     <div class="card-content content">
       <h2 class="has-text-primary subtitle">{{ version }}</h2>
       <div class="divider"><i class="material-icons icon">expand_more</i> Major Changes <i class="material-icons icon">expand_more</i></div>
+      <p>Added handling to detect if the backend is up and responding before loading data, to prevent random errors during deployments.</p>
       <p>
         Added a new "Update" button on Character pages to refresh Character data from the Lodestone.
         <ul>

@@ -1,20 +1,5 @@
 <template>
-  <div id="root" v-if="maintenance">
-    <Nav :maintenance="maintenance" />
-    <div class="hero is-fullheight-with-navbar">
-      <div class="hero-body">
-        <div class="container has-text-centered">
-          <h1 class="title is-1">
-            Savage <span class="has-text-danger">Aim</span> Maintenance
-          </h1>
-          <p class="subtitle">
-            We're currently undergoing maintenance. We should be back soon!
-          </p>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div id="root" v-else>
+  <div id="root">
     <Nav />
     <div class="container is-fluid">
       <router-view ref="viewComponent"></router-view>
@@ -41,6 +26,20 @@ import SavageAimMixin from '@/mixins/savage_aim_mixin'
 export default class App extends Vue {
   updateSocket!: WebSocket
 
+  // Check that the backend server is up before loading the App properly
+  async checkBackend(): Promise<void> {
+    const response = await fetch('/backend/health/')
+    if (response.ok) {
+      this.loadData()
+      Vue.nextTick(() => this.$forceUpdate)
+      return
+    }
+
+    // If the request fails, it's almost guaranteed that the server is down, so ping a warning and set a check again in 30 seconds
+    this.$notify({ text: 'Backend server could not be reached. There is probably an update being deployed. Checking again in 30 seconds.', type: 'is-warning' })
+    setTimeout(this.checkBackend, 30 * 1000)
+  }
+
   // Check the current version against the last version the user has seen, and if there's anything new, display the CHANGELOG modal
   checkChangelog(): void {
     const lastVersion = localStorage.lastVersion || ''
@@ -52,20 +51,17 @@ export default class App extends Vue {
     }
   }
 
-  get maintenance(): boolean {
-    if (process.env.VUE_APP_MAINTENANCE !== undefined) {
-      return process.env.VUE_APP_MAINTENANCE === '1'
-    }
-    return false
-  }
-
   get viewComponent(): SavageAimMixin {
     return this.$refs.viewComponent as SavageAimMixin
   }
 
   async mounted(): Promise<void> {
-    if (this.maintenance) return
+    this.checkBackend()
+  }
+
+  loadData(): void {
     // Populate the store with static information for dropdowns later
+    this.$store.dispatch('fetchUser')
     this.$store.dispatch('fetchGear')
     this.$store.dispatch('fetchItemLevels')
     this.$store.dispatch('fetchJobs')
