@@ -181,7 +181,7 @@ const store: Store = {
           }
           commit('setUser', userDetails)
         }
-        else {
+        else if (response.status !== 502) {
           Vue.notify({ text: `Error ${response.status} when fetching User details.`, type: 'is-danger' })
         }
       }
