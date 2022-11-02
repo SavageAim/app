@@ -69,7 +69,7 @@ class CharacterResource(APIView):
         data = CharacterDetailsSerializer(instance=obj).data
         return Response(data)
 
-    def put(self, request: Request, pk: int) -> Response:
+    def put(self, request: Request, pk: int, partial: bool = False) -> Response:
         """
         Update certain fields of a Character
         """
@@ -78,7 +78,7 @@ class CharacterResource(APIView):
         except Character.DoesNotExist:
             return Response(status=404)
 
-        serializer = CharacterUpdateSerializer(instance=obj, data=request.data)
+        serializer = CharacterUpdateSerializer(instance=obj, data=request.data, partial=partial)
         serializer.is_valid(raise_exception=True)
         serializer.save()
 
@@ -91,6 +91,9 @@ class CharacterResource(APIView):
             )
 
         return Response(status=204)
+
+    def patch(self, request: Request, pk: int) -> Response:
+        return self.put(request, pk, True)
 
 
 class CharacterVerification(APIView):

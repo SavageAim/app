@@ -73,7 +73,10 @@ class CharacterUpdateSerializer(serializers.ModelSerializer):
     Allow only certain fields on Character models to be updated
     """
     alias = serializers.CharField(max_length=64, allow_blank=True)
+    avatar_url = serializers.URLField()
+    name = serializers.CharField(max_length=60)
+    world = serializers.CharField(max_length=60)
 
     class Meta:
         model = Character
-        fields = ['alias']
+        fields = ['alias', 'avatar_url', 'name', 'world']
