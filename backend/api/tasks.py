@@ -13,6 +13,7 @@ from bs4 import BeautifulSoup
 from celery import shared_task
 from celery.utils.log import get_task_logger
 from channels.layers import get_channel_layer
+from django.core.management import call_command
 from django.utils import timezone
 # local
 from . import notifier
@@ -132,3 +133,11 @@ def cleanup():
     objs = Character.objects.filter(verified=False, user__isnull=False, created__lt=older_than)
     logger.debug(f'Found {objs.count()} characters. Deleting them.')
     objs.delete()
+
+
+@shared_task(name='refresh_tokens')
+def refresh_tokens():
+    """
+    Refresh any tokens that are about to expire
+    """
+    call_command('refresh_tokens')
