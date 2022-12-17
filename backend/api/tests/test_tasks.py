@@ -156,6 +156,8 @@ class TasksTestSuite(SavageAimTestCase):
         self.assertNotEqual(token.token_secret, new_token_data.token_secret)
         self.assertGreater(new_token_data.expires_at, token.expires_at)
 
+        app.delete()
+
     @patch('requests.get', side_effect=get_desktop_response)
     def test_verify_character(self, mocked_get):
         """

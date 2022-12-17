@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import timedelta
 import requests
 from allauth.socialaccount.models import SocialApp, SocialToken
 from django.core.management.base import BaseCommand
@@ -43,4 +43,3 @@ class Command(BaseCommand):
             token.token_secret = response_data['refresh_token']
             token.expires_at = timezone.now() + timedelta(seconds=response_data['expires_in'])
             token.save()
-
