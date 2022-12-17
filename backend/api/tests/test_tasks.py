@@ -4,6 +4,7 @@ from io import StringIO
 from typing import Dict
 from unittest.mock import patch
 # lib
+from allauth.socialaccount.models import SocialAccount, SocialApp, SocialToken
 from django.core.management import call_command
 from django.utils import timezone
 # local
@@ -50,6 +51,24 @@ def get_error_response(url: str, headers: Dict[str, str]):
     Return a faked http response object for a non 200 error
     """
     return type('response', (), {'status_code': 400})
+
+
+def get_token_response(url: str, data: Dict[str, str]):
+    """
+    Return a faked http response for a valid refresh token
+    """
+    return type(
+        'response',
+        (),
+        {
+            'status_code': 200,
+            'json': lambda: {
+                'access_token': 'new access token',
+                'refresh_token': 'new refresh token',
+                'expires_in': 60 * 60 * 24,
+            },
+        },
+    )
 
 
 class TasksTestSuite(SavageAimTestCase):
@@ -112,6 +131,30 @@ class TasksTestSuite(SavageAimTestCase):
         with self.assertRaises(Character.DoesNotExist):
             Character.objects.get(pk=old_unver.pk)
         self.assertEqual(Character.objects.filter(pk__in=[old_ver.pk, new_unver.pk, proxy.pk]).count(), 3)
+
+    @patch('requests.post', side_effect=get_token_response)
+    def test_token_refresh(self, mocked_post):
+        """
+        Test a refresh token attempt while mocking the request
+        """
+        app = SocialApp.objects.create()
+        account = SocialAccount.objects.create(
+            user=self._get_user(),
+        )
+        token = SocialToken.objects.create(
+            expires_at=timezone.now() + timedelta(hours=6),
+            token='current token',
+            token_secret='current secret',
+            account_id=account.id,
+            app_id=1,
+        )
+
+        call_command('refresh_tokens', stdout=StringIO(), stderr=StringIO())
+        new_token_data = SocialToken.objects.first()
+
+        self.assertNotEqual(token.token, new_token_data.token)
+        self.assertNotEqual(token.token_secret, new_token_data.token_secret)
+        self.assertGreater(new_token_data.expires_at, token.expires_at)
 
     @patch('requests.get', side_effect=get_desktop_response)
     def test_verify_character(self, mocked_get):
