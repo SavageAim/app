@@ -13,8 +13,14 @@
     <div class="card-content content">
       <h2 class="has-text-primary subtitle">{{ version }}</h2>
 
-      <div class="divider"><i class="material-icons icon">expand_more</i> Minor Changes <i class="material-icons icon">expand_more</i></div>
-      <p>Potentially improved user experience by making it so Discord logins refresh without you logging in again.</p>
+      <div class="divider"><i class="material-icons icon">expand_more</i> FFXIV Patch 6.3 <i class="material-icons icon">expand_more</i></div>
+      <p>Added the following new gear;
+        <ul>
+          <li>New EX Trial Weapons - Item Level 625</li>
+          <li>Hypostatic Armour - Item Level 620</li>
+          <li>Augmented Rinascita Weapons, Armour and Accessories - Item Level 620</li>
+        </ul>
+      </p>
 
     </div>
   </div>
