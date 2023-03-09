@@ -1,0 +1,25 @@
+- has_accessories: true
+  has_armour: false
+  has_weapon: false
+  item_level: 560
+  name: 'The Last'
+- has_accessories: false
+  has_armour: True
+  has_weapon: True
+  item_level: 560
+  name: 'Endwalker AF'
+- has_accessories: True
+  has_armour: True
+  has_weapon: True
+  item_level: 570
+  name: 'Moonward'
+- has_accessories: True
+  has_armour: False
+  has_weapon: False
+  item_level: 580
+  name: 'Eternal Dark'
+- has_accessories: False
+  has_armour: False
+  has_weapon: True
+  item_level: 580
+  name: 'Divine Light'
