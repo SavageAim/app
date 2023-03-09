@@ -1,0 +1,5 @@
+- has_accessories: False
+  has_armour: False
+  has_weapon: True
+  item_level: 615
+  name: 'Manderville'

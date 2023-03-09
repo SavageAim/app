@@ -1,0 +1,15 @@
+- has_accessories: True
+  has_armour: True
+  has_weapon: True
+  item_level: 620
+  name: 'Augmented Rinascita'
+- has_accessories: False
+  has_armour: True
+  has_weapon: False
+  item_level: 620
+  name: 'Hypostatic'
+- has_accessories: False
+  has_armour: False
+  has_weapon: True
+  item_level: 625
+  name: 'Flamecloaked'
