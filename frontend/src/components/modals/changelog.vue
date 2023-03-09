@@ -13,14 +13,15 @@
     <div class="card-content content">
       <h2 class="has-text-primary subtitle">{{ version }}</h2>
 
-      <div class="divider"><i class="material-icons icon">expand_more</i> FFXIV Patch 6.3 <i class="material-icons icon">expand_more</i></div>
+      <div class="divider"><i class="material-icons icon">expand_more</i> FFXIV 6.3x Patches <i class="material-icons icon">expand_more</i></div>
       <p>Added the following new gear;
         <ul>
-          <li>New EX Trial Weapons - Item Level 625</li>
-          <li>Hypostatic Armour - Item Level 620</li>
-          <li>Augmented Rinascita Weapons, Armour and Accessories - Item Level 620</li>
+          <li>Ultimate Omega Weapons - Item Level 635</li>
+          <li>Amazing Manderville Weapons - Item Level 630</li>
         </ul>
       </p>
+
+      <p class="has-text-primary">I'm really sorry about how long it took me to add the 6.31 patch data to the site. Have had a bit of a rough time recently but I'm back on my feet and ready to keep working on this site o7</p>
 
     </div>
   </div>
