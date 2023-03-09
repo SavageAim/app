@@ -1,3 +1,5 @@
+# stdlib
+from os import scandir
 # lib
 import yaml
 from django.conf import settings
@@ -13,15 +15,18 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         self.stdout.write(self.style.HTTP_REDIRECT('Beginning Seed of DB'))
         seed_data_dir = settings.BASE_DIR / 'api/management/commands/seed_data'
+        gear_data_dir = seed_data_dir / 'gear'
 
         # Get the Tier and Gear data and import them
-        with open(seed_data_dir / 'gear.yml', 'r') as f:
-            self.stdout.write(self.style.HTTP_REDIRECT('Seeding Gear'))
-            self.import_file(f, models.Gear)
-
         with open(seed_data_dir / 'tiers.yml', 'r') as f:
             self.stdout.write(self.style.HTTP_REDIRECT('Seeding Tiers'))
             self.import_file(f, models.Tier)
+
+        with scandir(gear_data_dir) as gear_files:
+            for file in gear_files:
+                self.stdout.write(self.style.HTTP_REDIRECT(f'Seeding Gear from {file.name}'))
+                with open(gear_data_dir / file.name, 'r') as f:
+                    self.import_file(f, models.Gear)
 
         # Lastly we import the Job data.
         # This is handled *slightly* differently because the 'ordering' key in this file will most likely change
