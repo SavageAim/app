@@ -1,0 +1,35 @@
+- has_accessories: True
+  has_armour: True
+  has_weapon: True
+  item_level: 640
+  name: 'Crafted'
+- has_accessories: True
+  has_armour: True
+  has_weapon: False
+  item_level: 640
+  name: 'Normal Mode Gear'
+- has_accessories: False
+  has_armour: False
+  has_weapon: True
+  item_level: 645
+  name: 'Golbez Weapon'
+- has_accessories: True
+  has_armour: True
+  has_weapon: True
+  item_level: 650
+  name: 'Tome'
+- has_accessories: True
+  has_armour: True
+  has_weapon: True
+  item_level: 660
+  name: 'Augmented Tome'
+- has_accessories: True
+  has_armour: True
+  has_weapon: False
+  item_level: 660
+  name: 'Savage'
+- has_accessories: False
+  has_armour: False
+  has_weapon: True
+  item_level: 665
+  name: 'Savage'

@@ -13,16 +13,21 @@
     <div class="card-content content">
       <h2 class="has-text-primary subtitle">{{ version }}</h2>
 
-      <div class="divider"><i class="material-icons icon">expand_more</i> FFXIV 6.3x Patches <i class="material-icons icon">expand_more</i></div>
-      <p>Added the following new gear;
+      <div class="divider"><i class="material-icons icon">expand_more</i> FFXIV Patch 6.4 <i class="material-icons icon">expand_more</i></div>
+      <p>Added new tier: <span class="has-text-primary">Pandæmonium: Anabaseios</span>. Team Leaders be sure to update your Team for proper BIS tracking!</p>
+
+      <p>
+        Added the following gear;
         <ul>
-          <li>Ultimate Omega Weapons - Item Level 635</li>
-          <li>Amazing Manderville Weapons - Item Level 630</li>
+          <li>Crafted Weapons, Armour, and Accessories; Item Level 640</li>
+          <li>Normal Mode Armour, and Accessories; Item Level 640</li>
+          <li>Voidcast Dais Weapons; Item Level 645</li>
+          <li>Tome Weapons, Armour, and Accessories; Item Level 650</li>
+          <li>Augmented Tome Weapons, Armour, and Accessories; Item Level 660</li>
+          <li>Savage Armour, and Accessories; Item Level 660</li>
+          <li>Savage Weapons; Item Level 665</li>
         </ul>
       </p>
-
-      <p class="has-text-primary">I'm really sorry about how long it took me to add the 6.31 patch data to the site. Have had a bit of a rough time recently but I'm back on my feet and ready to keep working on this site o7</p>
-
     </div>
   </div>
 </template>
