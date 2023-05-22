@@ -38,7 +38,7 @@
 
 <script lang="ts">
 import { Component, Vue, Prop } from 'vue-property-decorator'
-import { TomeGreedGear, TomeGreedItem } from '@/interfaces/loot'
+import { TomeGreedGear } from '@/interfaces/loot'
 
 @Component
 export default class GreedTomeModal extends Vue {
