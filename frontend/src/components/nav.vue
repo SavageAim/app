@@ -89,7 +89,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Watch } from 'vue-property-decorator'
+import { Component, Watch } from 'vue-property-decorator'
 import Notification from '@/interfaces/notification'
 import SavageAimMixin from '@/mixins/savage_aim_mixin'
 import Legend from './modals/legend.vue'
