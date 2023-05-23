@@ -19,15 +19,16 @@
       <p>
         Added the following gear;
         <ul>
-          <li>Crafted Weapons, Armour, and Accessories; Item Level 640</li>
-          <li>Normal Mode Armour, and Accessories; Item Level 640</li>
-          <li>Voidcast Dais Weapons; Item Level 645</li>
-          <li>Tome Weapons, Armour, and Accessories; Item Level 650</li>
-          <li>Augmented Tome Weapons, Armour, and Accessories; Item Level 660</li>
-          <li>Savage Armour, and Accessories; Item Level 660</li>
-          <li>Savage Weapons; Item Level 665</li>
+          <li>Diadochos Weapons, Armour, and Accessories; Item Level 640</li>
+          <li>Anabaseios Armour, and Accessories; Item Level 640</li>
+          <li>Voidcast Weapons; Item Level 645</li>
+          <li>Credendum Weapons, Armour, and Accessories; Item Level 650</li>
+          <li>Augmented Credendum Weapons, Armour, and Accessories; Item Level 660</li>
+          <li>Ascension Armour, and Accessories; Item Level 660</li>
+          <li>Ascension Weapons; Item Level 665</li>
         </ul>
       </p>
+      <p>While the Tome weapons have their own names, they are considered Credendum for ease.</p>
     </div>
   </div>
 </template>
