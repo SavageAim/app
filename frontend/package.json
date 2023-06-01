@@ -11,7 +11,7 @@
     "@creativebulma/bulma-badge": "^1.0.1",
     "@sentry/tracing": "^7.16.0",
     "@sentry/vue": "^7.16.0",
-    "@xivapi/js": "^0.3.3",
+    "@xivapi/js": "^0.4.2",
     "bulma": "^0.9.3",
     "dayjs": "^1.10.7",
     "microtip": "^0.2.2",
