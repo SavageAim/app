@@ -22,12 +22,13 @@
             </div>
             <div class="field has-addons">
               <div class="control is-expanded">
-                <button class="button is-danger is-fullwidth" @click="() => { this.character = null }">Change Character</button>
+                <button class="button is-danger is-fullwidth" @click="changeCharacter">Change Character</button>
               </div>
               <div class="control is-expanded">
                 <button class="button is-success is-fullwidth" @click="createProxy">Create Proxy</button>
               </div>
             </div>
+            <p v-for="(error, i) in characterApiErrors" :key="i" class="help is-danger">{{ error }}</p>
           </template>
         </div>
       </div>
@@ -80,6 +81,11 @@ export default class NewProxy extends TeamViewMixin {
 
   get writeUrl(): string {
     return `/backend/api/team/${this.teamId}/proxies/`
+  }
+
+  changeCharacter(): void {
+    this.character = null
+    this.characterApiErrors = []
   }
 
   checkPermissions(): void {
