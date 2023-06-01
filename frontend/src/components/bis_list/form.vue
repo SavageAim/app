@@ -11,8 +11,7 @@
       :method="method"
       :url="url"
       v-on:job-change="jobChange"
-      v-on:update-min="updateMinIl"
-      v-on:update-max="updateMaxIl"
+      v-on:update-ilevels="updateItemLevels"
       v-on:error-code="emitErrorCode"
       v-on:errors="handleErrors"
       v-on:save="$emit('save')"
@@ -35,8 +34,7 @@
       :url="url"
       :simpleActions="!renderDesktop"
       v-on:job-change="jobChange"
-      v-on:update-min="updateMinIl"
-      v-on:update-max="updateMaxIl"
+      v-on:update-ilevels="updateItemLevels"
       v-on:error-code="emitErrorCode"
       v-on:errors="handleErrors"
       v-on:save="$emit('save')"
@@ -106,12 +104,9 @@ export default class BISListForm extends Vue {
     this.displayOffhand = selectedJob === 'PLD'
   }
 
-  updateMinIl(minIl: number): void {
-    this.minIl = minIl
-  }
-
-  updateMaxIl(maxIl: number): void {
-    this.maxIl = maxIl
+  updateItemLevels(values: number[]): void {
+    // Always comes in as [min, max]
+    [this.minIl, this.maxIl] = values
   }
 
   emitErrorCode(errorCode: number): void {

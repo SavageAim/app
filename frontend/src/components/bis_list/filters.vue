@@ -1,34 +1,11 @@
 <template>
-  <div class="card-content">
-    <div class="field is-horizontal">
-      <div class="field-label is-normal">
-        <label class="label">Min ILvl</label>
-      </div>
+  <div class="card-content filter-card">
+    <div class="field">
+      <label class="label">Item Level</label>
       <div class="field-body">
         <div class="field">
           <div class="control">
-            <div class="select is-fullwidth">
-              <select ref="minIlPicker" @change="updateMin" :value="minIl">
-                <option v-for="val in ilChoices" :key="val" :value="val">{{ val }}</option>
-              </select>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="field is-horizontal">
-      <div class="field-label is-normal">
-        <label class="label">Max ILvl</label>
-      </div>
-      <div class="field-body">
-        <div class="field">
-          <div class="control">
-            <div class="select is-fullwidth">
-              <select ref="maxIlPicker" @change="updateMax" :value="maxIl">
-                <option v-for="val in ilChoices" :key="val" :value="val">{{ val }}</option>
-              </select>
-            </div>
+            <div ref="iLevelSlider"></div>
           </div>
         </div>
       </div>
@@ -37,8 +14,8 @@
 </template>
 
 <script lang="ts">
+import noUiSlider, { PipsMode } from 'nouislider'
 import { Component, Prop, Vue } from 'vue-property-decorator'
-import range from 'range-inclusive'
 
 @Component
 export default class Filters extends Vue {
@@ -48,29 +25,51 @@ export default class Filters extends Vue {
   @Prop()
   minIl!: number
 
-  // Get an array of item level choices based on the total min and max values
-  get ilChoices(): number[] {
-    return range(this.$store.state.maxItemLevel, this.$store.state.minItemLevel, -5)
+  mounted(): void {
+    const container = this.$refs.iLevelSlider as HTMLElement
+    const step = 5
+
+    const slider = noUiSlider.create(container, {
+      range: {
+        min: this.$store.state.minItemLevel,
+        max: this.$store.state.maxItemLevel,
+      },
+      step,
+      start: [this.minIl, this.maxIl],
+      margin: step,
+      connect: true,
+      behaviour: 'tap-drag',
+      tooltips: true,
+      format: {
+        to: (value: number) => value,
+        from: (value: string) => Number(value),
+      },
+      pips: {
+        mode: PipsMode.Count,
+        values: 6,
+        stepped: true,
+        density: 100,
+      },
+    })
+
+    slider.on('change', this.handleUpdate)
   }
 
-  // Ref converters
-  get minIlPicker(): HTMLSelectElement {
-    return this.$refs.minIlPicker as HTMLSelectElement
-  }
-
-  get maxIlPicker(): HTMLSelectElement {
-    return this.$refs.maxIlPicker as HTMLSelectElement
-  }
-
-  updateMin(): void {
-    this.$emit('update-min', this.minIlPicker.value)
-  }
-
-  updateMax(): void {
-    this.$emit('update-max', this.maxIlPicker.value)
+  handleUpdate(values: (number | string)[]): void {
+    this.$emit('update-ilevels', values)
   }
 }
 </script>
 
 <style lang="scss">
+@import '~nouislider/dist/nouislider.css';
+@import '../../assets/variables.scss';
+
+.noUi-connect {
+  background-color: $main-colour;
+}
+
+.filter-card {
+  padding-bottom: 3.5rem;
+}
 </style>
