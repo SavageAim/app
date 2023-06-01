@@ -91,9 +91,9 @@ export default class BISListForm extends Vue {
   url!: string
 
   // Set up default values for min and max IL, will change as new tiers are released
-  maxIl = 635
+  maxIl = this.$store.state.maxItemLevel
 
-  minIl = 610
+  minIl = this.maxIl - 25
 
   get errors(): BISListErrors {
     return {
