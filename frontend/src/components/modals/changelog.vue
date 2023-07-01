@@ -13,14 +13,8 @@
     <div class="card-content content">
       <h2 class="has-text-primary subtitle">{{ version }}</h2>
 
-      <div class="divider"><i class="material-icons icon">expand_more</i> Minor Updates <i class="material-icons icon">expand_more</i></div>
-      <p>Item Level filtering in BIS pages now uses a slider instead of two large dropdowns.</p>
-      <p class="has-text-info">The dropdowns had 21 entries in them as of 6.4's release, so it felt like it was a good time to move it to something more manageable.</p>
-      <p class="has-text-info">If there are any alternative suggestions, please consider leaving them in the Discord!</p>
-
       <div class="divider"><i class="material-icons icon">expand_more</i> Fixes <i class="material-icons icon">expand_more</i></div>
-      <p>Set the default Item Level filters on BIS pages to be the item level range for Anabaseios.</p>
-      <p>Fixed issue where error messages were not correctly appearing on the New Proxy Character page.</p>
+      <p>Fixed a HTTP 500 Server Error that could occur during login.</p>
 
     </div>
   </div>

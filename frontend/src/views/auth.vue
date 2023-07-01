@@ -1,8 +1,17 @@
 <template>
   <div id="auth" class="container">
+    <!-- Error Messages -->
     <div v-if="redirect" class="notification is-warning">
       <p>Please log in to continue.</p>
     </div>
+    <div v-if="wasCancelled" class="notification is-info">
+      Login attempt cancelled!
+    </div>
+    <div v-if="wasError" class="notification is-danger">
+      An error occurred while attempting to log in. Please try again later or report it in the Discord server if it persists.
+    </div>
+
+    <!-- Actual Auth Stuff -->
     <div class="card">
       <div class="card-header">
         <div class="card-header-title">
@@ -48,6 +57,15 @@ export default class Auth extends SavageAimMixin {
     // If the user is authenticated, we don't need to be here
     this.checkAuth()
     document.title = 'Login - Savage Aim'
+  }
+
+  // Handlers for the other potential error messages
+  get wasCancelled(): boolean {
+    return this.$route.query.auth_cancelled === '1'
+  }
+
+  get wasError(): boolean {
+    return this.$route.query.auth_error === '1'
   }
 }
 </script>
