@@ -30,12 +30,12 @@ patterns = [
     # Set auth urls to redirect and display an error message instead
     path(
         'auth/cancelled/',
-        RedirectView.as_view(url=f'{settings.LOGIN_REDIRECT_URL}/auth/?auth_cancelled=1', permanent=True),
+        RedirectView.as_view(url=f'{settings.LOGIN_REDIRECT_URL}auth/?auth_cancelled=1', permanent=True),
         name='socialaccount_login_cancelled',
     ),
     path(
         'auth/error/',
-        RedirectView.as_view(url=f'{settings.LOGIN_REDIRECT_URL}/auth/?auth_error=1', permanent=True),
+        RedirectView.as_view(url=f'{settings.LOGIN_REDIRECT_URL}auth/?auth_error=1', permanent=True),
         name='socialaccount_login_error',
     ),
 ]
