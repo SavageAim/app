@@ -14,20 +14,30 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from allauth.socialaccount.providers.discord.urls import urlpatterns as discord_urls
-from allauth.socialaccount.views import login_cancelled, login_error
+from django.conf import settings
 from django.contrib.auth.views import LogoutView
 from django.http import HttpResponse
 from django.urls import path, include
+from django.views.generic.base import RedirectView
 
 patterns = [
     path('api/', include(('api.urls', 'api'))),
+    path('health/', lambda _: HttpResponse()),
+    path('logout/', LogoutView.as_view()),
 
     # Auth stuff (TODO - replace this because it's sorta workaroundy)
     path('accounts/', include(discord_urls)),
-    path('auth/cancelled/', login_cancelled, name='socialaccount_login_cancelled'),
-    path('auth/error/', login_error, name='socialaccount_login_error'),
-    path('health/', lambda _: HttpResponse()),
-    path('logout/', LogoutView.as_view()),
+    # Set auth urls to redirect and display an error message instead
+    path(
+        'auth/cancelled/',
+        RedirectView.as_view(url=f'{settings.LOGIN_REDIRECT_URL}/auth/?auth_cancelled=1', permanent=True),
+        name='socialaccount_login_cancelled',
+    ),
+    path(
+        'auth/error/',
+        RedirectView.as_view(url=f'{settings.LOGIN_REDIRECT_URL}/auth/?auth_error=1', permanent=True),
+        name='socialaccount_login_error',
+    ),
 ]
 
 urlpatterns = [
