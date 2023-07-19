@@ -44,8 +44,38 @@ class EtroImport(SavageAimTestCase):
             'necklace': Gear.objects.get(name='Augmented Radiant Host').pk,
             'bracelet': Gear.objects.get(name='Augmented Radiant Host').pk,
             'right_ring': Gear.objects.get(name='Augmented Radiant Host').pk,
-            'min_il': 600,
+            'min_il': 560,
             'max_il': 605,
+        }
+        self.assertDictEqual(response.json(), expected)
+
+    def test_import_with_relic(self):
+        """
+        Test an import of a gearset with a custom relic
+        """
+        url = reverse('api:etro_import', kwargs={'id': '2745b09f-4023-40e6-93e2-72c652143182'})
+        user = self._get_user()
+        self.client.force_authenticate(user)
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        # Build an expected data packet
+        expected = {
+            'job_id': 'DRG',
+            'mainhand': Gear.objects.get(name='Majestic Manderville').pk,
+            'offhand': Gear.objects.get(name='Majestic Manderville').pk,
+            'head': Gear.objects.get(name='Ascension', has_armour=True).pk,
+            'body': Gear.objects.get(name='Ascension', has_armour=True).pk,
+            'hands': Gear.objects.get(name='Ascension', has_armour=True).pk,
+            'earrings': Gear.objects.get(name='Ascension', has_armour=True).pk,
+            'left_ring': Gear.objects.get(name='Ascension', has_armour=True).pk,
+            'legs': Gear.objects.get(name='Ascension', has_accessories=True).pk,
+            'feet': Gear.objects.get(name='Ascension', has_accessories=True).pk,
+            'necklace': Gear.objects.get(name='Ascension', has_accessories=True).pk,
+            'bracelet': Gear.objects.get(name='Ascension', has_accessories=True).pk,
+            'right_ring': Gear.objects.get(name='Ascension', has_accessories=True).pk,
+            'min_il': 645,
+            'max_il': 665,
         }
         self.assertDictEqual(response.json(), expected)
 
