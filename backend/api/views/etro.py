@@ -53,7 +53,7 @@ class EtroImport(APIView):
 
     def get(self, request: Request, id: str) -> Response:
         """
-        Return a list of Characters belonging to a certain User
+        Given an Etro Gearset ID, load the equipment from it
         """
         # Instantiate a Client instance for CoreAPI
         client = coreapi.Client()
@@ -61,54 +61,55 @@ class EtroImport(APIView):
 
         # First things first, attempt to read the gearset
         try:
-            response = client.action(schema, ['gearsets', 'read'], params={'id': id})
+            gearset = client.action(schema, ['gearsets', 'read'], params={'id': id})
         except coreapi.exceptions.ErrorMessage as e:
             return Response({'message': e.error.title}, status=400)
-        job_id = response['jobAbbrev']
 
-        # Loop through each slot of the etro gearset, fetch the name and item level and store it in a dict
-        gear_details: Dict[str, str] = {}
-        item_levels: Set[int] = set()
-        min_il = float('inf')
-        max_il = float('-inf')
+        job_id = gearset['jobAbbrev']
+        min_il = gearset['minItemLevel']
+        max_il = gearset['maxItemLevel']
 
-        for etro_slot, sa_slot in SLOT_MAP.items():
-            gear_id = response[etro_slot]
-            if gear_id is None:
-                continue
-            item_response = client.action(schema, ['equipment', 'read'], params={'id': gear_id})
-            gear_details[sa_slot] = item_response['name']
-
-            # item level stuff
-            il = item_response['itemLevel']
-            item_levels.add(il)
-            if il < min_il:
-                min_il = il
-            if il > max_il:
-                max_il = il
-
-        # Get the names of all the gear with the specified Item Levels
-        gear_names = Gear.objects.filter(item_level__in=item_levels).values('name', 'id')
-
-        response = {
-            'job_id': job_id,
+        # Retrieve a list of all gear within the item level bracket for the job
+        params = {job_id: True, 'minItemLevel': min_il, 'maxItemLevel': max_il}
+        equipment = client.action(schema, ['equipment', 'list'], params=params)
+        # Map IDs to names
+        etro_map = {
+            item['id']: item['name'] for item in equipment
         }
 
-        # Loop through the slots one final time, and get the gear id for that slot
-        for slot, item_name in gear_details.items():
+        # Loop through the gear slots of the gear set and get the names for each
+        gear_names: Dict[str, str] = {}
+        for etro_slot, sa_slot in SLOT_MAP.items():
+            gear_id = gearset[etro_slot]
+            if gear_id is None:
+                continue
+            gear_names[sa_slot] = etro_map[gear_id]
+
+        # Check for relic weapons
+        if gearset['weapon'] is None and 'weapon' in gearset['relics']:
+            relic_id = gearset['relics']['weapon']
+            relic = client.action(schema, ['relic', 'read'], params={'id': relic_id})
+            gear_names['mainhand'] = relic['baseItem']['name']
+
+        # Turn the names into SA gear ids
+        sa_gear = Gear.objects.filter(item_level__gte=min_il, item_level__lte=max_il).values('name', 'id')
+        response = {
+            'job_id': job_id,
+            'min_il': min_il,
+            'max_il': max_il,
+        }
+
+        # Loop through each gear slot and fetch the id based off the name
+        for slot, item_name in gear_names.items():
             if slot in ARMOUR_SLOTS:
-                response[slot] = self._get_gear_id(gear_names.filter(has_armour=True), item_name)
+                response[slot] = self._get_gear_id(sa_gear.filter(has_armour=True), item_name)
             elif slot in ACCESSORY_SLOTS:
-                response[slot] = self._get_gear_id(gear_names.filter(has_accessories=True), item_name)
+                response[slot] = self._get_gear_id(sa_gear.filter(has_accessories=True), item_name)
             else:
-                response[slot] = self._get_gear_id(gear_names.filter(has_weapon=True), item_name)
+                response[slot] = self._get_gear_id(sa_gear.filter(has_weapon=True), item_name)
 
         # Check for offhand
         if job_id != 'PLD':
             response['offhand'] = response['mainhand']
-
-        # Also add item level status
-        response['min_il'] = min_il
-        response['max_il'] = max_il
 
         return Response(response)
