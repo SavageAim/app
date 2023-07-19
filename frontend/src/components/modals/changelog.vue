@@ -16,6 +16,9 @@
       <div class="divider"><i class="material-icons icon">expand_more</i> FFXIV Patch 6.45 <i class="material-icons icon">expand_more</i></div>
       <p>Added Majestic Manderville Weapons, iL 645.</p>
 
+      <div class="divider"><i class="material-icons icon">expand_more</i> Fixes <i class="material-icons icon">expand_more</i></div>
+      <p>Rewrote Etro Import endpoint to prevent rate limit hits. Had the unplanned effect of speeding up the request as well.</p>
+
     </div>
   </div>
 </template>
