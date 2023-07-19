@@ -2,6 +2,7 @@
 Given an etro id, convert it into a format that uses Savage Aim ids
 """
 # stdlib
+from time import sleep
 from typing import Dict, Set
 # lib
 import coreapi
@@ -86,6 +87,9 @@ class EtroImport(APIView):
                 min_il = il
             if il > max_il:
                 max_il = il
+
+            # Space out requests to not hit the rate limit
+            sleep(0.05)
 
         # Get the names of all the gear with the specified Item Levels
         gear_names = Gear.objects.filter(item_level__in=item_levels).values('name', 'id')
