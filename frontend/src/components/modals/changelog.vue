@@ -13,8 +13,8 @@
     <div class="card-content content">
       <h2 class="has-text-primary subtitle">{{ version }}</h2>
 
-      <div class="divider"><i class="material-icons icon">expand_more</i> Fixes <i class="material-icons icon">expand_more</i></div>
-      <p>Fixed a HTTP 500 Server Error that could occur during login.</p>
+      <div class="divider"><i class="material-icons icon">expand_more</i> FFXIV Patch 6.45 <i class="material-icons icon">expand_more</i></div>
+      <p>Added Majestic Manderville Weapons, iL 645.</p>
 
     </div>
   </div>
