@@ -3,7 +3,7 @@
     <div class="card">
       <a class="card-header" @click="toggleHistory">
         <div class="card-header-title">
-          Loot History
+          Tier Loot History
         </div>
         <div class="card-header-icon">
           <span class="icon"><i class="material-icons" ref="historyIcon">expand_more</i></span>
