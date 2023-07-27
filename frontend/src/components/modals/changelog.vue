@@ -13,11 +13,11 @@
     <div class="card-content content">
       <h2 class="has-text-primary subtitle">{{ version }}</h2>
 
-      <div class="divider"><i class="material-icons icon">expand_more</i> FFXIV Patch 6.45 <i class="material-icons icon">expand_more</i></div>
-      <p>Added Majestic Manderville Weapons, iL 645.</p>
-
-      <div class="divider"><i class="material-icons icon">expand_more</i> Fixes <i class="material-icons icon">expand_more</i></div>
-      <p>Rewrote Etro Import endpoint to prevent rate limit hits. Had the unplanned effect of speeding up the request as well.</p>
+      <div class="divider"><i class="material-icons icon">expand_more</i> Updates <i class="material-icons icon">expand_more</i></div>
+      <p>Wrote a new algorithm for fetching information for the Loot Manager page.</p>
+      <p>Until the new Loot Manager update comes out sometime next month, I've set up the Loot Manager to randomly use either of the algorithms (50/50 split).</p>
+      <p>The new one appears to be faster and less demanding in my own testing, but this kind of thing is best tested with real data.</p>
+      <p>As always, if there are any issues, please report them on the Discord!</p>
 
     </div>
   </div>

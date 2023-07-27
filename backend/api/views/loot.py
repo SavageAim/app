@@ -44,6 +44,11 @@ class LootCollection(APIView):
         'bracelet',
     ]
     # Offhand and Rings cannot be automated due to special handling
+    NON_AUTOMATED_SLOTS = [
+        'ring',
+        'tome-accessory-augment',
+        'tome-armour-augment'
+    ]
 
     # This could probably be done nice but /shrug for now
     def _get_gear_data(self, obj: Team) -> Dict[str, List[Dict[str, str]]]:
@@ -394,3 +399,142 @@ class LootWithBIS(APIView):
         self._send_to_team(team, {'type': 'loot', 'id': str(team.id)})
 
         return Response({'id': loot.pk}, status=201)
+
+
+class LootCollectionV2(LootCollection):
+    """
+    An alternative version of the Loot Collection with a new get_gear_data function
+
+    I want to randomly test both versions with real data and ensure that this one is as superior as I've found in my tests
+    """
+
+    def _get_gear_data(self, obj: Team) -> Dict[str, List[Dict[str, str]]]:
+        """
+        An attempt at improving the original loot response with less DB hits + waiting required.
+        """
+        # Set up the whole response dictionary at once
+        response = {slot: {'need': [], 'greed': []} for slot in self.AUTOMATED_SLOTS}
+        for slot in self.NON_AUTOMATED_SLOTS:
+            response[slot] = {'need': [], 'greed': []}
+
+        # Maintain a mapping of character greed lists
+        greed_lists = {}
+
+        raid_gear_name = obj.tier.raid_gear_name
+
+        # Loop through every member of the team.
+        for member in obj.members.all():
+            greed_lists[member.id] = {}
+            # Loop through the member's greed BIS Lists
+            for bis_list in BISList.objects.with_all_relations().filter(owner=member.character):
+                for slot in self.AUTOMATED_SLOTS:
+                    greed_lists[member.id].setdefault(slot, [])
+
+                    list_is_need = bis_list.id == member.bis_list_id
+                    bis = getattr(bis_list, f'bis_{slot}')
+                    current = getattr(bis_list, f'current_{slot}')
+
+                    if bis.name == raid_gear_name and current.name != raid_gear_name:
+                        if list_is_need:
+                            response[slot]['need'].append({
+                                'member_id': member.id,
+                                'character_name': member.character.display_name,
+                                'current_gear_name': current.name,
+                                'current_gear_il': current.item_level,
+                                'job_icon_name': bis_list.job.id,
+                                'job_role': bis_list.job.role,
+                            })
+                        else:
+                            greed_lists[member.id][slot].append({
+                                'bis_list_name': bis_list.display_name,
+                                'bis_list_id': bis_list.id,
+                                'current_gear_name': current.name,
+                                'current_gear_il': current.item_level,
+                                'job_icon_name': bis_list.job.id,
+                                'job_role': bis_list.job.role,
+                            })
+
+                # For non-automated slots we have to do stuff more manually
+                slot = 'ring'
+                greed_lists[member.id].setdefault(slot, [])
+
+                bis_ring_check = [
+                    bis_list.bis_right_ring.name == raid_gear_name,
+                    bis_list.bis_left_ring.name == raid_gear_name,
+                ]
+                current_ring_check = [
+                    bis_list.current_right_ring.name != raid_gear_name,
+                    bis_list.current_left_ring.name != raid_gear_name,
+                ]
+                if any(bis_ring_check) and all(current_ring_check):
+                    if list_is_need:
+                        response[slot]['need'].append({
+                            'member_id': member.id,
+                            'character_name': member.character.display_name,
+                            'current_gear_name': current.name,
+                            'current_gear_il': current.item_level,
+                            'job_icon_name': bis_list.job.id,
+                            'job_role': bis_list.job.role,
+                        })
+                    else:
+                        greed_lists[member.id][slot].append({
+                            'bis_list_name': bis_list.display_name,
+                            'bis_list_id': bis_list.id,
+                            'current_gear_name': current.name,
+                            'current_gear_il': current.item_level,
+                            'job_icon_name': bis_list.job.id,
+                            'job_role': bis_list.job.role,
+                        })
+
+                slot = 'tome-accessory-augment'
+                greed_lists[member.id].setdefault(slot, [])
+                required = bis_list.accessory_augments_required(obj.tier.tome_gear_name)
+                if required > 0:
+                    if list_is_need:
+                        response[slot]['need'].append({
+                            'member_id': member.id,
+                            'character_name': member.character.display_name,
+                            'job_icon_name': member.bis_list.job.id,
+                            'job_role': member.bis_list.job.role,
+                            'requires': required,
+                        })
+                    else:
+                        greed_lists[member.id][slot].append({
+                            'bis_list_name': bis_list.display_name,
+                            'bis_list_id': bis_list.id,
+                            'job_icon_name': bis_list.job.id,
+                            'job_role': bis_list.job.role,
+                            'requires': required,
+                        })
+
+                slot = 'tome-armour-augment'
+                greed_lists[member.id].setdefault(slot, [])
+                required = bis_list.armour_augments_required(obj.tier.tome_gear_name)
+                if required > 0:
+                    if list_is_need:
+                        response[slot]['need'].append({
+                            'member_id': member.id,
+                            'character_name': member.character.display_name,
+                            'job_icon_name': member.bis_list.job.id,
+                            'job_role': member.bis_list.job.role,
+                            'requires': required,
+                        })
+                    else:
+                        greed_lists[member.id][slot].append({
+                            'bis_list_name': bis_list.display_name,
+                            'bis_list_id': bis_list.id,
+                            'job_icon_name': bis_list.job.id,
+                            'job_role': bis_list.job.role,
+                            'requires': required,
+                        })
+
+        # Lastly, consolidate the two storages of items into one
+        for member in obj.members.all():
+            for slot in greed_lists[member.id]:
+                response[slot]['greed'].append({
+                    'member_id': member.id,
+                    'character_name': member.character.display_name,
+                    'greed_lists': greed_lists[member.id][slot],
+                })
+
+        return response

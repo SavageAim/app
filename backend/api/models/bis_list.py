@@ -8,6 +8,38 @@ from django.db import models
 from django.db.models import Q
 
 
+class BISListManager(models.Manager):
+
+    def with_all_relations(self):
+        return self.select_related(
+            'bis_body',
+            'bis_bracelet',
+            'bis_earrings',
+            'bis_feet',
+            'bis_hands',
+            'bis_head',
+            'bis_left_ring',
+            'bis_legs',
+            'bis_mainhand',
+            'bis_necklace',
+            'bis_offhand',
+            'bis_right_ring',
+            'current_body',
+            'current_bracelet',
+            'current_earrings',
+            'current_feet',
+            'current_hands',
+            'current_head',
+            'current_left_ring',
+            'current_legs',
+            'current_mainhand',
+            'current_necklace',
+            'current_offhand',
+            'current_right_ring',
+            'job',
+        )
+
+
 class BISList(models.Model):
     bis_body = models.ForeignKey('Gear', on_delete=models.CASCADE, related_name='bis_body_set')
     bis_bracelet = models.ForeignKey('Gear', on_delete=models.CASCADE, related_name='bis_bracelet_set')
@@ -38,6 +70,8 @@ class BISList(models.Model):
     job = models.ForeignKey('Job', on_delete=models.CASCADE)
     name = models.CharField(max_length=64, default='')
     owner = models.ForeignKey('Character', on_delete=models.CASCADE, related_name='bis_lists')
+
+    objects = BISListManager()
 
     class Meta:
         ordering = ['-job__role', 'job__ordering', 'name']
