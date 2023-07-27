@@ -12,10 +12,10 @@
             <div class="select is-fullwidth">
               <select v-model="fight">
                 <option value="na">Select a Fight</option>
-                <option value="first">Anabaseios: The Ninth Circle</option>
-                <option value="second">Anabaseios: The Tenth Circle</option>
-                <option value="third">Anabaseios: The Eleventh Circle</option>
-                <option value="fourth">Anabaseios: The Twelfth Circle</option>
+                <option value="first">{{ tier.fights[0] }}</option>
+                <option value="second">{{ tier.fights[1] }}</option>
+                <option value="third">{{ tier.fights[2] }}</option>
+                <option value="fourth">{{ tier.fights[3] }}</option>
               </select>
             </div>
           </div>
@@ -75,6 +75,7 @@ import {
   TomeNeedGear,
 } from '@/interfaces/loot'
 import { LootCreateErrors, LootBISCreateErrors } from '@/interfaces/responses'
+import Tier from '@/interfaces/tier'
 
 @Component({
   components: {
@@ -101,6 +102,9 @@ export default class PerFightLootManager extends Vue {
 
   @Prop()
   sendLootWithBis!: (data: LootWithBISPacket) => Promise<LootBISCreateErrors | null>
+
+  @Prop()
+  tier!: Tier
 
   @Prop()
   userHasPermission!: boolean

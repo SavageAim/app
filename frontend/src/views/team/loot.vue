@@ -36,6 +36,7 @@
       <PerFightLootManager
         :loot="loot"
         :requesting="requesting"
+        :tier="team.tier"
         :send-loot="sendLoot"
         :send-loot-with-bis="sendLootWithBis"
         :user-has-permission="userHasLootManagerPermission"
