@@ -164,7 +164,7 @@ def sampler(context):
     path = context.get('wsgi_environ', {}).get('PATH_INFO', '').lower()
     # I want to trace loot requests since I need to know what's going on in the loot requests so I can improve them
     if 'loot' in path:
-        return 0.5
+        return 0.75
     elif 'notifications' in path:
         # Notifications spans are not important
         return 0
