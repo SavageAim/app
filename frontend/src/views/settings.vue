@@ -84,7 +84,7 @@ export default class Settings extends SavageAimMixin {
 
   errors: SettingsErrors = {}
 
-  lootManagerVersion = 'item'
+  lootManagerVersion = this.user.loot_manager_version
 
   notifications = {
     ...this.user.notifications,
@@ -181,8 +181,7 @@ export default class Settings extends SavageAimMixin {
   }
 
   unsavedLootManager(): boolean {
-    // TODO
-    return false
+    return this.lootManagerVersion !== this.user.loot_manager_version
   }
 
   unsavedNotifications(): boolean {
