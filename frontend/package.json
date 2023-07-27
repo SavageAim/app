@@ -14,6 +14,7 @@
     "@xivapi/js": "^0.4.2",
     "bulma": "^0.9.3",
     "dayjs": "^1.10.7",
+    "lodash.isequal": "^4.5.0",
     "microtip": "^0.2.2",
     "multi-range-slider-vue": "^1.1.4",
     "nouislider": "^15.7.0",
@@ -28,6 +29,7 @@
   },
   "devDependencies": {
     "@creativebulma/bulma-divider": "^1.1.0",
+    "@types/lodash.isequal": "^4.5.6",
     "@typescript-eslint/eslint-plugin": "^4.18.0",
     "@typescript-eslint/parser": "^4.18.0",
     "@vue/cli-plugin-eslint": "~4.5.0",
