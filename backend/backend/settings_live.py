@@ -155,6 +155,7 @@ USE_I18N = True
 USE_L10N = True
 USE_TZ = True
 
+
 # Sentry for errors as well
 def sampler(context):
     # Always inherit parent context
@@ -167,8 +168,13 @@ def sampler(context):
     elif 'notifications' in path:
         # Notifications spans are not important
         return 0
+    # Also ignore celery tasks
+    if 'celery' in context['transaction_context']['op']:
+        return 0
+
     # Anything else I'm not too bothered by
-    return 0.05
+    return 0.1
+
 
 sentry_sdk.init(
     dsn=environ['SENTRY_DSN'],
