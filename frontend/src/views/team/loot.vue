@@ -169,6 +169,10 @@ export default class TeamLoot extends TeamViewMixin {
     return `/backend/api/team/${this.teamId}/loot/`
   }
 
+  get v2Url(): string {
+    return `/backend/api/team/${this.teamId}/loot_v2/`
+  }
+
   async created(): Promise<void> {
     await this.fetchData(false)
     document.title = `Loot Tracker - ${this.team.name} - Savage Aim`
@@ -177,7 +181,11 @@ export default class TeamLoot extends TeamViewMixin {
   async fetchData(reload: boolean): Promise<void> {
     // Load the loot data from the API
     try {
-      const response = await fetch(this.url)
+      // Pick a URL at random, 50% odds each time
+      let response
+      if (Math.random() < 0.5) response = await fetch(this.url)
+      else response = await fetch(this.v2Url)
+
       if (response.ok) {
         // Parse the JSON and save it in instance variables
         const content = (await response.json()) as LootResponse
