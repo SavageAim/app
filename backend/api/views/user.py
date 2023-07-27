@@ -46,8 +46,9 @@ class UserView(APIView):
         serializer = SettingsSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        obj.theme = serializer.validated_data['theme']
+        obj.theme = serializer.validated_data.get('theme', obj.theme)
         obj.notifications.update(serializer.validated_data.get('notifications', {}))
+        obj.loot_manager_version = serializer.validated_data.get('loot_manager_version', obj.loot_manager_version)
         obj.save()
 
         # Send websocket packet for updates

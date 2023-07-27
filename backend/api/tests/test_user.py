@@ -48,10 +48,11 @@ class User(SavageAimTestCase):
         user = self._get_user()
         self.client.force_authenticate(user)
 
-        data = {'theme': 'blue', 'notifications': {'verify_fail': False}}
+        data = {'theme': 'blue', 'notifications': {'verify_fail': False}, 'loot_manager_version': 'fight'}
         response = self.client.put(url, data)
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, response)
         user.refresh_from_db()
+        self.assertEqual(user.settings.loot_manager_version, 'fight')
         self.assertEqual(user.settings.theme, 'blue')
         self.assertFalse(user.settings.notifications['verify_fail'])
 
@@ -64,6 +65,7 @@ class User(SavageAimTestCase):
         self.assertFalse(user.settings.notifications['verify_fail'])
         self.assertTrue(user.settings.notifications['verify_success'])
         self.assertTrue('team_lead' not in user.settings.notifications)
+        self.assertEqual(user.settings.loot_manager_version, 'fight')  # Ensure hasn't changed
 
     def test_update_400(self):
         """
@@ -73,10 +75,11 @@ class User(SavageAimTestCase):
         user = self._get_user()
         self.client.force_authenticate(user)
 
-        data = {'theme': 'abcde', 'notifications': {'abcde': 'abcde'}}
+        data = {'theme': 'abcde', 'notifications': {'abcde': 'abcde'}, 'loot_manager_version': 'abcde'}
         response = self.client.put(url, data)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(response.json()['notifications'], ['"abcde" is not a valid choice.'])
+        self.assertEqual(response.json()['loot_manager_version'], ['"abcde" is not a valid choice.'])
 
         data['notifications'] = {'team_lead': 'abcde'}
         response = self.client.put(url, data)
