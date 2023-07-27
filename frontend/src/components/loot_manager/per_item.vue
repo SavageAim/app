@@ -4,7 +4,7 @@
       <div class="card">
         <div class="card-header">
           <div class="card-header-title">
-            What Item Dropped
+            Select an Item
           </div>
         </div>
         <div class="card-content">
@@ -111,7 +111,7 @@ import { LootCreateErrors, LootBISCreateErrors } from '@/interfaces/responses'
     NeedTomeItemBox,
   },
 })
-export default class TeamLootManagerVersion1 extends Vue {
+export default class PerItemLootManager extends Vue {
   errors: LootBISCreateErrors = {}
 
   displayItem = 'na'

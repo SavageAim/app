@@ -24,12 +24,22 @@
       </div>
 
       <!-- Select the Loot Manager Version -->
-      <LootManagerVersion1
+      <PerItemLootManager
         :loot="loot"
         :requesting="requesting"
         :send-loot="sendLoot"
         :send-loot-with-bis="sendLootWithBis"
         :user-has-permission="userHasLootManagerPermission"
+        v-if="version === 'item'"
+      />
+
+      <PerFightLootManager
+        :loot="loot"
+        :requesting="requesting"
+        :send-loot="sendLoot"
+        :send-loot-with-bis="sendLootWithBis"
+        :user-has-permission="userHasLootManagerPermission"
+        v-if="version === 'fight'"
       />
 
       <!-- Render the Tier History -->
@@ -49,7 +59,8 @@
 <script lang="ts">
 import { Component } from 'vue-property-decorator'
 import History from '@/components/loot/history.vue'
-import LootManagerVersion1 from '@/components/loot_manager/version_1.vue'
+import PerFightLootManager from '@/components/loot_manager/per_fight.vue'
+import PerItemLootManager from '@/components/loot_manager/per_item.vue'
 import TeamNav from '@/components/team/nav.vue'
 import {
   LootData,
@@ -64,7 +75,8 @@ import TeamViewMixin from '@/mixins/team_view_mixin'
 @Component({
   components: {
     History,
-    LootManagerVersion1,
+    PerFightLootManager,
+    PerItemLootManager,
     TeamNav,
   },
 })
@@ -79,6 +91,10 @@ export default class TeamLoot extends TeamViewMixin {
 
   get url(): string {
     return `/backend/api/team/${this.teamId}/loot/`
+  }
+
+  get version(): string {
+    return this.$store.state.user.loot_manager_version
   }
 
   async created(): Promise<void> {
