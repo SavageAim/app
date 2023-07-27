@@ -5,6 +5,7 @@ export default interface NotificationSettings {
   team_kick: boolean
   team_lead: boolean
   team_leave: boolean
+  team_proxy_claim: boolean
   team_rename: boolean
   verify_fail: boolean
   verify_success: boolean
