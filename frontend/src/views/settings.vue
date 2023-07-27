@@ -42,10 +42,15 @@
           v-if="activeTab.theme"
         />
         <NotificationsSettings
-          :errors="errors"
           :notifications="notifications"
           v-on:changeNotification="changeNotification"
           v-if="activeTab.notifications"
+        />
+        <LootManagerSettings
+          :errors="errors"
+          :loot-manager-version="lootManagerVersion"
+          v-on:changeLootManagerVersion="changeLootManagerVersion"
+          v-if="activeTab.lootManager"
         />
       </div>
     </div>
@@ -55,6 +60,7 @@
 <script lang="ts">
 import isEqual from 'lodash.isequal'
 import { Component, Watch } from 'vue-property-decorator'
+import LootManagerSettings from '@/components/settings/loot_manager.vue'
 import NotificationsSettings from '@/components/settings/notifications.vue'
 import ThemeSettings from '@/components/settings/theme.vue'
 import NotificationSettings from '@/interfaces/notification_settings'
@@ -64,6 +70,7 @@ import SavageAimMixin from '@/mixins/savage_aim_mixin'
 
 @Component({
   components: {
+    LootManagerSettings,
     NotificationsSettings,
     ThemeSettings,
   },
@@ -76,6 +83,8 @@ export default class Settings extends SavageAimMixin {
   }
 
   errors: SettingsErrors = {}
+
+  lootManagerVersion = 'item'
 
   notifications = {
     ...this.user.notifications,
@@ -95,6 +104,10 @@ export default class Settings extends SavageAimMixin {
   // Return the user object from the store
   get user(): User {
     return this.$store.state.user
+  }
+
+  changeLootManagerVersion(version: string): void {
+    this.lootManagerVersion = version
   }
 
   changeNotification(data: {notification: keyof NotificationSettings, value: boolean}): void {
@@ -125,7 +138,7 @@ export default class Settings extends SavageAimMixin {
 
   // Save the data into a new bis list
   async save(): Promise<void> {
-    const body = JSON.stringify({ theme: this.theme, notifications: this.notifications })
+    const body = JSON.stringify({ theme: this.theme, notifications: this.notifications, loot_manager_version: this.lootManagerVersion })
     try {
       const response = await fetch(this.url, {
         method: 'PUT',

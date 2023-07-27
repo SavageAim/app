@@ -85,6 +85,8 @@ export interface ProxyCreateErrors {
 // Settings errors response
 export interface SettingsErrors {
   theme?: string[]
+  notifications?: string[]
+  loot_manager_version?: string[]
 }
 
 // Team create response will return a string id since it uses uuid

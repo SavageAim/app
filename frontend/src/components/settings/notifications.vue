@@ -80,13 +80,9 @@
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
 import NotificationSettings from '@/interfaces/notification_settings'
-import { SettingsErrors } from '@/interfaces/responses'
 
 @Component
 export default class NotificationsSettings extends Vue {
-  @Prop()
-  errors!: SettingsErrors
-
   @Prop()
   notifications!: NotificationSettings
 
