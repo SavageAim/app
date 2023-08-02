@@ -33,7 +33,10 @@ class UserSerializer(serializers.Serializer):
         """
         Given a User, retrieve the version of the loot manager they want to see
         """
-        return obj.settings.loot_manager_version
+        try:
+            return obj.settings.loot_manager_version
+        except (AttributeError, Settings.DoesNotExist):
+            return Settings.LOOT_MANAGER_DEFAULT
 
     def get_notifications(self, obj) -> Dict[str, bool]:
         """
