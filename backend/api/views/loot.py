@@ -202,8 +202,19 @@ class LootCollection(APIView):
         # Get the gear information from the above hidden function
         gear = self._get_gear_data(obj)
 
+        # Calculate the received amounts for users here
+        received = {}
+        for item in objs:
+            if item.member is None:
+                continue
+
+            char_name = item.member.character.display_name
+            received.setdefault(char_name, {'need': 0, 'greed': 0})
+            key = 'greed' if item.greed else 'need'
+            received[char_name][key] += 1
+
         # Build and return the response
-        loot_data = {'gear': gear, 'history': history}
+        loot_data = {'gear': gear, 'history': history, 'received': received}
         team_data = TeamSerializer(obj).data
         return Response({'team': team_data, 'loot': loot_data})
 

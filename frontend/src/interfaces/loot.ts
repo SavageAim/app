@@ -45,7 +45,7 @@ export interface TomeNeedGear {
   required: number
 }
 
-interface LootGear {
+export interface LootGear {
   mainhand: { need: NeedGear[], greed: GreedGear[] }
   offhand: { need: NeedGear[], greed: GreedGear[] }
   head: { need: NeedGear[], greed: GreedGear[] }
@@ -72,6 +72,7 @@ export interface Loot {
 export interface LootData {
   gear: LootGear
   history: Loot[]
+  received: { [name: string]: { need: number, greed: number } }
 }
 
 export interface LootResponse {
