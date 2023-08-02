@@ -106,7 +106,9 @@ export default class TeamLoot extends TeamViewMixin {
   async fetchData(reload: boolean): Promise<void> {
     // Load the loot data from the API
     try {
+      // Pick a URL at random, 50% odds each time
       const response = await fetch(this.url)
+
       if (response.ok) {
         // Parse the JSON and save it in instance variables
         const content = (await response.json()) as LootResponse

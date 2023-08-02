@@ -155,6 +155,7 @@ USE_I18N = True
 USE_L10N = True
 USE_TZ = True
 
+
 # Sentry for errors as well
 def sampler(context):
     # Always inherit parent context
@@ -163,12 +164,17 @@ def sampler(context):
     path = context.get('wsgi_environ', {}).get('PATH_INFO', '').lower()
     # I want to trace loot requests since I need to know what's going on in the loot requests so I can improve them
     if 'loot' in path:
-        return 0.5
+        return 0.75
     elif 'notifications' in path:
         # Notifications spans are not important
         return 0
+    # Also ignore celery tasks
+    if 'celery' in context['transaction_context']['op']:
+        return 0
+
     # Anything else I'm not too bothered by
-    return 0.05
+    return 0.1
+
 
 sentry_sdk.init(
     dsn=environ['SENTRY_DSN'],
@@ -178,7 +184,7 @@ sentry_sdk.init(
     # If you wish to associate users to errors (assuming you are using
     # django.contrib.auth) you may enable sending PII data.
     send_default_pii=True,
-    release='savageaim@20230719.2',
+    release='savageaim@20230727',
 )
 
 # Channels
