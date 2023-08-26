@@ -93,7 +93,6 @@ import {
   GreedGear,
   GreedItem,
   NeedGear,
-  Loot,
   LootData,
   LootPacket,
   LootWithBISPacket,
@@ -132,13 +131,13 @@ export default class PerItemLootManager extends Vue {
   userHasPermission!: boolean
 
   getGreedReceived(entry: GreedGear): number {
-    // Given an entry, search the history and find how many times that Character has received greed loot so far this tier
-    return this.loot.history.reduce((sum: number, loot: Loot) => sum + (loot.member === entry.character_name && loot.greed ? 1 : 0), 0)
+    // Given an entry, return how many times that Character has received greed loot so far this tier
+    return this.loot.received[entry.character_name].greed
   }
 
   getNeedReceived(entry: NeedGear): number {
-    // Given an entry, search the history and find how many times that Character has received need loot so far this tier
-    return this.loot.history.reduce((sum: number, loot: Loot) => sum + (loot.member === entry.character_name && !loot.greed ? 1 : 0), 0)
+    // Given an entry, return how many times that Character has received need loot so far this tier
+    return this.loot.received[entry.character_name].need
   }
 
   // Functions to handle interacting with the API for handling loot handouts
