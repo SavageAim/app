@@ -69,10 +69,17 @@ export interface Loot {
   obtained: string
 }
 
+export interface LootReceived {
+  [name: string]: {
+    need: number
+    greed: number
+  }
+}
+
 export interface LootData {
   gear: LootGear
   history: Loot[]
-  received: { [name: string]: { need: number, greed: number } }
+  received: LootReceived
 }
 
 export interface LootResponse {
