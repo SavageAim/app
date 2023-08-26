@@ -19,6 +19,7 @@
               </select>
             </div>
           </div>
+          <p class="has-text-primary" v-if="fight != 'na' && userHasPermission">Click on the dark boxes to pick a Team Member to get each item, then click the Save button to update everyone's loot at once.</p>
 
           <!-- Display generic errors here -->
           <div class="box has-background-danger" v-if="errors.greed !== undefined">
@@ -35,7 +36,7 @@
           </div>
         </div>
       </div>
-      <button class="button is-success is-fullwidth">Save Loot Assigments</button>
+      <button class="button is-success is-fullwidth" v-if="userHasPermission">Save Loot Assigments</button>
     </div>
 
     <div class="column" v-for="item in fightItems()" :key="item">
@@ -46,7 +47,7 @@
           </div>
         </div>
         <div class="card-content">
-          <a class="box">
+          <a class="box" @click="() => { selectTeamMember(item) }">
             Select a Team Member
           </a>
         </div>
@@ -63,12 +64,13 @@ import History from '@/components/loot/history.vue'
 import ItemDropdown from '@/components/item_dropdown.vue'
 import NeedRaidItemBox from '@/components/loot/need_raid_item_box.vue'
 import NeedTomeItemBox from '@/components/loot/need_tome_item_box.vue'
+import PerFightMemberSelect from '@/components/modals/per_fight_member_select.vue'
 import {
   GreedGear,
   GreedItem,
   NeedGear,
-  Loot,
   LootData,
+  LootGear,
   LootPacket,
   LootWithBISPacket,
   TomeGreedGear,
@@ -124,16 +126,6 @@ export default class PerFightLootManager extends Vue {
     return this.fightItemMap[this.fight]
   }
 
-  getGreedReceived(entry: GreedGear): number {
-    // Given an entry, search the history and find how many times that Character has received greed loot so far this tier
-    return this.loot.history.reduce((sum: number, loot: Loot) => sum + (loot.member === entry.character_name && loot.greed ? 1 : 0), 0)
-  }
-
-  getNeedReceived(entry: NeedGear): number {
-    // Given an entry, search the history and find how many times that Character has received need loot so far this tier
-    return this.loot.history.reduce((sum: number, loot: Loot) => sum + (loot.member === entry.character_name && !loot.greed ? 1 : 0), 0)
-  }
-
   // Functions to handle interacting with the API for handling loot handouts
   giveGreedRaidLoot(entry: GreedGear, list: GreedItem): void {
     const data = {
@@ -178,6 +170,20 @@ export default class PerFightLootManager extends Vue {
       // item: this.displayItem,
     }
     this.sendLoot(data)
+  }
+
+  selectTeamMember(item: string): void {
+    const key = item.toLowerCase().replaceAll(' ', '-') as keyof LootGear
+    this.$modal.show(
+      PerFightMemberSelect,
+      {
+        greed: this.loot.gear[key].greed,
+        item,
+        need: this.loot.gear[key].need,
+        received: this.loot.received,
+        tome: key.indexOf('augment') !== -1,
+      },
+    )
   }
 
   // Helper function that sits inbetween the giveRaidLoot and sendLootWithBis functions
