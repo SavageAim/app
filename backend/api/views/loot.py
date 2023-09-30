@@ -9,6 +9,7 @@ from typing import Dict, List
 from datetime import datetime
 # lib
 from django.core.exceptions import ValidationError
+from django.db.models import QuerySet
 from rest_framework.request import Request
 from rest_framework.response import Response
 # local
@@ -47,6 +48,12 @@ class LootCollection(APIView):
         'ring',
         'tome-accessory-augment',
         'tome-armour-augment'
+    ]
+    # History slots are separate again
+    HISTORY_SLOTS = [
+        'mount',
+        'tome-weapon-augment',
+        'tome-weapon-token',
     ]
 
     def _get_gear_data(self, obj: Team) -> Dict[str, List[Dict[str, str]]]:
@@ -180,6 +187,38 @@ class LootCollection(APIView):
 
         return response
 
+    def _get_history_loot_data(self, obj: Team, loot: QuerySet) -> Dict[str, List[Dict[str, str]]]:
+        """
+        A method for retrieving the loot items that are checked purely by the history data
+        """
+        response = {}
+
+        for slot in self.HISTORY_SLOTS:
+            slot_data = {'need': [], 'greed': []}
+            for member in obj.members.all():
+                current = member.bis_list.current_mainhand
+                # Check if the slot has already been claimed by the current member
+                # If they have retrieved a 'need' token already, they don't need it again
+                if not loot.filter(member=member, item=slot, greed=False).exists():
+                    slot_data['need'].append({
+                        'member_id': member.id,
+                        'character_name': member.character.display_name,
+                        'current_gear_name': current.name if slot != 'mount' else 'N/A',
+                        'current_gear_il': current.item_level if slot != 'mount' else 'N/A',
+                        'job_icon_name': member.bis_list.job.id,
+                        'job_role': member.bis_list.job.role,
+                    })
+
+                # If the slot is not for mount, then just add the member to the greed
+                if slot != 'mount':
+                    slot_data['greed'].append({
+                        'member_id': member.id,
+                        'character_name': member.character.display_name,
+                        'greed_lists': [],
+                    })
+            response[slot] = slot_data
+        return response
+
     def get(self, request: Request, team_id: str) -> Response:
         """
         Get loot history and current need/greed status for a team
@@ -201,6 +240,7 @@ class LootCollection(APIView):
 
         # Get the gear information from the above hidden function
         gear = self._get_gear_data(obj)
+        gear.update(self._get_history_loot_data(obj, objs))
 
         # Calculate the received amounts for users here
         received = {}

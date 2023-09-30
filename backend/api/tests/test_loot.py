@@ -219,7 +219,7 @@ class LootTestSuite(SavageAimTestCase):
             owner=self.main_tank,
         )
 
-        # Lastly, link the characters to the team
+        # Link the characters to the team
         self.tl_tm = self.team.members.create(character=self.team_lead, bis_list=self.tl_main_bis, lead=True)
         self.mt_tm = self.team.members.create(character=self.main_tank, bis_list=self.mt_main_bis, permissions=2)
 
@@ -291,39 +291,6 @@ class LootTestSuite(SavageAimTestCase):
                     },
                 ],
             },
-            # 'offhand': {
-            #     'need': [
-            #         {
-            #             'member_id': self.mt_tm.pk,
-            #             'character_name': f'{self.main_tank.name} @ {self.main_tank.world}',
-            #             'current_gear_name': self.crafted.name,
-            #             'current_gear_il': self.crafted.item_level,
-            #             'job_icon_name': 'PLD',
-            #             'job_role': 'tank',
-            #         },
-            #     ],
-            #     'greed': [
-            #         {
-            #             'member_id': self.mt_tm.pk,
-            #             'character_name': f'{self.main_tank.name} @ {self.main_tank.world}',
-            #             'greed_lists': [],
-            #         },
-            #         {
-            #             'member_id': self.tl_tm.pk,
-            #             'character_name': self.team_lead.alias,
-            #             'greed_lists': [
-            #                 {
-            #                     'bis_list_id': self.tl_alt_bis.id,
-            #                     'bis_list_name': self.tl_alt_bis.display_name,
-            #                     'current_gear_name': self.crafted.name,
-            #                     'current_gear_il': self.crafted.item_level,
-            #                     'job_icon_name': 'PLD',
-            #                     'job_role': 'tank',
-            #                 },
-            #             ],
-            #         },
-            #     ],
-            # },
             'head': {
                 'need': [
                     {
@@ -842,6 +809,91 @@ class LootTestSuite(SavageAimTestCase):
                     },
                 ],
             },
+            'mount': {
+                'need': [
+                    {
+                        'member_id': self.mt_tm.pk,
+                        'character_name': f'{self.main_tank.name} @ {self.main_tank.world}',
+                        'current_gear_name': 'N/A',
+                        'current_gear_il': 'N/A',
+                        'job_icon_name': 'PLD',
+                        'job_role': 'tank',
+                    },
+                    {
+                        'member_id': self.tl_tm.pk,
+                        'character_name': self.team_lead.alias,
+                        'current_gear_name': 'N/A',
+                        'current_gear_il': 'N/A',
+                        'job_icon_name': 'SGE',
+                        'job_role': 'heal',
+                    },
+                ],
+                'greed': [],
+            },
+            'tome-weapon-token': {
+                'need': [
+                    {
+                        'member_id': self.mt_tm.pk,
+                        'character_name': f'{self.main_tank.name} @ {self.main_tank.world}',
+                        'current_gear_name': self.mt_main_bis.current_mainhand.name,
+                        'current_gear_il': self.mt_main_bis.current_mainhand.item_level,
+                        'job_icon_name': 'PLD',
+                        'job_role': 'tank',
+                    },
+                    {
+                        'member_id': self.tl_tm.pk,
+                        'character_name': self.team_lead.alias,
+                        'current_gear_name': self.tl_main_bis.current_mainhand.name,
+                        'current_gear_il': self.tl_main_bis.current_mainhand.item_level,
+                        'job_icon_name': 'SGE',
+                        'job_role': 'heal',
+                    },
+                ],
+                'greed': [
+                    {
+                        'member_id': self.mt_tm.pk,
+                        'character_name': f'{self.main_tank.name} @ {self.main_tank.world}',
+                        'greed_lists': [],
+                    },
+                    {
+                        'member_id': self.tl_tm.pk,
+                        'character_name': self.team_lead.alias,
+                        'greed_lists': [],
+                    },
+                ],
+            },
+            'tome-weapon-augment': {
+                'need': [
+                    {
+                        'member_id': self.mt_tm.pk,
+                        'character_name': f'{self.main_tank.name} @ {self.main_tank.world}',
+                        'current_gear_name': self.mt_main_bis.current_mainhand.name,
+                        'current_gear_il': self.mt_main_bis.current_mainhand.item_level,
+                        'job_icon_name': 'PLD',
+                        'job_role': 'tank',
+                    },
+                    {
+                        'member_id': self.tl_tm.pk,
+                        'character_name': self.team_lead.alias,
+                        'current_gear_name': self.tl_main_bis.current_mainhand.name,
+                        'current_gear_il': self.tl_main_bis.current_mainhand.item_level,
+                        'job_icon_name': 'SGE',
+                        'job_role': 'heal',
+                    },
+                ],
+                'greed': [
+                    {
+                        'member_id': self.mt_tm.pk,
+                        'character_name': f'{self.main_tank.name} @ {self.main_tank.world}',
+                        'greed_lists': [],
+                    },
+                    {
+                        'member_id': self.tl_tm.pk,
+                        'character_name': self.team_lead.alias,
+                        'greed_lists': [],
+                    },
+                ],
+            },
         }
 
     def tearDown(self):
@@ -860,6 +912,26 @@ class LootTestSuite(SavageAimTestCase):
         Given the objects we set up, test that the calculator returns the correct information
         Then update some BIS items and recheck to ensure it's always up to date
         """
+        # Add some history elements for testing the new stuff
+        Loot.objects.create(
+            greed=False,
+            item='mount',
+            member=self.mt_tm,
+            obtained=datetime.now(),
+            team=self.team,
+            tier=self.team.tier,
+        )
+        Loot.objects.create(
+            greed=False,
+            item='tome-weapon-token',
+            member=self.tl_tm,
+            obtained=datetime.now(),
+            team=self.team,
+            tier=self.team.tier,
+        )
+        self.expected_gear['mount']['need'].pop(0)
+        self.expected_gear['tome-weapon-token']['need'].pop(1)
+
         url = reverse('api:loot_collection', kwargs={'team_id': self.team.pk})
         user = self._get_user()
         self.client.force_authenticate(user)
@@ -868,6 +940,7 @@ class LootTestSuite(SavageAimTestCase):
 
         # Compile the expected gear response and ensure it all matches
         content = response.json()['loot']['gear']
+        self.assertEqual(len(content), len(self.expected_gear), content)
         for item in self.expected_gear.keys():
             self.assertEqual(content[item], self.expected_gear[item], item)
 
@@ -877,6 +950,9 @@ class LootTestSuite(SavageAimTestCase):
         self.tl_main_bis.current_right_ring = self.raid_gear
         self.tl_main_bis.save()
 
+        self.expected_gear['tome-weapon-augment']['need'][1].update(
+            {'current_gear_il': self.raid_weapon.item_level, 'current_gear_name': self.raid_weapon.name},
+        )
         self.expected_gear['mainhand']['need'].pop(1)
         self.expected_gear['feet']['need'].pop(0)
         self.expected_gear['ring']['need'].pop(1)
@@ -903,6 +979,12 @@ class LootTestSuite(SavageAimTestCase):
         self.mt_main_bis.current_hands = self.raid_gear
         self.mt_main_bis.save()
 
+        self.expected_gear['tome-weapon-token']['need'][0].update(
+            {'current_gear_il': self.raid_weapon.item_level, 'current_gear_name': self.raid_weapon.name},
+        )
+        self.expected_gear['tome-weapon-augment']['need'][0].update(
+            {'current_gear_il': self.raid_weapon.item_level, 'current_gear_name': self.raid_weapon.name},
+        )
         self.expected_gear['mainhand']['need'].pop(0)
         self.expected_gear['hands']['need'].pop(0)
 
@@ -938,6 +1020,7 @@ class LootTestSuite(SavageAimTestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         content = response.json()['loot']['gear']
+        self.assertEqual(len(content), len(self.expected_gear), content)
         for item in self.expected_gear.keys():
             self.assertEqual(content[item], self.expected_gear[item], item)
 
@@ -1185,6 +1268,18 @@ class LootTestSuite(SavageAimTestCase):
         self.expected_gear['ring']['greed'][0]['greed_lists'].pop(1)
         self.expected_gear['mainhand']['greed'][1]['greed_lists'].pop(0)
         self.expected_gear['body']['greed'][0]['greed_lists'].pop(0)
+        self.expected_gear['tome-weapon-token']['need'][0].update(
+            {'current_gear_il': self.raid_weapon.item_level, 'current_gear_name': self.raid_weapon.name},
+        )
+        self.expected_gear['tome-weapon-augment']['need'][0].update(
+            {'current_gear_il': self.raid_weapon.item_level, 'current_gear_name': self.raid_weapon.name},
+        )
+        self.expected_gear['tome-weapon-token']['need'][1].update(
+            {'current_gear_il': self.raid_weapon.item_level, 'current_gear_name': self.raid_weapon.name},
+        )
+        self.expected_gear['tome-weapon-augment']['need'][1].update(
+            {'current_gear_il': self.raid_weapon.item_level, 'current_gear_name': self.raid_weapon.name},
+        )
 
         self.assertEqual(self.client.post(write_url, need_data_ring).status_code, status.HTTP_201_CREATED)
         self.assertEqual(self.client.post(write_url, need_data_shield).status_code, status.HTTP_201_CREATED)
