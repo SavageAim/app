@@ -12,6 +12,7 @@ const dynamicDefaults = {
   adaptive: true,
   classes: 'card',
   height: 'auto',
+  width: '800px',
   resizable: false,
   scrollable: true,
   styles: {
