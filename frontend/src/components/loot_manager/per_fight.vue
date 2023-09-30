@@ -36,7 +36,7 @@
           </div>
         </div>
       </div>
-      <button class="button is-success is-fullwidth" v-if="userHasPermission">Save Loot Assigments</button>
+      <button class="button is-success is-fullwidth" v-if="fight != 'na' && userHasPermission">Save Loot Assigments</button>
     </div>
 
     <div class="column" v-for="item in fightItems()" :key="item">
@@ -181,7 +181,6 @@ export default class PerFightLootManager extends Vue {
         item,
         need: this.loot.gear[key].need,
         received: this.loot.received,
-        tome: key.indexOf('augment') !== -1,
       },
     )
   }
