@@ -25,7 +25,7 @@
       <template v-if="tabs.showNeed">
         <a class="box list-item" v-for="entry in need" :key="`need-${entry.member_id}`" data-microtip-position="top" role="tooltip" :aria-label="showRequires ? `Requires: ${entry.requires}` : `Current: ${entry.current_gear_name}`" >
           <span class="badge is-primary">{{ getNeedReceived(entry) }}</span>
-          <span v-if="tome" class="badge is-link is-left is-hidden-desktop">{{ entry.requires }}</span>
+          <!-- <span v-if="tome" class="badge is-link is-left is-hidden-desktop">{{ entry.requires }}</span> -->
           <div class="list-data">
             <div class="left">
               {{ entry.character_name }}
@@ -57,7 +57,7 @@
 
       <template v-if="tabs.showGreed">
         <!-- Greed Items -->
-        <a class="box" v-for="entry in greed" :key="`greed-${entry.member_id}`" data-microtip-position="top" role="tooltip" :aria-label="`BIS Lists: ${entry.greed_lists.length}`" >
+        <a class="box" v-for="entry in greed" :key="`greed-${entry.member_id}`" data-microtip-position="top" role="tooltip" :aria-label="`BIS Lists: ${entry.greed_lists.length}`" @click="() => { toggleGreedDropdown(entry.member_id) }">
           <div class="list-item">
             <span class="badge is-info">{{ getGreedReceived(entry) }}</span>
             <div class="list-data">
@@ -75,11 +75,14 @@
                   </span>
                 </div>
                 <!-- Dropdown button -->
-                <span class="icon"><i class="material-icons" ref="historyIcon">expand_more</i></span>
+                <span class="icon">
+                  <i class="material-icons" v-if="!(greedDropdowns[entry.member_id] || false)">expand_more</i>
+                  <i class="material-icons" v-else>expand_less</i>
+                </span>
               </div>
             </div>
           </div>
-          <div class="greed-list-container">
+          <div class="greed-list-container" v-if="greedDropdowns[entry.member_id] || false">
             <div class="list-data" v-for="list in entry.greed_lists" :key="`greed-${entry.member_id}-list-${list.bis_list_id}`">
               <div class="left">
                 {{ list.job_icon_name }}
@@ -122,13 +125,10 @@ import {
   },
 })
 export default class LoadCurrentGear extends Vue {
-  tabs = {
-    showNeed: true,
-    showGreed: false,
-  }
-
   @Prop()
   greed!: GreedGear[] | TomeGreedGear[]
+
+  greedDropdowns: { [id: number]: boolean } = {}
 
   @Prop()
   item!: string
@@ -138,6 +138,11 @@ export default class LoadCurrentGear extends Vue {
 
   @Prop()
   received!: LootReceived
+
+  tabs = {
+    showNeed: true,
+    showGreed: false,
+  }
 
   get showRequires(): boolean {
     return (this.item === 'Tome Armour Augment' || this.item === 'Tome Accessory Augment')
@@ -159,6 +164,12 @@ export default class LoadCurrentGear extends Vue {
 
   showNeed(): void {
     this.tabs = { showNeed: true, showGreed: false }
+  }
+
+  toggleGreedDropdown(memberId: number): void {
+    const prev = this.greedDropdowns[memberId] || false
+    this.greedDropdowns[memberId] = !prev
+    this.$forceUpdate()
   }
 }
 </script>
