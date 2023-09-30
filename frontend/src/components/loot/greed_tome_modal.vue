@@ -11,7 +11,7 @@
       </div>
     </div>
     <div class="card-content">
-      <a class="box list-item" v-for="list in entry.greed_lists" :key="list.bis_list_id" data-microtip-position="top" role="tooltip" :aria-label="`Current: ${list.current_gear_name}`" @click="() => { select(list) }">
+      <a class="box list-item" v-for="list in entry.greed_lists" :key="list.bis_list_id" data-microtip-position="top" role="tooltip" :aria-label="`Requires: ${list.requires}`" @click="() => { select(list) }">
         <span class="badge is-link is-topleft is-hidden-desktop">{{ list.requires }}</span>
         <div class="list-data">
           <div class="left">
@@ -38,7 +38,7 @@
 
 <script lang="ts">
 import { Component, Vue, Prop } from 'vue-property-decorator'
-import { TomeGreedGear } from '@/interfaces/loot'
+import { TomeGreedGear, GreedItem } from '@/interfaces/loot'
 
 @Component
 export default class GreedTomeModal extends Vue {
@@ -46,10 +46,10 @@ export default class GreedTomeModal extends Vue {
   entry!: TomeGreedGear
 
   @Prop()
-  save!: () => void
+  save!: (list: GreedItem) => void
 
-  select(): void {
-    this.save()
+  select(list: GreedItem): void {
+    this.save(list)
     this.$emit('close')
   }
 }

@@ -51,7 +51,7 @@
               </div>
               <div class="field-body">
                 <div class="field">
-                  <ItemDropdown v-model="createData.item" :displayNonGear="true" :error="errors.item" />
+                  <ItemDropdown v-model="createData.item" :error="errors.item" />
                 </div>
               </div>
             </div>
@@ -135,7 +135,7 @@
                 </div>
               </td>
               <td>
-                <ItemDropdown v-model="createData.item" :displayNonGear="true" :error="errors.item" />
+                <ItemDropdown v-model="createData.item" :error="errors.item" />
               </td>
               <td>
                 <div class="control">

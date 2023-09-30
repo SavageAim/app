@@ -38,11 +38,11 @@
         <div class="card-content">
           <p>Below are the people that need the chosen item for their Team BIS.</p>
           <p v-if="userHasPermission">Clicking the button beside anyone will add a Loot entry, and update their BIS List accordingly (where possible).</p>
-          <template v-if="displayItem.indexOf('augment') !== -1">
-            <NeedTomeItemBox :user-has-permission="userHasPermission" :items-received="getNeedReceived(entry)" :entry="entry" :requesting="requesting" v-for="entry in loot.gear[displayItem].need" :key="entry.character_id" v-on:save="() => { giveNeedTomeLoot(entry) }" />
+          <template v-if="displayItem === 'tome-accessory-augment' || displayItem === 'tome-armour-augment'">
+            <NeedTomeItemBox :user-has-permission="userHasPermission" :items-received="getNeedReceived(entry)" :entry="entry" :requesting="requesting" v-for="entry in loot.gear[displayItem].need" :key="entry.character_id" v-on:save="() => { giveNeedLoot(entry) }" />
           </template>
           <template v-else-if="displayItem !== 'na'">
-            <NeedRaidItemBox :user-has-permission="userHasPermission" :items-received="getNeedReceived(entry)" :entry="entry" :requesting="requesting" v-for="entry in loot.gear[displayItem].need" :key="entry.character_id" v-on:save="() => { giveNeedRaidLoot(entry) }" />
+            <NeedRaidItemBox :user-has-permission="userHasPermission" :items-received="getNeedReceived(entry)" :entry="entry" :requesting="requesting" v-for="entry in loot.gear[displayItem].need" :key="entry.character_id" v-on:save="() => { giveNeedLoot(entry) }" />
           </template>
         </div>
       </div>
@@ -69,10 +69,10 @@
               :items-received="getGreedReceived(entry)"
               :entry="entry"
               :requesting="requesting"
-              :raid="displayItem.indexOf('augment') === -1"
+              :item="displayItem"
 
-              v-on:save-tome="() => { giveGreedTomeLoot(entry) }"
-              v-on:save-raid="(list) => { giveGreedRaidLoot(entry, list) }"
+              v-on:save-without-update="() => { giveGreedTomeLoot(entry) }"
+              v-on:save-with-update="(list) => { giveGreedRaidLoot(entry, list) }"
             />
           </template>
         </div>
@@ -160,6 +160,18 @@ export default class PerItemLootManager extends Vue {
       item: this.displayItem,
     }
     this.sendLoot(data)
+  }
+
+  // Determine what function to call for a given item
+  giveNeedLoot(entry: NeedGear | TomeNeedGear): void {
+    if (this.displayItem.indexOf('tome') !== -1 || this.displayItem === 'mount') {
+      // We cannot run an update but we do want to save them
+      this.giveNeedTomeLoot(entry as TomeNeedGear)
+    }
+    else {
+      // Anything else can be updated since it's all raid gear
+      this.giveNeedRaidLoot(entry as NeedGear)
+    }
   }
 
   giveNeedRaidLoot(entry: NeedGear): void {
