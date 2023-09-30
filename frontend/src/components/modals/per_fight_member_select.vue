@@ -23,7 +23,7 @@
 
       <!-- Need Items -->
       <template v-if="tabs.showNeed">
-        <a class="box list-item" v-for="entry in need" :key="`need-${entry.member_id}`" data-microtip-position="top" role="tooltip" :aria-label="showRequires ? `Requires: ${entry.requires}` : `Current: ${entry.current_gear_name}`" >
+        <a class="box list-item" v-for="entry in need" :key="`need-${entry.member_id}`" data-microtip-position="top" role="tooltip" :aria-label="showRequires ? `Requires: ${entry.requires}` : `Current: ${entry.current_gear_name}`" @click="() => { chooseNeed(entry) }">
           <span class="badge is-primary">{{ getNeedReceived(entry) }}</span>
           <!-- <span v-if="tome" class="badge is-link is-left is-hidden-desktop">{{ entry.requires }}</span> -->
           <div class="list-data">
@@ -114,6 +114,7 @@ import {
   GreedGear,
   LootReceived,
   NeedGear,
+  PerFightChosenMember,
   TomeGreedGear,
   TomeNeedGear,
 } from '@/interfaces/loot'
@@ -125,6 +126,9 @@ import {
   },
 })
 export default class LoadCurrentGear extends Vue {
+  @Prop()
+  choose!: (data: PerFightChosenMember, item: string) => void
+
   @Prop()
   greed!: GreedGear[] | TomeGreedGear[]
 
@@ -142,6 +146,18 @@ export default class LoadCurrentGear extends Vue {
   tabs = {
     showNeed: true,
     showGreed: false,
+  }
+
+  chooseNeed(data: NeedGear | TomeNeedGear): void {
+    const neededData = {
+      greed: false,
+      items_received: this.getNeedReceived(data),
+      member_id: data.member_id,
+      member_name: data.character_name,
+      job_id: data.job_icon_name,
+    }
+    this.choose(neededData, this.item)
+    this.$emit('close')
   }
 
   get showRequires(): boolean {

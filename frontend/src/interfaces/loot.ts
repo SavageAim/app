@@ -100,3 +100,11 @@ export interface LootPacket {
   member_id: number
   obtained: string
 }
+
+export interface PerFightChosenMember {
+  greed: boolean
+  member_id: number
+  member_name: string
+  job_id: string
+  items_received: number
+}

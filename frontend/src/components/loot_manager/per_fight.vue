@@ -47,8 +47,19 @@
           </div>
         </div>
         <div class="card-content">
-          <a class="box" @click="() => { selectTeamMember(item) }">
+          <a class="box" @click="() => { selectTeamMember(item) }" v-if="!chosenMembers[item]">
             Select a Team Member
+          </a>
+          <a class="box list-data" @click="() => { selectTeamMember(item) }" v-else>
+            <span class="badge" :class="chosenMembers[item].greed ? 'is-info' : 'is-primary'">{{ chosenMembers[item].items_received }}</span>
+            <div class="left">
+              {{ chosenMembers[item].member_name }}
+            </div>
+            <div class="right">
+              <span class="icon">
+                <img :src="`/job_icons/${chosenMembers[item].job_id}.png`" :alt="`${chosenMembers[item].job_id} job icon`" width="24" height="24" />
+              </span>
+            </div>
           </a>
         </div>
       </div>
@@ -58,7 +69,12 @@
 
 <script lang="ts">
 import dayjs from 'dayjs'
-import { Component, Prop, Vue } from 'vue-property-decorator'
+import {
+  Component,
+  Prop,
+  Vue,
+  Watch,
+} from 'vue-property-decorator'
 import GreedCharacterEntry from '@/components/loot/greed_character_entry.vue'
 import History from '@/components/loot/history.vue'
 import ItemDropdown from '@/components/item_dropdown.vue'
@@ -73,6 +89,7 @@ import {
   LootGear,
   LootPacket,
   LootWithBISPacket,
+  PerFightChosenMember,
   TomeGreedGear,
   TomeNeedGear,
 } from '@/interfaces/loot'
@@ -89,6 +106,8 @@ import Tier from '@/interfaces/tier'
   },
 })
 export default class PerFightLootManager extends Vue {
+  chosenMembers: { [item: string]: PerFightChosenMember } = {}
+
   errors: LootBISCreateErrors = {}
 
   fight = 'na'
@@ -110,6 +129,18 @@ export default class PerFightLootManager extends Vue {
 
   @Prop()
   userHasPermission!: boolean
+
+  chooseMember(data: PerFightChosenMember, item: string) {
+    this.chosenMembers[item] = data
+    console.log(this.chosenMembers)
+    this.$forceUpdate()
+  }
+
+  @Watch('fight')
+  emptyChosenMembers(): void {
+    // When you change the fight, reset the chosen map
+    this.chosenMembers = {}
+  }
 
   get fightItemMap(): {[key: string]: string[]} {
     // Temp solution
@@ -177,6 +208,7 @@ export default class PerFightLootManager extends Vue {
     this.$modal.show(
       PerFightMemberSelect,
       {
+        choose: this.chooseMember,
         greed: this.loot.gear[key].greed,
         item,
         need: this.loot.gear[key].need,
@@ -224,5 +256,9 @@ export default class PerFightLootManager extends Vue {
 
 .list-actions {
   margin-left: 1.25rem;
+}
+
+.box.list-data {
+  position: relative;
 }
 </style>
