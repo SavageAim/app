@@ -17,7 +17,7 @@
       <p>The <router-link to="/settings/">settings page</router-link> has been expanded with extra settings.</p>
       <p>In the interest of keeping it neat, the settings sections are now accessible in separate sections, similar to the character pages.</p>
       <p>Navbar items will display an asterisk when they have been changed, to help indicate unsaved changes have been made.</p>
-
+      
       <div class="divider"><i class="material-icons icon">expand_more</i> Loot Manager Update <i class="material-icons icon">expand_more</i></div>
       <p>
         The "Mount", "Tome Weapon Token" and "Tome Weapon Augment" fields in the loot manager are now returned by the API.
@@ -33,13 +33,15 @@
           <li>This has been done so the dark blue is only used for the "Amount of Augment Tokens Required", for consistency across Desktop and Mobile.</li>
         </ul>
       </p>
-
+      
       <div class="divider"><i class="material-icons icon">expand_more</i> Per Fight Loot Manager <i class="material-icons icon">expand_more</i></div>
       <p>A new version of the Loot Manager has been released in beta.</p>
       <p>To view the differences, or opt in to try it out, please visit <router-link to="/settings/">your settings</router-link>.</p>
       <p class="has-text-primary">If you have any feedback, please make it known in the <a href="https://discord.gg/k8szJ5qAKw" target="_blank">Discord server</a>!</p>
       <p>Also note that the Loot Manager version is a personal setting, as both will be supported going forward.</p>
-
+      
+      <div class="divider"><i class="material-icons icon">expand_more</i> Minor Changes <i class="material-icons icon">expand_more</i></div>
+      <p>Notification deduping has been added, preventing users from receiving the exact same notification if they already have an unread notification with the exact same text within the last 5 they receive.</p>
     </div>
   </div>
 </template>
