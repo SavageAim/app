@@ -66,6 +66,9 @@
             </div>
           </a>
         </div>
+        <footer class="card-footer" v-if="chosenMembers[item]">
+          <a class="card-footer-item has-text-danger" @click="() => { clear(item) }">Clear</a>
+        </footer>
       </div>
     </div>
   </div>
@@ -135,6 +138,11 @@ export default class PerFightLootManager extends SavageAimMixin {
 
   chooseMember(data: PerFightChosenMember, item: string): void {
     this.chosenMembers[item] = data
+    this.$forceUpdate()
+  }
+
+  clear(item: string) {
+    delete this.chosenMembers[item]
     this.$forceUpdate()
   }
 
