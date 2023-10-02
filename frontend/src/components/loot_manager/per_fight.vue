@@ -159,15 +159,22 @@ export default class PerFightLootManager extends SavageAimMixin {
     return this.fightItemMap[this.fight]
   }
 
-  save(): void {
+  async save(): Promise<void> {
     // Don't do anything if no members are chosen
     if (Object.keys(this.chosenMembers).length === 0) return
 
     // Set the internal requesting flag
     this.requestingI = true
 
+    // Maintain an array of responses for error displaying
+    const responses: (LootCreateErrors | LootBISCreateErrors | null)[] = []
+
     // Iterate through our chosen members and upload their data
-    Object.entries(this.chosenMembers).forEach(async ([item, data]) => {
+    const entries = Object.entries(this.chosenMembers)
+    // Have to use this loop type to properly await all responses
+    /* eslint-disable no-await-in-loop */
+    for (let index = 0; index < entries.length; index += 1) {
+      const [item, data] = entries[index]
       let key = item.toLowerCase().replaceAll(' ', '-')
       // Special case handling for mainhand differentiations
       if (key.indexOf('mainhand') !== -1) key = 'mainhand'
@@ -179,23 +186,41 @@ export default class PerFightLootManager extends SavageAimMixin {
         item: key,
       }
 
-      // TODO - Error Handling
       // If the flag is greed but no greed id is given, send without update (will only happen when it's `give to a char`)
       if (lootPacket.greed && lootPacket.greed_bis_id === null) {
-        await this.sendLoot(lootPacket)
+        responses.push(await this.sendLoot(lootPacket))
       }
       // Check if the key is one of the tome items or the mount
       else if (key === 'mount' || key.indexOf('tome') !== -1) {
-        await this.sendLoot(lootPacket)
+        responses.push(await this.sendLoot(lootPacket))
       }
       // Anything else will get sent with a bis update request
       else {
-        await this.sendLootWithBis(lootPacket)
+        responses.push(await this.sendLootWithBis(lootPacket))
       }
-    })
+    }
+    /* eslint-enable no-await-in-loop */
+
+    // Select a notification type to display based on how the requests went
+    const tester = (value: LootCreateErrors | LootBISCreateErrors | null) => value === null
+    if (responses.every(tester)) {
+      // All responses were successful. Give green message, clear selected inputs, and reload the state
+      this.$notify({ text: 'All Loot was recorded successfully!', type: 'is-success' })
+      this.chosenMembers = {}
+      this.fetchData(true)
+    }
+    // If we reach here, there has to be at least one non-null value
+    // If there are some successful requests then display details to that effect
+    else if (responses.find(tester) === null) {
+      this.$notify({ text: 'Some of the requests failed. This should not normally happen and has been reported.', type: 'is-warning' })
+      // TODO - Remove the successful ones from the data and display error messages for the others.
+    }
+    else {
+      // All failed, just display error messages
+      this.$notify({ text: 'All requests failed. This should not normally happen and has been reported.', type: 'is-danger' })
+    }
 
     // Reset the state
-    this.chosenMembers = {}
     this.requestingI = false
   }
 
@@ -234,7 +259,7 @@ export default class PerFightLootManager extends SavageAimMixin {
       }
     }
     catch (e) {
-      this.$notify({ text: `Error ${e} when attempting to add Loot entry.`, type: 'is-danger' })
+      this.$notify({ text: `Unexpected error ${e} when attempting to add Loot entry.`, type: 'is-danger' })
     }
     return null
   }
@@ -254,12 +279,11 @@ export default class PerFightLootManager extends SavageAimMixin {
 
       if (!response.ok) {
         super.handleError(response.status)
-        this.$notify({ text: `Unexpectedly received an error when giving out an item. Error messages have been added to the page. This is probably something wrong with the site itself.`, type: 'is-danger' })
         return (await response.json() as LootBISCreateErrors)
       }
     }
     catch (e) {
-      this.$notify({ text: `Error ${e} when attempting to add Loot entry.`, type: 'is-danger' })
+      this.$notify({ text: `Unexpected error ${e} when attempting to add Loot entry.`, type: 'is-danger' })
     }
     return null
   }
