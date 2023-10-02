@@ -25,7 +25,7 @@
       <template v-if="tabs.showNeed">
         <a class="box list-item" v-for="entry in need" :key="`need-${entry.member_id}`" data-microtip-position="top" role="tooltip" :aria-label="showRequires ? `Requires: ${entry.requires}` : `Current: ${entry.current_gear_name}`" @click="() => { chooseNeed(entry) }">
           <span class="badge is-primary">{{ getNeedReceived(entry) }}</span>
-          <!-- <span v-if="tome" class="badge is-link is-left is-hidden-desktop">{{ entry.requires }}</span> -->
+          <span v-if="entry.requires" class="badge is-link is-left is-hidden-desktop">{{ entry.requires }}</span>
           <div class="list-data">
             <div class="left">
               {{ entry.character_name }}
@@ -70,7 +70,7 @@
                   <span class="tag is-light">
                     BIS Lists
                   </span>
-                  <span class="tag is-link">
+                  <span class="tag is-dark">
                     {{ entry.greed_lists.length }}
                   </span>
                 </div>
@@ -83,22 +83,39 @@
             </div>
           </div>
           <div class="greed-list-container" v-if="greedDropdowns[entry.member_id] || false">
-            <div class="list-data" v-for="list in entry.greed_lists" :key="`greed-${entry.member_id}-list-${list.bis_list_id}`">
+            <div class="list-item" v-for="list in entry.greed_lists" :key="`greed-${entry.member_id}-list-${list.bis_list_id}`">
+              <span v-if="list.requires" class="badge is-link is-left is-hidden-desktop">{{ list.requires }}</span>
               <div class="left">
                 {{ list.job_icon_name }}
               </div>
               <div class="right">
+                <div class="tags has-addons is-hidden-touch" v-if="showRequires">
+                  <span class="tag is-light">
+                    Requires
+                  </span>
+                  <span class="tag is-link">
+                    {{ list.requires }}
+                  </span>
+                </div>
+                <div class="tags has-addons is-hidden-touch" v-else>
+                  <span class="tag is-light">
+                    iL
+                  </span>
+                  <span class="tag" :class="[`is-${list.job_role}`]">
+                    {{ list.current_gear_il }}
+                  </span>
+                </div>
                 <span class="icon">
                   <img :src="`/job_icons/${list.job_icon_name}.png`" :alt="`${list.job_icon_name} job icon`" width="24" height="24" />
                 </span>
               </div>
               <div class="list-actions">
-                <button class="button is-success" >Select</button>
+                <button class="button is-success" @click="() => { chooseGreed(entry, list) }" >Select</button>
               </div>
             </div>
 
             <!-- If the member has no bis list just give a big button -->
-            <button v-if="entry.greed_lists.length === 0" class="button is-success is-fullwidth">Select This Character</button>
+            <button v-if="entry.greed_lists.length === 0" class="button is-success is-fullwidth" @click="() => { chooseGreed(entry, null) }">Select This Character</button>
           </div>
         </a>
       </template>
@@ -112,10 +129,12 @@ import NeedRaidItemBox from '@/components/loot/need_raid_item_box.vue'
 import NeedTomeItemBox from '@/components/loot/need_tome_item_box.vue'
 import {
   GreedGear,
+  GreedItem,
   LootReceived,
   NeedGear,
   PerFightChosenMember,
   TomeGreedGear,
+  TomeGreedItem,
   TomeNeedGear,
 } from '@/interfaces/loot'
 
@@ -148,16 +167,28 @@ export default class LoadCurrentGear extends Vue {
     showGreed: false,
   }
 
+  chooseGreed(data: GreedGear | TomeGreedGear, list: GreedItem | TomeGreedItem | null): void {
+    const neededData = {
+      greed: true,
+      greed_list_id: list?.bis_list_id || null,
+      items_received: this.getGreedReceived(data),
+      member_id: data.member_id,
+      member_name: data.character_name,
+      job_id: list?.job_icon_name || null,
+    }
+    this.handleChoose(neededData)
+  }
+
   chooseNeed(data: NeedGear | TomeNeedGear): void {
     const neededData = {
       greed: false,
+      greed_list_id: null,
       items_received: this.getNeedReceived(data),
       member_id: data.member_id,
       member_name: data.character_name,
       job_id: data.job_icon_name,
     }
-    this.choose(neededData, this.item)
-    this.$emit('close')
+    this.handleChoose(neededData)
   }
 
   get showRequires(): boolean {
@@ -166,12 +197,17 @@ export default class LoadCurrentGear extends Vue {
 
   getGreedReceived(entry: GreedGear | TomeGreedGear): number {
     // Given an entry, return how many times that Character has received greed loot so far this tier
-    return this.received[entry.character_name].greed
+    return this.received[entry.character_name]?.greed || 0
   }
 
   getNeedReceived(entry: NeedGear | TomeNeedGear): number {
     // Given an entry, return how many times that Character has received need loot so far this tier
-    return this.received[entry.character_name].need
+    return this.received[entry.character_name]?.need || 0
+  }
+
+  handleChoose(details: PerFightChosenMember): void {
+    this.choose(details, this.item)
+    this.$emit('close')
   }
 
   showGreed(): void {
@@ -194,5 +230,9 @@ export default class LoadCurrentGear extends Vue {
 .greed-list-container {
   padding-left: 1em;
   padding-right: 1em;
+
+  & .list-item {
+    position: relative;
+  }
 }
 </style>

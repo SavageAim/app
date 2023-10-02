@@ -34,11 +34,11 @@
       />
 
       <PerFightLootManager
+        :fetch-data="fetchData"
         :loot="loot"
         :requesting="requesting"
         :tier="team.tier"
-        :send-loot="sendLoot"
-        :send-loot-with-bis="sendLootWithBis"
+        :url="url"
         :user-has-permission="userHasLootManagerPermission"
         v-if="version === 'fight'"
       />

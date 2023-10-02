@@ -103,8 +103,9 @@ export interface LootPacket {
 
 export interface PerFightChosenMember {
   greed: boolean
+  greed_list_id: number | null
   member_id: number
   member_name: string
-  job_id: string
+  job_id: string | null
   items_received: number
 }
