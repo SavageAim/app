@@ -27,6 +27,12 @@
           <li>Mount will never have anyone in the greed field for it as it is impossible to get a mount twice.</li>
         </ul>
       </p>
+      <p>
+        The colour of the "BIS Lists" tag showing how many greed lists a Character has that need an item has been changed.
+        <ul>
+          <li>This has been done so the dark blue is only used for the "Amount of Augment Tokens Required", for consistency across Desktop and Mobile.</li>
+        </ul>
+      </p>
 
       <div class="divider"><i class="material-icons icon">expand_more</i> Per Fight Loot Manager <i class="material-icons icon">expand_more</i></div>
       <p>A new version of the Loot Manager has been released in beta.</p>

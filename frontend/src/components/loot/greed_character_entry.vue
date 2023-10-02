@@ -10,7 +10,7 @@
           <span class="tag is-light">
             BIS Lists
           </span>
-          <span class="tag is-link">
+          <span class="tag is-dark">
             {{ entry.greed_lists.length }}
           </span>
         </div>
