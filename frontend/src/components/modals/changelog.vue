@@ -18,7 +18,7 @@
         Added the following new types of Gear released in 6.5;
         <ul>
           <li>New EX Trial Weapons - Item Level 655</li>
-          <li>Thalean Armour - Item Level 650</li>
+          <li>Theogonic Armour - Item Level 650</li>
           <li>Augmented Diadochos Weapons, Armour, and Accessories - Item Level 650</li>
         </ul>
       </p>
