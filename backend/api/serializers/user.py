@@ -16,6 +16,7 @@ __all__ = [
 class UserSerializer(serializers.Serializer):
     avatar_url = serializers.SerializerMethodField()
     id = serializers.IntegerField()
+    loot_manager_version = serializers.SerializerMethodField()
     notifications = serializers.SerializerMethodField()
     theme = serializers.SerializerMethodField()
     username = serializers.SerializerMethodField()
@@ -27,6 +28,15 @@ class UserSerializer(serializers.Serializer):
         if hasattr(obj, 'socialaccount_set') and obj.socialaccount_set.exists():  # pragma: no cover
             return obj.socialaccount_set.first().get_avatar_url()
         return ''
+
+    def get_loot_manager_version(self, obj) -> str:
+        """
+        Given a User, retrieve the version of the loot manager they want to see
+        """
+        try:
+            return obj.settings.loot_manager_version
+        except (AttributeError, Settings.DoesNotExist):
+            return Settings.LOOT_MANAGER_DEFAULT
 
     def get_notifications(self, obj) -> Dict[str, bool]:
         """

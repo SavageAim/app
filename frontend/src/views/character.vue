@@ -22,9 +22,9 @@
           <div class="card-content">
             <aside class="menu">
               <ul class="menu-list">
-                <li><a :class="{ 'is-active': bisShown }" @click="showBIS">View BIS Lists</a></li>
-                <li><a :class="{ 'is-active': teamsShown }" @click="showTeams">View Teams</a></li>
-                <li><a :class="{ 'is-active': settingsShown }" @click="showSettings">View Settings</a></li>
+                <li><a :class="{ 'is-active': bisShown }" @click="showBIS">BIS Lists</a></li>
+                <li><a :class="{ 'is-active': teamsShown }" @click="showTeams">Teams</a></li>
+                <li><a :class="{ 'is-active': settingsShown }" @click="showSettings">Settings</a></li>
               </ul>
             </aside>
           </div>

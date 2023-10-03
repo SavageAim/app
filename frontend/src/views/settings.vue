@@ -1,171 +1,96 @@
 <template>
   <div>
-    <h2 class="title">
-      Settings for {{ user.username }}
-    </h2>
-
-    <!-- Colour Scheme -->
+    <!-- Navigation -->
     <div class="columns">
-      <div class="column is-half">
+      <div class="column is-one-quarter-desktop">
         <div class="card">
           <div class="card-header">
-            <div class="card-header-title">Colour Scheme</div>
+            <div class="card-header-title">Settings for {{ user.username }}</div>
           </div>
           <div class="card-content">
-            <div class="field">
-              <div class="control">
-                <div class="select is-fullwidth">
-                  <select v-model="theme" ref="dropdown">
-                    <option value="beta">Beta</option>
-                    <option value="blue">Blue</option>
-                    <option value="fflogs">FFLogs</option>
-                    <option value="green">Green</option>
-                    <option value="purple">Purple</option>
-                    <option value="red">Red</option>
-                    <option value="traffic">Traffic Lights</option>
-                    <option disabled>----- Pride Flag Schemes -----</option>
-                    <option value="ace">Asexual</option>
-                    <option value="lesbian">Lesbian</option>
-                    <option value="nb">Nonbinary</option>
-                    <option value="pan">Pan</option>
-                    <option value="rainbow">Rainbow</option>
-                    <option value="trans">Trans</option>
-                  </select>
-                </div>
-                <p class="help is-danger" v-if="errors.theme !== undefined">{{ errors.theme[0] }}</p>
-              </div>
-            </div>
-            <div class="divider"><i class="material-icons icon">expand_more</i> Example <i class="material-icons icon">expand_more</i></div>
-            <table class="table is-bordered is-fullwidth gear-table" :class="[`is-${theme}`]">
-              <tr>
-                <th class="is-il-bis">Best in Slot</th>
-              </tr>
-              <tr>
-                <th class="is-il-minus-0">Max IL - 0</th>
-              </tr>
-              <tr>
-                <th class="is-il-minus-5">Max IL - 5</th>
-              </tr>
-              <tr>
-                <th class="is-il-minus-10">Max IL - 10</th>
-              </tr>
-              <tr>
-                <th class="is-il-minus-15">Max IL - 15</th>
-              </tr>
-              <tr>
-                <th class="is-il-minus-20">Max IL - 20</th>
-              </tr>
-              <tr>
-                <th class="is-il-minus-25">Max IL - 25</th>
-              </tr>
-              <tr>
-                <th class="is-il-out-of-range">Out of the range of the Team's current Tier</th>
-              </tr>
-            </table>
+            <aside class="menu">
+              <ul class="menu-list">
+                <li>
+                  <a :class="{ 'is-active': activeTab.theme }" @click="showTheme">
+                    Colour Scheme <span v-if="unsavedTheme()">*</span>
+                  </a>
+                </li>
+                <li>
+                  <a :class="{ 'is-active': activeTab.notifications }" @click="showNotifications">
+                    Notifications <span v-if="unsavedNotifications()">*</span>
+                  </a>
+                </li>
+                <li>
+                  <a :class="{ 'is-active': activeTab.lootManager }" @click="showLootManager">
+                    Loot Manager Version <span v-if="unsavedLootManager()">*</span>
+                  </a>
+                </li>
+              </ul>
+            </aside>
           </div>
         </div>
+        <button class="button is-success is-fullwidth" @click="save">Save</button>
       </div>
 
       <!-- Notifications -->
-      <div class="column is-half">
-        <div class="card">
-          <div class="card-header">
-            <div class="card-header-title">Notifications</div>
-          </div>
-          <div class="card-content">
-            <p class="has-text-info">Tick or untick boxes for the Notifications you do / don't want to receive, and click save!<br />Please note this only affects future notifications and will not delete any existing ones.</p>
-            <div class="divider"><i class="material-icons icon">expand_more</i> Character <i class="material-icons icon">expand_more</i></div>
-            <div class="field">
-              <label class="checkbox">
-                <input type="checkbox" v-model="notifications.verify_success">
-                Character Verification success
-              </label>
-            </div>
-            <div class="field">
-              <label class="checkbox">
-                <input type="checkbox" v-model="notifications.verify_fail">
-                Character Verification failed.
-              </label>
-            </div>
-
-            <div class="divider"><i class="material-icons icon">expand_more</i> Team <i class="material-icons icon">expand_more</i></div>
-            <div class="field">
-              <label class="checkbox">
-                <input type="checkbox" v-model="notifications.team_disband">
-                A Team that one of your Characters was in has been disbanded.
-              </label>
-            </div>
-            <div class="field">
-              <label class="checkbox">
-                <input type="checkbox" v-model="notifications.team_join">
-                A Character has joined one of the Teams you lead.
-              </label>
-            </div>
-            <div class="field">
-              <label class="checkbox">
-                <input type="checkbox" v-model="notifications.team_kick">
-                A Character has been kicked from a Team.
-              </label>
-            </div>
-            <div class="field">
-              <label class="checkbox">
-                <input type="checkbox" v-model="notifications.team_lead">
-                Your Character has been made leader of a Team.
-              </label>
-            </div>
-            <div class="field">
-              <label class="checkbox">
-                <input type="checkbox" v-model="notifications.team_leave">
-                A Character has left one of the Teams you lead.
-              </label>
-            </div>
-            <div class="field">
-              <label class="checkbox">
-                <input type="checkbox" v-model="notifications.team_proxy_claim">
-                A Proxy Character in one of your Teams has been claimed by a user.
-              </label>
-            </div>
-            <div class="field">
-              <label class="checkbox">
-                <input type="checkbox" v-model="notifications.team_rename">
-                A Team that one of your Characters is in has been renamed.
-              </label>
-            </div>
-
-            <div class="divider"><i class="material-icons icon">expand_more</i> Loot Manager <i class="material-icons icon">expand_more</i></div>
-            <div class="field">
-              <label class="checkbox">
-                <input type="checkbox" v-model="notifications.loot_tracker_update">
-                Loot Tracker updates your BIS List.
-              </label>
-            </div>
-          </div>
-        </div>
+      <div class="column">
+        <!-- Colour Scheme -->
+        <ThemeSettings
+          :errors="errors"
+          :theme="theme"
+          v-on:changeTheme="changeTheme"
+          v-if="activeTab.theme"
+        />
+        <NotificationsSettings
+          :notifications="notifications"
+          v-on:changeNotification="changeNotification"
+          v-if="activeTab.notifications"
+        />
+        <LootManagerSettings
+          :errors="errors"
+          :loot-manager-version="lootManagerVersion"
+          v-on:changeLootManagerVersion="changeLootManagerVersion"
+          v-if="activeTab.lootManager"
+        />
       </div>
     </div>
-    <button class="button is-success is-fullwidth" @click="save">Save</button>
   </div>
 </template>
 
 <script lang="ts">
+import isEqual from 'lodash.isequal'
 import { Component, Watch } from 'vue-property-decorator'
+import LootManagerSettings from '@/components/settings/loot_manager.vue'
+import NotificationsSettings from '@/components/settings/notifications.vue'
+import ThemeSettings from '@/components/settings/theme.vue'
+import NotificationSettings from '@/interfaces/notification_settings'
 import { SettingsErrors } from '@/interfaces/responses'
 import User from '@/interfaces/user'
 import SavageAimMixin from '@/mixins/savage_aim_mixin'
 
-@Component
+@Component({
+  components: {
+    LootManagerSettings,
+    NotificationsSettings,
+    ThemeSettings,
+  },
+})
 export default class Settings extends SavageAimMixin {
+  activeTab = {
+    theme: true,
+    notifications: false,
+    lootManager: false,
+  }
+
   errors: SettingsErrors = {}
+
+  lootManagerVersion = this.user.loot_manager_version
 
   notifications = {
     ...this.user.notifications,
   }
 
   theme = this.user.theme
-
-  get dropdown(): HTMLSelectElement {
-    return this.$refs.dropdown as HTMLSelectElement
-  }
 
   mounted(): void {
     document.title = 'User Settings - Savage Aim'
@@ -181,6 +106,18 @@ export default class Settings extends SavageAimMixin {
     return this.$store.state.user
   }
 
+  changeLootManagerVersion(version: string): void {
+    this.lootManagerVersion = version
+  }
+
+  changeNotification(data: {notification: keyof NotificationSettings, value: boolean}): void {
+    this.notifications[data.notification] = data.value
+  }
+
+  changeTheme(theme: string): void {
+    this.theme = theme
+  }
+
   // Function called on page reload via websockets
   async load(): Promise<void> {
     // This function does nothing on purpose
@@ -193,9 +130,15 @@ export default class Settings extends SavageAimMixin {
     this.notifications = { ...this.$store.state.user.notifications }
   }
 
+  resetActiveTab(): void {
+    this.activeTab.theme = false
+    this.activeTab.notifications = false
+    this.activeTab.lootManager = false
+  }
+
   // Save the data into a new bis list
   async save(): Promise<void> {
-    const body = JSON.stringify({ theme: this.theme, notifications: this.notifications })
+    const body = JSON.stringify({ theme: this.theme, notifications: this.notifications, loot_manager_version: this.lootManagerVersion })
     try {
       const response = await fetch(this.url, {
         method: 'PUT',
@@ -220,6 +163,33 @@ export default class Settings extends SavageAimMixin {
     catch (e) {
       this.$notify({ text: `Error ${e} when attempting to update User Settings.`, type: 'is-danger' })
     }
+  }
+
+  showLootManager(): void {
+    this.resetActiveTab()
+    this.activeTab.lootManager = true
+  }
+
+  showNotifications(): void {
+    this.resetActiveTab()
+    this.activeTab.notifications = true
+  }
+
+  showTheme(): void {
+    this.resetActiveTab()
+    this.activeTab.theme = true
+  }
+
+  unsavedLootManager(): boolean {
+    return this.lootManagerVersion !== this.user.loot_manager_version
+  }
+
+  unsavedNotifications(): boolean {
+    return !isEqual(this.notifications, this.user.notifications)
+  }
+
+  unsavedTheme(): boolean {
+    return this.theme !== this.user.theme
   }
 }
 </script>

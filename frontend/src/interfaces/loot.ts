@@ -45,7 +45,7 @@ export interface TomeNeedGear {
   required: number
 }
 
-interface LootGear {
+export interface LootGear {
   mainhand: { need: NeedGear[], greed: GreedGear[] }
   offhand: { need: NeedGear[], greed: GreedGear[] }
   head: { need: NeedGear[], greed: GreedGear[] }
@@ -69,9 +69,17 @@ export interface Loot {
   obtained: string
 }
 
+export interface LootReceived {
+  [name: string]: {
+    need: number
+    greed: number
+  }
+}
+
 export interface LootData {
   gear: LootGear
   history: Loot[]
+  received: LootReceived
 }
 
 export interface LootResponse {
@@ -91,4 +99,13 @@ export interface LootPacket {
   item: string
   member_id: number
   obtained: string
+}
+
+export interface PerFightChosenMember {
+  greed: boolean
+  greed_list_id: number | null
+  member_id: number
+  member_name: string
+  job_id: string | null
+  items_received: number
 }

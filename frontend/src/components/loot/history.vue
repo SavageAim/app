@@ -1,9 +1,9 @@
 <template>
-  <div class="column is-full">
+  <div>
     <div class="card">
       <a class="card-header" @click="toggleHistory">
         <div class="card-header-title">
-          Loot History
+          Tier Loot History
         </div>
         <div class="card-header-icon">
           <span class="icon"><i class="material-icons" ref="historyIcon">expand_more</i></span>
@@ -22,7 +22,7 @@
                 <div class="field">
                   <div class="control">
                     <input class="input" type="date" v-model="createData.obtained" />
-                    <p class="help is-danger" v-if="createLootErrors.obtained !== undefined">{{ createLootErrors.obtained[0] }}</p>
+                    <p class="help is-danger" v-if="errors.obtained !== undefined">{{ errors.obtained[0] }}</p>
                   </div>
                 </div>
               </div>
@@ -40,7 +40,7 @@
                         <option v-for="member in team.members" :key="member.id" :value="member.id">{{ member.name }}</option>
                       </select>
                     </div>
-                    <p class="help is-danger" v-if="createLootErrors.member_id !== undefined">{{ createLootErrors.member_id[0] }}</p>
+                    <p class="help is-danger" v-if="errors.member_id !== undefined">{{ errors.member_id[0] }}</p>
                   </div>
                 </div>
               </div>
@@ -51,7 +51,7 @@
               </div>
               <div class="field-body">
                 <div class="field">
-                  <ItemDropdown v-model="createData.item" :displayNonGear="true" :error="createLootErrors.item" />
+                  <ItemDropdown v-model="createData.item" :error="errors.item" />
                 </div>
               </div>
             </div>
@@ -83,7 +83,7 @@
                         </button>
                       </div>
                     </div>
-                    <p class="help is-danger" v-if="createLootErrors.greed !== undefined">{{ createLootErrors.greed[0] }}</p>
+                    <p class="help is-danger" v-if="errors.greed !== undefined">{{ errors.greed[0] }}</p>
                   </div>
                 </div>
               </div>
@@ -120,7 +120,7 @@
               <td>
                 <div class="control">
                   <input class="input" type="date" v-model="createData.obtained" />
-                  <p class="help is-danger" v-if="createLootErrors.obtained !== undefined">{{ createLootErrors.obtained[0] }}</p>
+                  <p class="help is-danger" v-if="errors.obtained !== undefined">{{ errors.obtained[0] }}</p>
                 </div>
               </td>
               <td>
@@ -131,11 +131,11 @@
                       <option v-for="member in team.members" :key="member.id" :value="member.id">{{ member.name }}</option>
                     </select>
                   </div>
-                  <p class="help is-danger" v-if="createLootErrors.member_id !== undefined">{{ createLootErrors.member_id[0] }}</p>
+                  <p class="help is-danger" v-if="errors.member_id !== undefined">{{ errors.member_id[0] }}</p>
                 </div>
               </td>
               <td>
-                <ItemDropdown v-model="createData.item" :displayNonGear="true" :error="createLootErrors.item" />
+                <ItemDropdown v-model="createData.item" :error="errors.item" />
               </td>
               <td>
                 <div class="control">
@@ -163,7 +163,7 @@
                       </button>
                     </div>
                   </div>
-                  <p class="help is-danger" v-if="createLootErrors.greed !== undefined">{{ createLootErrors.greed[0] }}</p>
+                  <p class="help is-danger" v-if="errors.greed !== undefined">{{ errors.greed[0] }}</p>
                 </div>
               </td>
               <td>
@@ -228,7 +228,7 @@ export default class History extends SavageAimMixin {
     obtained: '',
   }
 
-  createLootErrors: LootCreateErrors = {}
+  errors: LootCreateErrors = {}
 
   @Prop()
   fetchData!: (reload: boolean) => Promise<void>
@@ -281,9 +281,9 @@ export default class History extends SavageAimMixin {
   }
 
   async trackExtraLoot(greed: boolean): Promise<void> {
-    this.createLootErrors = {}
+    this.errors = {}
     if (this.createData.obtained === '') {
-      this.createLootErrors.obtained = ['Please enter a date.']
+      this.errors.obtained = ['Please enter a date.']
       return
     }
     const data = {
@@ -297,7 +297,7 @@ export default class History extends SavageAimMixin {
       this.createData = { item: 'na', member: -1, obtained: '' }
     }
     else {
-      this.createLootErrors = response
+      this.errors = response
     }
   }
 }

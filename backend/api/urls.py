@@ -25,7 +25,6 @@ urlpatterns = [
 
     # Loot
     path('team/<str:team_id>/loot/', views.LootCollection.as_view(), name='loot_collection'),
-    path('team/<str:team_id>/loot_v2/', views.LootCollectionV2.as_view(), name='loot_collection_v2'),
     path('team/<str:team_id>/loot/bis/', views.LootWithBIS.as_view(), name='loot_with_bis'),
 
     # Notifications

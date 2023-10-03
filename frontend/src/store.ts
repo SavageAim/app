@@ -33,6 +33,7 @@ interface Store {
 const DEFAULT_USER = {
   avatar_url: '',
   id: null,
+  loot_manager_version: 'item',
   notifications: {
     loot_tracker_update: true,
     team_disband: true,
@@ -40,6 +41,7 @@ const DEFAULT_USER = {
     team_kick: true,
     team_lead: true,
     team_leave: true,
+    team_proxy_claim: true,
     team_rename: true,
     verify_fail: true,
     verify_success: true,

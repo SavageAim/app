@@ -16,11 +16,9 @@
         <option value="ring">Ring</option>
         <option value="tome-accessory-augment">Tome Accessory Augment</option>
         <option value="tome-armour-augment">Tome Armour Augment</option>
-        <template v-if="displayNonGear">
-          <option value="tome-weapon-token">Tome Weapon Token</option>
-          <option value="tome-weapon-augment">Tome Weapon Augment</option>
-          <option value="mount">Mount</option>
-        </template>
+        <option value="tome-weapon-token">Tome Weapon Token</option>
+        <option value="tome-weapon-augment">Tome Weapon Augment</option>
+        <option value="mount">Mount</option>
       </select>
     </div>
     <p v-if="error !== undefined" class="help is-danger">{{ error[0] }}</p>
@@ -32,9 +30,6 @@ import { Component, Prop, Vue } from 'vue-property-decorator'
 
 @Component
 export default class ItemDropdown extends Vue {
-  @Prop({ default: false })
-  displayNonGear!: boolean
-
   @Prop()
   error!: string[] | undefined
 

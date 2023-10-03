@@ -4,11 +4,14 @@ type used in the system, without having to add messy code elsewhere
 
 Also will handle sending info to websockets when we get there
 """
+# stdlib
 from __future__ import annotations
 from typing import Optional
+# lib
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
 from django.contrib.auth.models import User
+# local
 from . import models
 
 CHANNEL_LAYER = get_channel_layer()
@@ -29,6 +32,10 @@ def _create_notif(user: Optional[User], text: str, link: str, type: str):
         send = True
 
     if not send:
+        return
+
+    # Do some deduping by checking if we have sent the user a notification with the same text within the last 30 seconds
+    if models.Notification.objects.filter(user=user, text=text, link=link, type=type, read=False)[:5].exists():
         return
 
     # If we make it to this point, create the object and then push updates down the web socket

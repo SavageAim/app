@@ -12,6 +12,7 @@ const dynamicDefaults = {
   adaptive: true,
   classes: 'card',
   height: 'auto',
+  width: '800px',
   resizable: false,
   scrollable: true,
   styles: {
@@ -27,7 +28,18 @@ Sentry.init({
   Vue,
   dsn: 'https://06f41b525a40497a848fb726f6d03244@o242258.ingest.sentry.io/6180221',
   logErrors: true,
-  release: 'savageaim@20230727',
+  release: 'savageaim@20230719.2',
+  integrations: [
+    new Sentry.BrowserTracing({
+      routingInstrumentation: Sentry.vueRouterInstrumentation(router),
+    }),
+    new Sentry.Replay(),
+  ],
+  tracesSampleRate: 0.25,
+
+  // Only capture replays for errors
+  replaysSessionSampleRate: 0,
+  replaysOnErrorSampleRate: 1,
 })
 
 new Vue({
