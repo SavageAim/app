@@ -15,11 +15,11 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Build the Docker image
-      run: docker build . --file deployment/Dockerfile -t docker.pkg.github.com/savage-aim/app/backend:latest -t docker.pkg.github.com/savage-aim/app/backend:$(echo "$GITHUB_REF" | sed 's/refs\/tags\///')
+      run: docker build . --file deployment/Dockerfile -t ghcr.io/savageaim/app/backend:latest -t ghcr.io/savageaim/app/backend:$(echo "$GITHUB_REF" | sed 's/refs\/tags\///')
     - name: Login to GitHub Docker Registry
-      run: docker login docker.pkg.github.com -u freyamade -p ${{ secrets.GITHUB_TOKEN }}
+      run: docker login ghcr.io -u freyamade -p ${{ secrets.GITHUB_TOKEN }}
     - name: Push the Docker image
-      run: docker push --all-tags docker.pkg.github.com/savage-aim/app/backend
+      run: docker push --all-tags ghcr.io/savageaim/app/backend
 
   build-ws-backend:
     runs-on: ubuntu-latest
@@ -30,11 +30,11 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Build the Docker image
-      run: docker build . --file deployment/ws.Dockerfile -t docker.pkg.github.com/savage-aim/app/ws-backend:latest -t docker.pkg.github.com/savage-aim/app/ws-backend:$(echo "$GITHUB_REF" | sed 's/refs\/tags\///')
+      run: docker build . --file deployment/ws.Dockerfile -t ghcr.io/savageaim/app/ws-backend:latest -t ghcr.io/savageaim/app/ws-backend:$(echo "$GITHUB_REF" | sed 's/refs\/tags\///')
     - name: Login to GitHub Docker Registry
-      run: docker login docker.pkg.github.com -u freyamade -p ${{ secrets.GITHUB_TOKEN }}
+      run: docker login ghcr.io -u freyamade -p ${{ secrets.GITHUB_TOKEN }}
     - name: Push the Docker image
-      run: docker push --all-tags docker.pkg.github.com/savage-aim/app/ws-backend
+      run: docker push --all-tags ghcr.io/savageaim/app/ws-backend
 
   build-frontend:
     runs-on: ubuntu-latest
@@ -45,10 +45,10 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Build the Docker image
-      run: docker build . --file deployment/Dockerfile --tag docker.pkg.github.com/savage-aim/app/frontend:latest -t docker.pkg.github.com/savage-aim/app/frontend:$(echo "$GITHUB_REF" | sed 's/refs\/tags\///')
+      run: docker build . --file deployment/Dockerfile --tag ghcr.io/savageaim/app/frontend:latest -t ghcr.io/savageaim/app/frontend:$(echo "$GITHUB_REF" | sed 's/refs\/tags\///')
     - name: Build maintenance image
-      run: docker build . --file deployment/Dockerfile --build-arg VUE_APP_MAINTENANCE="1" --tag docker.pkg.github.com/savage-aim/app/frontend:maint
+      run: docker build . --file deployment/Dockerfile --build-arg VUE_APP_MAINTENANCE="1" --tag ghcr.io/savageaim/app/frontend:maint
     - name: Login to GitHub Docker Registry
-      run: docker login docker.pkg.github.com -u freyamade -p ${{ secrets.GITHUB_TOKEN }}
+      run: docker login ghcr.io -u freyamade -p ${{ secrets.GITHUB_TOKEN }}
     - name: Push the Docker image
-      run: docker push --all-tags docker.pkg.github.com/savage-aim/app/frontend
+      run: docker push --all-tags ghcr.io/savageaim/app/frontend
