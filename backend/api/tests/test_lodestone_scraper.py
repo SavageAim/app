@@ -1,13 +1,13 @@
 from django.urls import reverse
 from rest_framework import status
 from .test_base import SavageAimTestCase
-from ..lodestone_scraper import LodestoneScraper
+from ..lodestone_scraper import CharacterNotFoundError, LodestoneScraper
 
 SCRAPER = LodestoneScraper.get_instance()
 CHAR_ID = '22909725'
 
 
-class EtroImport(SavageAimTestCase):
+class LodestoneScraper(SavageAimTestCase):
     """
     Test that the Lodestone Scraper returns what is expected for its various methods
     """
@@ -29,3 +29,26 @@ class EtroImport(SavageAimTestCase):
         """
         err = SCRAPER.check_token(CHAR_ID, 'abcdefghijklmnopqrstuvwxyz')
         self.assertEqual(err, 'Could not find the verification code in the Lodestone profile.')
+
+    def test_data_pull(self):
+        """
+        Test Plan;
+            - Load data of my own character, ensure it matches what is expected.
+        """
+        expected = {
+            'avatar_url': 'https://img2.finalfantasyxiv.com/f/ce3cf70bc9048943a57001f987830daa_7206469080400ed57a5373d0a9c55c59fc0_96x96.jpg',
+            'name': 'Eira Erikawa',
+            'world': 'Lich',
+            'dc': 'Light',
+        }
+        data = SCRAPER.get_character_data(CHAR_ID)
+        self.assertDictEqual(data, expected)
+
+    def test_data_pull_from_invalid_character(self):
+        """
+        Test Plan;
+            - Attempt to load data for a character that isn't real
+            - Ensure the function raises the CharacterNotFoundError exception
+        """
+        with self.assertRaises(CharacterNotFoundError):
+            SCRAPER.get_character_data('abcde')

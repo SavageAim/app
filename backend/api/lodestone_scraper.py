@@ -1,5 +1,7 @@
 # stdlib
 import logging
+import re
+from dataclasses import dataclass
 # lib
 import requests
 from bs4 import BeautifulSoup
@@ -9,6 +11,14 @@ META_JSON_URL = 'https://raw.githubusercontent.com/xivapi/lodestone-css-selector
 CHARACTER_JSON_URL = 'https://raw.githubusercontent.com/xivapi/lodestone-css-selectors/main/profile/character.json'
 CHARACTER_URL = 'https://eu.finalfantasyxiv.com/lodestone/character/{character_id}'
 LOGGER = logging.getLogger(__name__)
+
+
+class CharacterNotFoundError(Exception):
+    ...
+
+
+class LodestoneError(Exception):
+    ...
 
 
 class LodestoneScraper:
@@ -46,15 +56,64 @@ class LodestoneScraper:
         url = CHARACTER_URL.format(character_id=character_id)
         response = requests.get(url, headers={'User-Agent': self.user_agent})
         if response.status_code != 200:
-            LOGGER.error(f'Received {response.status_code} response from Lodestone.\n\t{response.content}')
+            LOGGER.error(f'Received {response.status_code} response from Lodestone for `check_token`.\n\t{response.content}')
             return 'Lodestone may be down.'
 
-        soup = BeautifulSoup(response.content, 'html.parser')
-
         # Use the Character CSS Selectors to get the element to look at.
+        soup = BeautifulSoup(response.content, 'html.parser')
         css_class = self.character_json['BIO']['selector']
-        for el in soup.select(css_class):
-            if token in el.getText():
-                return None
+        el = soup.select_one(css_class)
+        if token in el.getText():
+            return None
 
         return 'Could not find the verification code in the Lodestone profile.'
+    
+    def get_character_data(self, character_id: str) -> dict:
+        """
+        Given a Character ID, scrape the page for the following information;
+            - avatar_url
+            - name
+            - world
+                - Server (DC)
+        """
+        url = CHARACTER_URL.format(character_id=character_id)
+        response = requests.get(url, headers={'User-Agent': self.user_agent})
+        if response.status_code == 404:
+            # Since this is directly hooked up to an endpoint, we should handle 404s appropriately
+            raise CharacterNotFoundError
+        elif response.status_code != 200:
+            LOGGER.error(f'Received {response.status_code} response from Lodestone for `get_character_data`.\n\t{response.content}')
+            raise LodestoneError
+
+        # Use the Character CSS Selectors to get the element to look at.
+        soup = BeautifulSoup(response.content, 'html.parser')
+        avatar_url = ''
+        name = ''
+        world = ''
+        dc = ''
+
+        # Avatar URL
+        selectors = self.character_json['AVATAR']
+        css_class = selectors['selector']
+        el = soup.select_one(css_class)
+        avatar_url = el.get(selectors['attribute']).split('?')[0]
+
+        # Name
+        selectors = self.character_json['NAME']
+        css_class = selectors['selector']
+        el = soup.select_one(css_class)
+        name = el.getText()
+
+        # World
+        selectors = self.character_json['SERVER']
+        css_class = selectors['selector']
+        el = soup.select_one(css_class)
+        match = re.match(selectors['regex'], el.getText())
+        world, dc = match.group('World'), match.group('DC')
+
+        return {
+            'avatar_url': avatar_url,
+            'name': name,
+            'world': world,
+            'dc': dc,
+        }
