@@ -9,7 +9,7 @@ from django.core.management import call_command
 from django.utils import timezone
 # local
 from api.models import BISList, Character, Gear, Notification, Team, Tier
-from api.tasks import xivapi_lookup, verify_character, cleanup
+from api.tasks import verify_character, cleanup
 from .test_base import SavageAimTestCase
 
 
@@ -50,7 +50,7 @@ def get_error_response(url: str, headers: Dict[str, str]):
     """
     Return a faked http response object for a non 200 error
     """
-    return type('response', (), {'status_code': 400})
+    return type('response', (), {'status_code': 400, 'content': 'Invalid request.'})
 
 
 def get_token_response(url: str, data: Dict[str, str]):
@@ -308,77 +308,3 @@ class TasksTestSuite(SavageAimTestCase):
         error = 'Lodestone may be down.'
         message = f'The verification of {char} has failed! Reason: {error}'
         self.assertEqual(notif.text, message)
-
-    @patch('requests.get', side_effect=get_desktop_response)
-    def test_xivapi_lookup_desktop(self, mocked_get):
-        """
-        Check that the desktop search works for beautiful soup
-        """
-        char = Character.objects.create(
-            avatar_url='https://img.savageaim.com/abcde',
-            lodestone_id=1234567890,
-            user=self._get_user(),
-            name='Char 1',
-            world='Lich',
-            verified=False,
-            token=Character.generate_token(),
-        )
-        # Run the function and assert the response is None
-        self.assertIsNone(xivapi_lookup(char.lodestone_id, char.token, LOGGER))
-
-    @patch('requests.get', side_effect=get_mobile_response)
-    def test_xivapi_lookup_mobile(self, mocked_get):
-        """
-        Check that the mobile search works for beautiful soup
-        """
-        char = Character.objects.create(
-            avatar_url='https://img.savageaim.com/abcde',
-            lodestone_id=1234567890,
-            user=self._get_user(),
-            name='Char 1',
-            world='Lich',
-            verified=False,
-            token=Character.generate_token(),
-        )
-        # Run the function and assert the response is None
-        self.assertIsNone(xivapi_lookup(char.lodestone_id, char.token, LOGGER))
-
-    @patch('requests.get', side_effect=get_empty_response)
-    def test_xivapi_lookup_empty(self, mocked_get):
-        """
-        If no token can be found, we need to ensure the correct error message is returned
-        """
-        char = Character.objects.create(
-            avatar_url='https://img.savageaim.com/abcde',
-            lodestone_id=1234567890,
-            user=self._get_user(),
-            name='Char 1',
-            world='Lich',
-            verified=False,
-            token=Character.generate_token(),
-        )
-        # Run the function and assert the response is None
-        self.assertEqual(
-            xivapi_lookup(char.lodestone_id, char.token, LOGGER),
-            'Could not find the verification code in the Lodestone profile.',
-        )
-
-    @patch('requests.get', side_effect=get_error_response)
-    def test_xivapi_lookup_error(self, mocked_get):
-        """
-        If lodestone gets an error, ensure the right message is returned
-        """
-        char = Character.objects.create(
-            avatar_url='https://img.savageaim.com/abcde',
-            lodestone_id=1234567890,
-            user=self._get_user(),
-            name='Char 1',
-            world='Lich',
-            verified=False,
-            token=Character.generate_token(),
-        )
-        # Run the function and assert the response is None
-        self.assertEqual(
-            xivapi_lookup(char.lodestone_id, char.token, LOGGER),
-            'Lodestone may be down.',
-        )
