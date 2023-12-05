@@ -43,6 +43,7 @@
 </template>
 
 <script lang="ts">
+import * as Sentry from '@sentry/vue'
 import { Component, Prop, Vue } from 'vue-property-decorator'
 import CharacterBio from '@/components/character_bio.vue'
 import { CharacterDetails } from '@/interfaces/character'
@@ -94,6 +95,7 @@ export default class DeleteCharacter extends Vue {
     }
     catch (e) {
       this.$notify({ text: `Error ${e} when fetching Character deletion results.`, type: 'is-danger' })
+      Sentry.captureException(e)
     }
   }
 
@@ -121,6 +123,7 @@ export default class DeleteCharacter extends Vue {
     }
     catch (e) {
       this.$notify({ text: `Error ${e} when attempting to delete ${this.character.name}.`, type: 'is-danger' })
+      Sentry.captureException(e)
     }
   }
 }

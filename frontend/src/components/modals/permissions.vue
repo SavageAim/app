@@ -26,6 +26,7 @@
 </template>
 
 <script lang="ts">
+import * as Sentry from '@sentry/vue'
 import { Component, Prop, Vue } from 'vue-property-decorator'
 import TeamMember from '@/interfaces/team_member'
 
@@ -71,6 +72,7 @@ export default class Permissions extends Vue {
     }
     catch (e) {
       this.$notify({ text: `Error ${e} when attempting to update Permissions.`, type: 'is-danger' })
+      Sentry.captureException(e)
     }
   }
 }

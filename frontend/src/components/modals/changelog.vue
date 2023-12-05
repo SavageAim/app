@@ -13,14 +13,17 @@
     <div class="card-content content">
       <h2 class="has-text-primary subtitle">{{ version }}</h2>
 
-      <div class="divider"><i class="material-icons icon">expand_more</i> FFXIV 6.51 Update <i class="material-icons icon">expand_more</i></div>
+      <div class="divider"><i class="material-icons icon">expand_more</i> Major Fixes <i class="material-icons icon">expand_more</i></div>
       <p>
-        Added the following new types of Gear released in 6.51;
+        Fixed a pretty major issue with XIVAPI that prevented new Characters from being imported.
         <ul>
-          <li>Exquisite Credendum Weapons - Item Level 665</li>
-          <li>These are upgrades to Augmented Credendum Tome Weapons, obtained through Savage Criterion</li>
+          <li>Unsure how long this was present, and I'm genuinely very sorry if it affected you..</li>
         </ul>
       </p>
+
+      <div class="divider"><i class="material-icons icon">expand_more</i> Other Updates <i class="material-icons icon">expand_more</i></div>
+      <p>Added more visibility into frontend errors so I can become more aware of what issues arise and when.</p>
+      <p>Security updates.</p>
     </div>
   </div>
 </template>

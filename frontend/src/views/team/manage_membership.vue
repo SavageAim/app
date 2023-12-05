@@ -29,6 +29,7 @@
 </template>
 
 <script lang="ts">
+import * as Sentry from '@sentry/vue'
 import { Component, Prop } from 'vue-property-decorator'
 import TeamMemberForm from '@/components/team/member_form.vue'
 import { TeamMemberUpdateErrors } from '@/interfaces/responses'
@@ -99,6 +100,7 @@ export default class TeamManageMembership extends SavageAimMixin {
     }
     catch (e) {
       this.$notify({ text: `Error ${e} when fetching Team Member.`, type: 'is-danger' })
+      Sentry.captureException(e)
     }
   }
 
@@ -118,6 +120,7 @@ export default class TeamManageMembership extends SavageAimMixin {
     }
     catch (e) {
       this.$notify({ text: `Error ${e} when fetching Team.`, type: 'is-danger' })
+      Sentry.captureException(e)
     }
   }
 
@@ -147,6 +150,7 @@ export default class TeamManageMembership extends SavageAimMixin {
     }
     catch (e) {
       this.$notify({ text: `Error ${e} when attempting to create BIS List.`, type: 'is-danger' })
+      Sentry.captureException(e)
     }
   }
 }

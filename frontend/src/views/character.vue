@@ -165,8 +165,8 @@
 </template>
 
 <script lang="ts">
+import * as Sentry from '@sentry/vue'
 import { Component, Prop } from 'vue-property-decorator'
-import XIVAPI from '@xivapi/js'
 import BISTable from '@/components/bis_table.vue'
 import CharacterBio from '@/components/character_bio.vue'
 import DeleteBIS from '@/components/modals/confirmations/delete_bis.vue'
@@ -175,6 +175,7 @@ import TeamBio from '@/components/team/bio.vue'
 import BISList from '@/interfaces/bis_list'
 import { CharacterDetails } from '@/interfaces/character'
 import Job from '@/interfaces/job'
+import { CharacterScrapeData, CharacterScrapeError } from '@/interfaces/lodestone'
 import { CharacterUpdateErrors } from '@/interfaces/responses'
 import Team from '@/interfaces/team'
 import TeamMember from '@/interfaces/team_member'
@@ -206,6 +207,10 @@ export default class Character extends SavageAimMixin {
   loading = true
 
   updating = false
+
+  get lodestoneUrl(): string {
+    return `/backend/api/lodestone/${this.character.lodestone_id}/`
+  }
 
   get teamsUrl(): string {
     return `/backend/api/team/?char_id=${this.characterId}`
@@ -248,6 +253,7 @@ export default class Character extends SavageAimMixin {
     }
     catch (e) {
       this.$notify({ text: `Error ${e} when fetching Character.`, type: 'is-danger' })
+      Sentry.captureException(e)
     }
   }
 
@@ -265,6 +271,7 @@ export default class Character extends SavageAimMixin {
     }
     catch (e) {
       this.$notify({ text: `Error ${e} when fetching Character's Team List.`, type: 'is-danger' })
+      Sentry.captureException(e)
     }
   }
 
@@ -304,6 +311,7 @@ export default class Character extends SavageAimMixin {
     }
     catch (e) {
       this.$notify({ text: `Error ${e} when attempting to update Character.`, type: 'is-danger' })
+      Sentry.captureException(e)
     }
   }
 
@@ -313,26 +321,30 @@ export default class Character extends SavageAimMixin {
     this.updating = true
     // Reload data from the Lodestone, and send an update request to the API.
     // We just need to update the name, world, and image url
-    const xiv = new XIVAPI()
     try {
-      const response = (await xiv.character.get(this.character.lodestone_id))
-      // Update the local character and use the same function for updating alias
-      this.character.avatar_url = response.Character.Avatar
-      this.character.name = response.Character.Name
-      this.character.world = `${response.Character.Server} (${response.Character.DC})`
-      await this.saveDetails()
-    }
-    catch (err) {
-      let errorMessage: string
-      if (err.error != null) {
-        // XIVAPI Error
-        errorMessage = err.error.Message
+      const response = await fetch(this.lodestoneUrl, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': this.$cookies.get('csrftoken'),
+        },
+      })
+      if (response.ok) {
+        const json = await response.json() as CharacterScrapeData
+        // Update the local character and use the same function for updating alias
+        this.character.avatar_url = json.avatar_url
+        this.character.name = json.name
+        this.character.world = `${json.world} (${json.dc})`
+        await this.saveDetails()
       }
       else {
-        // Normal JS error
-        errorMessage = err.message
+        const json = await response.json() as CharacterScrapeError
+        this.$notify({ text: `Received error when attempting to update Character details from Lodestone; ${json.message}`, type: 'is-danger' })
       }
-      this.$notify({ text: `Received error when attempting to update Character details from Lodestone; ${errorMessage}`, type: 'is-danger' })
+    }
+    catch (err) {
+      this.$notify({ text: `Unexpected error ${err} when attempting to update Character details.`, type: 'is-danger' })
+      Sentry.captureException(err)
     }
     finally {
       this.updating = false
@@ -352,7 +364,7 @@ export default class Character extends SavageAimMixin {
         },
       })
       if (response.ok) {
-        this.$notify({ text: 'Verification requested, please check back in a few minutes!', type: 'is-success' })
+        this.$notify({ text: 'Verification requested, please wait!', type: 'is-success' })
       }
       else if (response.status === 404) {
         // Status 404 on this page likely means the character is verified
@@ -363,7 +375,8 @@ export default class Character extends SavageAimMixin {
       }
     }
     catch (e) {
-      this.$notify({ text: `Error ${e} when attempting to add Character to verification queue..`, type: 'is-danger' })
+      this.$notify({ text: `Error ${e} when attempting to add Character to verification queue.`, type: 'is-danger' })
+      Sentry.captureException(e)
     }
   }
 

@@ -3,6 +3,7 @@ from .character import CharacterCollection, CharacterDelete, CharacterResource, 
 from .etro import EtroImport
 from .gear import GearCollection, ItemLevels
 from .job import JobCollection
+from .lodestone import LodestoneResource
 from .loot import LootCollection, LootWithBIS
 from .notification import NotificationCollection, NotificationResource
 from .team import TeamCollection, TeamResource, TeamInvite
@@ -27,6 +28,8 @@ __all__ = [
     'ItemLevels',
 
     'JobCollection',
+
+    'LodestoneResource',
 
     'LootCollection',
     'LootWithBIS',

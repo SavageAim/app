@@ -5,11 +5,8 @@ Task to verify accounts on XIVAPI.
 """
 # stdlib
 from datetime import timedelta
-from typing import Optional
 # lib
-import requests
 from asgiref.sync import async_to_sync
-from bs4 import BeautifulSoup
 from celery import shared_task
 from celery.utils.log import get_task_logger
 from channels.layers import get_channel_layer
@@ -17,41 +14,10 @@ from django.core.management import call_command
 from django.utils import timezone
 # local
 from . import notifier
+from .lodestone_scraper import LodestoneScraper
 from .models import Character
 
 logger = get_task_logger(__name__)
-USER_AGENT = (
-    'Mozilla/5.0 (Linux; Android 4.0.4; Galaxy Nexus Build/IMM76B) AppleWebKit/537.36 (KHTML, like Gecko) '
-    'Chrome/46.0.2490.76 Mobile Safari/537.36'
-)
-
-
-def xivapi_lookup(pk: str, token: str, log) -> Optional[str]:
-    """
-    Actually check XIVAPI for the specified token being present in the specified character's bio
-    """
-    # We're gonna have to scrape the webpage similar to how FFXIVCollect does it
-    url = f'https://eu.finalfantasyxiv.com/lodestone/character/{pk}'
-    response = requests.get(url, headers={'User-Agent': USER_AGENT})
-    if response.status_code != 200:
-        log.error(f'Received {response.status_code} response from Lodestone. Cannot verify right now.')
-        return 'Lodestone may be down.'
-
-    soup = BeautifulSoup(response.content, 'html.parser')
-
-    # Find a div with either character__selfintroduction or character__character_profile
-    # Get the text in them, check if the text contains the token we're looking for
-
-    # Attempt the selfintroduction one first
-    for el in soup.find_all('div', class_='character__selfintroduction'):
-        if token in el.getText():
-            return None
-
-    for el in soup.find_all('div', class_='character__character_profile'):
-        if token in el.getText():
-            return None
-
-    return 'Could not find the verification code in the Lodestone profile.'
 
 
 def assimilate_proxies(real_char: Character):
@@ -92,7 +58,7 @@ def verify_character(pk: int):
 
     # Call the xivapi function in a sync context
     logger.debug('calling lookup function')
-    err = xivapi_lookup(obj.lodestone_id, obj.token, logger)
+    err = LodestoneScraper.get_instance().check_token(obj.lodestone_id, obj.token)
     logger.debug('finished lookup function')
 
     if err is not None:

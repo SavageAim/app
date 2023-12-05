@@ -18,9 +18,10 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop } from 'vue-property-decorator'
-import XIVAPI from '@xivapi/js'
+import * as Sentry from '@sentry/vue'
+import { Component, Prop, Vue } from 'vue-property-decorator'
 import { Character } from '@/interfaces/character'
+import { CharacterScrapeData, CharacterScrapeError } from '@/interfaces/lodestone'
 import SavageAimMixin from '@/mixins/savage_aim_mixin'
 
 @Component
@@ -30,6 +31,8 @@ export default class CharacterForm extends SavageAimMixin {
 
   @Prop()
   apiLoading!: boolean
+
+  baseUrl = `/backend/api/lodestone`
 
   char: Character | null = null
 
@@ -68,35 +71,43 @@ export default class CharacterForm extends SavageAimMixin {
 
     // If we're okay here, we can grab the id and use XIVAPI to check that the ID is correct
     const id = match[1]
-    const xiv = new XIVAPI()
+    const url = `${this.baseUrl}/${id}`
     try {
-      const response = await xiv.character.get(id)
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': Vue.$cookies.get('csrftoken'),
+        },
+      })
 
-      // Using the data we retrieve from XIVAPI, then send a create request to the API.
-      const char = {
-        alias: '',
-        avatar_url: response.Character.Avatar,
-        id: -1,
-        lodestone_id: response.Character.ID,
-        name: response.Character.Name,
-        world: `${response.Character.Server} (${response.Character.DC})`,
-        user_id: this.$store.state.user.id,
-        token: '',
-        verified: false,
-      }
+      if (response.ok) {
+        // Using the data we retrieve from XIVAPI, then send a create request to the API.
+        const json = await response.json() as CharacterScrapeData
+        const char = {
+          alias: '',
+          avatar_url: json.avatar_url,
+          id: -1,
+          lodestone_id: id,
+          name: json.name,
+          world: `${json.world} (${json.dc})`,
+          user_id: this.$store.state.user.id,
+          token: '',
+          verified: false,
+        }
 
-      // Bubble up the character with an event
-      this.$emit('fetched', char)
-    }
-    catch (err) {
-      if (err.error != null) {
-        // XIVAPI Error
-        this.checkErrors = [err.error.Message]
+        // Bubble up the character with an event
+        this.$emit('fetched', char)
       }
       else {
-        // Normal JS error
-        this.checkErrors = [err.message]
+        super.handleError(response.status)
+        const json = await response.json() as CharacterScrapeError
+        this.checkErrors = [json.message]
       }
+    }
+    catch (err) {
+      this.$notify({ text: `Error ${err} when attempting to create Character.`, type: 'is-danger' })
+      Sentry.captureException(err)
     }
     finally {
       this.xivLoading = false

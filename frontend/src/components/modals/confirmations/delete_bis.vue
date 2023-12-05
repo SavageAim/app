@@ -63,6 +63,7 @@
 </template>
 
 <script lang="ts">
+import * as Sentry from '@sentry/vue'
 import { Component, Prop, Vue } from 'vue-property-decorator'
 import BISList from '@/interfaces/bis_list'
 import { CharacterDetails } from '@/interfaces/character'
@@ -113,6 +114,7 @@ export default class DeleteBIS extends Vue {
     }
     catch (e) {
       this.$notify({ text: `Error ${e} when fetching BIS List deletion results.`, type: 'is-danger' })
+      Sentry.captureException(e)
     }
   }
 
@@ -137,6 +139,7 @@ export default class DeleteBIS extends Vue {
     }
     catch (e) {
       this.$notify({ text: `Error ${e} when attempting to delete BIS List.`, type: 'is-danger' })
+      Sentry.captureException(e)
     }
   }
 }

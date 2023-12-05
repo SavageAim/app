@@ -30,6 +30,7 @@
 </template>
 
 <script lang="ts">
+import * as Sentry from '@sentry/vue'
 import { Component, Prop, Vue } from 'vue-property-decorator'
 import { Loot } from '@/interfaces/loot'
 import Team from '@/interfaces/team'
@@ -69,6 +70,7 @@ export default class DeleteLoot extends Vue {
     }
     catch (e) {
       this.$notify({ text: `Error ${e} when attempting to delete Loot History.`, type: 'is-danger' })
+      Sentry.captureException(e)
     }
   }
 }

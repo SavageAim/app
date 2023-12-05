@@ -58,6 +58,7 @@
 </template>
 
 <script lang="ts">
+import * as Sentry from '@sentry/vue'
 import { Component } from 'vue-property-decorator'
 import History from '@/components/loot/history.vue'
 import PerFightLootManager from '@/components/loot_manager/per_fight.vue'
@@ -123,6 +124,7 @@ export default class TeamLoot extends TeamViewMixin {
     }
     catch (e) {
       this.$notify({ text: `Error ${e} when fetching Team Loot Data.`, type: 'is-danger' })
+      Sentry.captureException(e)
     }
   }
 
@@ -157,6 +159,7 @@ export default class TeamLoot extends TeamViewMixin {
     }
     catch (e) {
       this.$notify({ text: `Error ${e} when attempting to add Loot entry.`, type: 'is-danger' })
+      Sentry.captureException(e)
     }
     finally {
       this.requesting = false
@@ -191,6 +194,7 @@ export default class TeamLoot extends TeamViewMixin {
     }
     catch (e) {
       this.$notify({ text: `Error ${e} when attempting to add Loot entry.`, type: 'is-danger' })
+      Sentry.captureException(e)
     }
     finally {
       this.requesting = false

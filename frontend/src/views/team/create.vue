@@ -52,6 +52,7 @@
 </template>
 
 <script lang="ts">
+import * as Sentry from '@sentry/vue'
 import { Component, Vue } from 'vue-property-decorator'
 import TeamMemberForm from '@/components/team/member_form.vue'
 import { Character } from '@/interfaces/character'
@@ -121,6 +122,7 @@ export default class TeamJoin extends SavageAimMixin {
     }
     catch (e) {
       this.$notify({ text: `Error ${e} when attempting to create a Team.`, type: 'is-danger' })
+      Sentry.captureException(e)
     }
   }
 

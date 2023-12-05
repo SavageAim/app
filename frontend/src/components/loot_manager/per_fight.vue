@@ -76,10 +76,10 @@
 
 <script lang="ts">
 import dayjs from 'dayjs'
+import * as Sentry from '@sentry/vue'
 import {
   Component,
   Prop,
-  Vue,
   Watch,
 } from 'vue-property-decorator'
 import GreedCharacterEntry from '@/components/loot/greed_character_entry.vue'
@@ -141,7 +141,7 @@ export default class PerFightLootManager extends SavageAimMixin {
     this.$forceUpdate()
   }
 
-  clear(item: string) {
+  clear(item: string): void {
     delete this.chosenMembers[item]
     this.$forceUpdate()
   }
@@ -268,6 +268,7 @@ export default class PerFightLootManager extends SavageAimMixin {
     }
     catch (e) {
       this.$notify({ text: `Unexpected error ${e} when attempting to add Loot entry.`, type: 'is-danger' })
+      Sentry.captureException(e)
     }
     return null
   }
@@ -292,6 +293,7 @@ export default class PerFightLootManager extends SavageAimMixin {
     }
     catch (e) {
       this.$notify({ text: `Unexpected error ${e} when attempting to add Loot entry.`, type: 'is-danger' })
+      Sentry.captureException(e)
     }
     return null
   }

@@ -31,6 +31,7 @@
 </template>
 
 <script lang="ts">
+import * as Sentry from '@sentry/vue'
 import { Component } from 'vue-property-decorator'
 import TeamMemberCard from '@/components/team/member_card.vue'
 import TeamNav from '@/components/team/nav.vue'
@@ -71,6 +72,7 @@ export default class TeamOverview extends TeamViewMixin {
     }
     catch (e) {
       this.$notify({ text: `Error ${e} when fetching Team.`, type: 'is-danger' })
+      Sentry.captureException(e)
     }
   }
 
