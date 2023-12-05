@@ -33,8 +33,6 @@ export default class NewChar extends SavageAimMixin {
 
   loading = false
 
-  regex = /https:\/\/[a-z]{2}\.finalfantasyxiv\.com\/lodestone\/character\/([0-9]+)\/?/
-
   url = `/backend/api/character/`
 
   get urlInput(): HTMLInputElement {
