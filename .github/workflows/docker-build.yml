@@ -14,8 +14,13 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+    - name: Get Release Info
+      id: get_release
+      uses: bruceadams/get-release@v1.3.2
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
     - name: Build the Docker image
-      run: docker build . --file deployment/Dockerfile -t ghcr.io/savageaim/app/backend:latest -t ghcr.io/savageaim/app/backend:$(echo "$GITHUB_REF" | sed 's/refs\/tags\///')
+      run: docker build . --file deployment/Dockerfile -t ghcr.io/savageaim/app/backend:latest -t ghcr.io/savageaim/app/backend:${{ steps.get_release.outputs.tag_name }}
     - name: Login to GitHub Docker Registry
       run: docker login ghcr.io -u freyamade -p ${{ secrets.GITHUB_TOKEN }}
     - name: Push the Docker image
@@ -29,8 +34,13 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+    - name: Get Release Info
+      id: get_release
+      uses: bruceadams/get-release@v1.3.2
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
     - name: Build the Docker image
-      run: docker build . --file deployment/ws.Dockerfile -t ghcr.io/savageaim/app/ws-backend:latest -t ghcr.io/savageaim/app/ws-backend:$(echo "$GITHUB_REF" | sed 's/refs\/tags\///')
+      run: docker build . --file deployment/ws.Dockerfile -t ghcr.io/savageaim/app/ws-backend:latest -t ghcr.io/savageaim/app/ws-backend:${{ steps.get_release.outputs.tag_name }}
     - name: Login to GitHub Docker Registry
       run: docker login ghcr.io -u freyamade -p ${{ secrets.GITHUB_TOKEN }}
     - name: Push the Docker image
@@ -44,8 +54,13 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+    - name: Get Release Info
+      id: get_release
+      uses: bruceadams/get-release@v1.3.2
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
     - name: Build the Docker image
-      run: docker build . --file deployment/Dockerfile --tag ghcr.io/savageaim/app/frontend:latest -t ghcr.io/savageaim/app/frontend:$(echo "$GITHUB_REF" | sed 's/refs\/tags\///')
+      run: docker build . --file deployment/Dockerfile --tag ghcr.io/savageaim/app/frontend:latest -t ghcr.io/savageaim/app/frontend:${{ steps.get_release.outputs.tag_name }}
     - name: Build maintenance image
       run: docker build . --file deployment/Dockerfile --build-arg VUE_APP_MAINTENANCE="1" --tag ghcr.io/savageaim/app/frontend:maint
     - name: Login to GitHub Docker Registry
