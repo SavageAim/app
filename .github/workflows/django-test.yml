@@ -11,6 +11,7 @@ defaults:
 jobs:
   build:
     runs-on: ubuntu-latest
+    container: python:3.10
 
     services:
       postgres:
@@ -25,11 +26,7 @@ jobs:
           --health-retries 5
 
     steps:
-    - uses: actions/checkout@v3
-    - name: Set up Python
-      uses: actions/setup-python@v2
-      with:
-        python-version: 3.8
+    - uses: actions/checkout@v4
     - name: Install Dependencies
       run: |
         python -m pip install --upgrade pip

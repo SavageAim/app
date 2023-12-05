@@ -65,7 +65,7 @@ class LodestoneScraper:
             return None
 
         return 'Could not find the verification code in the Lodestone profile.'
-    
+
     def get_character_data(self, character_id: str) -> dict:
         """
         Given a Character ID, scrape the page for the following information;
