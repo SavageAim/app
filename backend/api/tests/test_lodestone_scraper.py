@@ -44,6 +44,13 @@ class LodestoneScraper(SavageAimTestCase):
         data = SCRAPER.get_character_data(CHAR_ID)
         self.assertDictEqual(data, expected)
 
+        # Also ensure the same data packet is returned from the API version of this function
+        self.client.force_login(self._get_user())
+        url = reverse('api:lodestone_resource', kwargs={'character_id': CHAR_ID})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK, response.content)
+        self.assertDictEqual(response.json(), expected)
+
     def test_data_pull_from_invalid_character(self):
         """
         Test Plan;
