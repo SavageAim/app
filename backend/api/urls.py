@@ -23,6 +23,9 @@ urlpatterns = [
     # Job
     path('job/', views.JobCollection.as_view(), name='job_collection'),
 
+    # Lodestone Scraper Hooks
+    path('lodestone/<str:character_id>/', views.LodestoneResource.as_view(), name='lodestone_resource'),
+
     # Loot
     path('team/<str:team_id>/loot/', views.LootCollection.as_view(), name='loot_collection'),
     path('team/<str:team_id>/loot/bis/', views.LootWithBIS.as_view(), name='loot_with_bis'),
