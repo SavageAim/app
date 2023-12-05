@@ -166,7 +166,6 @@
 
 <script lang="ts">
 import { Component, Prop } from 'vue-property-decorator'
-import XIVAPI from '@xivapi/js'
 import BISTable from '@/components/bis_table.vue'
 import CharacterBio from '@/components/character_bio.vue'
 import DeleteBIS from '@/components/modals/confirmations/delete_bis.vue'
