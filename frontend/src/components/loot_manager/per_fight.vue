@@ -79,7 +79,6 @@ import dayjs from 'dayjs'
 import {
   Component,
   Prop,
-  Vue,
   Watch,
 } from 'vue-property-decorator'
 import GreedCharacterEntry from '@/components/loot/greed_character_entry.vue'
@@ -141,7 +140,7 @@ export default class PerFightLootManager extends SavageAimMixin {
     this.$forceUpdate()
   }
 
-  clear(item: string) {
+  clear(item: string): void {
     delete this.chosenMembers[item]
     this.$forceUpdate()
   }
