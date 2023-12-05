@@ -104,8 +104,8 @@ export default class CharacterForm extends SavageAimMixin {
         this.checkErrors = [json.message]
       }
     }
-    catch (exc) {
-      this.$notify({ text: `Error ${exc} when attempting to create Character.`, type: 'is-danger' })
+    catch (err) {
+      this.$notify({ text: `Error ${err} when attempting to create Character.`, type: 'is-danger' })
     }
     finally {
       this.xivLoading = false
