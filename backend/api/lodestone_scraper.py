@@ -1,11 +1,9 @@
 # stdlib
 import logging
 import re
-from dataclasses import dataclass
 # lib
 import requests
 from bs4 import BeautifulSoup
-
 
 META_JSON_URL = 'https://raw.githubusercontent.com/xivapi/lodestone-css-selectors/main/meta.json'
 CHARACTER_JSON_URL = 'https://raw.githubusercontent.com/xivapi/lodestone-css-selectors/main/profile/character.json'

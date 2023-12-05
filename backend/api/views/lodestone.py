@@ -10,7 +10,6 @@ Webscraping-on-demand endpoint to pull the following info from Lodestone;
 
 # lib
 from rest_framework.views import APIView
-from rest_framework.permissions import AllowAny
 from rest_framework.request import Request
 from rest_framework.response import Response
 # local
