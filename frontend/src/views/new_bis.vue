@@ -17,6 +17,7 @@
 </template>
 
 <script lang="ts">
+import * as Sentry from '@sentry/vue'
 import { Component, Prop } from 'vue-property-decorator'
 import BISListForm from '@/components/bis_list/form.vue'
 import BISListModify from '@/dataclasses/bis_list_modify'
@@ -73,6 +74,7 @@ export default class NewBIS extends SavageAimMixin {
     }
     catch (e) {
       this.$notify({ text: `Error ${e} when fetching Character.`, type: 'is-danger' })
+      Sentry.captureException(e)
     }
   }
 

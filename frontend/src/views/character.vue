@@ -165,6 +165,7 @@
 </template>
 
 <script lang="ts">
+import * as Sentry from '@sentry/vue'
 import { Component, Prop } from 'vue-property-decorator'
 import BISTable from '@/components/bis_table.vue'
 import CharacterBio from '@/components/character_bio.vue'
@@ -252,6 +253,7 @@ export default class Character extends SavageAimMixin {
     }
     catch (e) {
       this.$notify({ text: `Error ${e} when fetching Character.`, type: 'is-danger' })
+      Sentry.captureException(e)
     }
   }
 
@@ -269,6 +271,7 @@ export default class Character extends SavageAimMixin {
     }
     catch (e) {
       this.$notify({ text: `Error ${e} when fetching Character's Team List.`, type: 'is-danger' })
+      Sentry.captureException(e)
     }
   }
 
@@ -308,6 +311,7 @@ export default class Character extends SavageAimMixin {
     }
     catch (e) {
       this.$notify({ text: `Error ${e} when attempting to update Character.`, type: 'is-danger' })
+      Sentry.captureException(e)
     }
   }
 
@@ -340,6 +344,7 @@ export default class Character extends SavageAimMixin {
     }
     catch (err) {
       this.$notify({ text: `Unexpected error ${err} when attempting to update Character details.`, type: 'is-danger' })
+      Sentry.captureException(err)
     }
     finally {
       this.updating = false
@@ -370,7 +375,8 @@ export default class Character extends SavageAimMixin {
       }
     }
     catch (e) {
-      this.$notify({ text: `Error ${e} when attempting to add Character to verification queue..`, type: 'is-danger' })
+      this.$notify({ text: `Error ${e} when attempting to add Character to verification queue.`, type: 'is-danger' })
+      Sentry.captureException(e)
     }
   }
 

@@ -18,6 +18,7 @@
 </template>
 
 <script lang="ts">
+import * as Sentry from '@sentry/vue'
 import { Component, Prop, Vue } from 'vue-property-decorator'
 import { Character } from '@/interfaces/character'
 import { CharacterScrapeData, CharacterScrapeError } from '@/interfaces/lodestone'
@@ -106,6 +107,7 @@ export default class CharacterForm extends SavageAimMixin {
     }
     catch (err) {
       this.$notify({ text: `Error ${err} when attempting to create Character.`, type: 'is-danger' })
+      Sentry.captureException(err)
     }
     finally {
       this.xivLoading = false

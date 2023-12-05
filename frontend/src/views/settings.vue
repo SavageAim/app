@@ -59,6 +59,7 @@
 
 <script lang="ts">
 import isEqual from 'lodash.isequal'
+import * as Sentry from '@sentry/vue'
 import { Component, Watch } from 'vue-property-decorator'
 import LootManagerSettings from '@/components/settings/loot_manager.vue'
 import NotificationsSettings from '@/components/settings/notifications.vue'
@@ -162,6 +163,7 @@ export default class Settings extends SavageAimMixin {
     }
     catch (e) {
       this.$notify({ text: `Error ${e} when attempting to update User Settings.`, type: 'is-danger' })
+      Sentry.captureException(e)
     }
   }
 

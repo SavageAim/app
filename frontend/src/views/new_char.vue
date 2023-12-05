@@ -17,6 +17,7 @@
 </template>
 
 <script lang="ts">
+import * as Sentry from '@sentry/vue'
 import { Component, Vue } from 'vue-property-decorator'
 import CharacterForm from '@/components/character_form.vue'
 import { Character } from '@/interfaces/character'
@@ -80,6 +81,7 @@ export default class NewChar extends SavageAimMixin {
     }
     catch (e) {
       this.$notify({ text: `Error ${e} when attempting to create Character.`, type: 'is-danger' })
+      Sentry.captureException(e)
     }
     finally {
       this.loading = false

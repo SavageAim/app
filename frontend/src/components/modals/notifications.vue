@@ -46,6 +46,7 @@
 </template>
 
 <script lang="ts">
+import * as Sentry from '@sentry/vue'
 import { Component, Vue } from 'vue-property-decorator'
 import NotificationCard from '@/components/notification_card.vue'
 import Notification from '@/interfaces/notification'
@@ -90,6 +91,7 @@ export default class Notifications extends Vue {
     }
     catch (e) {
       this.$notify({ text: `Error ${e} when marking notifications as read.`, type: 'is-danger' })
+      Sentry.captureException(e)
     }
   }
 

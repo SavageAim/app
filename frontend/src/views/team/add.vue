@@ -38,6 +38,7 @@
 </template>
 
 <script lang="ts">
+import * as Sentry from '@sentry/vue'
 import { Component } from 'vue-property-decorator'
 import SavageAimMixin from '@/mixins/savage_aim_mixin'
 
@@ -73,6 +74,7 @@ export default class TeamAdd extends SavageAimMixin {
     }
     catch (e) {
       this.$notify({ text: `Error ${e} when fetching Team.`, type: 'is-danger' })
+      Sentry.captureException(e)
     }
   }
 }

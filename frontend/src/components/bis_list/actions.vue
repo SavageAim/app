@@ -23,6 +23,7 @@
 </template>
 
 <script lang="ts">
+import * as Sentry from '@sentry/vue'
 import {
   Component,
   Prop,
@@ -122,6 +123,7 @@ export default class Actions extends Vue {
     }
     catch (e) {
       this.$notify({ text: `Error ${e} when attempting to import Etro data.`, type: 'is-danger' })
+      Sentry.captureException(e)
     }
     finally {
       this.importLoading = false
@@ -179,6 +181,7 @@ export default class Actions extends Vue {
     }
     catch (e) {
       this.$notify({ text: `Error ${e} when attempting to create BIS List.`, type: 'is-danger' })
+      Sentry.captureException(e)
     }
   }
 }

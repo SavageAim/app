@@ -32,6 +32,7 @@
 </template>
 
 <script lang="ts">
+import * as Sentry from '@sentry/vue'
 import { Component, Prop, Vue } from 'vue-property-decorator'
 import BISListForm from '@/components/bis_list/form.vue'
 import CharacterBio from '@/components/character_bio.vue'
@@ -120,6 +121,7 @@ export default class EditProxy extends TeamViewMixin {
     }
     catch (e) {
       this.$notify({ text: `Error ${e} when attempting to update Proxy Character.`, type: 'is-danger' })
+      Sentry.captureException(e)
     }
     finally {
       this.requesting = false
@@ -147,6 +149,7 @@ export default class EditProxy extends TeamViewMixin {
     }
     catch (e) {
       this.$notify({ text: `Error ${e} when fetching Team.`, type: 'is-danger' })
+      Sentry.captureException(e)
     }
   }
 

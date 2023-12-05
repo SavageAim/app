@@ -76,6 +76,7 @@
 
 <script lang="ts">
 import dayjs from 'dayjs'
+import * as Sentry from '@sentry/vue'
 import {
   Component,
   Prop,
@@ -267,6 +268,7 @@ export default class PerFightLootManager extends SavageAimMixin {
     }
     catch (e) {
       this.$notify({ text: `Unexpected error ${e} when attempting to add Loot entry.`, type: 'is-danger' })
+      Sentry.captureException(e)
     }
     return null
   }
@@ -291,6 +293,7 @@ export default class PerFightLootManager extends SavageAimMixin {
     }
     catch (e) {
       this.$notify({ text: `Unexpected error ${e} when attempting to add Loot entry.`, type: 'is-danger' })
+      Sentry.captureException(e)
     }
     return null
   }

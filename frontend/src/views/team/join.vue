@@ -89,6 +89,7 @@
 </template>
 
 <script lang="ts">
+import * as Sentry from '@sentry/vue'
 import { Component, Prop, Vue } from 'vue-property-decorator'
 import CharacterBio from '@/components/character_bio.vue'
 import ClaimCharacterModal from '@/components/modals/confirmations/claim_character.vue'
@@ -170,6 +171,7 @@ export default class TeamJoin extends SavageAimMixin {
     }
     catch (e) {
       this.$notify({ text: `Error ${e} when fetching Team.`, type: 'is-danger' })
+      Sentry.captureException(e)
     }
   }
 
@@ -202,6 +204,7 @@ export default class TeamJoin extends SavageAimMixin {
     }
     catch (e) {
       this.$notify({ text: `Error ${e} when attempting to create BIS List.`, type: 'is-danger' })
+      Sentry.captureException(e)
     }
   }
 

@@ -27,6 +27,7 @@
 </template>
 
 <script lang="ts">
+import * as Sentry from '@sentry/vue'
 import { Component, Prop, Vue } from 'vue-property-decorator'
 import TeamBio from '@/components/team/bio.vue'
 import Team from '@/interfaces/team'
@@ -74,6 +75,7 @@ export default class DeleteTeam extends Vue {
     }
     catch (e) {
       this.$notify({ text: `Error ${e} when attempting to disband ${this.team.name}.`, type: 'is-danger' })
+      Sentry.captureException(e)
     }
   }
 }

@@ -23,6 +23,7 @@
 <script lang="ts">
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
+import * as Sentry from '@sentry/vue'
 import { Component, Prop, Vue } from 'vue-property-decorator'
 import Notification from '@/interfaces/notification'
 
@@ -59,6 +60,7 @@ export default class NotificationCard extends Vue {
     }
     catch (e) {
       this.$notify({ text: `Error ${e} when marking notification as read.`, type: 'is-danger' })
+      Sentry.captureException(e)
     }
   }
 

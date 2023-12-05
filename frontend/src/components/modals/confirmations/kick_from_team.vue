@@ -46,6 +46,7 @@
 </template>
 
 <script lang="ts">
+import * as Sentry from '@sentry/vue'
 import { Component, Prop, Vue } from 'vue-property-decorator'
 import TeamMember from '@/interfaces/team_member'
 
@@ -83,6 +84,7 @@ export default class KickFromTeam extends Vue {
     }
     catch (e) {
       this.$notify({ text: `Error ${e} when attempting to kick Team Member.`, type: 'is-danger' })
+      Sentry.captureException(e)
     }
   }
 }

@@ -88,6 +88,7 @@
 </template>
 
 <script lang="ts">
+import * as Sentry from '@sentry/vue'
 import { Component, Vue } from 'vue-property-decorator'
 import TeamNav from '@/components/team/nav.vue'
 import DeleteTeam from '@/components/modals/confirmations/delete_team.vue'
@@ -162,6 +163,7 @@ export default class TeamSettings extends TeamViewMixin {
     }
     catch (e) {
       this.$notify({ text: `Error ${e} when fetching Team.`, type: 'is-danger' })
+      Sentry.captureException(e)
     }
   }
 
@@ -189,6 +191,7 @@ export default class TeamSettings extends TeamViewMixin {
     }
     catch (e) {
       this.$notify({ text: `Error ${e} when attempting to regenerate Team Invite Code.`, type: 'is-danger' })
+      Sentry.captureException(e)
     }
   }
 
@@ -220,6 +223,7 @@ export default class TeamSettings extends TeamViewMixin {
     }
     catch (e) {
       this.$notify({ text: `Error ${e} when attempting to update Team settings.`, type: 'is-danger' })
+      Sentry.captureException(e)
     }
   }
 }

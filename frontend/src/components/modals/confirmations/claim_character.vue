@@ -21,6 +21,7 @@
 </template>
 
 <script lang="ts">
+import * as Sentry from '@sentry/vue'
 import { Component, Prop, Vue } from 'vue-property-decorator'
 import CharacterBio from '@/components/character_bio.vue'
 import { Character } from '@/interfaces/character'
@@ -72,6 +73,7 @@ export default class ClaimCharacter extends Vue {
     }
     catch (e) {
       this.$notify({ text: `Error ${e} when attempting to claim Character.`, type: 'is-danger' })
+      Sentry.captureException(e)
     }
   }
 }

@@ -49,6 +49,7 @@
 </template>
 
 <script lang="ts">
+import * as Sentry from '@sentry/vue'
 import { Component, Prop, Vue } from 'vue-property-decorator'
 import TeamMember from '@/interfaces/team_member'
 
@@ -88,6 +89,7 @@ export default class LeaveTeam extends Vue {
     }
     catch (e) {
       this.$notify({ text: `Error ${e} when attempting to leave Team.`, type: 'is-danger' })
+      Sentry.captureException(e)
     }
   }
 }

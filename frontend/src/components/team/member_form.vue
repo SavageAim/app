@@ -49,6 +49,7 @@
 </template>
 
 <script lang="ts">
+import * as Sentry from '@sentry/vue'
 import {
   Component,
   Prop,
@@ -151,6 +152,7 @@ export default class TeamMemberForm extends SavageAimMixin {
     }
     catch (e) {
       this.$notify({ text: `Error ${e} when fetching BIS Lists for the chosen Character.`, type: 'is-danger' })
+      Sentry.captureException(e)
     }
   }
 
