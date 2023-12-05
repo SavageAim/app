@@ -21,8 +21,9 @@
         </ul>
       </p>
 
-      <div class="divider"><i class="material-icons icon">expand_more</i> Minor Updates <i class="material-icons icon">expand_more</i></div>
+      <div class="divider"><i class="material-icons icon">expand_more</i> Other Updates <i class="material-icons icon">expand_more</i></div>
       <p>Added more visibility into frontend errors so I can become more aware of what issues arise and when.</p>
+      <p>Security updates.</p>
     </div>
   </div>
 </template>
