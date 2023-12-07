@@ -5,11 +5,16 @@
       <div class="column is-one-quarter-desktop">
         <div class="card">
           <div class="card-header">
-            <div class="card-header-title">Settings for {{ user.username }}</div>
+            <div class="card-header-title">User Settings</div>
           </div>
           <div class="card-content">
             <aside class="menu">
               <ul class="menu-list">
+              <li>
+                  <a :class="{ 'is-active': activeTab.details }" @click="showDetails">
+                    User Details <span v-if="unsavedDetails()">*</span>
+                  </a>
+                </li>
                 <li>
                   <a :class="{ 'is-active': activeTab.theme }" @click="showTheme">
                     Colour Scheme <span v-if="unsavedTheme()">*</span>
@@ -34,6 +39,12 @@
 
       <!-- Notifications -->
       <div class="column">
+        <UserDetailsSettings
+          :errors="errors"
+          :username="username"
+          v-on:changeUsername="changeUsername"
+          v-if="activeTab.details"
+        />
         <!-- Colour Scheme -->
         <ThemeSettings
           :errors="errors"
@@ -41,7 +52,7 @@
           v-on:changeTheme="changeTheme"
           v-if="activeTab.theme"
         />
-        <NotificationsSettings
+        <NotificationsSettingsComponent
           :notifications="notifications"
           v-on:changeNotification="changeNotification"
           v-if="activeTab.notifications"
@@ -62,8 +73,9 @@ import isEqual from 'lodash.isequal'
 import * as Sentry from '@sentry/vue'
 import { Component, Watch } from 'vue-property-decorator'
 import LootManagerSettings from '@/components/settings/loot_manager.vue'
-import NotificationsSettings from '@/components/settings/notifications.vue'
+import NotificationsSettingsComponent from '@/components/settings/notifications.vue'
 import ThemeSettings from '@/components/settings/theme.vue'
+import UserDetailsSettings from '@/components/settings/user_details.vue'
 import NotificationSettings from '@/interfaces/notification_settings'
 import { SettingsErrors } from '@/interfaces/responses'
 import User from '@/interfaces/user'
@@ -72,13 +84,15 @@ import SavageAimMixin from '@/mixins/savage_aim_mixin'
 @Component({
   components: {
     LootManagerSettings,
-    NotificationsSettings,
+    NotificationsSettingsComponent,
     ThemeSettings,
+    UserDetailsSettings,
   },
 })
 export default class Settings extends SavageAimMixin {
   activeTab = {
-    theme: true,
+    details: true,
+    theme: false,
     notifications: false,
     lootManager: false,
   }
@@ -92,6 +106,8 @@ export default class Settings extends SavageAimMixin {
   }
 
   theme = this.user.theme
+
+  username = this.user.username
 
   mounted(): void {
     document.title = 'User Settings - Savage Aim'
@@ -119,6 +135,10 @@ export default class Settings extends SavageAimMixin {
     this.theme = theme
   }
 
+  changeUsername(username: string): void {
+    this.username = username
+  }
+
   // Function called on page reload via websockets
   async load(): Promise<void> {
     // This function does nothing on purpose
@@ -132,6 +152,7 @@ export default class Settings extends SavageAimMixin {
   }
 
   resetActiveTab(): void {
+    this.activeTab.details = false
     this.activeTab.theme = false
     this.activeTab.notifications = false
     this.activeTab.lootManager = false
@@ -139,7 +160,13 @@ export default class Settings extends SavageAimMixin {
 
   // Save the data into a new bis list
   async save(): Promise<void> {
-    const body = JSON.stringify({ theme: this.theme, notifications: this.notifications, loot_manager_version: this.lootManagerVersion })
+    const body = JSON.stringify({
+      theme: this.theme,
+      notifications: this.notifications,
+      loot_manager_version: this.lootManagerVersion,
+      username: this.username,
+    })
+
     try {
       const response = await fetch(this.url, {
         method: 'PUT',
@@ -167,6 +194,11 @@ export default class Settings extends SavageAimMixin {
     }
   }
 
+  showDetails(): void {
+    this.resetActiveTab()
+    this.activeTab.details = true
+  }
+
   showLootManager(): void {
     this.resetActiveTab()
     this.activeTab.lootManager = true
@@ -180,6 +212,10 @@ export default class Settings extends SavageAimMixin {
   showTheme(): void {
     this.resetActiveTab()
     this.activeTab.theme = true
+  }
+
+  unsavedDetails(): boolean {
+    return this.username !== this.user.username
   }
 
   unsavedLootManager(): boolean {

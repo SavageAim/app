@@ -51,6 +51,10 @@ class UserView(APIView):
         obj.loot_manager_version = serializer.validated_data.get('loot_manager_version', obj.loot_manager_version)
         obj.save()
 
+        # Update the username
+        request.user.first_name = serializer.validated_data.get('username', request.user.first_name)
+        request.user.save()
+
         # Send websocket packet for updates
         self._send_to_user(request.user, {'type': 'settings'})
 

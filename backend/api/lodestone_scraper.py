@@ -1,6 +1,7 @@
 # stdlib
 import logging
 import re
+from typing import Optional
 # lib
 import requests
 from bs4 import BeautifulSoup
@@ -46,7 +47,7 @@ class LodestoneScraper:
         cls._instance = instance
         return instance
 
-    def check_token(self, character_id: str, token: str) -> str | None:
+    def check_token(self, character_id: str, token: str) -> Optional[str]:
         """
             Check the given character for the specified token being present in their bio.
             Return an error string to pass back to the FE if not found, or None if it was.

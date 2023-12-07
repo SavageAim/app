@@ -16,10 +16,11 @@ NOTIFICATION_VALUES = {True, False}
 
 
 class SettingsSerializer(serializers.ModelSerializer):
+    username = serializers.CharField(max_length=150)
 
     class Meta:
         model = Settings
-        fields = ['loot_manager_version', 'notifications', 'theme']
+        fields = ['loot_manager_version', 'notifications', 'theme', 'username']
 
     def validate_notifications(self, notifications: Dict[str, bool]) -> Dict[str, bool]:
         """

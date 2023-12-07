@@ -12,6 +12,11 @@
     </div>
     <div class="card-content content">
       <h2 class="has-text-primary subtitle">{{ version }}</h2>
+      <div class="divider"><i class="material-icons icon">expand_more</i> Settings Updates <i class="material-icons icon">expand_more</i></div>
+      <p>
+        Usernames are now editable on the User Settings page!
+        <ul><li>For anyone who's usernames are different since the Discord Username update, this will probably help!</li></ul>
+      </p>
 
       <div class="divider"><i class="material-icons icon">expand_more</i> Major Fixes <i class="material-icons icon">expand_more</i></div>
       <p>
