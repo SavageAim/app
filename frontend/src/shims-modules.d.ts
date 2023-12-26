@@ -1,2 +1,2 @@
 declare module 'range-inclusive'
-declare module '@xivapi/js'
+declare module 'vue-shortkey'

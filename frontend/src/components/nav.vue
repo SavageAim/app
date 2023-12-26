@@ -28,7 +28,14 @@
 
       <div class="navbar-end">
         <template v-if="authenticated">
-          <a class="navbar-item notifications" @click="showNotifs">
+          <a class="navbar-item" @click="openSwitcher" data-microtip-position="bottom" role="tooltip" aria-label="Quick Switcher">
+            <span class="icon">
+              <i class="material-icons">pageview</i>
+            </span>
+            <span class="is-hidden-desktop">Quick Switcher</span>
+          </a>
+
+          <a class="navbar-item notifications" @click="showNotifs" data-microtip-position="bottom" role="tooltip" aria-label="Notifications">
             <div class="icon-text" v-if="unreads > 0">
               <span class="icon">
                 <span class="badge is-info">{{ unreads }}</span>
