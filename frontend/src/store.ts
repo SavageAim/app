@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/vue'
 import Vue from 'vue'
 import Vuex, { ActionTree, MutationTree } from 'vuex'
 import { Character } from './interfaces/character'
@@ -233,11 +234,13 @@ const store: Store = {
       state.user = user
       // Set the user loaded flag to say we've at least called this method once
       state.userLoaded = true
+      Sentry.setUser({ id: user.id!, username: user.username! })
     },
 
     resetUser(state: State): void {
       state.user = DEFAULT_USER
       state.userLoaded = false
+      Sentry.setUser(null)
     },
   },
   state: {
