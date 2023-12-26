@@ -33,27 +33,30 @@
           <th class="is-il-bis">Best in Slot</th>
         </tr>
         <tr>
-          <th class="is-il-minus-0">Max IL - 0</th>
+          <th class="is-il-minus-0">Max IL Gear that is not Best in Slot</th>
         </tr>
         <tr>
-          <th class="is-il-minus-5">Max IL - 5</th>
+          <th class="is-il-minus-5">Max IL - 5 (Typically Augmented Tome Gear)</th>
         </tr>
         <tr>
-          <th class="is-il-minus-10">Max IL - 10</th>
+          <th class="is-il-minus-10">Max IL - 10 (Typically Later Trial Weapon)</th>
         </tr>
         <tr>
-          <th class="is-il-minus-15">Max IL - 15</th>
+          <th class="is-il-minus-15">Max IL - 15 (Typically Unaugmented Tome Gear)</th>
         </tr>
         <tr>
-          <th class="is-il-minus-20">Max IL - 20</th>
+          <th class="is-il-minus-20">Max IL - 20 (Typically Early Catchup Trial Weapon)</th>
         </tr>
         <tr>
-          <th class="is-il-minus-25">Max IL - 25</th>
+          <th class="is-il-minus-25">Max IL - 25 (Typically Crafted Sets)</th>
         </tr>
         <tr>
           <th class="is-il-out-of-range">Out of the range of the Team's current Tier</th>
         </tr>
       </table>
+      <div class="divider"><i class="material-icons icon">expand_more</i> Explanation <i class="material-icons icon">expand_more</i></div>
+      <p>Please note that all references to a "Maximum Item Level" (Max IL) refer to the Item Level of the Weapon obtained from the Tier's final raid.</p>
+      <p>For example, the Max IL for Pandæmonium: Asphodelos is 605.</p>
     </div>
   </div>
 </template>

@@ -27,13 +27,6 @@
       </div>
 
       <div class="navbar-end">
-        <a @click="showLegend" class="navbar-item">
-          <div class="icon-text">
-            <span class="icon"><i class="material-icons">bar_chart</i></span>
-            <span>Colours Explanation</span>
-          </div>
-        </a>
-
         <template v-if="authenticated">
           <a class="navbar-item notifications" @click="showNotifs">
             <div class="icon-text" v-if="unreads > 0">
@@ -92,7 +85,6 @@
 import { Component, Watch } from 'vue-property-decorator'
 import Notification from '@/interfaces/notification'
 import SavageAimMixin from '@/mixins/savage_aim_mixin'
-import Legend from './modals/legend.vue'
 import NotificationsModal from './modals/notifications.vue'
 
 @Component
@@ -132,11 +124,6 @@ export default class Nav extends SavageAimMixin {
 
   mounted(): void {
     this.isMounted = true
-  }
-
-  // Display the colour legend chart modal
-  showLegend(): void {
-    this.$modal.show(Legend)
   }
 
   showNotifs(): void {

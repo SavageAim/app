@@ -12,23 +12,12 @@
     </div>
     <div class="card-content content">
       <h2 class="has-text-primary subtitle">{{ version }}</h2>
-      <div class="divider"><i class="material-icons icon">expand_more</i> Settings Updates <i class="material-icons icon">expand_more</i></div>
+      <div class="divider"><i class="material-icons icon">expand_more</i> Navbar Changes and Improvements <i class="material-icons icon">expand_more</i></div>
+      <p>The explanation for what colours mean has been moved to the Theme settings page, and removed from the navigation menu.</p>
       <p>
-        Usernames are now editable on the User Settings page!
+        The explanation for what colours mean has been moved to the Theme settings page, and removed from the navigation menu.
         <ul><li>For anyone who's usernames are different since the Discord Username update, this will probably help!</li></ul>
       </p>
-
-      <div class="divider"><i class="material-icons icon">expand_more</i> Major Fixes <i class="material-icons icon">expand_more</i></div>
-      <p>
-        Fixed a pretty major issue with XIVAPI that prevented new Characters from being imported.
-        <ul>
-          <li>Unsure how long this was present, and I'm genuinely very sorry if it affected you..</li>
-        </ul>
-      </p>
-
-      <div class="divider"><i class="material-icons icon">expand_more</i> Other Updates <i class="material-icons icon">expand_more</i></div>
-      <p>Added more visibility into frontend errors so I can become more aware of what issues arise and when.</p>
-      <p>Security updates.</p>
     </div>
   </div>
 </template>
