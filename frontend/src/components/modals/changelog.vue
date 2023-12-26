@@ -12,11 +12,15 @@
     </div>
     <div class="card-content content">
       <h2 class="has-text-primary subtitle">{{ version }}</h2>
-      <div class="divider"><i class="material-icons icon">expand_more</i> Navbar Changes and Improvements <i class="material-icons icon">expand_more</i></div>
-      <p>The explanation for what colours mean has been moved to the Theme settings page, and removed from the navigation menu.</p>
+      <div class="divider"><i class="material-icons icon">expand_more</i> Navigation Changes <i class="material-icons icon">expand_more</i></div>
+      <p>The explanation for what colours mean has been moved to the Theme settings page, and removed from the navbar.</p>
       <p>
-        The explanation for what colours mean has been moved to the Theme settings page, and removed from the navigation menu.
-        <ul><li>For anyone who's usernames are different since the Discord Username update, this will probably help!</li></ul>
+        A quick-switcher (similar to Discord's) has been added for faster moving between pages.
+        <ul>
+          <li>It's accessible through the navbar, or by pressing <code>Ctrl</code>+<code>K</code> on PC.</li>
+          <li>This menu allows you to type to search for pages, and select them via arrow keys or clicking/tapping.</li>
+          <li>By default it will display the home pages for all your Teams and Characters, but searching for something specific will allow you to go straight to pages that are deeper in, like the loot management page in a Team for example.</li>
+        </ul>
       </p>
     </div>
   </div>
