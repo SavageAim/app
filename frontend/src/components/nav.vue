@@ -55,13 +55,13 @@
             <div class="navbar-dropdown">
               <router-link class="navbar-item" to="/settings/">
                 <div class="icon-text">
-                  <span class="icon is-hidden-desktop"><i class="material-icons">settings</i></span>
+                  <span class="icon"><i class="material-icons">settings</i></span>
                   <span>Settings</span>
                 </div>
               </router-link>
               <a class="navbar-item" @click="logout">
                 <div class="icon-text">
-                  <span class="icon is-hidden-desktop"><i class="material-icons">logout</i></span>
+                  <span class="icon"><i class="material-icons">logout</i></span>
                   <span>Logout</span>
                 </div>
               </a>
