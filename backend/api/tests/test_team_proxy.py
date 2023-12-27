@@ -547,6 +547,7 @@ class TeamProxyClaim(SavageAimTestCase):
         # Lastly, link the characters to the team
         self.tm = self.team.members.create(character=self.char, bis_list=self.tl_main_bis, lead=True)
         self.proxy_tm = self.team.members.create(character=self.proxy, bis_list=self.proxy_bis, lead=False)
+        self.proxy.refresh_from_db()
 
         # Map gear names to ids for ease
         self.gear_id_map = {g.name: g.id for g in Gear.objects.all()}
@@ -575,7 +576,7 @@ class TeamProxyClaim(SavageAimTestCase):
         old_data = CharacterCollectionSerializer(instance=self.proxy).data
 
         # Remove changed keys
-        for key in ['proxy', 'user_id', 'id']:
+        for key in ['proxy', 'user_id', 'id', 'bis_lists']:
             new_data.pop(key)
             old_data.pop(key)
 
