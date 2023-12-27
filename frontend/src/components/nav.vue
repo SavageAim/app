@@ -29,10 +29,12 @@
       <div class="navbar-end">
         <template v-if="authenticated">
           <a class="navbar-item" @click="() => this.openSwitcher()" data-microtip-position="bottom" role="tooltip" aria-label="Quick Switcher">
-            <span class="icon">
-              <i class="material-icons">pageview</i>
-            </span>
-            <span class="is-hidden-desktop">Quick Switcher</span>
+            <div class="icon-text">
+              <span class="icon">
+                <i class="material-icons">pageview</i>
+              </span>
+              <span class="is-hidden-desktop">Quick Switcher</span>
+            </div>
           </a>
 
           <a class="navbar-item notifications" @click="showNotifs" data-microtip-position="bottom" role="tooltip" aria-label="Notifications">
