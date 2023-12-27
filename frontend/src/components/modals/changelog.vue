@@ -22,6 +22,10 @@
           <li>By default it will display the home pages for all your Teams and Characters, but searching for something specific will allow you to go straight to pages that are deeper in, like the loot management page in a Team for example.</li>
         </ul>
       </p>
+
+      <div class="divider"><i class="material-icons icon">expand_more</i> Other Fixes <i class="material-icons icon">expand_more</i></div>
+      <p>If a non-leader accesses the Team's Settings page, the redirect will now put them back on the correct page.</p>
+
     </div>
   </div>
 </template>
