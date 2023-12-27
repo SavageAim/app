@@ -39,7 +39,13 @@ class CharacterCollectionSerializer(serializers.ModelSerializer):
         """
         Return summaries of bis lists
         """
-        return list(char.bis_lists.values('name', 'id'))
+        return [
+            {
+                'id': bis.id,
+                'name': bis.name if bis.name != '' else bis.job_id,
+            }
+            for bis in char.bis_lists.all()
+        ]
 
     def validate_world(self, world: str) -> str:
         """
