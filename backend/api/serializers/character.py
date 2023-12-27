@@ -42,7 +42,7 @@ class CharacterCollectionSerializer(serializers.ModelSerializer):
         return [
             {
                 'id': bis.id,
-                'name': bis.name if bis.name != '' else bis.job_id,
+                'name': bis.name if bis.name != '' else bis.job.display_name,
             }
             for bis in char.bis_lists.all()
         ]
