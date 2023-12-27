@@ -20,13 +20,13 @@
         v-shortkey="{up: ['arrowup'], down: ['arrowdown'], select: ['enter']}"
         @shortkey="handleShortkey"
         autocomplete="off"
+        v-model="searchTerm"
       />
 
-      <article class="panel is-link" id="link-chooser">
-        <a v-for="(choice, index) in choices" class="panel-block" :class="{'is-active': index === targetIndex}" :key="choice.url" @click="() => { open(choice.url) }">
+      <article class="panel is-link" id="link-chooser" :key="currentChoices.length">
+        <a v-for="(choice, index) in currentChoices" class="panel-block" :class="{'is-active': index === targetIndex}" :key="choice.url" @click="() => { open(choice.url) }">
           <div class="panel-icon">
-            <i class="material-icons" aria-hidden="true" v-if="choice.isTeam">group</i>
-            <i class="material-icons" aria-hidden="true" v-else>person</i>
+            <i class="material-icons" aria-hidden="true">{{ choice.iconName }}</i>
           </div>
           <span>{{ choice.name }}</span>
         </a>
@@ -37,19 +37,24 @@
 
 <script lang="ts">
 // import * as Sentry from '@sentry/vue'
-import { Component, Vue } from 'vue-property-decorator'
-import { Character } from '@/interfaces/character'
+import { matchSorter } from 'match-sorter'
+import { Component, Vue, Watch } from 'vue-property-decorator'
+import BISList from '@/interfaces/bis_list'
+import { CharacterDetails } from '@/interfaces/character'
 import Team from '@/interfaces/team'
+import TeamMember from '@/interfaces/team_member'
 
 interface SwitcherItem {
+  iconName: string
   name: string
   url: string
-  isTeam: boolean
 }
 
 @Component
 export default class QuickSwitcher extends Vue {
-  choices: SwitcherItem[] = []
+  currentChoices: SwitcherItem[] = []
+
+  searchTerm = ''
 
   targetIndex = 0
 
@@ -57,16 +62,66 @@ export default class QuickSwitcher extends Vue {
     this.$emit('close')
   }
 
+  get potentialChoices(): SwitcherItem[] {
+    const choices: SwitcherItem[] = this.$store.state.characters.map(
+      (char: CharacterDetails) => [
+        {
+          iconName: 'person',
+          name: char.name,
+          url: `/characters/${char.id}/`,
+        },
+        ...char.bis_lists.map(
+          (bis: BISList) => ({
+            iconName: 'list_alt',
+            name: `${char.name} / ${bis.name}`,
+            url: `/characters/${char.id}/bis_list/${bis.id}/`,
+          }),
+        ),
+      ],
+    ).flat()
+
+    // For team stuff, since we have to check permissions before pushing certain pages
+    this.$store.state.teams.forEach((team: Team) => {
+      choices.push({
+        iconName: 'group',
+        name: team.name,
+        url: `/team/${team.id}/`,
+      })
+      choices.push({
+        iconName: 'receipt_long',
+        name: `${team.name} / Loot Manager`,
+        url: `/team/${team.id}/loot/`,
+      })
+      choices.push({
+        iconName: 'manage_accounts',
+        name: `${team.name} / Manage Members`,
+        url: `/team/${team.id}/management/`,
+      })
+
+      if (team.members.find((member: TeamMember) => member.lead)!.character.user_id === this.$store.state.user.id) {
+        choices.push({
+          iconName: 'settings',
+          name: `${team.name} / Settings`,
+          url: `/team/${team.id}/settings/`,
+        })
+      }
+    })
+
+    return choices
+  }
+
   get searchbox(): HTMLInputElement {
     return this.$refs.searchbox as HTMLInputElement
   }
 
+  @Watch('searchTerm')
+  checkInput(): void {
+    this.currentChoices = matchSorter(this.potentialChoices, this.searchTerm, { keys: ['name'] })
+  }
+
   mounted(): void {
-    // Compile the list of initial choices
-    this.choices = [
-      ...this.$store.state.characters.map((char: Character) => ({ name: char.name, url: `/characters/${char.id}`, isTeam: false })),
-      ...this.$store.state.teams.map((team: Team) => ({ name: team.name, url: `/team/${team.id}`, isTeam: true })),
-    ]
+    // Compile the list of initial currentChoices
+    this.checkInput()
 
     this.searchbox.focus()
   }
@@ -75,14 +130,14 @@ export default class QuickSwitcher extends Vue {
     switch (event.srcKey) {
     case 'up':
       // Decrement by 1, wrap around
-      this.targetIndex = (this.targetIndex - 1 + this.choices.length) % this.choices.length
+      this.targetIndex = (this.targetIndex - 1 + this.currentChoices.length) % this.currentChoices.length
       break
     case 'down':
       // Increment by 1, wrap around
-      this.targetIndex = (this.targetIndex + 1) % this.choices.length
+      this.targetIndex = (this.targetIndex + 1) % this.currentChoices.length
       break
     case 'select':
-      this.open(this.choices[this.targetIndex].url)
+      this.open(this.currentChoices[this.targetIndex].url)
       break
     default:
       break
