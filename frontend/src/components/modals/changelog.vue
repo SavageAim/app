@@ -12,6 +12,9 @@
     </div>
     <div class="card-content content">
       <h2 class="has-text-primary subtitle">{{ version }}</h2>
+      <div class="divider"><i class="material-icons icon">auto_awesome</i> Happy Holidays and Happy New Year <i class="material-icons icon">auto_awesome</i></div>
+      <p>Hard to believe I've been at this for nearly 2 years now! Hope everyone had a good end to 2023 and a nice start to 2024. Roll on Dawntrail!!</p>
+
       <div class="divider"><i class="material-icons icon">expand_more</i> Navigation Changes <i class="material-icons icon">expand_more</i></div>
       <p>The explanation for what colours mean has been moved to the Theme settings page, and removed from the navbar.</p>
       <p>
@@ -19,7 +22,6 @@
         <ul>
           <li>It's accessible through the navbar, or by pressing <code>Ctrl</code>+<code>K</code> on PC.</li>
           <li>This menu allows you to type to search for pages, and select them via arrow keys or clicking/tapping.</li>
-          <li>By default it will display the home pages for all your Teams and Characters, but searching for something specific will allow you to go straight to pages that are deeper in, like the loot management page in a Team for example.</li>
         </ul>
       </p>
 
