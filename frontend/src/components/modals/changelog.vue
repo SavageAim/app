@@ -22,6 +22,7 @@
         <ul>
           <li>It's accessible through the navbar, or by pressing <code>Ctrl</code>+<code>K</code> on PC.</li>
           <li>This menu allows you to type to search for pages, and select them via arrow keys or clicking/tapping.</li>
+          <li>It shows the top 5 most relevant items to your search, and when empty the list displays main character / team pages instead.</li>
         </ul>
       </p>
 

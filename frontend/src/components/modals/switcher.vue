@@ -116,7 +116,13 @@ export default class QuickSwitcher extends Vue {
 
   @Watch('searchTerm')
   checkInput(): void {
-    this.currentChoices = matchSorter(this.potentialChoices, this.searchTerm, { keys: ['name'] })
+    this.targetIndex = 0
+    if (this.searchTerm === '') {
+      this.currentChoices = matchSorter(this.potentialChoices, this.searchTerm, { keys: ['name'] }).filter((item: SwitcherItem) => item.name.indexOf('/') === -1)
+    }
+    else {
+      this.currentChoices = matchSorter(this.potentialChoices, this.searchTerm, { keys: ['name'] }).slice(0, 5)
+    }
   }
 
   mounted(): void {
