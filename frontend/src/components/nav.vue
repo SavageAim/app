@@ -28,7 +28,7 @@
 
       <div class="navbar-end">
         <template v-if="authenticated">
-          <a class="navbar-item" @click="openSwitcher" data-microtip-position="bottom" role="tooltip" aria-label="Quick Switcher">
+          <a class="navbar-item" @click="() => this.openSwitcher()" data-microtip-position="bottom" role="tooltip" aria-label="Quick Switcher">
             <span class="icon">
               <i class="material-icons">pageview</i>
             </span>
