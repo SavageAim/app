@@ -3,6 +3,7 @@ Serializers for the Character model
 """
 # stdlib
 from re import compile
+from typing import Dict, List, Union
 # lib
 from rest_framework import serializers
 # local
@@ -21,6 +22,7 @@ class CharacterCollectionSerializer(serializers.ModelSerializer):
     alias = serializers.CharField(allow_blank=True, required=False)
     proxy = serializers.SerializerMethodField()
     user_id = serializers.IntegerField(required=False)
+    bis_lists = serializers.SerializerMethodField()
 
     class Meta:
         model = Character
@@ -32,6 +34,12 @@ class CharacterCollectionSerializer(serializers.ModelSerializer):
         Return flag stating if the Character is a proxy char or not
         """
         return char.user is None
+
+    def get_bis_lists(self, char: Character) -> List[Dict[str, Union[str, int]]]:
+        """
+        Return summaries of bis lists
+        """
+        return list(char.bis_lists.values('name', 'id'))
 
     def validate_world(self, world: str) -> str:
         """
