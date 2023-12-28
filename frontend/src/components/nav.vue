@@ -61,7 +61,7 @@
               <span>{{ user.username }}</span>
             </div>
 
-            <div class="navbar-dropdown">
+            <div class="navbar-dropdown is-right">
               <router-link class="navbar-item" to="/settings/">
                 <div class="icon-text">
                   <span class="icon"><i class="material-icons">settings</i></span>
@@ -193,5 +193,9 @@ nav {
 .notifications .badge {
   top: unset;
   right: unset;
+}
+
+.navbar-item .icon-text {
+  flex-wrap: nowrap;
 }
 </style>
