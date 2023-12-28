@@ -1,8 +1,8 @@
 <template>
-  <div id="root">
+  <div id="root" v-shortkey.once="['ctrl', 'k']" @shortkey="openSwitcher">
     <Nav />
     <div class="container is-fluid">
-      <router-view ref="viewComponent"></router-view>
+      <router-view ref="viewComponent" :key="$route.fullPath"></router-view>
     </div>
     <Footer v-if="($route.name || '').indexOf('errors') == -1" />
     <notifications position="bottom left" classes="notification" />
@@ -112,6 +112,10 @@ export default class App extends Vue {
   reloadView(): void {
     // Reload the view currently loaded in the router-view component
     this.viewComponent.load()
+  }
+
+  openSwitcher(): void {
+    this.viewComponent.openSwitcher()
   }
 }
 </script>

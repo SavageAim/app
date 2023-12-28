@@ -12,23 +12,23 @@
     </div>
     <div class="card-content content">
       <h2 class="has-text-primary subtitle">{{ version }}</h2>
-      <div class="divider"><i class="material-icons icon">expand_more</i> Settings Updates <i class="material-icons icon">expand_more</i></div>
-      <p>
-        Usernames are now editable on the User Settings page!
-        <ul><li>For anyone who's usernames are different since the Discord Username update, this will probably help!</li></ul>
-      </p>
+      <div class="divider"><i class="material-icons icon">auto_awesome</i> Happy Holidays and Happy New Year <i class="material-icons icon">auto_awesome</i></div>
+      <p>Hard to believe I've been at this for nearly 2 years now! Hope everyone had a good end to 2023 and a nice start to 2024. Roll on Dawntrail!!</p>
 
-      <div class="divider"><i class="material-icons icon">expand_more</i> Major Fixes <i class="material-icons icon">expand_more</i></div>
+      <div class="divider"><i class="material-icons icon">expand_more</i> Navigation Changes <i class="material-icons icon">expand_more</i></div>
+      <p>The explanation for what colours mean has been moved to the Theme settings page, and removed from the navbar.</p>
       <p>
-        Fixed a pretty major issue with XIVAPI that prevented new Characters from being imported.
+        A quick-switcher (similar to Discord's) has been added for faster moving between pages.
         <ul>
-          <li>Unsure how long this was present, and I'm genuinely very sorry if it affected you..</li>
+          <li>It's accessible through the navbar, or by pressing <code>Ctrl</code>+<code>K</code> on PC.</li>
+          <li>This menu allows you to type to search for pages, and select them via arrow keys or clicking/tapping.</li>
+          <li>It shows the top 5 most relevant items to your search, and when empty the list displays main character / team pages instead.</li>
         </ul>
       </p>
 
-      <div class="divider"><i class="material-icons icon">expand_more</i> Other Updates <i class="material-icons icon">expand_more</i></div>
-      <p>Added more visibility into frontend errors so I can become more aware of what issues arise and when.</p>
-      <p>Security updates.</p>
+      <div class="divider"><i class="material-icons icon">expand_more</i> Other Fixes <i class="material-icons icon">expand_more</i></div>
+      <p>If a non-leader accesses the Team's Settings page, the redirect will now put them back on the correct page.</p>
+
     </div>
   </div>
 </template>

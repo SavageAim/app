@@ -129,7 +129,7 @@ export default class TeamSettings extends TeamViewMixin {
   checkPermissions(displayWarning: boolean): void {
     // Ensure that the person on this page is the team leader and not anybody else
     if (!this.userIsTeamLead) {
-      this.$router.push(`/team/${this.$route.params.id}/`, () => {
+      this.$router.push(`/team/${this.$route.params.teamId}/`, () => {
         if (displayWarning) Vue.notify({ text: 'Only the team leader can edit a Team\'s settings.', type: 'is-warning' })
       })
     }

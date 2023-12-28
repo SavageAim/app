@@ -1,5 +1,6 @@
 // Not your standard mixin, needs to be extended
 import { Vue } from 'vue-property-decorator'
+import QuickSwitcher from '@/components/modals/switcher.vue'
 import User from '@/interfaces/user'
 
 export default class SavageAimMixin extends Vue {
@@ -17,6 +18,26 @@ export default class SavageAimMixin extends Vue {
   get user(): User {
     // This assumes that the User exists
     return this.$store.state.user
+  }
+
+  get modalContainer(): HTMLElement | null {
+    return document.getElementById('modals-container')
+  }
+
+  getCloseButton(): HTMLLinkElement | null {
+    // Convoluted function to get the button to click instead of just calling hide
+    const modal = this.modalContainer?.getElementsByClassName('vm--modal')[0]
+    return modal?.getElementsByClassName('icon')[0] as HTMLLinkElement
+  }
+
+  openSwitcher(): void {
+    // Check if there's already an open modal
+    if (this.modalContainer === null || this.modalContainer!.children.length === 0) {
+      this.$modal.show(QuickSwitcher, { }, { closed: () => { this.load() } })
+    }
+    else {
+      this.getCloseButton()!.click()
+    }
   }
 
   handleError(statusCode: number): void {

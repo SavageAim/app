@@ -1,5 +1,10 @@
 import BISList from './bis_list'
 
+interface BISSummary {
+  name: string
+  id: number
+}
+
 export interface Character {
   alias: string
   avatar_url: string
@@ -10,6 +15,7 @@ export interface Character {
   user_id: number
   verified: boolean
   world: string
+  bis_lists: BISSummary[]
 }
 
 // The detailed view of a character's information

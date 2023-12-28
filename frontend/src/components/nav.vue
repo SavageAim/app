@@ -27,15 +27,17 @@
       </div>
 
       <div class="navbar-end">
-        <a @click="showLegend" class="navbar-item">
-          <div class="icon-text">
-            <span class="icon"><i class="material-icons">bar_chart</i></span>
-            <span>Colours Explanation</span>
-          </div>
-        </a>
-
         <template v-if="authenticated">
-          <a class="navbar-item notifications" @click="showNotifs">
+          <a class="navbar-item" @click="() => this.openSwitcher()" data-microtip-position="bottom" role="tooltip" aria-label="Quick Switcher">
+            <div class="icon-text">
+              <span class="icon">
+                <i class="material-icons">pageview</i>
+              </span>
+              <span class="is-hidden-desktop">Quick Switcher</span>
+            </div>
+          </a>
+
+          <a class="navbar-item notifications" @click="showNotifs" data-microtip-position="bottom" role="tooltip" aria-label="Notifications">
             <div class="icon-text" v-if="unreads > 0">
               <span class="icon">
                 <span class="badge is-info">{{ unreads }}</span>
@@ -59,16 +61,16 @@
               <span>{{ user.username }}</span>
             </div>
 
-            <div class="navbar-dropdown">
+            <div class="navbar-dropdown is-right">
               <router-link class="navbar-item" to="/settings/">
                 <div class="icon-text">
-                  <span class="icon is-hidden-desktop"><i class="material-icons">settings</i></span>
+                  <span class="icon"><i class="material-icons">settings</i></span>
                   <span>Settings</span>
                 </div>
               </router-link>
               <a class="navbar-item" @click="logout">
                 <div class="icon-text">
-                  <span class="icon is-hidden-desktop"><i class="material-icons">logout</i></span>
+                  <span class="icon"><i class="material-icons">logout</i></span>
                   <span>Logout</span>
                 </div>
               </a>
@@ -92,7 +94,6 @@
 import { Component, Watch } from 'vue-property-decorator'
 import Notification from '@/interfaces/notification'
 import SavageAimMixin from '@/mixins/savage_aim_mixin'
-import Legend from './modals/legend.vue'
 import NotificationsModal from './modals/notifications.vue'
 
 @Component
@@ -132,11 +133,6 @@ export default class Nav extends SavageAimMixin {
 
   mounted(): void {
     this.isMounted = true
-  }
-
-  // Display the colour legend chart modal
-  showLegend(): void {
-    this.$modal.show(Legend)
   }
 
   showNotifs(): void {
@@ -197,5 +193,9 @@ nav {
 .notifications .badge {
   top: unset;
   right: unset;
+}
+
+.navbar-item .icon-text {
+  flex-wrap: nowrap;
 }
 </style>

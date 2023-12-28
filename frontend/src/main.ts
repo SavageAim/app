@@ -3,6 +3,7 @@ import Vue from 'vue'
 import Notifications from 'vue-notification'
 import VModal from 'vue-js-modal'
 import VueCookies from 'vue-cookies'
+import VueShortkey from 'vue-shortkey'
 import App from './App.vue'
 import router from './router'
 import store from './store'
@@ -23,12 +24,13 @@ const dynamicDefaults = {
 Vue.use(Notifications)
 Vue.use(VModal, { dynamicDefaults })
 Vue.use(VueCookies)
+Vue.use(VueShortkey)
 
 Sentry.init({
   Vue,
   dsn: 'https://06f41b525a40497a848fb726f6d03244@o242258.ingest.sentry.io/6180221',
   logErrors: true,
-  release: 'savageaim@20231207',
+  release: 'savageaim@20231227',
   integrations: [
     new Sentry.BrowserTracing({
       routingInstrumentation: Sentry.vueRouterInstrumentation(router),
