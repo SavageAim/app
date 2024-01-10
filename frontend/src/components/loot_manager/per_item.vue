@@ -132,12 +132,12 @@ export default class PerItemLootManager extends Vue {
 
   getGreedReceived(entry: GreedGear): number {
     // Given an entry, return how many times that Character has received greed loot so far this tier
-    return this.loot.received[entry.character_name].greed
+    return this.loot.received[entry.character_name]?.greed || 0
   }
 
   getNeedReceived(entry: NeedGear): number {
     // Given an entry, return how many times that Character has received need loot so far this tier
-    return this.loot.received[entry.character_name].need
+    return this.loot.received[entry.character_name]?.need || 0
   }
 
   // Functions to handle interacting with the API for handling loot handouts
