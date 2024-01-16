@@ -12,8 +12,13 @@
     </div>
     <div class="card-content content">
       <h2 class="has-text-primary subtitle">{{ version }}</h2>
-      <div class="divider"><i class="material-icons icon">expand_more</i> Fixes <i class="material-icons icon">expand_more</i></div>
-      <p>Fixed an issue in the Per-Item Loot Manager where having Team Members who haven't received loot would cause the dropdown to not work. (Thanks @natkr!)</p>
+      <div class="divider"><i class="material-icons icon">expand_more</i> FFXIV 6.55 Update <i class="material-icons icon">expand_more</i></div>
+      <p>
+        Added the following new types of Gear released in 6.55;
+        <ul>
+          <li>Mandervillous Weapons - Item Level 665</li>
+        </ul>
+      </p>
 
     </div>
   </div>
