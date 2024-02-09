@@ -31,7 +31,7 @@
         <div class="dropdown is-centered card-footer-item" ref="dropdown">
           <div class="dropdown-trigger">
             <a class="icon-text" aria-haspopup="true" :aria-controls="`actions-${details.id}`" @click="toggleDropdown">
-              <span class="icon"><i class="material-icons">more_horiz</i></span>
+              <span class="icon"><i class="material-icons">more_vert</i></span>
               <span>Actions</span>
               <span class="icon">
                 <i class="material-icons" v-if="active">expand_less</i>
