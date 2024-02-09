@@ -91,16 +91,73 @@
               </div>
               <div class="card-content">
                 <BISTable :list="bis" />
-                <p class="has-text-info has-text-centered">Colours generated using item level {{ bis.bis_mainhand.item_level }}</p>
+                <p class="has-text-info has-text-centered bis-colour-info">Colours generated using item level {{ bis.bis_mainhand.item_level }}</p>
               </div>
-              <footer class="card-footer">
+              <!-- Dropdown for mobile -->
+              <footer class="card-footer is-hidden-desktop">
+                <div class="dropdown is-centered card-footer-item" :class="{'is-active': actionsActive[bis.id] || false}">
+                  <div class="dropdown-trigger">
+                    <a class="icon-text" aria-haspopup="true" :aria-controls="`actions-${bis.id}`" @click="() => { toggleActions(bis.id) }">
+                      <span class="icon"><i class="material-icons">more_vert</i></span>
+                      <span>Actions</span>
+                      <span class="icon">
+                        <i class="material-icons" v-if="actionsActive[bis.id]">expand_less</i>
+                        <i class="material-icons" v-else>expand_more</i>
+                      </span>
+                    </a>
+                  </div>
+                  <div class="dropdown-menu" :id="`actions-${bis.id}`" role="menu">
+                    <div class="dropdown-content">
+                      <router-link :to="`/characters/${character.id}/bis_list/${bis.id}/`" class="card-footer-item">
+                        <span class="icon-text">
+                          <span class="icon"><i class="material-icons">edit</i></span>
+                          <span>Edit BIS</span>
+                        </span>
+                      </router-link>
+                      <template v-if="bis.external_link != null">
+                        <hr class="dropdown-divider" />
+                        <a target="_blank" :href="bis.external_link" class="card-footer-item">
+                          <span class="icon-text">
+                            <span class="icon"><i class="material-icons">open_in_new</i></span>
+                            <span>{{ bis.external_link.replace(/https?:\/\//, '').split('/')[0] }}</span>
+                          </span>
+                        </a>
+                      </template>
+                      <hr class="dropdown-divider" />
+                      <!-- Modal to confirm, Delete BIS -->
+                      <a class="card-footer-item has-text-danger" @click="() => { deleteBIS(bis) }">
+                        <span class="icon-text">
+                          <span class="icon"><i class="material-icons">delete</i></span>
+                          <span>Delete BIS</span>
+                        </span>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </footer>
+
+              <!-- No Dropdown for Desktop -->
+              <footer class="card-footer has-text-link is-hidden-touch">
+                <!-- Quick link to edit this bis list -->
                 <router-link :to="`/characters/${character.id}/bis_list/${bis.id}/`" class="card-footer-item">
-                  Edit
+                  <span class="icon-text">
+                    <span class="icon"><i class="material-icons">edit</i></span>
+                    <span>Edit BIS</span>
+                  </span>
                 </router-link>
-                <a v-if="bis.external_link != null" target="_blank" :href="bis.external_link" class="card-footer-item">
-                  View on {{ bis.external_link.replace(/https?:\/\//, '').split('/')[0] }}
+                <a target="_blank" :href="bis.external_link" class="card-footer-item" v-if="bis.external_link != null">
+                  <span class="icon-text">
+                    <span class="icon"><i class="material-icons">open_in_new</i></span>
+                    <span>{{ bis.external_link.replace(/https?:\/\//, '').split('/')[0] }}</span>
+                  </span>
                 </a>
-                <a class="has-text-danger card-footer-item" @click="() => { deleteBIS(bis) }">Delete</a>
+                <!-- Modal to confirm, delete BIS -->
+                <a class="card-footer-item has-text-danger" @click="() => { deleteBIS(bis) }">
+                  <span class="icon-text">
+                    <span class="icon"><i class="material-icons">delete</i></span>
+                    <span>Delete BIS</span>
+                  </span>
+                </a>
               </footer>
             </div>
             <div class="subtitle has-text-centered" v-if="character.bis_lists.length === 0">
@@ -189,6 +246,8 @@ import SavageAimMixin from '@/mixins/savage_aim_mixin'
   },
 })
 export default class Character extends SavageAimMixin {
+  actionsActive: { [bisId: number]: boolean } = {}
+
   bisShown = true
 
   character!: CharacterDetails
@@ -315,6 +374,11 @@ export default class Character extends SavageAimMixin {
     }
   }
 
+  toggleActions(bisId: number): void {
+    this.actionsActive[bisId] = !(this.actionsActive[bisId] || false)
+    this.$forceUpdate()
+  }
+
   async updateChar(): Promise<void> {
     if (!this.character.verified || this.updating) return
 
@@ -424,5 +488,9 @@ export default class Character extends SavageAimMixin {
 button.is-loading.is-ghost {
   // Fixing a slight centering issue
   margin-top: 4px;
+}
+
+p.bis-colour-info {
+  margin-top: 1rem;
 }
 </style>

@@ -27,8 +27,9 @@
       <div class="card-content">
         <BISTable :list="details.bis_list" :item-level="maxItemLevel" />
       </div>
+      <!-- Dropdown for mobile -->
       <footer class="card-footer is-hidden-desktop" v-if="displayFooter">
-        <div class="dropdown is-centered card-footer-item" ref="dropdown">
+        <div class="dropdown is-centered card-footer-item" :class="{'is-active': active}">
           <div class="dropdown-trigger">
             <a class="icon-text" aria-haspopup="true" :aria-controls="`actions-${details.id}`" @click="toggleDropdown">
               <span class="icon"><i class="material-icons">more_vert</i></span>
@@ -78,7 +79,7 @@
         </div>
       </footer>
 
-      <!-- Remove Dropdown for Desktop -->
+      <!-- No Dropdown for Desktop -->
       <footer class="card-footer has-text-link is-hidden-touch" v-if="displayFooter">
         <a target="_blank" :href="details.bis_list.external_link" class="card-footer-item" v-if="details.bis_list.external_link != null">
           <span class="icon-text">
@@ -146,10 +147,6 @@ export default class TeamMemberCard extends Vue {
     )
   }
 
-  get dropdown(): HTMLElement {
-    return this.$refs.dropdown as HTMLElement
-  }
-
   leave(): void {
     this.$modal.show(LeaveTeam, { details: this.details, teamId: this.teamId })
   }
@@ -160,7 +157,6 @@ export default class TeamMemberCard extends Vue {
   }
 
   toggleDropdown(): void {
-    this.dropdown.classList.toggle('is-active')
     this.active = !this.active
   }
 }
