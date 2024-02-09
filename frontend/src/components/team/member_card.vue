@@ -27,10 +27,11 @@
       <div class="card-content">
         <BISTable :list="details.bis_list" :item-level="maxItemLevel" />
       </div>
-      <footer class="card-footer" v-if="displayDropdown">
+      <footer class="card-footer is-hidden-desktop" v-if="displayFooter">
         <div class="dropdown is-centered card-footer-item" ref="dropdown">
           <div class="dropdown-trigger">
             <a class="icon-text" aria-haspopup="true" :aria-controls="`actions-${details.id}`" @click="toggleDropdown">
+              <span class="icon"><i class="material-icons">more_horiz</i></span>
               <span>Actions</span>
               <span class="icon">
                 <i class="material-icons" v-if="active">expand_less</i>
@@ -41,28 +42,74 @@
           <div class="dropdown-menu" :id="`actions-${details.id}`" role="menu">
             <div class="dropdown-content">
               <a v-if="details.bis_list.external_link != null" target="_blank" :href="details.bis_list.external_link" class="card-footer-item">
-                View on {{ details.bis_list.external_link.replace(/https?:\/\//, '').split('/')[0] }}
+                <span class="icon-text">
+                  <span class="icon"><i class="material-icons">open_in_new</i></span>
+                  <span>{{ details.bis_list.external_link.replace(/https?:\/\//, '').split('/')[0] }}</span>
+                </span>
               </a>
               <template v-if="owner">
                 <!-- Quick link to edit this bis list -->
                 <hr class="dropdown-divider" />
                 <router-link :to="`/characters/${details.character.id}/bis_list/${details.bis_list.id}/`" class="card-footer-item">
-                  Edit BIS List
+                  <span class="icon-text">
+                    <span class="icon"><i class="material-icons">edit</i></span>
+                    <span>Edit BIS</span>
+                  </span>
                 </router-link>
                 <hr class="dropdown-divider" />
                 <!-- Link to update the TeamMember details with new character / bislist -->
                 <router-link :to="`./member/${details.id}/`" class="card-footer-item">
-                  Change Linked Character / BIS List
+                  <span class="icon-text">
+                    <span class="icon"><i class="material-icons">edit_note</i></span>
+                    <span>Update Membership</span>
+                  </span>
                 </router-link>
                 <hr class="dropdown-divider" />
                 <!-- Modal to confirm, leave team -->
                 <a class="card-footer-item has-text-danger" @click="leave">
-                  Leave Team
+                  <span class="icon-text">
+                    <span class="icon"><i class="material-icons">not_interested</i></span>
+                    <span>Leave Team</span>
+                  </span>
                 </a>
               </template>
             </div>
           </div>
         </div>
+      </footer>
+
+      <!-- Remove Dropdown for Desktop -->
+      <footer class="card-footer has-text-link is-hidden-touch" v-if="displayFooter">
+        <a target="_blank" :href="details.bis_list.external_link" class="card-footer-item" v-if="details.bis_list.external_link != null">
+          <span class="icon-text">
+            <span class="icon"><i class="material-icons">open_in_new</i></span>
+            <span>{{ details.bis_list.external_link.replace(/https?:\/\//, '').split('/')[0] }}</span>
+          </span>
+        </a>
+
+        <template v-if="owner">
+          <!-- Quick link to edit this bis list -->
+          <router-link :to="`/characters/${details.character.id}/bis_list/${details.bis_list.id}/`" class="card-footer-item">
+            <span class="icon-text">
+              <span class="icon"><i class="material-icons">edit</i></span>
+              <span>Edit BIS</span>
+            </span>
+          </router-link>
+          <!-- Link to update the TeamMember details with new character / bislist -->
+          <router-link :to="`./member/${details.id}/`" class="card-footer-item">
+            <span class="icon-text">
+              <span class="icon"><i class="material-icons">edit_note</i></span>
+              <span>Update Membership</span>
+            </span>
+          </router-link>
+          <!-- Modal to confirm, leave team -->
+          <a class="card-footer-item has-text-danger" @click="leave">
+            <span class="icon-text">
+              <span class="icon"><i class="material-icons">not_interested</i></span>
+              <span>Leave Team</span>
+            </span>
+          </a>
+        </template>
       </footer>
     </div>
   </div>
@@ -91,8 +138,8 @@ export default class TeamMemberCard extends Vue {
   @Prop()
   teamId!: number
 
-  get displayDropdown(): boolean {
-    // Check all the link cases in the dropdown and if none of them are true, we don't want to render the dropdown at all
+  get displayFooter(): boolean {
+    // Check all the link cases in the footer and if none of them are true, we don't want to render the card footer at all
     return (
       this.details.bis_list.external_link != null
       || this.owner
