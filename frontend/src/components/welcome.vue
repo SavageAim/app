@@ -10,11 +10,13 @@
         </div>
       </div>
       <div class="card-content has-text-centered">
-        <p>Savage Aim is an online tool designed mainly for managing the Best-in-Slot (BiS) lists of Savage prog groups in FFXIV.</p>
-        <p>It's built by someone who currently raids Savage blind, and therefore a lot of the features are built initially with my own requirements in mind.</p>
-        <p>If you'd like to help support the development, I'd welcome suggestions and ideas and feedback!</p>
-        <p>Please note we currently only support authentication through Discord, though if need be, we can add more providers soon!</p>
-        <p>Happy Raiding :D</p>
+        <p>SavageAim is a tool used for managing the Best-in-Slot (BiS) lists of Savage Prog groups in FFXIV.</p>
+        <p>It is designed by someone who raids primarily blind, and initially was constructed with my own static's interests first and foremost.</p>
+        <p>However, as the project has gotten bigger, more feedback has been given by people and it is developing into a system that I hope everyone can be happy to use!</p>
+        <p>I welcome you to the site, and ask only that if you have some feedback or assistance, please make it known through the Discord server so I can continue to make this tool better in the future!</p>
+        <p>The wiki link in the footer is also a handy place where all of the running of the tool has been documented as it is being developed.</p>
+        <hr />
+        <p>Happy raiding! :D</p>
       </div>
     </div>
   </div>
