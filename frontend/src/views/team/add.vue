@@ -28,7 +28,7 @@
             <p class="help is-danger" v-if="joinError.length > 0">{{ joinError }}</p>
           </div>
           <button class="button is-success" @click="joinTeam">
-            <span class="icon"><i class="material-icons">add</i></span>
+            <span class="icon"><i class="material-icons">login</i></span>
             <span>Join</span>
           </button>
         </div>

@@ -44,7 +44,12 @@
           </template>
         </div>
         <div class="card-footer">
-          <a class="card-footer-item has-text-success" @click="create">Create Team</a>
+          <a class="card-footer-item has-text-success" @click="create">
+            <span class="icon-text">
+              <span class="icon"><i class="material-icons">add</i></span>
+              Create Team
+            </span>
+          </a>
         </div>
       </div>
     </div>

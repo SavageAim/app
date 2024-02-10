@@ -34,7 +34,10 @@
             </aside>
           </div>
         </div>
-        <button class="button is-success is-fullwidth" @click="save">Save</button>
+        <button class="button is-success is-fullwidth" @click="save">
+          <span class="icon"><i class="material-icons">save</i></span>
+          <span>Save</span>
+        </button>
       </div>
 
       <!-- Notifications -->
