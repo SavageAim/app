@@ -34,6 +34,8 @@
 
       <div class="divider"><i class="material-icons icon">expand_more</i> Fixes <i class="material-icons icon">expand_more</i></div>
       <p>The heart from the Kofi logo will no longer be visible on top of dropdowns / tooltips.</p>
+      <p>Tabs with errors are correctly shown in the Settings page.</p>
+      <p>Errors on the Settings page are now cleared when a save is successful.</p>
 
     </div>
   </div>
