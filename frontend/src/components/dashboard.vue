@@ -3,8 +3,12 @@
     <div class="column is-three-quarters-desktop">
       <div class="card">
         <div class="card-header">
-          <div class="card-header-title">
-            <h2 class="title">Your Teams</h2>
+          <div class="card-header-title"><span class="larger-title">Your Teams</span></div>
+          <div class="card-header-icon">
+            <router-link to="/team/" class="button is-small is-success">
+              <span class="icon"><i class="material-icons">add</i></span>
+              <span>Add New</span>
+            </router-link>
           </div>
         </div>
         <div class="card-content">
@@ -17,20 +21,18 @@
             </router-link>
           </template>
         </div>
-        <footer class="card-footer">
-          <router-link to="/team/" class="card-footer-item has-text-success icon-text">
-            <span class="icon"><i class="material-icons">add</i></span>
-            <span>Add New</span>
-          </router-link>
-        </footer>
       </div>
     </div>
 
     <div class="column">
     <div class="card">
       <div class="card-header">
-        <div class="card-header-title">
-          <h2 class="title">Your Characters</h2>
+        <div class="card-header-title"><span class="larger-title">Your Characters</span></div>
+        <div class="card-header-icon">
+          <router-link to="/characters/new/" class="button is-small is-success">
+            <span class="icon"><i class="material-icons">add</i></span>
+            <span>Add New</span>
+          </router-link>
         </div>
       </div>
       <div class="card-content">
@@ -44,12 +46,6 @@
           </router-link>
         </template>
       </div>
-      <footer class="card-footer">
-        <router-link to="/characters/new/" class="card-footer-item has-text-success icon-text">
-          <span class="icon"><i class="material-icons">add</i></span>
-          <span>Add New</span>
-        </router-link>
-      </footer>
     </div>
   </div>
   </div>
