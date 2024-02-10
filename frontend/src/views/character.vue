@@ -142,6 +142,14 @@
                         </span>
                       </router-link>
                       <hr class="dropdown-divider" />
+                      <!-- clone BIS -->
+                      <a class="card-footer-item" @click="() => { duplicateBIS(bis) }">
+                        <span class="icon-text">
+                          <span class="icon"><i class="material-icons">copy_all</i></span>
+                          <span>Copy</span>
+                        </span>
+                      </a>
+                      <hr class="dropdown-divider" />
                       <!-- Modal to confirm, Delete BIS -->
                       <a class="card-footer-item has-text-danger" @click="() => { deleteBIS(bis) }">
                         <span class="icon-text">
@@ -169,6 +177,13 @@
                     <span>Edit BIS</span>
                   </span>
                 </router-link>
+                <!-- clone BIS -->
+                <a class="card-footer-item" @click="() => { duplicateBIS(bis) }">
+                  <span class="icon-text">
+                    <span class="icon"><i class="material-icons">copy_all</i></span>
+                    <span>Copy</span>
+                  </span>
+                </a>
                 <!-- Modal to confirm, delete BIS -->
                 <a class="card-footer-item has-text-danger" @click="() => { deleteBIS(bis) }">
                   <span class="icon-text">
@@ -255,6 +270,7 @@ import CharacterBio from '@/components/character_bio.vue'
 import DeleteBIS from '@/components/modals/confirmations/delete_bis.vue'
 import DeleteCharacter from '@/components/modals/confirmations/delete_character.vue'
 import TeamBio from '@/components/team/bio.vue'
+import BISListModify from '@/dataclasses/bis_list_modify'
 import BISList from '@/interfaces/bis_list'
 import { CharacterDetails } from '@/interfaces/character'
 import Job from '@/interfaces/job'
@@ -293,6 +309,10 @@ export default class Character extends SavageAimMixin {
 
   updating = false
 
+  get bisListUrl(): string {
+    return `/backend/api/character/${this.characterId}/bis_lists/`
+  }
+
   get lodestoneUrl(): string {
     return `/backend/api/lodestone/${this.character.lodestone_id}/`
   }
@@ -319,6 +339,33 @@ export default class Character extends SavageAimMixin {
   deleteChar(): void {
     // Prompt deletion first before sending an api request (we'll use a modal instead of javascript alerts)
     this.$modal.show(DeleteCharacter, { character: this.character })
+  }
+
+  async duplicateBIS(bis: BISList): Promise<void> {
+    // Create a shallow copy of the bis list, change the name and send a post request to the endpoint
+    const dupedBis = BISListModify.buildEditVersion(bis)
+    dupedBis.name = `Copy of ${bis.display_name}`
+    try {
+      const response = await fetch(this.bisListUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': this.$cookies.get('csrftoken'),
+        },
+        body: JSON.stringify(dupedBis),
+      })
+
+      if (response.ok) {
+        this.$notify({ text: 'BIS List copied successfully!', type: 'is-success' })
+      }
+      else {
+        this.$notify({ text: 'BIS List could not be copied.', type: 'is-danger' })
+      }
+    }
+    catch (e) {
+      this.$notify({ text: `Error ${e} when attempting to create BIS List.`, type: 'is-danger' })
+      Sentry.captureException(e)
+    }
   }
 
   async fetchChar(reload: boolean): Promise<void> {
