@@ -8,7 +8,8 @@
         </div>
         <div class="control">
           <button class="button is-success" :class="{'is-loading': apiLoading || xivLoading}" @click="fetchChar">
-            Import
+            <span class="icon"><i class="material-icons">cloud_download</i></span>
+            <span>Import</span>
           </button>
         </div>
       </div>

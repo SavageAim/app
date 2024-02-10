@@ -19,11 +19,11 @@
 
       <template v-if="!importLoading">
         <button class="button is-fullwidth is-primary" data-microtip-position="top" role="tooltip" aria-label="Import BIS Gear from Etro.gg" v-if="importable()" @click="etroImport">
-          <span class="icon"><i class="material-icons">download</i></span>
+          <span class="icon"><i class="material-icons">cloud_download</i></span>
           <span>Import from Etro</span>
         </button>
         <button class="button is-fullwidth is-disabled" data-microtip-position="top" role="tooltip" aria-label="Please enter an Etro gearset link in the external URL." v-else>
-          <span class="icon"><i class="material-icons">download</i></span>
+          <span class="icon"><i class="material-icons">cloud_download</i></span>
           <span>Import from Etro</span>
         </button>
       </template>

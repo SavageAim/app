@@ -16,9 +16,11 @@
     </div>
     <div class="management-buttons buttons is-grouped" v-if="userIsLead && !member.lead">
       <button class="button is-primary is-outlined is-fullwidth" @click="editPermissions">
+        <span class="icon"><i class="material-icons">edit</i></span>
         <span>Edit Permissions</span>
       </button>
       <button class="button is-danger is-outlined is-fullwidth" @click="kick">
+        <span class="icon"><i class="material-icons">delete</i></span>
         <span>Kick From Team</span>
       </button>
     </div>

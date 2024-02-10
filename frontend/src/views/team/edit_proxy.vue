@@ -18,11 +18,14 @@
           <div class="box" id="char-box">
             <CharacterBio :character="character" :displayUnverified="false" />
           </div>
-          <div class="field has-addons">
-            <div class="control is-expanded">
-              <button class="button is-success is-fullwidth" @click="save">Update BIS</button>
-            </div>
-          </div>
+        </div>
+        <div class="card-footer" v-if="character !== null">
+          <a class="card-footer-item has-text-success" @click="save">
+            <span class="icon-text">
+              <span class="icon"><i class="material-icons">save</i></span>
+              <span>Save Proxy</span>
+            </span>
+          </a>
         </div>
       </div>
 
