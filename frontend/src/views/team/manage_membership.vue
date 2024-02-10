@@ -19,8 +19,16 @@
           </div>
           <div class="card-content">
             <p>Below you can change which of your Characters are in the Team, and/or the BIS List they will be using.</p>
+            <hr />
             <TeamMemberForm ref="form" :bis-list-id-errors="errors.bis_list_id" :character-id-errors="errors.character_id" :initial-character-id="member.character.id" :initial-bis-list-id="member.bis_list.id" />
-            <button class="button is-success" @click="save">Save</button>
+          </div>
+          <div class="card-footer">
+            <a class="card-footer-item has-text-success" @click="save">
+              <span class="icon-text">
+                <span class="icon"><i class="material-icons">save</i></span>
+                <span>Save</span>
+              </span>
+            </a>
           </div>
         </div>
       </div>
