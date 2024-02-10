@@ -20,8 +20,8 @@
       </div>
     </div>
     <div v-if="userHasPermission" class="list-actions">
-      <button class="button is-success" @click="save" v-if="!requesting">Give Item</button>
-      <button class="button is-success is-loading" v-else>Give Item</button>
+      <button class="button is-primary" @click="save" v-if="!requesting">Give Item</button>
+      <button class="button is-primary is-loading" v-else>Give Item</button>
     </div>
   </div>
 </template>

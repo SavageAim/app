@@ -110,12 +110,12 @@
                 </span>
               </div>
               <div class="list-actions">
-                <button class="button is-success" @click="() => { chooseGreed(entry, list) }" >Select</button>
+                <button class="button is-info" @click="() => { chooseGreed(entry, list) }" >Select</button>
               </div>
             </div>
 
             <!-- If the member has no bis list just give a big button -->
-            <button v-if="entry.greed_lists.length === 0" class="button is-success is-fullwidth" @click="() => { chooseGreed(entry, null) }">Select This Character</button>
+            <button v-if="entry.greed_lists.length === 0" class="button is-info is-fullwidth" @click="() => { chooseGreed(entry, null) }">Select This Character</button>
           </div>
         </a>
       </template>

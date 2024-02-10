@@ -19,7 +19,7 @@
       </label>
     </div>
     <footer class="card-footer">
-      <a class="card-footer-item has-text-success" @click="save">Save Changes</a>
+      <a class="card-footer-item has-text-success" @click="save">Save</a>
       <a class="card-footer-item has-text-danger" @click="() => { this.$emit('close') }">Cancel</a>
     </footer>
   </div>
