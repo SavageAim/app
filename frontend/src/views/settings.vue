@@ -11,22 +11,22 @@
             <aside class="menu">
               <ul class="menu-list">
               <li>
-                  <a :class="{ 'is-active': activeTab.details }" @click="showDetails">
+                  <a :class="{ 'is-active': activeTab.details, 'has-text-danger': errorsInDetails() }" @click="showDetails">
                     User Details <span v-if="unsavedDetails()">*</span>
                   </a>
                 </li>
                 <li>
-                  <a :class="{ 'is-active': activeTab.theme }" @click="showTheme">
+                  <a :class="{ 'is-active': activeTab.theme, 'has-text-danger': errorsInTheme() }" @click="showTheme">
                     Colour Scheme <span v-if="unsavedTheme()">*</span>
                   </a>
                 </li>
                 <li>
-                  <a :class="{ 'is-active': activeTab.notifications }" @click="showNotifications">
+                  <a :class="{ 'is-active': activeTab.notifications, 'has-text-danger': errorsInNotifications() }" @click="showNotifications">
                     Notifications <span v-if="unsavedNotifications()">*</span>
                   </a>
                 </li>
                 <li>
-                  <a :class="{ 'is-active': activeTab.lootManager }" @click="showLootManager">
+                  <a :class="{ 'is-active': activeTab.lootManager, 'has-text-danger': errorsInLootManager() }" @click="showLootManager">
                     Loot Manager Version <span v-if="unsavedLootManager()">*</span>
                   </a>
                 </li>
@@ -142,6 +142,22 @@ export default class Settings extends SavageAimMixin {
     this.username = username
   }
 
+  errorsInDetails(): boolean {
+    return (this.errors.username?.length || 0) > 0
+  }
+
+  errorsInLootManager(): boolean {
+    return (this.errors.loot_manager_version?.length || 0) > 0
+  }
+
+  errorsInNotifications(): boolean {
+    return (this.errors.notifications?.length || 0) > 0
+  }
+
+  errorsInTheme(): boolean {
+    return (this.errors.theme?.length || 0) > 0
+  }
+
   // Function called on page reload via websockets
   async load(): Promise<void> {
     // This function does nothing on purpose
@@ -185,6 +201,8 @@ export default class Settings extends SavageAimMixin {
         this.$notify({ text: 'Update successful!', type: 'is-success' })
         // Update the user in the system too
         this.$store.dispatch('fetchUser')
+        // Reset Errors
+        this.errors = {}
       }
       else {
         super.handleError(response.status)
