@@ -12,8 +12,18 @@
           </div>
           <footer class="card-footer">
             <button class="card-footer-item is-loading is-ghost button" v-if="updating"></button>
-            <a class="card-footer-item" @click="updateChar" v-else>Update</a>
-            <a class="has-text-danger card-footer-item" @click="deleteChar">Delete</a>
+            <a class="card-footer-item" @click="updateChar" v-else>
+              <span class="icon-text">
+                <span class="icon"><i class="material-icons">sync</i></span>
+                <span>Re-Import</span>
+              </span>
+            </a>
+            <a class="has-text-danger card-footer-item" @click="deleteChar">
+              <span class="icon-text">
+                <span class="icon"><i class="material-icons">delete</i></span>
+                <span>Delete</span>
+              </span>
+            </a>
           </footer>
         </div>
 
@@ -44,12 +54,17 @@
           <div class="message-body">
             <p>Please be aware that this character is yet to be verified.</p>
             <p>Unverified characters cannot create gear lists, or interact with teams.</p>
-            <p>In order to verify, please copy the token below the line, and update <a href="https://eu.finalfantasyxiv.com/lodestone/my/setting/profile/" target="_blank">this page</a> with it, then press the "Request Verification" button.</p>
+            <p>In order to verify, please copy the token in the box below, update <a href="https://eu.finalfantasyxiv.com/lodestone/my/setting/profile/" target="_blank">this page</a> with it, then press the "Verify Character" button.</p>
             <p>Unverified characters are removed from the system after 24h.</p>
             <hr />
-            <p class="has-text-centered has-text-link">{{ character.token }}</p>
-            <div class="buttons is-centered">
-              <button class="button is-outlined is-link" @click="verify">Request Verification</button>
+            <div class="field has-addons">
+              <div class="control is-expanded">
+                <input class="input is-link" id="characterToken" type="text" :value="character.token" readonly />
+              </div>
+              <label class="label is-sr-only" for="characterToken">Character Verification Token</label>
+              <div class="control">
+                <button class="button is-link" @click="verify">Verify Character</button>
+              </div>
             </div>
           </div>
         </article>
@@ -65,7 +80,10 @@
               </div>
               <div class="level-right">
                 <div class="level-item">
-                  <router-link to="./bis_list/" class="button is-info">Add New</router-link>
+                  <router-link to="./bis_list/" class="button is-success">
+                    <span class="icon"><i class="material-icons">add</i></span>
+                    <span>Add New</span>
+                  </router-link>
                 </div>
               </div>
             </div>
@@ -175,7 +193,10 @@
               </div>
               <div class="level-right">
                 <div class="level-item">
-                  <router-link to="/team/" class="button is-info">Add New</router-link>
+                  <router-link to="/team/" class="button is-success">
+                    <span class="icon"><i class="material-icons">add</i></span>
+                    <span>Add New</span>
+                  </router-link>
                 </div>
               </div>
             </div>
@@ -211,7 +232,12 @@
                 </div>
               </div>
               <footer class="card-footer">
-                <a class="has-text-success card-footer-item" @click="saveDetails">Save</a>
+                <a class="has-text-success card-footer-item" @click="saveDetails">
+                  <span class="icon-text">
+                    <span class="icon"><i class="material-icons">save</i></span>
+                    <span>Save Settings</span>
+                  </span>
+                </a>
               </footer>
             </div>
           </div>
