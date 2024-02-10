@@ -31,6 +31,7 @@ class EtroImport(SavageAimTestCase):
 
         # Build an expected data packet
         expected = {
+            'name': 'BiS DNC ilvl 600 (2.47) - 6.11',
             'job_id': 'DNC',
             'mainhand': Gear.objects.get(name='Ultimate of the Heavens').pk,
             'offhand': Gear.objects.get(name='Ultimate of the Heavens').pk,
@@ -61,6 +62,7 @@ class EtroImport(SavageAimTestCase):
 
         # Build an expected data packet
         expected = {
+            'name': 'test with relic',
             'job_id': 'DRG',
             'mainhand': Gear.objects.get(name='Majestic Manderville').pk,
             'offhand': Gear.objects.get(name='Majestic Manderville').pk,
