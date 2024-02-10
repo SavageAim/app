@@ -108,21 +108,21 @@
                   </div>
                   <div class="dropdown-menu" :id="`actions-${bis.id}`" role="menu">
                     <div class="dropdown-content">
-                      <router-link :to="`/characters/${character.id}/bis_list/${bis.id}/`" class="card-footer-item">
-                        <span class="icon-text">
-                          <span class="icon"><i class="material-icons">edit</i></span>
-                          <span>Edit BIS</span>
-                        </span>
-                      </router-link>
                       <template v-if="bis.external_link != null">
-                        <hr class="dropdown-divider" />
                         <a target="_blank" :href="bis.external_link" class="card-footer-item">
                           <span class="icon-text">
                             <span class="icon"><i class="material-icons">open_in_new</i></span>
                             <span>{{ bis.external_link.replace(/https?:\/\//, '').split('/')[0] }}</span>
                           </span>
                         </a>
+                        <hr class="dropdown-divider" />
                       </template>
+                      <router-link :to="`/characters/${character.id}/bis_list/${bis.id}/`" class="card-footer-item">
+                        <span class="icon-text">
+                          <span class="icon"><i class="material-icons">edit</i></span>
+                          <span>Edit BIS</span>
+                        </span>
+                      </router-link>
                       <hr class="dropdown-divider" />
                       <!-- Modal to confirm, Delete BIS -->
                       <a class="card-footer-item has-text-danger" @click="() => { deleteBIS(bis) }">
@@ -138,6 +138,12 @@
 
               <!-- No Dropdown for Desktop -->
               <footer class="card-footer has-text-link is-hidden-touch">
+                <a target="_blank" :href="bis.external_link" class="card-footer-item" v-if="bis.external_link != null">
+                  <span class="icon-text">
+                    <span class="icon"><i class="material-icons">open_in_new</i></span>
+                    <span>{{ bis.external_link.replace(/https?:\/\//, '').split('/')[0] }}</span>
+                  </span>
+                </a>
                 <!-- Quick link to edit this bis list -->
                 <router-link :to="`/characters/${character.id}/bis_list/${bis.id}/`" class="card-footer-item">
                   <span class="icon-text">
@@ -145,12 +151,6 @@
                     <span>Edit BIS</span>
                   </span>
                 </router-link>
-                <a target="_blank" :href="bis.external_link" class="card-footer-item" v-if="bis.external_link != null">
-                  <span class="icon-text">
-                    <span class="icon"><i class="material-icons">open_in_new</i></span>
-                    <span>{{ bis.external_link.replace(/https?:\/\//, '').split('/')[0] }}</span>
-                  </span>
-                </a>
                 <!-- Modal to confirm, delete BIS -->
                 <a class="card-footer-item has-text-danger" @click="() => { deleteBIS(bis) }">
                   <span class="icon-text">
