@@ -18,6 +18,7 @@ export interface ImportResponse {
   left_ring: number
   right_ring: number
 
+  name: string
   min_il: number
   max_il: number
 }

@@ -65,6 +65,7 @@ class EtroImport(APIView):
         except coreapi.exceptions.ErrorMessage as e:
             return Response({'message': e.error.title}, status=400)
 
+        name = gearset['name']
         job_id = gearset['jobAbbrev']
         min_il = gearset['minItemLevel']
         max_il = gearset['maxItemLevel']
@@ -94,6 +95,7 @@ class EtroImport(APIView):
         # Turn the names into SA gear ids
         sa_gear = Gear.objects.filter(item_level__gte=min_il, item_level__lte=max_il).values('name', 'id')
         response = {
+            'name': name,
             'job_id': job_id,
             'min_il': min_il,
             'max_il': max_il,
