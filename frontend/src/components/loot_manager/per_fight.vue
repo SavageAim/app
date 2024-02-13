@@ -38,7 +38,10 @@
       </div>
 
       <template v-if="fight != 'na' && userHasPermission">
-        <button class="button is-success is-fullwidth" @click="save" v-if="!(requesting || requestingI)">Save Loot Assigments</button>
+        <button class="button is-success is-fullwidth" @click="save" v-if="!(requesting || requestingI)">
+          <span class="icon"><i class="material-icons">save</i></span>
+          <span>Save Loot Assigments</span>
+        </button>
         <button class="button is-success is-fullwidth is-loading" v-else>Save Loot Assigments</button>
       </template>
     </div>

@@ -3,7 +3,7 @@
     <div class="card">
       <div class="card-header">
         <div class="card-header-title">
-          <h2 class="title">Add A Character</h2>
+          <span class="larger-title">Add A Character</span>
         </div>
       </div>
       <div class="card-content">

@@ -33,7 +33,10 @@
               </div>
               <div class="card-content" v-if="characters.length">
                 <TeamMemberForm ref="form" :bis-list-id-errors="errors.bis_list_id" :character-id-errors="errors.character_id" />
-                <button class="button is-success" @click="join">Join!</button>
+                <button class="button is-success" @click="join">
+                  <span class="icon"><i class="material-icons">login</i></span>
+                  <span>Join!</span>
+                </button>
               </div>
               <div class="card-content content" v-else>
                 <p>

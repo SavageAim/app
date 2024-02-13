@@ -38,7 +38,9 @@
               </div>
             </div>
             <div class="control">
-              <a class="button is-link" target="_blank" @click="addBIS">Add New</a>
+              <a class="button is-success" target="_blank" @click="addBIS">
+                Add New
+              </a>
             </div>
           </div>
           <p v-if="bisListIdErrors !== undefined" class="help is-danger">{{ bisListIdErrors[0] }}</p>

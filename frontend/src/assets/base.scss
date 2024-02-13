@@ -52,7 +52,8 @@ $dropdown-content-background-color: $scheme-main-bis;
 }
 
 // Card stuff
-$card-header-shadow: 0 0.5em 0 0 rgba($accent-dark, 0.1);
+$card-header-shadow: 0;
+$card-content-background-color: rgba(0, 0, 0, 0.02);
 $card-background-color: $scheme-main-bis;
 a.card-footer-item, .dropdown.card-footer-item a {
   color: $main-colour;
@@ -67,6 +68,9 @@ a.card-footer-item, .dropdown.card-footer-item a {
 }
 .card:not(:last-child) {
   margin-bottom: 1.5rem;
+}
+.card-header-title > span.larger-title {
+  font-size: 1.1em;
 }
 
 // Add extra colours for IL tiering (will be customisable later) and for roles
@@ -102,6 +106,10 @@ html.has-navbar-fixed-top {
 p.disabled-delete {
   font-weight: bold;
   color: hsl(348, 86%, 30%);
+}
+
+.card-header {
+  border-bottom: 1px solid $border-light;
 }
 
 @import './gear_gradients';

@@ -31,11 +31,11 @@
           <div class="card-content">
             <div class="field has-addons">
               <div class="control is-expanded">
-                <input class="input" id="inviteCode" type="text" :value="team.invite_code" readonly />
+                <input class="input is-dark" id="inviteCode" type="text" :value="team.invite_code" readonly />
               </div>
               <label class="label is-sr-only" for="inviteCode">Invite Code</label>
               <div class="control">
-                <button class="button is-warning" @click="regenerateInviteCode">Regenerate</button>
+                <button class="button is-dark" @click="regenerateInviteCode">Regenerate</button>
               </div>
             </div>
             <p>Send the above code, or <a :href="`${inviteUrl}/${team.invite_code}/`" target="_blank">this URL</a>, to people to allow them to join <span class="has-text-primary">{{ team.name }}</span>!</p>
@@ -78,8 +78,18 @@
             </div>
           </div>
           <footer class="card-footer">
-            <a class="has-text-success card-footer-item" @click="saveDetails">Save</a>
-            <a class="has-text-danger card-footer-item" @click="disband">Disband</a>
+            <a class="has-text-success card-footer-item" @click="saveDetails">
+              <span class="icon-text">
+                <span class="icon"><i class="material-icons">save</i></span>
+                <span>Save</span>
+              </span>
+            </a>
+            <a class="has-text-danger card-footer-item" @click="disband">
+              <span class="icon-text">
+                <span class="icon"><i class="material-icons">delete</i></span>
+                <span>Disband</span>
+              </span>
+            </a>
           </footer>
         </div>
       </div>

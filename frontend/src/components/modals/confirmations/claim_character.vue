@@ -14,8 +14,18 @@
       </div>
     </div>
     <div class="card-footer">
-      <a class="card-footer-item" @click="() => { this.$emit('close') }">Cancel</a>
-      <a class="card-footer-item has-text-success" @click="claimCharacter">Claim Character</a>
+      <a class="card-footer-item has-text-success" @click="claimCharacter">
+        <span class="icon-text">
+          <span class="icon"><i class="material-icons">checklist</i></span>
+          <span>Claim Character</span>
+        </span>
+      </a>
+      <a class="card-footer-item has-text-link" @click="() => { this.$emit('close') }">
+        <span class="icon-text">
+          <span class="icon"><i class="material-icons">close</i></span>
+          <span>Cancel</span>
+        </span>
+      </a>
     </div>
   </div>
 </template>

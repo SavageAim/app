@@ -40,8 +40,18 @@
       </a>
     </div>
     <footer class="card-footer">
-      <a class="card-footer-item has-text-success" @click="sync">{{ verb }} and Sync</a>
-      <a class="card-footer-item has-text-danger" @click="() => { this.$emit('close') }">Cancel</a>
+      <a class="card-footer-item has-text-success" @click="sync">
+        <span class="icon-text">
+          <span class="icon"><i class="material-icons">save_as</i></span>
+          <span>{{ verb }} &amp; Sync</span>
+        </span>
+      </a>
+      <a class="card-footer-item has-text-link" @click="() => { this.$emit('close') }">
+        <span class="icon-text">
+          <span class="icon"><i class="material-icons">close</i></span>
+          <span>Cancel</span>
+        </span>
+      </a>
     </footer>
   </div>
 </template>

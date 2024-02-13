@@ -28,7 +28,7 @@
         <div class="column">
           <div class="card">
             <div class="card-header">
-              <div class="card-header-title">Team Members</div>
+              <div class="card-header-title"><span class="larger-title">Team Members</span></div>
             </div>
             <div class="card-content">
               <TeamMemberManager :team-id="teamId" :member="member" :user-is-lead="userIsTeamLead" v-for="member in realMembers()" :key="member.id" v-on:reload="() => { fetchTeam(true) }" />
@@ -39,11 +39,12 @@
         <div class="column">
           <div class="card">
             <div class="card-header">
-              <div class="card-header-title">Proxy Characters</div>
+              <div class="card-header-title"><span class="larger-title">Proxy Characters</span></div>
               <!-- Replace with check for the perm -->
               <div class="card-header-icon" v-if="userHasProxyManagerPermission">
                 <router-link to="../proxies/" class="button is-small is-success">
-                  <span>Add Proxy Character</span>
+                  <span class="icon"><i class="material-icons">add</i></span>
+                  <span>Add New</span>
                 </router-link>
               </div>
             </div>

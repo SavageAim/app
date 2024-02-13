@@ -1,22 +1,43 @@
 <template>
   <div class="card-content">
     <div class="buttons">
-      <button v-if="!charIsProxy" class="button is-fullwidth is-success" data-microtip-position="top" role="tooltip" :aria-label="`${saveText} this BIS List.`" @click="save">{{ saveText }} BIS List</button>
+      <button v-if="!charIsProxy" class="button is-fullwidth is-success" data-microtip-position="top" role="tooltip" :aria-label="`${saveText} this BIS List.`" @click="save">
+        <span class="icon"><i class="material-icons">save</i></span>
+        <span>{{ saveText }} BIS List</span>
+      </button>
 
       <template v-if="!(simple || charIsProxy)">
-        <button class="button is-fullwidth is-success" data-microtip-position="top" role="tooltip" :aria-label="`${saveText} this BIS List, and sync current gear to other ${bisList.job_id} BIS Lists.`" v-if="syncable()" @click="displaySyncModal">{{ saveText }} and Sync Current Gear</button>
-        <button class="button is-fullwidth is-disabled" data-microtip-position="top" role="tooltip" :aria-label="`You have no other ${bisList.job_id} BIS Lists.`" v-else>{{ saveText }} and Sync Current Gear</button>
+        <button class="button is-fullwidth is-success" data-microtip-position="top" role="tooltip" :aria-label="`${saveText} this BIS List, and sync current gear to other ${bisList.job_id} BIS Lists.`" v-if="syncable()" @click="displaySyncModal">
+          <span class="icon"><i class="material-icons">save_as</i></span>
+          <span>{{ saveText }} &amp; Sync Current Gear</span>
+        </button>
+        <button class="button is-fullwidth is-disabled" data-microtip-position="top" role="tooltip" :aria-label="`You have no other ${bisList.job_id} BIS Lists.`" v-else>
+          <span class="icon"><i class="material-icons">save_as</i></span>
+          <span>{{ saveText }} &amp; Sync Current Gear</span>
+        </button>
       </template>
 
       <template v-if="!importLoading">
-        <button class="button is-fullwidth is-primary" data-microtip-position="top" role="tooltip" aria-label="Import BIS Gear from Etro.gg" v-if="importable()" @click="etroImport">Import from Etro</button>
-        <button class="button is-fullwidth is-disabled" data-microtip-position="top" role="tooltip" aria-label="Please enter an Etro gearset link in the external URL." v-else>Import</button>
+        <button class="button is-fullwidth is-primary" data-microtip-position="top" role="tooltip" aria-label="Import BIS Gear from Etro.gg" v-if="importable()" @click="etroImport">
+          <span class="icon"><i class="material-icons">cloud_download</i></span>
+          <span>Import from Etro</span>
+        </button>
+        <button class="button is-fullwidth is-disabled" data-microtip-position="top" role="tooltip" aria-label="Please enter an Etro gearset link in the external URL." v-else>
+          <span class="icon"><i class="material-icons">cloud_download</i></span>
+          <span>Import from Etro</span>
+        </button>
       </template>
       <button v-else class="button is-static is-loading is-fullwidth">Loading data.</button>
 
       <template v-if="!(simple || charIsProxy)">
-        <button class="button is-fullwidth is-primary" data-microtip-position="top" role="tooltip" :aria-label="`Load Current gear from another ${bisList.job_id} BIS List.`" v-if="syncable()" @click="displayLoadModal">Load Current Gear</button>
-        <button class="button is-fullwidth is-disabled" data-microtip-position="top" role="tooltip" :aria-label="`You have no other ${bisList.job_id} BIS Lists.`" v-else>Load Current Gear</button>
+        <button class="button is-fullwidth is-primary" data-microtip-position="top" role="tooltip" :aria-label="`Load Current gear from another ${bisList.job_id} BIS List.`" v-if="syncable()" @click="displayLoadModal">
+          <span class="icon"><i class="material-icons">content_copy</i></span>
+          <span>Copy Current Gear</span>
+        </button>
+        <button class="button is-fullwidth is-disabled" data-microtip-position="top" role="tooltip" :aria-label="`You have no other ${bisList.job_id} BIS Lists.`" v-else>
+          <span class="icon"><i class="material-icons">content_copy</i></span>
+          <span>Copy Current Gear</span>
+        </button>
       </template>
     </div>
   </div>

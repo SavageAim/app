@@ -5,20 +5,28 @@
     </div>
     <div class="desktop-buttons is-hidden-touch">
       <div class="buttons is-grouped" v-if="userHasPermission">
-        <router-link :to="`../proxies/${member.character.id}/`" class="button is-primary is-outlined">
-          Edit Proxy BIS
+        <router-link :to="`../proxies/${member.character.id}/`" class="button is-primary">
+          <span class="icon-text">
+            <span class="icon"><i class="material-icons">edit</i></span>
+            <span>Edit Proxy BIS</span>
+          </span>
         </router-link>
-        <button class="button is-danger is-outlined" @click="kick">
+        <button class="button is-danger" @click="kick">
+          <span class="icon"><i class="material-icons">delete</i></span>
           <span>Kick From Team</span>
         </button>
       </div>
     </div>
     <div class="touch-buttons is-hidden-desktop">
       <div class="buttons" v-if="userHasPermission">
-        <router-link :to="`../proxies/${member.character.id}/`" class="button is-primary is-outlined is-fullwidth">
-          Edit Proxy BIS
+        <router-link :to="`../proxies/${member.character.id}/`" class="button is-primary is-fullwidth">
+          <span class="icon-text">
+            <span class="icon"><i class="material-icons">edit</i></span>
+            <span>Edit Proxy BIS</span>
+          </span>
         </router-link>
-        <button class="button is-danger is-outlined is-fullwidth" @click="kick">
+        <button class="button is-danger is-fullwidth" @click="kick">
+          <span class="icon"><i class="material-icons">delete</i></span>
           <span>Kick From Team</span>
         </button>
       </div>

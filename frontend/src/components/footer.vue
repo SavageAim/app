@@ -63,14 +63,11 @@ export default class Footer extends Vue {
 .icon-stack {
   position: relative;
 
-  & .heart {
-    z-index: 999;
-  }
-
   & .cup {
     position: absolute;
     top: 0;
     left: 0;
+    z-index: -10;
   }
 }
 

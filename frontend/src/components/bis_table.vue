@@ -92,7 +92,7 @@
           <table class="table is-bordered is-fullwidth gear-table" :class="[`is-${$store.state.user.theme}`]">
             <tbody>
               <tr>
-                <template v-if="list.job === 'paladin'">
+                <template v-if="list.job.name === 'paladin'">
                   <th>Shield</th>
                   <td data-microtip-position="top" role="tooltip" :aria-label="`Current: ${list.current_offhand.name}`" :class="[getColourClass(list.current_offhand, list.bis_offhand)]">{{ list.bis_offhand.name }}</td>
                 </template>
@@ -211,5 +211,8 @@ export default class BISTable extends Vue {
 <style lang="scss">
 td[role=tooltip] {
   background-clip: padding-box;
+}
+table.gear-table:not(:last-child) {
+  margin-bottom: 0;
 }
 </style>

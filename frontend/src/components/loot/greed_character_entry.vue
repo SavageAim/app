@@ -17,9 +17,9 @@
       </div>
     </div>
     <div v-if="userHasPermission" class="list-actions">
-      <button class="button is-success is-loading" v-if="requesting">Give Item</button>
-      <button class="button is-success" @click="openCharacter" v-else-if="entry.greed_lists.length > 0">Select BIS</button>
-      <button class="button is-success" @click="saveWithoutUpdate" v-else>Give Item</button>
+      <button class="button is-info is-loading" v-if="requesting">Give Item</button>
+      <button class="button is-info" @click="openCharacter" v-else-if="entry.greed_lists.length > 0">Select BIS</button>
+      <button class="button is-info" @click="saveWithoutUpdate" v-else>Give Item</button>
     </div>
   </div>
 </template>

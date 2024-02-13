@@ -84,6 +84,7 @@ export interface ProxyCreateErrors {
 
 // Settings errors response
 export interface SettingsErrors {
+  username?: string[]
   theme?: string[]
   notifications?: string[]
   loot_manager_version?: string[]

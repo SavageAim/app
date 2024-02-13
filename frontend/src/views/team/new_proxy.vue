@@ -20,16 +20,22 @@
             <div class="box" id="char-box">
               <CharacterBio :character="character" :displayUnverified="false" />
             </div>
-            <div class="field has-addons">
-              <div class="control is-expanded">
-                <button class="button is-danger is-fullwidth" @click="changeCharacter">Change Character</button>
-              </div>
-              <div class="control is-expanded">
-                <button class="button is-success is-fullwidth" @click="createProxy">Create Proxy</button>
-              </div>
-            </div>
             <p v-for="(error, i) in characterApiErrors" :key="i" class="help is-danger">{{ error }}</p>
           </template>
+        </div>
+        <div class="card-footer" v-if="character !== null">
+          <a class="card-footer-item has-text-success" @click="createProxy">
+            <span class="icon-text">
+              <span class="icon"><i class="material-icons">add</i></span>
+              <span>Create Proxy</span>
+            </span>
+          </a>
+          <a class="card-footer-item" @click="changeCharacter">
+            <span class="icon-text">
+              <span class="icon"><i class="material-icons">cloud_sync</i></span>
+              <span>Change Character</span>
+            </span>
+          </a>
         </div>
       </div>
 

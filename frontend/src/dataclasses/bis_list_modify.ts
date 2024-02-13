@@ -75,6 +75,7 @@ export default class BISListModify {
   }
 
   importBIS(data: ImportResponse): void {
+    if (this.name === '') this.name = data.name
     this.job_id = data.job_id
     this.bis_mainhand_id = data.mainhand
     this.bis_offhand_id = data.offhand

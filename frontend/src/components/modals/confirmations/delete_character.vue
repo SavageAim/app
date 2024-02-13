@@ -35,9 +35,24 @@
       <input class="input" v-model="input" />
     </div>
     <div class="card-footer">
-      <a class="card-footer-item" @click="() => { this.$emit('close') }">Cancel</a>
-      <a class="card-footer-item has-text-danger" v-if="canDelete" @click="deleteCharacter">Delete</a>
-      <p class="card-footer-item disabled-delete" v-else data-microtip-position="top" role="tooltip" aria-label="Please confirm deletion.">Delete</p>
+      <a class="card-footer-item has-text-danger" v-if="canDelete" @click="deleteCharacter">
+        <span class="icon-text">
+          <span class="icon"><i class="material-icons">delete</i></span>
+          <span>Delete</span>
+        </span>
+      </a>
+      <p class="card-footer-item disabled-delete" v-else data-microtip-position="top" role="tooltip" aria-label="Please confirm deletion.">
+        <span class="icon-text">
+          <span class="icon"><i class="material-icons">block</i></span>
+          <span>Delete</span>
+        </span>
+      </p>
+      <a class="card-footer-item has-text-link" @click="() => { this.$emit('close') }">
+        <span class="icon-text">
+          <span class="icon"><i class="material-icons">close</i></span>
+          <span>Cancel</span>
+        </span>
+      </a>
     </div>
   </div>
 </template>
