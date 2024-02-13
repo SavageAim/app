@@ -23,8 +23,18 @@
       </ul>
     </div>
     <div class="card-footer">
-      <a class="card-footer-item" @click="() => { this.$emit('close') }">Cancel</a>
-      <a class="card-footer-item has-text-danger" @click="deleteLoot">Delete</a>
+      <a class="card-footer-item has-text-danger" @click="deleteLoot">
+        <span class="icon-text">
+          <span class="icon"><i class="material-icons">delete</i></span>
+          <span>Delete</span>
+        </span>
+      </a>
+      <a class="card-footer-item has-text-link" @click="() => { this.$emit('close') }">
+        <span class="icon-text">
+          <span class="icon"><i class="material-icons">close</i></span>
+          <span>Cancel</span>
+        </span>
+      </a>
     </div>
   </div>
 </template>

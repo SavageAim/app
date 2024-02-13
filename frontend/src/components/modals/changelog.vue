@@ -12,7 +12,7 @@
     </div>
     <div class="card-content content">
       <h2 class="has-text-primary subtitle">{{ version }}</h2>
-      <div class="divider"><i class="material-icons icon">expand_more</i> UI Changes <i class="material-icons icon">expand_more</i></div>
+      <div class="divider"><i class="material-icons icon">expand_more</i> UI Consistency <i class="material-icons icon">expand_more</i></div>
       <p>
         A bunch of changes have been made to the UI of the site after some feedback.
         <ul>
@@ -22,9 +22,11 @@
           <li>Added icons to most buttons/links. Buttons/links that do similar things will have the same icons, to increase visual consistency.</li>
           <li>Similarly, links and buttons with the same idea will now also be coloured the same.</li>
           <li>The Add New links on the Dashboard have been turned into buttons for more visual consistency.</li>
-          <li>The buttons on the Create Proxy page have been flipped as Delete buttons tend to be on the right on this site. Also, the style has been brought in line with other similar pages.</li>
+          <li>The buttons on the Create Proxy now use a style in line with other similar pages.</li>
+          <li>Confirmation popups with two actions will now always have the confirmation on the left and cancellation on the right. Also, cancel buttons will now be coloured the same as the X button to avoid confusion.</li>
         </ul>
       </p>
+      <p>The main idea of these changes is so; potentially long lists have their "Add New" button at the top, and all similar actions are linked visually.</p>
       <p class="has-text-info">Feedback on these changes would be helpful also, as I want to make the best site I can!</p>
 
       <div class="divider"><i class="material-icons icon">expand_more</i> Other Changes <i class="material-icons icon">expand_more</i></div>

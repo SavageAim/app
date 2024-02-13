@@ -69,7 +69,7 @@
                 <!-- Modal to confirm, leave team -->
                 <a class="card-footer-item has-text-danger" @click="leave">
                   <span class="icon-text">
-                    <span class="icon"><i class="material-icons">not_interested</i></span>
+                    <span class="icon"><i class="material-icons">meeting_room</i></span>
                     <span>Leave Team</span>
                   </span>
                 </a>
@@ -106,7 +106,7 @@
           <!-- Modal to confirm, leave team -->
           <a class="card-footer-item has-text-danger" @click="leave">
             <span class="icon-text">
-              <span class="icon"><i class="material-icons">not_interested</i></span>
+              <span class="icon"><i class="material-icons">meeting_room</i></span>
               <span>Leave Team</span>
             </span>
           </a>

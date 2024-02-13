@@ -19,8 +19,18 @@
       </label>
     </div>
     <footer class="card-footer">
-      <a class="card-footer-item has-text-success" @click="save">Save</a>
-      <a class="card-footer-item has-text-danger" @click="() => { this.$emit('close') }">Cancel</a>
+      <a class="card-footer-item has-text-success" @click="save">
+        <span class="icon-text">
+          <span class="icon"><i class="material-icons">save</i></span>
+          <span>Save</span>
+        </span>
+      </a>
+      <a class="card-footer-item has-text-link" @click="() => { this.$emit('close') }">
+        <span class="icon-text">
+          <span class="icon"><i class="material-icons">close</i></span>
+          <span>Cancel</span>
+        </span>
+      </a>
     </footer>
   </div>
 </template>

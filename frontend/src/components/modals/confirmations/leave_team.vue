@@ -38,12 +38,21 @@
         </div>
       </div>
       <p v-if="details.lead" class="has-text-warning">
-        Leaving the Team will pass Leadership to another Character.
+        Leaving the Team will pass Leadership to another Character (if one exists).
       </p>
     </div>
     <div class="card-footer">
-      <a class="card-footer-item" @click="() => { this.$emit('close') }">Cancel</a>
-      <a class="card-footer-item has-text-danger" @click="leaveTeam">Leave</a>
+      <a class="card-footer-item has-text-danger" @click="leaveTeam">
+        <span class="icon-text">
+          <span class="icon"><i class="material-icons">meeting_room</i></span>
+          <span>Leave</span>
+        </span></a>
+      <a class="card-footer-item has-text-link" @click="() => { this.$emit('close') }">
+        <span class="icon-text">
+          <span class="icon"><i class="material-icons">close</i></span>
+          <span>Cancel</span>
+        </span>
+      </a>
     </div>
   </div>
 </template>
