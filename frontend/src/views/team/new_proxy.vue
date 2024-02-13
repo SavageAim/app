@@ -30,7 +30,7 @@
               <span>Create Proxy</span>
             </span>
           </a>
-          <a class="card-footer-item has-text-danger" @click="changeCharacter">
+          <a class="card-footer-item" @click="changeCharacter">
             <span class="icon-text">
               <span class="icon"><i class="material-icons">cloud_sync</i></span>
               <span>Change Character</span>
