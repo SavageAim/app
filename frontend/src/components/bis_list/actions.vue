@@ -18,7 +18,7 @@
       </template>
 
       <template v-if="!importLoading">
-        <button class="button is-fullwidth is-primary" data-microtip-position="top" role="tooltip" aria-label="Import BIS Gear from Etro.gg" v-if="etroImportable()" @click="etroImport">
+        <button class="button is-fullwidth is-link" data-microtip-position="top" role="tooltip" aria-label="Import BIS Gear from Etro.gg" v-if="etroImportable()" @click="etroImport">
           <span class="icon"><i class="material-icons">cloud_download</i></span>
           <span>Import from Etro</span>
         </button>
@@ -29,14 +29,14 @@
       </template>
       <button v-else class="button is-static is-loading is-fullwidth">Loading data.</button>
 
-      <button class="button is-fullwidth is-primary" data-microtip-position="top" role="tooltip" aria-label="Import Current Gear from Lodestone" @click="lodestoneImport" v-if="!importLoading">
+      <button class="button is-fullwidth is-link" data-microtip-position="top" role="tooltip" aria-label="Import Current Gear from Lodestone" @click="lodestoneImport" v-if="!importLoading">
         <span class="icon"><i class="material-icons">cloud_download</i></span>
         <span>Import from Lodestone</span>
       </button>
       <button v-else class="button is-static is-loading is-fullwidth">Loading data.</button>
 
       <template v-if="!(simple || charIsProxy)">
-        <button class="button is-fullwidth is-primary" data-microtip-position="top" role="tooltip" :aria-label="`Load Current gear from another ${bisList.job_id} BIS List.`" v-if="syncable()" @click="displayLoadModal">
+        <button class="button is-fullwidth is-link" data-microtip-position="top" role="tooltip" :aria-label="`Load Current gear from another ${bisList.job_id} BIS List.`" v-if="syncable()" @click="displayLoadModal">
           <span class="icon"><i class="material-icons">content_copy</i></span>
           <span>Copy Current Gear</span>
         </button>
@@ -173,7 +173,7 @@ export default class Actions extends Vue {
       else {
         const error = await response.json() as ImportError
         if (response.status === 406) {
-          this.$notify({ text: error.message, type: 'is-primary' })
+          this.$notify({ text: error.message, type: 'is-link' })
         }
         else {
           // Only add the "Error while ..." text when it's not for the wrong job error
