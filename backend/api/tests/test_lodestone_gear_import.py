@@ -2,7 +2,7 @@ from io import StringIO
 from django.core.management import call_command
 from django.urls import reverse
 from rest_framework import status
-from api.models import Gear
+from api.models import Gear, Tier, Job
 from .test_base import SavageAimTestCase
 
 
@@ -17,6 +17,11 @@ class LodestoneGearImport(SavageAimTestCase):
         Call the Gear seed command to prepopulate the DB
         """
         call_command('seed', stdout=StringIO())
+
+    def tearDown(self):
+        Gear.objects.all().delete()
+        Tier.objects.all().delete()
+        Job.objects.all().delete()
 
     def test_import(self):
         """
