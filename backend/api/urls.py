@@ -25,6 +25,11 @@ urlpatterns = [
 
     # Lodestone Scraper Hooks
     path('lodestone/<str:character_id>/', views.LodestoneResource.as_view(), name='lodestone_resource'),
+    path(
+        'lodestone/<str:character_id>/import/<str:expected_job>/',
+        views.LodestoneGearImport.as_view(),
+        name='lodestone_gear_import',
+    ),
 
     # Loot
     path('team/<str:team_id>/loot/', views.LootCollection.as_view(), name='loot_collection'),
