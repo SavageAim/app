@@ -68,54 +68,22 @@ class LodestoneScraper(SavageAimTestCase):
             - Ensure the returned data matches what we expect
         """
         expected_data = {
-            'mainhand': {
-                'name': 'Augmented Ironworks Magitek Daggers',
-                'item_level': 130,
+            'gear': {
+                'mainhand': 'Augmented Ironworks Magitek Daggers',
+                'offhand': 'Augmented Ironworks Magitek Daggers',
+                'head': 'Koga Hatsuburi',
+                'body': 'Augmented Ironworks Corselet of Scouting',
+                'hands': 'Koga Tekko',
+                'legs': 'Augmented Ironworks Brais of Scouting',
+                'feet': 'Koga Kyahan',
+                'earrings': 'Menphina\'s Earring',
+                'necklace': 'Aetherial Brass Gorget',
+                'bracelet': 'Dawn Wristguards',
+                'right_ring': 'Brand-new Ring',
+                'left_ring': 'Weathered Ring',
             },
-            'offhand': {
-                'name': 'Augmented Ironworks Magitek Daggers',
-                'item_level': 130,
-            },
-            'head': {
-                'name': 'Koga Hatsuburi',
-                'item_level': 90,
-            },
-            'body': {
-                'name': 'Augmented Ironworks Corselet of Scouting',
-                'item_level': 130,
-            },
-            'hands': {
-                'name': 'Koga Tekko',
-                'item_level': 90,
-            },
-            'legs': {
-                'name': 'Augmented Ironworks Brais of Scouting',
-                'item_level': 130,
-            },
-            'feet': {
-                'name': 'Koga Kyahan',
-                'item_level': 90,
-            },
-            'earrings': {
-                'name': 'Menphina\'s Earring',
-                'item_level': 430,
-            },
-            'necklace': {
-                'name': 'Aetherial Brass Gorget',
-                'item_level': 16,
-            },
-            'bracelet': {
-                'name': 'Dawn Wristguards',
-                'item_level': 18,
-            },
-            'right_ring': {
-                'name': 'Brand-new Ring',
-                'item_level': 30,
-            },
-            'left_ring': {
-                'name': 'Weathered Ring',
-                'item_level': 5,
-            },
+            'max_il': 430,
+            'min_il': 5,
         }
         data = SCRAPER.get_current_gear(ALT_CHAR_ID, 'NIN')
         self.assertDictEqual(data, expected_data)

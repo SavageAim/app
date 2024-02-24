@@ -178,6 +178,8 @@ class LodestoneScraper:
 
         # Parse each of the slots from the website, and turn them into our local copies of gear
         soup = BeautifulSoup(response.content, 'html.parser')
+        max_il = float('-inf')
+        min_il = float('inf')
 
         slot_map = {}
         for slot_name, selectors in self.gearset_json.items():
@@ -190,13 +192,20 @@ class LodestoneScraper:
 
             gear_name = soup.select_one(selectors['NAME']['selector']).getText()
             item_level = int(soup.select_one(selectors['ITEM_LEVEL']['selector']).getText().split(' ')[-1])
-            slot_map[LODESTONE_TO_SA_NAME_MAP[slot_name]] = {
-                'name': gear_name,
-                'item_level': item_level
-            }
+
+            if item_level > max_il:
+                max_il = item_level
+            if item_level < min_il:
+                min_il = item_level
+
+            slot_map[LODESTONE_TO_SA_NAME_MAP[slot_name]] = gear_name
 
         # Handling for non-PLDs
         if expected_job != 'PLD':
             slot_map['offhand'] = slot_map['mainhand']
 
-        return slot_map
+        return {
+            'gear': slot_map,
+            'max_il': max_il,
+            'min_il': min_il,
+        }
