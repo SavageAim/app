@@ -12,33 +12,19 @@
     </div>
     <div class="card-content content">
       <h2 class="has-text-primary subtitle">{{ version }}</h2>
-      <div class="divider"><i class="material-icons icon">expand_more</i> UI Consistency <i class="material-icons icon">expand_more</i></div>
+      <div class="divider"><i class="material-icons icon">expand_more</i> New Features <i class="material-icons icon">expand_more</i></div>
       <p>
-        A bunch of changes have been made to the UI of the site after some feedback.
+        It is now possible to import your current gear from Lodestone when creating/editing BIS Lists!
         <ul>
-          <li>The actions below a Team Member's card will now be rendered directly on the card on Desktop size displays. No more dropdown on Desktop. Icons have also been added to each link to make them stand out.</li>
-          <li>Actions below BIS Lists on a Character page now also have icons, and have been consolidated under an Actions dropdown on smaller screens for consistency with the Team Member cards.</li>
-          <li>Removed padding under BIS List tables for consistent spacing within their cards. Also replaced the large shadow below the header on all cards with a simple border.</li>
-          <li>Added icons to most buttons/links. Buttons/links that do similar things will have the same icons, to increase visual consistency.</li>
-          <li>Similarly, links and buttons with the same idea will now also be coloured the same.</li>
-          <li>The Add New links on the Dashboard have been turned into buttons for more visual consistency.</li>
-          <li>The buttons on the Create Proxy now use a style in line with other similar pages.</li>
-          <li>Confirmation popups with two actions will now always have the confirmation on the left and cancellation on the right. Also, cancel buttons will now be coloured the same as the X button to avoid confusion.</li>
+          <li>If your current gear on Lodestone is not equippable by the Job your BIS List is set to, it will give a message and not make any changes.</li>
         </ul>
       </p>
-      <p>The main idea of these changes is so; potentially long lists have their "Add New" button at the top, and all similar actions are linked visually.</p>
-      <p class="has-text-info">Feedback on these changes would be helpful also, as I want to make the best site I can!</p>
 
-      <div class="divider"><i class="material-icons icon">expand_more</i> Other Changes <i class="material-icons icon">expand_more</i></div>
-      <p>Importing from Etro now populates the BIS List's name field, if it does not already have one.</p>
-      <p>Added an action under BIS Lists on a Character's page to create a copy of the BIS List.</p>
-      <p>Updated the welcome page message for the first time since the site's release.</p>
+      <div class="divider"><i class="material-icons icon">expand_more</i> Continuing UI Consistency <i class="material-icons icon">expand_more</i></div>
+      <p>Colours of Action buttons in BIS List pages have been changed to a darker blue to free-up the lighter blue for specific purposes.</p>
 
-      <div class="divider"><i class="material-icons icon">expand_more</i> Fixes <i class="material-icons icon">expand_more</i></div>
-      <p>The heart from the Kofi logo will no longer be visible on top of dropdowns / tooltips.</p>
-      <p>Tabs with errors are correctly shown in the Settings page.</p>
-      <p>Errors on the Settings page are now cleared when a save is successful.</p>
-
+      <div class="divider"><i class="material-icons icon">expand_more</i> Fixes & Improvements <i class="material-icons icon">expand_more</i></div>
+      <p>Attempting to optimize queries on the Loot Manager page to improve performance!</p>
     </div>
   </div>
 </template>
