@@ -27,8 +27,6 @@ SLOT_MAP = {
     'fingerL': 'left_ring',
     'fingerR': 'right_ring',
 }
-ARMOUR_SLOTS = {'head', 'body', 'hands', 'legs', 'feet'}
-ACCESSORY_SLOTS = {'earrings', 'necklace', 'bracelet', 'left_ring', 'right_ring'}
 
 
 class EtroImport(ImportAPIView):
@@ -88,9 +86,9 @@ class EtroImport(ImportAPIView):
 
         # Loop through each gear slot and fetch the id based off the name
         for slot, item_name in gear_names.items():
-            if slot in ARMOUR_SLOTS:
+            if slot in self.ARMOUR_SLOTS:
                 response[slot] = self._get_gear_id(sa_gear.filter(has_armour=True), item_name)
-            elif slot in ACCESSORY_SLOTS:
+            elif slot in self.ACCESSORY_SLOTS:
                 response[slot] = self._get_gear_id(sa_gear.filter(has_accessories=True), item_name)
             else:
                 response[slot] = self._get_gear_id(sa_gear.filter(has_weapon=True), item_name)

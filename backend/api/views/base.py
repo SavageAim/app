@@ -90,6 +90,9 @@ class ImportAPIView(APIView):
     A further subclass that gives access to a function for doing levenstein stuff.
     """
 
+    ARMOUR_SLOTS = {'head', 'body', 'hands', 'legs', 'feet'}
+    ACCESSORY_SLOTS = {'earrings', 'necklace', 'bracelet', 'left_ring', 'right_ring'}
+
     @staticmethod
     def _get_gear_id(gear_selection: Dict[str, str], item_name: str) -> str:
         """
