@@ -61,12 +61,7 @@ class LodestoneGearImport(ImportAPIView):
             return Response({'message': 'An error occurred connecting to Lodestone.'}, status=400)
         except MismatchedJobError as e:
             return Response(
-                {
-                    'message': (
-                        'Error occurred when attempting to import gear. '
-                        f'Gear was expected to be for "{expected_job}", but "{e.received}" was found.'
-                    )
-                },
+                {'message': f'Expected to import gear for {expected_job}, but found gear for {e.received} instead!'},
                 status=400,
             )
 
