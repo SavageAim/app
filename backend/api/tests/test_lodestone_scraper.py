@@ -1,10 +1,11 @@
 from django.urls import reverse
 from rest_framework import status
 from .test_base import SavageAimTestCase
-from ..lodestone_scraper import CharacterNotFoundError, LodestoneScraper
+from ..lodestone_scraper import CharacterNotFoundError, LodestoneScraper, MismatchedJobError
 
 SCRAPER = LodestoneScraper.get_instance()
 CHAR_ID = '22909725'
+ALT_CHAR_ID = '42935425'
 
 
 class LodestoneScraper(SavageAimTestCase):
@@ -59,3 +60,83 @@ class LodestoneScraper(SavageAimTestCase):
         """
         with self.assertRaises(CharacterNotFoundError):
             SCRAPER.get_character_data('abcde')
+
+    def test_get_current_gear(self):
+        """
+        Test Plan;
+            - Run a gear data pull from my alt that I probably won't play anymore
+            - Ensure the returned data matches what we expect
+        """
+        expected_data = {
+            'mainhand': {
+                'name': 'Augmented Ironworks Magitek Daggers',
+                'item_level': 130,
+            },
+            'offhand': {
+                'name': 'Augmented Ironworks Magitek Daggers',
+                'item_level': 130,
+            },
+            'head': {
+                'name': 'Koga Hatsuburi',
+                'item_level': 90,
+            },
+            'body': {
+                'name': 'Augmented Ironworks Corselet of Scouting',
+                'item_level': 130,
+            },
+            'hands': {
+                'name': 'Koga Tekko',
+                'item_level': 90,
+            },
+            'legs': {
+                'name': 'Augmented Ironworks Brais of Scouting',
+                'item_level': 130,
+            },
+            'feet': {
+                'name': 'Koga Kyahan',
+                'item_level': 90,
+            },
+            'earrings': {
+                'name': 'Menphina\'s Earring',
+                'item_level': 430,
+            },
+            'necklace': {
+                'name': 'Aetherial Brass Gorget',
+                'item_level': 16,
+            },
+            'bracelet': {
+                'name': 'Dawn Wristguards',
+                'item_level': 18,
+            },
+            'right_ring': {
+                'name': 'Brand-new Ring',
+                'item_level': 30,
+            },
+            'left_ring': {
+                'name': 'Weathered Ring',
+                'item_level': 5,
+            },
+        }
+        data = SCRAPER.get_current_gear(ALT_CHAR_ID, 'NIN')
+        self.assertDictEqual(data, expected_data)
+
+    def test_current_gear_pull_from_invalid_character(self):
+        """
+        Test Plan;
+            - Attempt to load data for a character that isn't real
+            - Ensure the function raises the CharacterNotFoundError exception
+        """
+        with self.assertRaises(CharacterNotFoundError):
+            SCRAPER.get_current_gear('abcde', 'abc')
+
+    def test_current_gear_pull_from_unexpected_job(self):
+        """
+        Test Plan;
+            - Load data from alt character but specify a different job
+            - Ensure the function raises the MismatchedJobError exception
+        """
+        try:
+            SCRAPER.get_current_gear(ALT_CHAR_ID, 'MNK')
+            self.fail('gear returned was for MNK')
+        except MismatchedJobError as e:
+            self.assertEqual(e.received, 'ROG NIN')
