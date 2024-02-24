@@ -64,14 +64,17 @@ class LodestoneGearImport(ImportAPIView):
                 {
                     'message': (
                         'Error occurred when attempting to import gear. '
-                        f'Gear was expected to be for {expected_job}, but {e.received} was found.'
+                        f'Gear was expected to be for "{expected_job}", but "{e.received}" was found.'
                     )
                 },
                 status=400,
             )
 
         # Now do Levenstein things for matching found gear to Gear objects
-        filtered_gear = Gear.objects.filter(item_level__gte=data['min_il'], item_level__lte=data['max_il']).values('name', 'id')
+        filtered_gear = Gear.objects.filter(
+            item_level__gte=data['min_il'],
+            item_level__lte=data['max_il'],
+        ).values('name', 'id')
         response = {
             'job_id': expected_job,
             'min_il': data['min_il'],
