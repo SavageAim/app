@@ -37,6 +37,7 @@ class BISListManager(models.Manager):
             'current_offhand',
             'current_right_ring',
             'job',
+            'owner',
         )
 
 
