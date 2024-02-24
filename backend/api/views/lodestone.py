@@ -60,10 +60,8 @@ class LodestoneGearImport(ImportAPIView):
         except LodestoneError:
             return Response({'message': 'An error occurred connecting to Lodestone.'}, status=400)
         except MismatchedJobError as e:
-            return Response(
-                {'message': f'Expected to import gear for {expected_job}, but found gear for {e.received} instead!'},
-                status=400,
-            )
+            msg = f'Expected to import gear for "{expected_job}", but found gear for "{e.received}" instead!'
+            return Response({'message': msg}, status=406)
 
         # Now do Levenstein things for matching found gear to Gear objects
         filtered_gear = Gear.objects.filter(

@@ -73,10 +73,10 @@ class LodestoneGearImport(SavageAimTestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
         # Job ID doesn't match gear
-        url = reverse('api:lodestone_gear_import', kwargs={'character_id': '22909725', 'expected_job': 'PLD'})
+        url = reverse('api:lodestone_gear_import', kwargs={'character_id': '22909725', 'expected_job': 'RDM'})
         response = self.client.get(url)
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.status_code, status.HTTP_406_NOT_ACCEPTABLE)
         self.assertEqual(
             response.json()['message'],
-            'Error occurred when attempting to import gear. Gear was expected to be for "PLD", but "SCH" was found.',
+            'Expected to import gear for "RDM", but found gear for "PLD" instead!',
         )

@@ -172,7 +172,13 @@ export default class Actions extends Vue {
       }
       else {
         const error = await response.json() as ImportError
-        this.$notify({ text: `Error while importing Lodestone gear; ${error.message}`, type: 'is-danger' })
+        if (response.status === 406) {
+          this.$notify({ text: error.message, type: 'is-primary' })
+        }
+        else {
+          // Only add the "Error while ..." text when it's not for the wrong job error
+          this.$notify({ text: `Error while importing Lodestone gear; ${error.message}`, type: 'is-danger' })
+        }
       }
     }
     catch (e) {
