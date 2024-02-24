@@ -68,13 +68,6 @@ class LootCollection(APIView):
         # Maintain a mapping of character greed lists
         greed_lists = {}
 
-        # Get all lists out in one go and store them
-        bis_map = {}
-        ids = obj.members.values_list('character_id', flat=True)
-        for bis_list in BISList.objects.with_all_relations().filter(owner_id__in=ids):
-            bis_map.setdefault(bis_list.owner_id, [])
-            bis_map[bis_list.owner.id].append(bis_list)
-
         # Store the name of the gear from the raid tier
         raid_gear_name = obj.tier.raid_gear_name
 
@@ -82,7 +75,7 @@ class LootCollection(APIView):
         for member in obj.members.all():
             greed_lists[member.id] = {}
             # Loop through the member's greed BIS Lists
-            for bis_list in bis_map[member.character.id]:
+            for bis_list in BISList.objects.with_all_relations().filter(owner=member.character):
                 for slot in self.AUTOMATED_SLOTS:
                     greed_lists[member.id].setdefault(slot, [])
 
