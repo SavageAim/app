@@ -5,12 +5,11 @@ Given an etro id, convert it into a format that uses Savage Aim ids
 from typing import Dict
 # lib
 import coreapi
-import jellyfish
-from rest_framework.views import APIView
 from rest_framework.request import Request
 from rest_framework.response import Response
 # local
 from api.models import Gear
+from api.views.base import ImportAPIView
 
 
 # Map names of slots from etro to savage aim
@@ -32,24 +31,10 @@ ARMOUR_SLOTS = {'head', 'body', 'hands', 'legs', 'feet'}
 ACCESSORY_SLOTS = {'earrings', 'necklace', 'bracelet', 'left_ring', 'right_ring'}
 
 
-class EtroImport(APIView):
+class EtroImport(ImportAPIView):
     """
     Import an etro gearset using coreapi and levenshtein distance
     """
-
-    @staticmethod
-    def _get_gear_id(gear_selection: Dict[str, str], item_name: str) -> str:
-        """
-        Find the id of the gear piece that matches the name closest
-        """
-        diff = float('inf')
-        gear_id = None
-        for details in gear_selection:
-            curr_diff = jellyfish.levenshtein_distance(details['name'], item_name)
-            if curr_diff < diff:
-                diff = curr_diff
-                gear_id = details['id']
-        return gear_id
 
     def get(self, request: Request, id: str) -> Response:
         """

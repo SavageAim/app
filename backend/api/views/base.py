@@ -1,5 +1,6 @@
 from typing import Any, Dict, Optional
 # lib
+import jellyfish
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
 from django.core.exceptions import ValidationError
@@ -82,3 +83,23 @@ class APIView(RFView):
     def _send_to_team(self, team: Team, event: Dict[str, Any]):
         if CHANNEL_LAYER is not None:
             async_to_sync(CHANNEL_LAYER.group_send)(f'team-updates-{team.id}', event)
+
+
+class ImportAPIView(APIView):
+    """
+    A further subclass that gives access to a function for doing levenstein stuff.
+    """
+
+    @staticmethod
+    def _get_gear_id(gear_selection: Dict[str, str], item_name: str) -> str:
+        """
+        Find the id of the gear piece that matches the name closest
+        """
+        diff = float('inf')
+        gear_id = None
+        for details in gear_selection:
+            curr_diff = jellyfish.levenshtein_distance(details['name'], item_name)
+            if curr_diff < diff:
+                diff = curr_diff
+                gear_id = details['id']
+        return gear_id
