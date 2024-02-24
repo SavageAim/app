@@ -82,12 +82,11 @@ class LodestoneGearImport(ImportAPIView):
         }
         # Loop through each gear slot and fetch the id based off the name
         for slot, item_name in data['gear'].items():
-            key = f'current_{slot}'
             if slot in self.ARMOUR_SLOTS:
-                response[key] = self._get_gear_id(filtered_gear.filter(has_armour=True), item_name)
+                response[slot] = self._get_gear_id(filtered_gear.filter(has_armour=True), item_name)
             elif slot in self.ACCESSORY_SLOTS:
-                response[key] = self._get_gear_id(filtered_gear.filter(has_accessories=True), item_name)
+                response[slot] = self._get_gear_id(filtered_gear.filter(has_accessories=True), item_name)
             else:
-                response[key] = self._get_gear_id(filtered_gear.filter(has_weapon=True), item_name)
+                response[slot] = self._get_gear_id(filtered_gear.filter(has_weapon=True), item_name)
 
         return Response(response)
