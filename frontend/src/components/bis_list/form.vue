@@ -18,6 +18,7 @@
       v-on:close="$emit('close')"
       v-on:import-bis-data="importBISData"
       v-on:import-current-data="importCurrentData"
+      v-on:import-current-lodestone-gear="importCurrentLodestoneGear"
 
       v-if="renderDesktop"
     />
@@ -41,6 +42,7 @@
       v-on:close="$emit('close')"
       v-on:import-bis-data="importBISData"
       v-on:import-current-data="importCurrentData"
+      v-on:import-current-lodestone-gear="importCurrentLodestoneGear"
       :class="[renderDesktop ? 'is-hidden-desktop' : '']"
     />
   </div>
@@ -53,7 +55,7 @@ import BISListMobileForm from '@/components/bis_list/mobile_form.vue'
 import BISListModify from '@/dataclasses/bis_list_modify'
 import BISList from '@/interfaces/bis_list'
 import { CharacterDetails } from '@/interfaces/character'
-import { ImportResponse } from '@/interfaces/imports'
+import { EtroImportResponse, LodestoneImportResponse } from '@/interfaces/imports'
 import { BISListErrors } from '@/interfaces/responses'
 
 @Component({
@@ -117,7 +119,7 @@ export default class BISListForm extends Vue {
     this.internalErrors = errors
   }
 
-  importBISData(data: ImportResponse): void {
+  importBISData(data: EtroImportResponse): void {
     if (data.min_il < this.minIl) this.minIl = data.min_il
     if (data.max_il > this.maxIl) this.maxIl = data.max_il
     Vue.nextTick(() => {
@@ -137,6 +139,16 @@ export default class BISListForm extends Vue {
       this.bisList.importCurrent(data)
       this.$forceUpdate()
       this.$notify({ text: 'Successfully imported Current Gear!', type: 'is-success' })
+    })
+  }
+
+  importCurrentLodestoneGear(data: LodestoneImportResponse): void {
+    if (data.min_il < this.minIl) this.minIl = data.min_il
+    if (data.max_il > this.maxIl) this.maxIl = data.max_il
+    Vue.nextTick(() => {
+      this.bisList.importCurrentLodestoneGear(data)
+      this.$forceUpdate()
+      this.$notify({ text: 'Successfully imported Current Gear from Lodestone!', type: 'is-success' })
     })
   }
 
