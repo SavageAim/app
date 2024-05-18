@@ -4,7 +4,7 @@ services:
   database:
     image: "postgres:13"
     volumes:
-      - database-data:/var/lib/postgresql/data/ # persist data even if container shuts downvolumes:
+      - ./database-data:/var/lib/postgresql/data/ # persist data even if container shuts downvolumes:
     ports:
       - '5432:5432'
     environment:
@@ -21,6 +21,3 @@ services:
     image: 'redis:latest'
     ports:
       - '6379:6379'
-
-volumes:
-  database-data: # named volumes can be managed easier using docker-compose

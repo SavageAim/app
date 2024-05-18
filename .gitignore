@@ -186,3 +186,5 @@ pnpm-debug.log*
 
 # Ignore changelog image directory
 changelogs/*.png
+
+./database-data/*
