@@ -8,7 +8,7 @@ from bs4 import BeautifulSoup
 
 META_JSON_URL = 'https://raw.githubusercontent.com/xivapi/lodestone-css-selectors/main/meta.json'
 CHARACTER_JSON_URL = 'https://raw.githubusercontent.com/xivapi/lodestone-css-selectors/main/profile/character.json'
-GEARSET_JSON_URL = 'https://raw.githubusercontent.com/freyamade/lodestone-css-selectors/main/profile/gearset.json'
+GEARSET_JSON_URL = 'https://raw.githubusercontent.com/xivapi/lodestone-css-selectors/main/profile/gearset.json'
 CHARACTER_URL = 'https://eu.finalfantasyxiv.com/lodestone/character/{character_id}'
 LOGGER = logging.getLogger(__name__)
 
