@@ -45,7 +45,6 @@
           <input class="input" :class="{'is-danger': errors.external_link !== undefined}" v-model="bisList.external_link" placeholder="i.e. Etro, Ariyala, etc" />
         </div>
         <p v-if="errors.external_link !== undefined" class="help is-danger">{{ errors.external_link[0] }}</p>
-        <p class="help is-info" v-else>Etro links can now be imported automatically!</p>
       </div>
     </div>
   </div>

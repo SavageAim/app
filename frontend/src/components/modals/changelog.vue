@@ -12,13 +12,19 @@
     </div>
     <div class="card-content content">
       <h2 class="has-text-primary subtitle">{{ version }}</h2>
-      <div class="divider"><i class="material-icons icon">expand_more</i> Import from Lodestone <i class="material-icons icon">expand_more</i></div>
-      <p>The ability to import your currently equipped gear from Lodestone has been added!</p>
-      <p>This only works if the currently readable version of Lodestone has gear on your character that is the same job as the one your BIS is for.</p>
-      <p class="has-text-info">Please note that due to Lodestone caching, job changes on Lodestone may take a few hours to appear!</p>
+      <div class="divider"><i class="material-icons icon">expand_more</i> New Features <i class="material-icons icon">expand_more</i></div>
+      <p>
+        It is now possible to import your current gear from Lodestone when creating/editing BIS Lists!
+        <ul>
+          <li>If your current gear on Lodestone is not equippable by the Job your BIS List is set to, it will give a message and not make any changes.</li>
+        </ul>
+      </p>
 
-      <div class="divider"><i class="material-icons icon">expand_more</i> Other Updates <i class="material-icons icon">expand_more</i></div>
-      <p>Improved the database interaction for calculating required loot, so the page should now load faster!</p>
+      <div class="divider"><i class="material-icons icon">expand_more</i> Continuing UI Consistency <i class="material-icons icon">expand_more</i></div>
+      <p>Colours of Action buttons in BIS List pages have been changed to a darker blue to free-up the lighter blue for specific purposes.</p>
+
+      <div class="divider"><i class="material-icons icon">expand_more</i> Fixes & Improvements <i class="material-icons icon">expand_more</i></div>
+      <p>Attempting to optimize queries on the Loot Manager page to improve performance!</p>
     </div>
   </div>
 </template>
