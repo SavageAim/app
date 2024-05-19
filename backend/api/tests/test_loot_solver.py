@@ -309,3 +309,45 @@ class LootTestSuite(SavageAimTestCase):
         expected['head'].remove(c1.id)
         expected['tome-armour-augment'].remove(c1.id)
         expected['tome-accessory-augment'].remove(c1.id)
+
+    def test_prio_bracket_generation(self):
+        """
+        Create some test maps as subsets of the expected data from the last test, and get the expected priority brackets generated
+        """
+        first_floor_requirements = {
+            'earrings': [5, 6],
+            'necklace': [1, 2, 3, 4, 7, 8],
+            'bracelet': [3, 4, 5, 6],
+            'ring': [5, 6, 7, 8],
+        }
+        second_floor_requirements = {
+            'head': [1, 2, 3, 5, 7, 8],
+            'hands': [1, 2, 7],
+            'feet': [3, 4, 5, 6, 8],
+            'tome-accessory-augment': [1, 1, 1, 2, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 7, 8, 8, 8],
+        }
+        third_floor_requirements = {
+            'body': [3, 4, 5, 6, 8],
+            'legs': [1, 2, 7],
+            'tome-armour-augment': [1, 1, 2, 2, 3, 3, 4, 4, 4, 5, 5, 6, 6, 6, 7, 7, 8, 8]
+        }
+        ordering = [5, 6, 7, 8, 1, 2, 3, 4]
+
+        first_floor_expected = {
+            3: [5, 6],
+            2: [7, 8, 3, 4],
+            1: [1, 2],
+        }
+        second_floor_expected = {
+            5: [7, 8, 1, 2],
+            4: [5, 3],
+            3: [6, 4],
+        }
+        third_floor_expected = {
+            4: [6, 4],
+            3: [5, 7, 8, 1, 2, 3],
+        }
+
+        self.assertDictEqual(LootSolver._generate_priority_brackets(first_floor_requirements, ordering), first_floor_expected)
+        self.assertDictEqual(LootSolver._generate_priority_brackets(second_floor_requirements, ordering), second_floor_expected)
+        self.assertDictEqual(LootSolver._generate_priority_brackets(third_floor_requirements, ordering), third_floor_expected)

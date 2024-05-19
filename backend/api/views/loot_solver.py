@@ -5,6 +5,7 @@ Get the loot history and required for a Team.
 Record new loot and update BIS Lists accordingly.
 """
 # stdlib
+import asyncio
 from collections import defaultdict
 from datetime import datetime
 from typing import Dict, List
@@ -94,6 +95,29 @@ class LootSolver(APIView):
                     requirements[token].append(member.id)
         return requirements
 
+    @staticmethod
+    def _generate_priority_brackets(requirements: Dict[str, List[int]], id_ordering: List[int]) -> Dict[int, List[int]]:
+        """
+        Given the requirements found by the above function, generate a new dictionary that gives priority brackets for items.
+        This will be used by the individual floor functions that will want to use it on subsets of the overall requirements map.
+        """
+        # Firstly, turn data into map of ids to how many items they need
+        items_needed = defaultdict(int)
+        for ids in requirements.values():
+            for id in ids:
+                items_needed[id] += 1
+
+        # Turn this into our prio bracket: name list with names sorted in required order
+        prio_brackets = defaultdict(list)
+        ordered_ids = sorted(items_needed, key=lambda id: id_ordering.index(id))
+        for ids in ordered_ids:
+            needed = items_needed[ids]
+            prio_brackets[needed].append(ids)
+
+        return dict(prio_brackets)
+
+    # async _get_first_floor_data(requirements: Dict[str, List[int]])
+
     async def get(self, request: Request, team_id: str) -> Response:
         """
         Fetch the current solver information for the team
@@ -103,8 +127,6 @@ class LootSolver(APIView):
                 'tier',
             ).prefetch_related(
                 'members',
-                'members__character',
-                'members__character__bis_lists',
                 'members__bis_list',
                 'members__bis_list__bis_body',
                 'members__bis_list__bis_bracelet',
@@ -134,105 +156,33 @@ class LootSolver(APIView):
             ).get(pk=team_id, members__character__user=request.user)
         except (Team.DoesNotExist, ValidationError):
             return Response(status=404)
+        
+        # Generate the ordering of IDs based on the decided pattern; DPS > Tanks > Healer
+        # Natural DPS ordering is Melee > Ranged > Caster
+        id_ordering = [
+            *obj.members.filter(bis_list__job__role='dps').values_list('id', flatten=True),
+            *obj.members.filter(bis_list__job__role='tank').values_list('id', flatten=True),
+            *obj.members.filter(bis_list__job__role='heal').values_list('id', flatten=True),
+        ]
 
+        # Generate the requirements map for the Team as it stands
         requirements = self._get_requirements_map(obj)
 
-        # Build and return the response
-        return Response()
+        # Gather the loot details for the Team so far so we can calculate things like mounts needed or how many clears have already happened
+        history = Loot.objects.filter(team=obj, tier=obj.tier)
 
-    def post(self, request: Request, team_id: str) -> Response:
-        """
-        Attempt to create new Loot entries.
-        Any updates sent here will also update Character's BIS Lists
-        """
-        team = self._get_team_with_permission(request, team_id, PERMISSION_NAME)
-        if team is None:
-            return Response(status=404)
-
-        # Firstly we validate the sent data
-        serializer = LootCreateSerializer(data=request.data, context={'team': team})
-        serializer.is_valid(raise_exception=True)
-        serializer.save(team=team, tier=team.tier)
-
-        # Send WS updates to the Team channel
-        self._send_to_team(team, {'type': 'loot', 'id': str(team.id)})
-
-        return Response({'id': serializer.instance.pk}, status=201)
-
-    def delete(self, request: Request, team_id: str) -> Response:
-        """
-        Remove Loot entries from the Team's history.
-        Entries to delete are specified in the request body.
-        """
-        team = self._get_team_with_permission(request, team_id, PERMISSION_NAME)
-        if team is None:
-            return Response(status=404)
-
-        ids = request.data.get('items', [])
-        Loot.objects.filter(team=team, pk__in=ids).delete()
-
-        # Send WS updates to the Team channel
-        self._send_to_team(team, {'type': 'loot', 'id': str(team.id)})
-
-        return Response(status=204)
-
-
-class LootWithBIS(APIView):
-    """
-    Create loot entries and also update BIS lists.
-    Has stricter serializer since it affects two models instead of one
-    """
-
-    def post(self, request: Request, team_id: str) -> Response:
-        """
-        Attempt to create new Loot entries.
-        Any updates sent here will also update Character's BIS Lists
-        """
-        team = self._get_team_with_permission(request, team_id, PERMISSION_NAME)
-        if team is None:
-            return Response(status=404)
-
-        # Firstly we validate the sent data
-        serializer = LootCreateWithBISSerializer(data=request.data, context={'team': team})
-        serializer.is_valid(raise_exception=True)
-
-        # If the data is valid, we want to create a Loot entry but also update some BIS Lists automagically.
-        greed_bis_id = serializer.validated_data.pop('greed_bis_id', None)
-        loot = Loot.objects.create(
-            obtained=datetime.today(),
-            team=team,
-            tier=team.tier,
-            **serializer.validated_data,
+        # Run the four functions async, gather them all up and build up a map for the response
+        first, second, third, fourth = asyncio.gather(
+            self._get_first_floor_data(requirements, history, id_ordering),
+            self._get_second_floor_data(requirements, history, id_ordering),
+            self._get_third_floor_data(requirements, history, id_ordering),
+            self._get_fourth_floor_data(requirements, history, id_ordering),
         )
 
-        # Update BIS Lists
-        list_id: int
-        if serializer.validated_data['greed']:
-            # Get the ID of BIS List to update
-            list_id = greed_bis_id
-        else:
-            list_id = team.members.get(pk=serializer.validated_data['member_id']).bis_list_id
-
-        item = serializer.validated_data['item']
-        bis = BISList.objects.get(pk=list_id)
-        # If it's ring, figure out which ring needs to be updated
-        if item == 'ring':
-            if bis.bis_right_ring.name == team.tier.raid_gear_name:
-                item = 'right_ring'
-            else:
-                item = 'left_ring'
-        # If we just copy bis_item onto current_item that will avoid any checking we have to do :D
-        bis_item = getattr(bis, f'bis_{item}')
-        setattr(bis, f'current_{item}', bis_item)
-        if item == 'mainhand':
-            # Set the offhand as well
-            bis.current_offhand = bis_item
-        bis.save()
-
-        # Send a notification
-        notifier.loot_tracker_update(bis, team)
-
-        # Send WS updates to the Team channel
-        self._send_to_team(team, {'type': 'loot', 'id': str(team.id)})
-
-        return Response({'id': loot.pk}, status=201)
+        # Build and return the response
+        return Response({
+            'first_floor': first,
+            'second_floor': second,
+            'third_floor': third,
+            'fourth_floor': fourth,
+        })
