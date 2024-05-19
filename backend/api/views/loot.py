@@ -5,8 +5,8 @@ Get the loot history and required for a Team.
 Record new loot and update BIS Lists accordingly.
 """
 # stdlib
-from typing import Dict, List
 from datetime import datetime
+from typing import Dict, List
 # lib
 from django.core.exceptions import ValidationError
 from django.db.models import QuerySet
@@ -68,6 +68,7 @@ class LootCollection(APIView):
         # Maintain a mapping of character greed lists
         greed_lists = {}
 
+        # Store the name of the gear from the raid tier
         raid_gear_name = obj.tier.raid_gear_name
 
         # Loop through every member of the team.
@@ -193,13 +194,20 @@ class LootCollection(APIView):
         """
         response = {}
 
+        # Maintain a mapping of member_id to a set of slots they have already needed
+        already_given = {}
+        for entry in loot.filter(item__in=self.HISTORY_SLOTS, greed=False):
+            already_given.setdefault(entry.member_id, set())
+            already_given[entry.member_id].add(entry.item)
+
         for slot in self.HISTORY_SLOTS:
             slot_data = {'need': [], 'greed': []}
+
             for member in obj.members.all():
                 current = member.bis_list.current_mainhand
                 # Check if the slot has already been claimed by the current member
                 # If they have retrieved a 'need' token already, they don't need it again
-                if not loot.filter(member=member, item=slot, greed=False).exists():
+                if slot not in already_given.get(member.id, set()):
                     slot_data['need'].append({
                         'member_id': member.id,
                         'character_name': member.character.display_name,
@@ -229,7 +237,33 @@ class LootCollection(APIView):
             ).prefetch_related(
                 'members',
                 'members__character',
+                'members__character__bis_lists',
                 'members__bis_list',
+                'members__bis_list__bis_body',
+                'members__bis_list__bis_bracelet',
+                'members__bis_list__bis_earrings',
+                'members__bis_list__bis_feet',
+                'members__bis_list__bis_hands',
+                'members__bis_list__bis_head',
+                'members__bis_list__bis_left_ring',
+                'members__bis_list__bis_legs',
+                'members__bis_list__bis_mainhand',
+                'members__bis_list__bis_necklace',
+                'members__bis_list__bis_offhand',
+                'members__bis_list__bis_right_ring',
+                'members__bis_list__current_body',
+                'members__bis_list__current_bracelet',
+                'members__bis_list__current_earrings',
+                'members__bis_list__current_feet',
+                'members__bis_list__current_hands',
+                'members__bis_list__current_head',
+                'members__bis_list__current_left_ring',
+                'members__bis_list__current_legs',
+                'members__bis_list__current_mainhand',
+                'members__bis_list__current_necklace',
+                'members__bis_list__current_offhand',
+                'members__bis_list__current_right_ring',
+                'members__bis_list__job',
             ).get(pk=team_id, members__character__user=request.user)
         except (Team.DoesNotExist, ValidationError):
             return Response(status=404)

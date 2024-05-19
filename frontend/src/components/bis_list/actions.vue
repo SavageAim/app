@@ -18,7 +18,7 @@
       </template>
 
       <template v-if="!importLoading">
-        <button class="button is-fullwidth is-primary" data-microtip-position="top" role="tooltip" aria-label="Import BIS Gear from Etro.gg" v-if="importable()" @click="etroImport">
+        <button class="button is-fullwidth is-link" data-microtip-position="top" role="tooltip" aria-label="Import BIS Gear from Etro.gg" v-if="etroImportable()" @click="etroImport">
           <span class="icon"><i class="material-icons">cloud_download</i></span>
           <span>Import from Etro</span>
         </button>
@@ -29,8 +29,14 @@
       </template>
       <button v-else class="button is-static is-loading is-fullwidth">Loading data.</button>
 
+      <button class="button is-fullwidth is-link" data-microtip-position="top" role="tooltip" aria-label="Import Current Gear from Lodestone" @click="lodestoneImport" v-if="!importLoading">
+        <span class="icon"><i class="material-icons">cloud_download</i></span>
+        <span>Import from Lodestone</span>
+      </button>
+      <button v-else class="button is-static is-loading is-fullwidth">Loading data.</button>
+
       <template v-if="!(simple || charIsProxy)">
-        <button class="button is-fullwidth is-primary" data-microtip-position="top" role="tooltip" :aria-label="`Load Current gear from another ${bisList.job_id} BIS List.`" v-if="syncable()" @click="displayLoadModal">
+        <button class="button is-fullwidth is-link" data-microtip-position="top" role="tooltip" :aria-label="`Load Current gear from another ${bisList.job_id} BIS List.`" v-if="syncable()" @click="displayLoadModal">
           <span class="icon"><i class="material-icons">content_copy</i></span>
           <span>Copy Current Gear</span>
         </button>
@@ -57,7 +63,7 @@ import BISListModify from '@/dataclasses/bis_list_modify'
 import BISList from '@/interfaces/bis_list'
 import { CharacterDetails } from '@/interfaces/character'
 import { CreateResponse, BISListErrors } from '@/interfaces/responses'
-import { ImportResponse, ImportError } from '@/interfaces/imports'
+import { EtroImportResponse, ImportError, LodestoneImportResponse } from '@/interfaces/imports'
 
 @Component
 export default class Actions extends Vue {
@@ -94,6 +100,10 @@ export default class Actions extends Vue {
     return `/backend/api/import/etro/${match[1]}/`
   }
 
+  get lodestoneImportUrl(): string {
+    return `/backend/api/lodestone/${this.character.lodestone_id}/import`
+  }
+
   get saveText(): string {
     if (this.create) return 'Create'
     return 'Save'
@@ -105,7 +115,7 @@ export default class Actions extends Vue {
   }
 
   @Watch('bisList.external_link', { deep: true })
-  importable(): boolean {
+  etroImportable(): boolean {
     return this.importPattern.exec(this.bisList.external_link || '') !== null
   }
 
@@ -134,7 +144,7 @@ export default class Actions extends Vue {
       const response = await fetch(url)
       if (response.ok) {
         // Handle the import
-        const data = await response.json() as ImportResponse
+        const data = await response.json() as EtroImportResponse
         this.$emit('import-bis-data', data)
       }
       else {
@@ -144,6 +154,35 @@ export default class Actions extends Vue {
     }
     catch (e) {
       this.$notify({ text: `Error ${e} when attempting to import Etro data.`, type: 'is-danger' })
+      Sentry.captureException(e)
+    }
+    finally {
+      this.importLoading = false
+    }
+  }
+
+  async lodestoneImport(): Promise<void> {
+    this.importLoading = true
+    try {
+      const response = await fetch(`${this.lodestoneImportUrl}/${this.bisList.job_id}`)
+      if (response.ok) {
+        // Handle the import
+        const data = await response.json() as LodestoneImportResponse
+        this.$emit('import-current-lodestone-gear', data)
+      }
+      else {
+        const error = await response.json() as ImportError
+        if (response.status === 406) {
+          this.$notify({ text: error.message, type: 'is-link' })
+        }
+        else {
+          // Only add the "Error while ..." text when it's not for the wrong job error
+          this.$notify({ text: `Error while importing Lodestone gear; ${error.message}`, type: 'is-danger' })
+        }
+      }
+    }
+    catch (e) {
+      this.$notify({ text: `Error ${e} when attempting to import Lodestone data.`, type: 'is-danger' })
       Sentry.captureException(e)
     }
     finally {
