@@ -5,7 +5,6 @@ Get the loot history and required for a Team.
 Record new loot and update BIS Lists accordingly.
 """
 # stdlib
-import asyncio
 from collections import defaultdict
 from datetime import datetime
 from typing import Dict, List, Tuple, Union
@@ -27,7 +26,7 @@ from api.serializers import (
 
 Requirements = Dict[str, List[int]]
 PrioBrackets = Dict[int, List[int]]
-HandoutData = Dict[str, Union[str, bool]]
+HandoutData = Dict[str, Union[str, bool, None]]
 
 
 class LootSolver(APIView):
@@ -53,21 +52,12 @@ class LootSolver(APIView):
 
     ARMOUR = {'head', 'body', 'hands', 'legs', 'feet'}
 
-    FIRST_FLOOR_SLOTS = {'earrings', 'necklace', 'bracelet', 'ring'}
-    SECOND_FLOOR_SLOTS = {'head', 'hands', 'feet', 'tome-accessory-augment'}
-    THIRD_FLOOR_SLOTS = {'body', 'legs', 'tome-armour-augment'}
-
-    def _get_gear_data(self, obj: Team) -> Dict[str, List[Dict[str, str]]]:
-        """
-        An attempt at improving the original loot response with less DB hits + waiting required.
-        """
-        pass
-
-    def _get_history_loot_data(self, obj: Team, loot: QuerySet) -> Dict[str, List[Dict[str, str]]]:
-        """
-        A method for retrieving the loot items that are checked purely by the history data
-        """
-        pass
+    FIRST_FLOOR_SLOTS = ['earrings', 'necklace', 'bracelet', 'ring']
+    SECOND_FLOOR_SLOTS = ['head', 'hands', 'feet', 'tome-accessory-augment']
+    THIRD_FLOOR_SLOTS = ['body', 'legs', 'tome-armour-augment', ]
+    FIRST_FLOOR_TOKENS = 3
+    SECOND_FLOOR_TOKENS = 4
+    THIRD_FLOOR_TOKENS = 4
 
     @staticmethod
     def _get_requirements_map(team: Team) -> Requirements:
@@ -121,9 +111,9 @@ class LootSolver(APIView):
             prio_brackets[needed].append(ids)
 
         return dict(prio_brackets)
-    
+
     @staticmethod
-    def _get_floor_prio_and_clear_count(requirements: Requirements, history: QuerySet[Loot], slots: List[str]) -> Tuple[int, PrioBrackets]:
+    def _get_floor_prio_and_clear_count(requirements: Requirements, history: QuerySet[Loot], slots: List[str], id_order: List[int]) -> Tuple[int, PrioBrackets]:
         """
         Turn a requirements map and history into the priority bracket information, along with how many clears have already been recorded for the fight.
         """
@@ -131,18 +121,120 @@ class LootSolver(APIView):
             slot: requirements.get(slot, [])
             for slot in slots
         }
-        clears = len(set(history.filter(item__in=slots).values_list('item', flat=True)))
-        return clears, floor_requirements
+        clears = len(set(history.filter(item__in=slots).values_list('obtained', flat=True)))
+        prio_brackets = LootSolver._generate_priority_brackets(floor_requirements, id_order)
+        return clears, prio_brackets
 
-    async def _get_first_floor_data(self, requirements: Requirements, history: QuerySet[Loot], id_order: List[int]) -> List[HandoutData]:
+    @staticmethod
+    def _get_handout_data(slots: List[str], requirements: Requirements, prio_brackets: PrioBrackets, weeks_per_token: int, weeks_cleared) -> List[HandoutData]:
+        """
+        Do the algorithm for gathering handout information
+        """
+        weeks = 0
+        handouts = []
+        remove_slots = slots.copy()
+        remove_slots.reverse()
+        while len(prio_brackets) > 0:
+            weeks += 1
+            week_data = {'token': False}
+            # Run through the slots
+            for slot in slots:
+                # Check the prio brackets in descending order
+                assignee = None
+                for check_prio in sorted(prio_brackets, key=lambda prio: -prio):
+                    # Run through the names and find the highest prio assignee
+                    for check_id in prio_brackets.get(check_prio, []):
+                        if check_id in requirements.get(slot, []):
+                            assignee = check_id
+                            requirements[slot].remove(assignee)
+                            break
+
+                    if assignee is not None:
+                        break
+                week_data[slot] = assignee
+
+                if assignee is None:
+                    continue
+
+                # Reduce the requirement number of the person and add them to the end of the list
+                new_prio = check_prio - 1
+                prio_brackets[check_prio].remove(assignee)
+                if prio_brackets[check_prio] == []:
+                    # If this empties the list, destroy it
+                    prio_brackets.pop(check_prio, None)
+                if new_prio > 0:
+                    # If the assignee's new prio (number of items they need) isn't 0, add them to the lower prio
+                    try:
+                        prio_brackets[new_prio].append(assignee)
+                    except KeyError:
+                        # Defaultdict doesn't re-default if the list is removed
+                        prio_brackets[new_prio] = [assignee]
+
+            # Add the week data to the handouts list
+            handouts.append(week_data)
+
+            # Lastly, if weeks % token_count == 0, reduce everyone's requirement by 1
+            if weeks % weeks_per_token == 0:
+                for priority in sorted(prio_brackets, key=lambda prio: prio):
+                    prio_brackets[priority - 1] = prio_brackets[priority]
+
+                    # Need to also remove a loot item for everyone in the priority bracket to keep the requirements info in check
+                    for member_id in prio_brackets[priority]:
+                        # Reverse slots so that we always pop tokens if possible
+                        for slot in remove_slots:
+                            try:
+                                requirements[slot].remove(member_id)
+                                break
+                            except ValueError:
+                                # Keep searching until we find one
+                                pass
+
+                # Remove the 0 key and the highest key because that will have been duplicated
+                prio_brackets.pop(0, None)
+                try:
+                    prio_brackets.pop(max(prio_brackets.keys()), None)
+                except ValueError:
+                    # 0 is also the max and we removed it?
+                    pass
+                week_data['token'] = True
+
+        # To ensure the fairness is maintained between weeks, cut off the cleared weeks
+        return handouts[weeks_cleared:]
+
+    def _get_first_floor_data(self, requirements: Requirements, history: QuerySet[Loot], id_order: List[int]) -> List[HandoutData]:
         """
         Simulate handing out the loot for a first floor clear.
         """
-        week, floor_requirements = self._get_floor_prio_and_clear_count(requirements, history, self.FIRST_FLOOR_SLOTS)
-        
+        weeks, prio_brackets = self._get_floor_prio_and_clear_count(requirements, history, self.FIRST_FLOOR_SLOTS, id_order)
+        return self._get_handout_data(self.FIRST_FLOOR_SLOTS, requirements, prio_brackets, self.FIRST_FLOOR_TOKENS, weeks)
 
+    def _get_second_floor_data(self, requirements: Requirements, history: QuerySet[Loot], id_order: List[int]) -> List[HandoutData]:
+        """
+        Simulate handing out the loot for a second floor clear.
+        """
+        weeks, prio_brackets = self._get_floor_prio_and_clear_count(requirements, history, self.SECOND_FLOOR_SLOTS, id_order)
+        return self._get_handout_data(self.SECOND_FLOOR_SLOTS, requirements, prio_brackets, self.SECOND_FLOOR_TOKENS, weeks)
 
-    async def get(self, request: Request, team_id: str) -> Response:
+    def _get_third_floor_data(self, requirements: Requirements, history: QuerySet[Loot], id_order: List[int]) -> List[HandoutData]:
+        """
+        Simulate handing out the loot for a third floor clear.
+        """
+        weeks, prio_brackets = self._get_floor_prio_and_clear_count(requirements, history, self.THIRD_FLOOR_SLOTS, id_order)
+        return self._get_handout_data(self.THIRD_FLOOR_SLOTS, requirements, prio_brackets, self.THIRD_FLOOR_TOKENS, weeks)
+
+    def _get_fourth_floor_data(self, history: QuerySet[Loot], team_size: int) -> HandoutData:
+        """
+        Simulate handing out the loot for a fourth floor clear.
+        Different from how the others are handled, because we just check how many people already have bis weapon, and also how many mounts have been obtained.
+        """
+        weapons_obtained = history.filter(item='mainhand', greed=False).count()
+        mounts_obtained = history.filter(item='mount').count()
+        return {
+            'weapons': team_size - weapons_obtained,
+            'mounts': team_size - mounts_obtained,
+        }
+
+    def get(self, request: Request, team_id: str) -> Response:
         """
         Fetch the current solver information for the team
         """
@@ -177,7 +269,7 @@ class LootSolver(APIView):
                 'members__bis_list__current_offhand',
                 'members__bis_list__current_right_ring',
                 'members__bis_list__job',
-            ).get(pk=team_id, members__character__user=request.user)
+            ).distinct().get(pk=team_id, members__character__user=request.user)
         except (Team.DoesNotExist, ValidationError):
             return Response(status=404)
 
@@ -195,13 +287,11 @@ class LootSolver(APIView):
         # Gather the loot details for the Team so far so we can calculate things like mounts needed or how many clears have already happened
         history = Loot.objects.filter(team=obj, tier=obj.tier)
 
-        # Run the four functions async, gather them all up and build up a map for the response
-        first, second, third, fourth = asyncio.gather(
-            self._get_first_floor_data(requirements, history, id_ordering),
-            self._get_second_floor_data(requirements, history, id_ordering),
-            self._get_third_floor_data(requirements, history, id_ordering),
-            self._get_fourth_floor_data(requirements, history, id_ordering),
-        )
+        # Run the four functions  gather them all up and build up a map for the response
+        first = self._get_first_floor_data(requirements, history, id_ordering)
+        second = self._get_second_floor_data(requirements, history, id_ordering)
+        third = self._get_third_floor_data(requirements, history, id_ordering)
+        fourth = self._get_fourth_floor_data(history, obj.members.count())
 
         # Build and return the response
         return Response({

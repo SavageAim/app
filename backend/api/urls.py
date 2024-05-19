@@ -35,6 +35,9 @@ urlpatterns = [
     path('team/<str:team_id>/loot/', views.LootCollection.as_view(), name='loot_collection'),
     path('team/<str:team_id>/loot/bis/', views.LootWithBIS.as_view(), name='loot_with_bis'),
 
+    # LootSolver
+    path('team/<str:team_id>/loot/solver', views.LootSolver.as_view(), name='loot_solver'),
+
     # Notifications
     path('notifications/', views.NotificationCollection.as_view(), name='notification_collection'),
     path('notifications/<int:pk>/', views.NotificationResource.as_view(), name='notification_resource'),

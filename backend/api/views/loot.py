@@ -264,7 +264,7 @@ class LootCollection(APIView):
                 'members__bis_list__current_offhand',
                 'members__bis_list__current_right_ring',
                 'members__bis_list__job',
-            ).get(pk=team_id, members__character__user=request.user)
+            ).distinct().get(pk=team_id, members__character__user=request.user)
         except (Team.DoesNotExist, ValidationError):
             return Response(status=404)
 
