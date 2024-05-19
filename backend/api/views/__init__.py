@@ -5,6 +5,7 @@ from .gear import GearCollection, ItemLevels
 from .job import JobCollection
 from .lodestone import LodestoneGearImport, LodestoneResource
 from .loot import LootCollection, LootWithBIS
+from .loot_solver import LootSolver
 from .notification import NotificationCollection, NotificationResource
 from .team import TeamCollection, TeamResource, TeamInvite
 from .team_member import TeamMemberResource, TeamMemberPermissionsResource
@@ -34,6 +35,8 @@ __all__ = [
 
     'LootCollection',
     'LootWithBIS',
+
+    'LootSolver',
 
     'NotificationCollection',
     'NotificationResource',
