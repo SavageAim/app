@@ -133,7 +133,8 @@ class LootSolver(APIView):
         weeks = 0
         handouts = []
         remove_slots = slots.copy()
-        remove_slots.reverse()
+        if 'augment' in slots[-1]:
+            remove_slots = [remove_slots[-1]] + remove_slots[:-1]
         while len(prio_brackets) > 0:
             weeks += 1
             week_data = {'token': False}
