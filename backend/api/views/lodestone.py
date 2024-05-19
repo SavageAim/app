@@ -60,7 +60,7 @@ class LodestoneGearImport(ImportAPIView):
         except LodestoneError:
             return Response({'message': 'An error occurred connecting to Lodestone.'}, status=400)
         except MismatchedJobError as e:
-            msg = f'Expected to import gear for "{expected_job}", but found gear for "{e.received}" instead!'
+            msg = f'Error occurred when attempting to import gear. Gear was expected to be for "{expected_job}", but "{e.received}" was found.'
             return Response({'message': msg}, status=406)
 
         # Now do Levenstein things for matching found gear to Gear objects
@@ -75,12 +75,11 @@ class LodestoneGearImport(ImportAPIView):
         }
         # Loop through each gear slot and fetch the id based off the name
         for slot, item_name in data['gear'].items():
-            slot_name = f'current_{slot}'
             if slot in self.ARMOUR_SLOTS:
-                response[slot_name] = self._get_gear_id(filtered_gear.filter(has_armour=True), item_name)
+                response[slot] = self._get_gear_id(filtered_gear.filter(has_armour=True), item_name)
             elif slot in self.ACCESSORY_SLOTS:
-                response[slot_name] = self._get_gear_id(filtered_gear.filter(has_accessories=True), item_name)
+                response[slot] = self._get_gear_id(filtered_gear.filter(has_accessories=True), item_name)
             else:
-                response[slot_name] = self._get_gear_id(filtered_gear.filter(has_weapon=True), item_name)
+                response[slot] = self._get_gear_id(filtered_gear.filter(has_weapon=True), item_name)
 
         return Response(response)
