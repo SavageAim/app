@@ -351,3 +351,44 @@ class LootTestSuite(SavageAimTestCase):
         self.assertDictEqual(LootSolver._generate_priority_brackets(first_floor_requirements, ordering), first_floor_expected)
         self.assertDictEqual(LootSolver._generate_priority_brackets(second_floor_requirements, ordering), second_floor_expected)
         self.assertDictEqual(LootSolver._generate_priority_brackets(third_floor_requirements, ordering), third_floor_expected)
+
+    def test_clear_count_calculator(self):
+        """
+        Test that the clear count calculator is correct
+        """
+        team = Team.objects.create(
+            invite_code=Team.generate_invite_code(),
+            name='The Testers',
+            tier=Tier.objects.get(max_item_level=665),
+        )
+        tier = Tier.objects.get(max_item_level=665)
+        clears, _ = LootSolver._get_floor_prio_and_clear_count({}, Loot.objects.all(), {'earrings', 'necklace', 'bracelet', 'ring'})
+        self.assertEqual(clears, 0)
+        Loot.objects.create(
+            item='ring',
+            obtained='2024-01-01',
+            team=team,
+            tier=tier,
+        )
+        Loot.objects.create(
+            item='earrings',
+            obtained='2024-01-01',
+            team=team,
+            tier=tier,
+        )
+        Loot.objects.create(
+            item='ring',
+            obtained='2024-01-02',
+            team=team,
+            tier=tier,
+            greed=True,
+        )
+        Loot.objects.create(
+            item='head',
+            obtained='2024-01-03',
+            team=team,
+            tier=tier,
+        )
+
+        clears, _ = LootSolver._get_floor_prio_and_clear_count({}, Loot.objects.all(), {'earrings', 'necklace', 'bracelet', 'ring'})
+        self.assertEqual(clears, 2)

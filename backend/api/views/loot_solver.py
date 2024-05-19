@@ -8,7 +8,7 @@ Record new loot and update BIS Lists accordingly.
 import asyncio
 from collections import defaultdict
 from datetime import datetime
-from typing import Dict, List
+from typing import Dict, List, Tuple, Union
 # lib
 from django.core.exceptions import ValidationError
 from django.db.models import QuerySet
@@ -25,7 +25,9 @@ from api.serializers import (
     TeamSerializer,
 )
 
-PERMISSION_NAME = 'loot_manager'
+Requirements = Dict[str, List[int]]
+PrioBrackets = Dict[int, List[int]]
+HandoutData = Dict[str, Union[str, bool]]
 
 
 class LootSolver(APIView):
@@ -51,6 +53,10 @@ class LootSolver(APIView):
 
     ARMOUR = {'head', 'body', 'hands', 'legs', 'feet'}
 
+    FIRST_FLOOR_SLOTS = {'earrings', 'necklace', 'bracelet', 'ring'}
+    SECOND_FLOOR_SLOTS = {'head', 'hands', 'feet', 'tome-accessory-augment'}
+    THIRD_FLOOR_SLOTS = {'body', 'legs', 'tome-armour-augment'}
+
     def _get_gear_data(self, obj: Team) -> Dict[str, List[Dict[str, str]]]:
         """
         An attempt at improving the original loot response with less DB hits + waiting required.
@@ -64,13 +70,13 @@ class LootSolver(APIView):
         pass
 
     @staticmethod
-    def _get_requirements_map(team: Team) -> Dict[str, List[int]]:
+    def _get_requirements_map(team: Team) -> Requirements:
         """
         Scan the team's loot info and build a map of { item: [ids, of, people, who, need, it] }
         """
         # Build the mapping of who needs what so we can pass that to the functions
         tier: Tier = team.tier
-        requirements: Dict[str, List[str]] = defaultdict(list)
+        requirements: Requirements = defaultdict(list)
         for member in team.members.all():
             for slot_name in LootSolver.SLOTS:
                 required_slot = slot_name if '_ring' not in slot_name else 'ring'
@@ -96,7 +102,7 @@ class LootSolver(APIView):
         return requirements
 
     @staticmethod
-    def _generate_priority_brackets(requirements: Dict[str, List[int]], id_ordering: List[int]) -> Dict[int, List[int]]:
+    def _generate_priority_brackets(requirements: Requirements, id_ordering: List[int]) -> PrioBrackets:
         """
         Given the requirements found by the above function, generate a new dictionary that gives priority brackets for items.
         This will be used by the individual floor functions that will want to use it on subsets of the overall requirements map.
@@ -115,8 +121,26 @@ class LootSolver(APIView):
             prio_brackets[needed].append(ids)
 
         return dict(prio_brackets)
+    
+    @staticmethod
+    def _get_floor_prio_and_clear_count(requirements: Requirements, history: QuerySet[Loot], slots: List[str]) -> Tuple[int, PrioBrackets]:
+        """
+        Turn a requirements map and history into the priority bracket information, along with how many clears have already been recorded for the fight.
+        """
+        floor_requirements = {
+            slot: requirements.get(slot, [])
+            for slot in slots
+        }
+        clears = len(set(history.filter(item__in=slots).values_list('item', flat=True)))
+        return clears, floor_requirements
 
-    # async _get_first_floor_data(requirements: Dict[str, List[int]])
+    async def _get_first_floor_data(self, requirements: Requirements, history: QuerySet[Loot], id_order: List[int]) -> List[HandoutData]:
+        """
+        Simulate handing out the loot for a first floor clear.
+        """
+        week, floor_requirements = self._get_floor_prio_and_clear_count(requirements, history, self.FIRST_FLOOR_SLOTS)
+        
+
 
     async def get(self, request: Request, team_id: str) -> Response:
         """
@@ -156,13 +180,13 @@ class LootSolver(APIView):
             ).get(pk=team_id, members__character__user=request.user)
         except (Team.DoesNotExist, ValidationError):
             return Response(status=404)
-        
+
         # Generate the ordering of IDs based on the decided pattern; DPS > Tanks > Healer
         # Natural DPS ordering is Melee > Ranged > Caster
         id_ordering = [
-            *obj.members.filter(bis_list__job__role='dps').values_list('id', flatten=True),
-            *obj.members.filter(bis_list__job__role='tank').values_list('id', flatten=True),
-            *obj.members.filter(bis_list__job__role='heal').values_list('id', flatten=True),
+            *obj.members.filter(bis_list__job__role='dps').values_list('id', flat=True),
+            *obj.members.filter(bis_list__job__role='tank').values_list('id', flat=True),
+            *obj.members.filter(bis_list__job__role='heal').values_list('id', flat=True),
         ]
 
         # Generate the requirements map for the Team as it stands
