@@ -63,6 +63,7 @@ class LootSolver(APIView):
     def _get_requirements_map(team: Team) -> Requirements:
         """
         Scan the team's loot info and build a map of { item: [ids, of, people, who, need, it] }
+        Note that this method builds up the overall map. The items already handed out are filtered out by _get_floor_data!
         """
         # Build the mapping of who needs what so we can pass that to the functions
         tier: Tier = team.tier
@@ -71,11 +72,6 @@ class LootSolver(APIView):
             for slot_name in LootSolver.SLOTS:
                 required_slot = slot_name if '_ring' not in slot_name else 'ring'
                 bis_slot: Gear = getattr(member.bis_list, f'bis_{slot_name}')
-                current_slot: Gear = getattr(member.bis_list, f'current_{slot_name}')
-
-                # Skip if the person already has BIS
-                if bis_slot.id == current_slot.id:
-                    continue
 
                 if bis_slot.name == tier.raid_gear_name:
                     requirements[required_slot].append(member.id)
@@ -113,24 +109,56 @@ class LootSolver(APIView):
         return dict(prio_brackets)
 
     @staticmethod
-    def _get_floor_prio_and_clear_count(requirements: Requirements, history: QuerySet[Loot], slots: List[str], id_order: List[int]) -> Tuple[int, PrioBrackets]:
+    def _get_floor_data(requirements: Requirements, history: QuerySet[Loot], slots: List[str], id_order: List[int]) -> Tuple[int, PrioBrackets, Requirements]:
         """
         Turn a requirements map and history into the priority bracket information, along with how many clears have already been recorded for the fight.
+        Also generate and return the updated Requirements from the Loot History
         """
+        # Limit floor requirements to the items that were important, then remove from this list as we update the prios below
         floor_requirements = {
             slot: requirements.get(slot, [])
             for slot in slots
         }
-        clears = len(set(history.filter(item__in=slots).values_list('obtained', flat=True)))
+        relevant_history = history.filter(item__in=slots).order_by('obtained')
+        clears = len({item.obtained for item in relevant_history})
         prio_brackets = LootSolver._generate_priority_brackets(floor_requirements, id_order)
-        return clears, prio_brackets
+
+        # Sim through the existing clear data and update prio brackets with how things have evolved in the past
+        history_data: Dict[str, Dict[str, int]] = defaultdict(dict)
+        for item in relevant_history:
+            history_data[item.obtained][item.item] = item.member_id
+
+        for obtained in history_data:
+            for slot in slots:
+                member_id = history_data[obtained].get(slot)
+                if member_id is None:
+                    continue
+                # move the receiver of the item down one bracket, making a new one if you have to
+                for priority in sorted(prio_brackets, key=lambda prio: -prio):
+                    try:
+                        prio_brackets[priority].remove(member_id)
+                        if (priority - 1) not in prio_brackets:
+                            prio_brackets[priority - 1] = [member_id]
+                        else:
+                            prio_brackets[priority - 1].append(member_id)
+
+                        try:
+                            floor_requirements[slot].remove(member_id)
+                        except ValueError:
+                            pass
+                        break
+                    except ValueError:
+                        # If they're not in the prio bracket at this prio just keep going
+                        continue
+        # Remove the 0 key
+        prio_brackets.pop(0, None)
+        return clears, prio_brackets, floor_requirements
 
     @staticmethod
-    def _get_handout_data(slots: List[str], requirements: Requirements, prio_brackets: PrioBrackets, weeks_per_token: int, weeks_cleared) -> List[HandoutData]:
+    def _get_handout_data(slots: List[str], requirements: Requirements, prio_brackets: PrioBrackets, weeks_per_token: int, weeks: int) -> List[HandoutData]:
         """
         Do the algorithm for gathering handout information
         """
-        weeks = 0
         handouts = []
         remove_slots = slots.copy()
         if 'augment' in slots[-1]:
@@ -199,29 +227,28 @@ class LootSolver(APIView):
                     pass
                 week_data['token'] = True
 
-        # To ensure the fairness is maintained between weeks, cut off the cleared weeks
-        return handouts[weeks_cleared:]
+        return handouts
 
     def _get_first_floor_data(self, requirements: Requirements, history: QuerySet[Loot], id_order: List[int]) -> List[HandoutData]:
         """
         Simulate handing out the loot for a first floor clear.
         """
-        weeks, prio_brackets = self._get_floor_prio_and_clear_count(requirements, history, self.FIRST_FLOOR_SLOTS, id_order)
-        return self._get_handout_data(self.FIRST_FLOOR_SLOTS, requirements, prio_brackets, self.FIRST_FLOOR_TOKENS, weeks)
+        weeks, prio_brackets, floor_requirements = self._get_floor_data(requirements, history, self.FIRST_FLOOR_SLOTS, id_order)
+        return self._get_handout_data(self.FIRST_FLOOR_SLOTS, floor_requirements, prio_brackets, self.FIRST_FLOOR_TOKENS, weeks)
 
     def _get_second_floor_data(self, requirements: Requirements, history: QuerySet[Loot], id_order: List[int]) -> List[HandoutData]:
         """
         Simulate handing out the loot for a second floor clear.
         """
-        weeks, prio_brackets = self._get_floor_prio_and_clear_count(requirements, history, self.SECOND_FLOOR_SLOTS, id_order)
-        return self._get_handout_data(self.SECOND_FLOOR_SLOTS, requirements, prio_brackets, self.SECOND_FLOOR_TOKENS, weeks)
+        weeks, prio_brackets, floor_requirements = self._get_floor_data(requirements, history, self.SECOND_FLOOR_SLOTS, id_order)
+        return self._get_handout_data(self.SECOND_FLOOR_SLOTS, floor_requirements, prio_brackets, self.SECOND_FLOOR_TOKENS, weeks)
 
     def _get_third_floor_data(self, requirements: Requirements, history: QuerySet[Loot], id_order: List[int]) -> List[HandoutData]:
         """
         Simulate handing out the loot for a third floor clear.
         """
-        weeks, prio_brackets = self._get_floor_prio_and_clear_count(requirements, history, self.THIRD_FLOOR_SLOTS, id_order)
-        return self._get_handout_data(self.THIRD_FLOOR_SLOTS, requirements, prio_brackets, self.THIRD_FLOOR_TOKENS, weeks)
+        weeks, prio_brackets, floor_requirements = self._get_floor_data(requirements, history, self.THIRD_FLOOR_SLOTS, id_order)
+        return self._get_handout_data(self.THIRD_FLOOR_SLOTS, floor_requirements, prio_brackets, self.THIRD_FLOOR_TOKENS, weeks)
 
     def _get_fourth_floor_data(self, history: QuerySet[Loot], team_size: int) -> HandoutData:
         """

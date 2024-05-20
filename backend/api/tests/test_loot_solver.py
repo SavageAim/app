@@ -20,30 +20,16 @@ class LootSolverTestSuite(SavageAimTestCase):
         self.maxDiff = None
         call_command('seed', stdout=StringIO())
 
-    def tearDown(self):
-        """
-        Clean up the DB after each test
-        """
-        Notification.objects.all().delete()
-        Loot.objects.all().delete()
-        TeamMember.objects.all().delete()
-        Team.objects.all().delete()
-        BISList.objects.all().delete()
-        Character.objects.all().delete()
-
-    def test_requirements_map_generation(self):
-        """
-        Build up a full test team, and run the requirements map function separately to ensure it builds the map correctly.
-        """
-        team = Team.objects.create(
+        self.tier = Tier.objects.get(max_item_level=665)
+        self.team = Team.objects.create(
             invite_code=Team.generate_invite_code(),
             name='The Testers',
-            tier=Tier.objects.get(max_item_level=665),
+            tier=self.tier,
         )
-        raid_weapon = Gear.objects.get(item_level=665, name='Ascension')
-        raid_gear = Gear.objects.get(item_level=660, name='Ascension')
-        tome_gear = Gear.objects.get(name='Augmented Credendum')
-        base_tome_gear = Gear.objects.get(name='Credendum')
+        self.raid_weapon = Gear.objects.get(item_level=665, name='Ascension')
+        self.raid_gear = Gear.objects.get(item_level=660, name='Ascension')
+        self.tome_gear = Gear.objects.get(name='Augmented Credendum')
+        self.base_tome_gear = Gear.objects.get(name='Credendum')
         crafted_gear = Gear.objects.get(name='Diadochos')
 
         # Make an ease of use map for current stuff to avoid redefining it over and over
@@ -63,7 +49,7 @@ class LootSolverTestSuite(SavageAimTestCase):
         }
 
         # Make 8 Characters that represent the team members
-        c1 = Character.objects.create(
+        self.c1 = Character.objects.create(
             avatar_url='https://img.savageaim.com/abcde',
             lodestone_id=1234567890,
             user=self._get_user(),
@@ -71,7 +57,7 @@ class LootSolverTestSuite(SavageAimTestCase):
             verified=True,
             world='Lich',
         )
-        c2 = Character.objects.create(
+        self.c2 = Character.objects.create(
             avatar_url='https://img.savageaim.com/abcde',
             lodestone_id=1234567890,
             user=self._get_user(),
@@ -79,7 +65,7 @@ class LootSolverTestSuite(SavageAimTestCase):
             verified=True,
             world='Lich',
         )
-        c3 = Character.objects.create(
+        self.c3 = Character.objects.create(
             avatar_url='https://img.savageaim.com/abcde',
             lodestone_id=1234567890,
             user=self._get_user(),
@@ -87,7 +73,7 @@ class LootSolverTestSuite(SavageAimTestCase):
             verified=True,
             world='Lich',
         )
-        c4 = Character.objects.create(
+        self.c4 = Character.objects.create(
             avatar_url='https://img.savageaim.com/abcde',
             lodestone_id=1234567890,
             user=self._get_user(),
@@ -95,7 +81,7 @@ class LootSolverTestSuite(SavageAimTestCase):
             verified=True,
             world='Lich',
         )
-        c5 = Character.objects.create(
+        self.c5 = Character.objects.create(
             avatar_url='https://img.savageaim.com/abcde',
             lodestone_id=1234567890,
             user=self._get_user(),
@@ -103,7 +89,7 @@ class LootSolverTestSuite(SavageAimTestCase):
             verified=True,
             world='Lich',
         )
-        c6 = Character.objects.create(
+        self.c6 = Character.objects.create(
             avatar_url='https://img.savageaim.com/abcde',
             lodestone_id=1234567890,
             user=self._get_user(),
@@ -111,7 +97,7 @@ class LootSolverTestSuite(SavageAimTestCase):
             verified=True,
             world='Lich',
         )
-        c7 = Character.objects.create(
+        self.c7 = Character.objects.create(
             avatar_url='https://img.savageaim.com/abcde',
             lodestone_id=1234567890,
             user=self._get_user(),
@@ -119,7 +105,7 @@ class LootSolverTestSuite(SavageAimTestCase):
             verified=True,
             world='Lich',
         )
-        c8 = Character.objects.create(
+        self.c8 = Character.objects.create(
             avatar_url='https://img.savageaim.com/abcde',
             lodestone_id=1234567890,
             user=self._get_user(),
@@ -129,186 +115,191 @@ class LootSolverTestSuite(SavageAimTestCase):
         )
 
         # Next make 8 BIS Lists, one for each, and link em to the team
-        b1 = BISList.objects.create(
-            owner=c1,
+        self.b1 = BISList.objects.create(
+            owner=self.c1,
             job_id='WAR',
-            bis_mainhand=raid_weapon,
-            bis_offhand=raid_weapon,
-            bis_head=raid_gear,
-            bis_body=tome_gear,
-            bis_hands=raid_gear,
-            bis_legs=raid_gear,
-            bis_feet=tome_gear,
-            bis_earrings=tome_gear,
-            bis_necklace=raid_gear,
-            bis_bracelet=tome_gear,
-            bis_right_ring=tome_gear,
-            bis_left_ring=base_tome_gear,
+            bis_mainhand=self.raid_weapon,
+            bis_offhand=self.raid_weapon,
+            bis_head=self.raid_gear,
+            bis_body=self.tome_gear,
+            bis_hands=self.raid_gear,
+            bis_legs=self.raid_gear,
+            bis_feet=self.tome_gear,
+            bis_earrings=self.tome_gear,
+            bis_necklace=self.raid_gear,
+            bis_bracelet=self.tome_gear,
+            bis_right_ring=self.tome_gear,
+            bis_left_ring=self.base_tome_gear,
             **current_map,
         )
-        team.members.create(character=c1, bis_list=b1, permissions=0)
+        self.tm1 = self.team.members.create(character=self.c1, bis_list=self.b1, permissions=0)
 
-        b2 = BISList.objects.create(
-            owner=c2,
+        self.b2 = BISList.objects.create(
+            owner=self.c2,
             job_id='DRK',
-            bis_mainhand=raid_weapon,
-            bis_offhand=raid_weapon,
-            bis_head=raid_gear,
-            bis_body=tome_gear,
-            bis_hands=raid_gear,
-            bis_legs=raid_gear,
-            bis_feet=tome_gear,
-            bis_earrings=tome_gear,
-            bis_necklace=raid_gear,
-            bis_bracelet=tome_gear,
-            bis_right_ring=tome_gear,
-            bis_left_ring=base_tome_gear,
+            bis_mainhand=self.raid_weapon,
+            bis_offhand=self.raid_weapon,
+            bis_head=self.raid_gear,
+            bis_body=self.tome_gear,
+            bis_hands=self.raid_gear,
+            bis_legs=self.raid_gear,
+            bis_feet=self.tome_gear,
+            bis_earrings=self.tome_gear,
+            bis_necklace=self.raid_gear,
+            bis_bracelet=self.tome_gear,
+            bis_right_ring=self.tome_gear,
+            bis_left_ring=self.base_tome_gear,
             **current_map,
         )
-        team.members.create(character=c2, bis_list=b2, permissions=0)
+        self.tm2 = self.team.members.create(character=self.c2, bis_list=self.b2, permissions=0)
 
-        b3 = BISList.objects.create(
-            owner=c3,
+        self.b3 = BISList.objects.create(
+            owner=self.c3,
             job_id='AST',
-            bis_mainhand=raid_weapon,
-            bis_offhand=raid_weapon,
-            bis_head=raid_gear,
-            bis_body=raid_gear,
-            bis_hands=tome_gear,
-            bis_legs=tome_gear,
-            bis_feet=raid_gear,
-            bis_earrings=tome_gear,
-            bis_necklace=raid_gear,
-            bis_bracelet=raid_gear,
-            bis_right_ring=tome_gear,
-            bis_left_ring=base_tome_gear,
+            bis_mainhand=self.raid_weapon,
+            bis_offhand=self.raid_weapon,
+            bis_head=self.raid_gear,
+            bis_body=self.raid_gear,
+            bis_hands=self.tome_gear,
+            bis_legs=self.tome_gear,
+            bis_feet=self.raid_gear,
+            bis_earrings=self.tome_gear,
+            bis_necklace=self.raid_gear,
+            bis_bracelet=self.raid_gear,
+            bis_right_ring=self.tome_gear,
+            bis_left_ring=self.base_tome_gear,
             **current_map,
         )
-        team.members.create(character=c3, bis_list=b3, lead=True)
+        self.tm3 = self.team.members.create(character=self.c3, bis_list=self.b3, lead=True)
 
-        b4 = BISList.objects.create(
-            owner=c4,
+        self.b4 = BISList.objects.create(
+            owner=self.c4,
             job_id='SGE',
-            bis_mainhand=raid_weapon,
-            bis_offhand=raid_weapon,
-            bis_head=tome_gear,
-            bis_body=raid_gear,
-            bis_hands=tome_gear,
-            bis_legs=tome_gear,
-            bis_feet=raid_gear,
-            bis_earrings=tome_gear,
-            bis_necklace=raid_gear,
-            bis_bracelet=raid_gear,
-            bis_right_ring=tome_gear,
-            bis_left_ring=base_tome_gear,
+            bis_mainhand=self.raid_weapon,
+            bis_offhand=self.raid_weapon,
+            bis_head=self.tome_gear,
+            bis_body=self.raid_gear,
+            bis_hands=self.tome_gear,
+            bis_legs=self.tome_gear,
+            bis_feet=self.raid_gear,
+            bis_earrings=self.tome_gear,
+            bis_necklace=self.raid_gear,
+            bis_bracelet=self.raid_gear,
+            bis_right_ring=self.tome_gear,
+            bis_left_ring=self.base_tome_gear,
             **current_map,
         )
-        team.members.create(character=c4, bis_list=b4, permissions=0)
+        self.tm4 = self.team.members.create(character=self.c4, bis_list=self.b4, permissions=0)
 
-        b5 = BISList.objects.create(
-            owner=c5,
+        self.b5 = BISList.objects.create(
+            owner=self.c5,
             job_id='MNK',
-            bis_mainhand=raid_weapon,
-            bis_offhand=raid_weapon,
-            bis_head=raid_gear,
-            bis_body=raid_gear,
-            bis_hands=tome_gear,
-            bis_legs=tome_gear,
-            bis_feet=raid_gear,
-            bis_earrings=raid_gear,
-            bis_necklace=tome_gear,
-            bis_bracelet=raid_gear,
-            bis_right_ring=raid_gear,
-            bis_left_ring=tome_gear,
+            bis_mainhand=self.raid_weapon,
+            bis_offhand=self.raid_weapon,
+            bis_head=self.raid_gear,
+            bis_body=self.raid_gear,
+            bis_hands=self.tome_gear,
+            bis_legs=self.tome_gear,
+            bis_feet=self.raid_gear,
+            bis_earrings=self.raid_gear,
+            bis_necklace=self.tome_gear,
+            bis_bracelet=self.raid_gear,
+            bis_right_ring=self.raid_gear,
+            bis_left_ring=self.tome_gear,
             **current_map,
         )
-        team.members.create(character=c5, bis_list=b5, permissions=0)
+        self.tm5 = self.team.members.create(character=self.c5, bis_list=self.b5, permissions=0)
 
-        b6 = BISList.objects.create(
-            owner=c6,
+        self.b6 = BISList.objects.create(
+            owner=self.c6,
             job_id='RPR',
-            bis_mainhand=raid_weapon,
-            bis_offhand=raid_weapon,
-            bis_head=tome_gear,
-            bis_body=raid_gear,
-            bis_hands=tome_gear,
-            bis_legs=tome_gear,
-            bis_feet=raid_gear,
-            bis_earrings=raid_gear,
-            bis_necklace=tome_gear,
-            bis_bracelet=raid_gear,
-            bis_right_ring=tome_gear,
-            bis_left_ring=raid_gear,
+            bis_mainhand=self.raid_weapon,
+            bis_offhand=self.raid_weapon,
+            bis_head=self.tome_gear,
+            bis_body=self.raid_gear,
+            bis_hands=self.tome_gear,
+            bis_legs=self.tome_gear,
+            bis_feet=self.raid_gear,
+            bis_earrings=self.raid_gear,
+            bis_necklace=self.tome_gear,
+            bis_bracelet=self.raid_gear,
+            bis_right_ring=self.tome_gear,
+            bis_left_ring=self.raid_gear,
             **current_map,
         )
-        team.members.create(character=c6, bis_list=b6, permissions=0)
+        self.tm6 = self.team.members.create(character=self.c6, bis_list=self.b6, permissions=0)
 
-        b7 = BISList.objects.create(
-            owner=c7,
+        self.b7 = BISList.objects.create(
+            owner=self.c7,
             job_id='BRD',
-            bis_mainhand=raid_weapon,
-            bis_offhand=raid_weapon,
-            bis_head=raid_gear,
-            bis_body=tome_gear,
-            bis_hands=raid_gear,
-            bis_legs=raid_gear,
-            bis_feet=tome_gear,
-            bis_earrings=tome_gear,
-            bis_necklace=raid_gear,
-            bis_bracelet=tome_gear,
-            bis_right_ring=tome_gear,
-            bis_left_ring=raid_gear,
+            bis_mainhand=self.raid_weapon,
+            bis_offhand=self.raid_weapon,
+            bis_head=self.raid_gear,
+            bis_body=self.tome_gear,
+            bis_hands=self.raid_gear,
+            bis_legs=self.raid_gear,
+            bis_feet=self.tome_gear,
+            bis_earrings=self.tome_gear,
+            bis_necklace=self.raid_gear,
+            bis_bracelet=self.tome_gear,
+            bis_right_ring=self.tome_gear,
+            bis_left_ring=self.raid_gear,
             **current_map,
         )
-        team.members.create(character=c7, bis_list=b7, permissions=0)
+        self.tm7 = self.team.members.create(character=self.c7, bis_list=self.b7, permissions=0)
 
-        b8 = BISList.objects.create(
-            owner=c8,
+        self.b8 = BISList.objects.create(
+            owner=self.c8,
             job_id='BLM',
-            bis_mainhand=raid_weapon,
-            bis_offhand=raid_weapon,
-            bis_head=raid_gear,
-            bis_body=raid_gear,
-            bis_hands=tome_gear,
-            bis_legs=tome_gear,
-            bis_feet=raid_gear,
-            bis_earrings=tome_gear,
-            bis_necklace=raid_gear,
-            bis_bracelet=tome_gear,
-            bis_right_ring=tome_gear,
-            bis_left_ring=raid_gear,
+            bis_mainhand=self.raid_weapon,
+            bis_offhand=self.raid_weapon,
+            bis_head=self.raid_gear,
+            bis_body=self.raid_gear,
+            bis_hands=self.tome_gear,
+            bis_legs=self.tome_gear,
+            bis_feet=self.raid_gear,
+            bis_earrings=self.tome_gear,
+            bis_necklace=self.raid_gear,
+            bis_bracelet=self.tome_gear,
+            bis_right_ring=self.tome_gear,
+            bis_left_ring=self.raid_gear,
             **current_map,
         )
-        team.members.create(character=c8, bis_list=b8, permissions=0)
+        self.tm8 = self.team.members.create(character=self.c8, bis_list=self.b8, permissions=0)
 
+    def tearDown(self):
+        """
+        Clean up the DB after each test
+        """
+        Notification.objects.all().delete()
+        Loot.objects.all().delete()
+        TeamMember.objects.all().delete()
+        Team.objects.all().delete()
+        BISList.objects.all().delete()
+        Character.objects.all().delete()
+
+    def test_requirements_map_generation(self):
+        """
+        Build up a full test team, and run the requirements map function separately to ensure it builds the map correctly.
+        """
         # Generate the expected map
         expected = {
-            'earrings': [c5.id, c6.id],
-            'necklace': [c1.id, c2.id, c3.id, c4.id, c7.id, c8.id],
-            'bracelet': [c3.id, c4.id, c5.id, c6.id],
-            'ring': [c5.id, c6.id, c7.id, c8.id],
-            'head': [c1.id, c2.id, c3.id, c5.id, c7.id, c8.id],
-            'hands': [c1.id, c2.id, c7.id],
-            'feet': [c3.id, c4.id, c5.id, c6.id, c8.id],
-            'tome-accessory-augment': [c1.id, c1.id, c1.id, c2.id, c2.id, c2.id, c3.id, c3.id, c4.id, c4.id, c5.id, c5.id, c6.id, c6.id, c7.id, c7.id, c7.id, c8.id, c8.id, c8.id],
-            'body': [c3.id, c4.id, c5.id, c6.id, c8.id],
-            'legs': [c1.id, c2.id, c7.id],
-            'tome-armour-augment': [c1.id, c1.id, c2.id, c2.id, c3.id, c3.id, c4.id, c4.id, c4.id, c5.id, c5.id, c6.id, c6.id, c6.id, c7.id, c7.id, c8.id, c8.id]
+            'earrings': [self.c5.id, self.c6.id],
+            'necklace': [self.c1.id, self.c2.id, self.c3.id, self.c4.id, self.c7.id, self.c8.id],
+            'bracelet': [self.c3.id, self.c4.id, self.c5.id, self.c6.id],
+            'ring': [self.c5.id, self.c6.id, self.c7.id, self.c8.id],
+            'head': [self.c1.id, self.c2.id, self.c3.id, self.c5.id, self.c7.id, self.c8.id],
+            'hands': [self.c1.id, self.c2.id, self.c7.id],
+            'feet': [self.c3.id, self.c4.id, self.c5.id, self.c6.id, self.c8.id],
+            'tome-accessory-augment': [self.c1.id, self.c1.id, self.c1.id, self.c2.id, self.c2.id, self.c2.id, self.c3.id, self.c3.id, self.c4.id, self.c4.id, self.c5.id, self.c5.id, self.c6.id, self.c6.id, self.c7.id, self.c7.id, self.c7.id, self.c8.id, self.c8.id, self.c8.id],
+            'body': [self.c3.id, self.c4.id, self.c5.id, self.c6.id, self.c8.id],
+            'legs': [self.c1.id, self.c2.id, self.c7.id],
+            'tome-armour-augment': [self.c1.id, self.c1.id, self.c2.id, self.c2.id, self.c3.id, self.c3.id, self.c4.id, self.c4.id, self.c4.id, self.c5.id, self.c5.id, self.c6.id, self.c6.id, self.c6.id, self.c7.id, self.c7.id, self.c8.id, self.c8.id]
         }
 
-        self.maxDiff = None
-        received = LootSolver._get_requirements_map(team)
+        received = LootSolver._get_requirements_map(self.team)
         for slot in expected:
             self.assertEqual(expected[slot], received[slot], slot)
-
-        # Now give some people BIS items and ensure the requirements map updates accordingly
-        b1.current_head = raid_gear
-        b1.current_feet = tome_gear
-        b1.current_earrings = tome_gear
-        b1.save()
-        expected['head'].remove(c1.id)
-        expected['tome-armour-augment'].remove(c1.id)
-        expected['tome-accessory-augment'].remove(c1.id)
 
     def test_prio_bracket_generation(self):
         """
@@ -356,38 +347,32 @@ class LootSolverTestSuite(SavageAimTestCase):
         """
         Test that the clear count calculator is correct
         """
-        team = Team.objects.create(
-            invite_code=Team.generate_invite_code(),
-            name='The Testers',
-            tier=Tier.objects.get(max_item_level=665),
-        )
-        tier = Tier.objects.get(max_item_level=665)
-        clears, _ = LootSolver._get_floor_prio_and_clear_count({}, Loot.objects.all(), {'earrings', 'necklace', 'bracelet', 'ring'}, [])
+        clears, *_ = LootSolver._get_floor_data({}, Loot.objects.all(), {'earrings', 'necklace', 'bracelet', 'ring'}, [])
         self.assertEqual(clears, 0)
         Loot.objects.create(
             item='ring',
             obtained='2024-01-01',
-            team=team,
-            tier=tier,
+            team=self.team,
+            tier=self.tier,
         )
         Loot.objects.create(
             item='earrings',
             obtained='2024-01-01',
-            team=team,
-            tier=tier,
+            team=self.team,
+            tier=self.tier,
         )
         Loot.objects.create(
             item='ring',
             obtained='2024-01-02',
-            team=team,
-            tier=tier,
+            team=self.team,
+            tier=self.tier,
             greed=True,
         )
         Loot.objects.create(
             item='head',
             obtained='2024-01-03',
-            team=team,
-            tier=tier,
+            team=self.team,
+            tier=self.tier,
         )
 
         # Ensure that the floor prio generation also works as expected
@@ -398,7 +383,7 @@ class LootSolverTestSuite(SavageAimTestCase):
             'ring': [5, 6, 7, 8],
             'head': [2, 4, 8],
         }
-        clears, prio_brackets = LootSolver._get_floor_prio_and_clear_count(requirements, Loot.objects.all(), {'earrings', 'necklace', 'bracelet', 'ring'}, [5, 6, 7, 8, 1, 2, 3, 4])
+        clears, prio_brackets, _ = LootSolver._get_floor_data(requirements, Loot.objects.all(), {'earrings', 'necklace', 'bracelet', 'ring'}, [5, 6, 7, 8, 1, 2, 3, 4])
         self.assertEqual(clears, 2)
         expected_brackets = {
             3: [5, 6],
@@ -407,259 +392,208 @@ class LootSolverTestSuite(SavageAimTestCase):
         }
         self.assertDictEqual(prio_brackets, expected_brackets)
 
+    def test_removing_obtained_requirements(self):
+        """
+        The _get_floor_data function also removes obtained items from the requirements map that is generated by the _get_requirements
+        """
+
+        # Second Floor Clear 1
+        Loot.objects.create(
+            item='head',
+            member=self.tm3,
+            tier=self.tier,
+            team=self.team,
+            obtained='2024-01-01',
+        )
+        self.b3.current_head = self.raid_gear
+        self.b3.save()
+        Loot.objects.create(
+            item='hands',
+            member=self.tm7,
+            tier=self.tier,
+            team=self.team,
+            obtained='2024-01-01',
+        )
+        self.b7.current_hands = self.raid_gear
+        self.b7.save()
+        Loot.objects.create(
+            item='feet',
+            member=self.tm4,
+            tier=self.tier,
+            team=self.team,
+            obtained='2024-01-01',
+        )
+        self.b4.current_feet = self.raid_gear
+        self.b4.save()
+        Loot.objects.create(
+            item='tome-accessory-augment',
+            member=self.tm6,
+            tier=self.tier,
+            team=self.team,
+            obtained='2024-01-01',
+        )
+        self.b6.current_right_ring = self.tome_gear
+        self.b6.save()
+        # Second Floor Clear 2
+        Loot.objects.create(
+            item='head',
+            member=self.tm2,
+            tier=self.tier,
+            team=self.team,
+            obtained='2024-01-02',
+        )
+        self.b2.current_head = self.raid_gear
+        self.b2.save()
+        Loot.objects.create(
+            item='hands',
+            member=self.tm2,
+            tier=self.tier,
+            team=self.team,
+            obtained='2024-01-02',
+        )
+        self.b2.current_hands = self.raid_gear
+        self.b2.save()
+        Loot.objects.create(
+            item='feet',
+            member=self.tm8,
+            tier=self.tier,
+            team=self.team,
+            obtained='2024-01-02',
+        )
+        self.b8.current_feet = self.raid_gear
+        self.b8.save()
+        Loot.objects.create(
+            item='tome-accessory-augment',
+            member=self.tm7,
+            tier=self.tier,
+            team=self.team,
+            obtained='2024-01-02',
+        )
+        self.b7.current_right_ring = self.tome_gear
+        self.b7.save()
+
+        # Generate the expected map
+        expected = {
+            'head': [self.c1.id, self.c5.id, self.c7.id, self.c8.id],
+            'hands': [self.c1.id],
+            'feet': [self.c3.id, self.c5.id, self.c6.id],
+            'tome-accessory-augment': [self.c1.id, self.c1.id, self.c1.id, self.c2.id, self.c2.id, self.c2.id, self.c3.id, self.c3.id, self.c4.id, self.c4.id, self.c5.id, self.c5.id, self.c6.id, self.c7.id, self.c7.id, self.c8.id, self.c8.id, self.c8.id],
+        }
+        requirements = LootSolver._get_requirements_map(self.team)
+
+        order = [self.c5.id, self.c6.id, self.c7.id, self.c8.id, self.c1.id, self.c2.id, self.c3.id, self.c4.id]
+        *_, floor_current_requirements = LootSolver._get_floor_data(requirements, Loot.objects.all(), ['head', 'hands', 'feet', 'tome-accessory-augment'], order)
+        self.assertDictEqual(floor_current_requirements, expected)
 
     def test_whole_view(self):
         """
         Generate the exact same team for the above tests but run the full view and get the information we need.
         Simulate some loot handouts in the team as well to make it a slightly different test case.
         """
-        team = Team.objects.create(
-            invite_code=Team.generate_invite_code(),
-            name='The Testers',
-            tier=Tier.objects.get(max_item_level=665),
+        # First Floor Clear 1
+        Loot.objects.create(
+            item='necklace',
+            member=self.tm4,
+            tier=self.tier,
+            team=self.team,
+            obtained='2024-01-01',
         )
-        raid_weapon = Gear.objects.get(item_level=665, name='Ascension')
-        raid_gear = Gear.objects.get(item_level=660, name='Ascension')
-        tome_gear = Gear.objects.get(name='Augmented Credendum')
-        base_tome_gear = Gear.objects.get(name='Credendum')
-        crafted_gear = Gear.objects.get(name='Diadochos')
+        self.b4.current_necklace = self.raid_gear
+        self.b4.save()
+        Loot.objects.create(
+            item='bracelet',
+            member=self.tm3,
+            tier=self.tier,
+            team=self.team,
+            obtained='2024-01-01',
+        )
+        self.b3.current_bracelet = self.raid_gear
+        self.b3.save()
+        Loot.objects.create(
+            item='ring',
+            member=self.tm8,
+            tier=self.tier,
+            team=self.team,
+            obtained='2024-01-01',
+        )
+        self.b8.current_left_ring = self.raid_gear
+        self.b8.save()
+        # Second Floor Clear 1
+        Loot.objects.create(
+            item='head',
+            member=self.tm3,
+            tier=self.tier,
+            team=self.team,
+            obtained='2024-01-01',
+        )
+        self.b3.current_head = self.raid_gear
+        self.b3.save()
+        Loot.objects.create(
+            item='hands',
+            member=self.tm7,
+            tier=self.tier,
+            team=self.team,
+            obtained='2024-01-01',
+        )
+        self.b7.current_hands = self.raid_gear
+        self.b7.save()
+        Loot.objects.create(
+            item='feet',
+            member=self.tm4,
+            tier=self.tier,
+            team=self.team,
+            obtained='2024-01-01',
+        )
+        self.b4.current_feet = self.raid_gear
+        self.b4.save()
+        Loot.objects.create(
+            item='tome-accessory-augment',
+            member=self.tm6,
+            tier=self.tier,
+            team=self.team,
+            obtained='2024-01-01',
+        )
+        self.b6.current_right_ring = self.tome_gear
+        self.b6.save()
+        # Second Floor Clear 2
+        Loot.objects.create(
+            item='head',
+            member=self.tm2,
+            tier=self.tier,
+            team=self.team,
+            obtained='2024-01-02',
+        )
+        self.b2.current_head = self.raid_gear
+        self.b2.save()
+        Loot.objects.create(
+            item='hands',
+            member=self.tm2,
+            tier=self.tier,
+            team=self.team,
+            obtained='2024-01-02',
+        )
+        self.b2.current_hands = self.raid_gear
+        self.b2.save()
+        Loot.objects.create(
+            item='feet',
+            member=self.tm8,
+            tier=self.tier,
+            team=self.team,
+            obtained='2024-01-02',
+        )
+        self.b8.current_feet = self.raid_gear
+        self.b8.save()
+        Loot.objects.create(
+            item='tome-accessory-augment',
+            member=self.tm7,
+            tier=self.tier,
+            team=self.team,
+            obtained='2024-01-02',
+        )
+        self.b7.current_right_ring = self.tome_gear
+        self.b7.save()
 
-        # Make an ease of use map for current stuff to avoid redefining it over and over
-        current_map = {
-            'current_mainhand': crafted_gear,
-            'current_offhand': crafted_gear,
-            'current_head': crafted_gear,
-            'current_body': crafted_gear,
-            'current_hands': crafted_gear,
-            'current_legs': crafted_gear,
-            'current_feet': crafted_gear,
-            'current_earrings': crafted_gear,
-            'current_necklace': crafted_gear,
-            'current_bracelet': crafted_gear,
-            'current_right_ring': crafted_gear,
-            'current_left_ring': crafted_gear,
-        }
-
-        # Make 8 Characters that represent the team members
-        c1 = Character.objects.create(
-            avatar_url='https://img.savageaim.com/abcde',
-            lodestone_id=1234567890,
-            user=self._get_user(),
-            name='C1',
-            verified=True,
-            world='Lich',
-        )
-        c2 = Character.objects.create(
-            avatar_url='https://img.savageaim.com/abcde',
-            lodestone_id=1234567890,
-            user=self._get_user(),
-            name='C2',
-            verified=True,
-            world='Lich',
-        )
-        c3 = Character.objects.create(
-            avatar_url='https://img.savageaim.com/abcde',
-            lodestone_id=1234567890,
-            user=self._get_user(),
-            name='C3',
-            verified=True,
-            world='Lich',
-        )
-        c4 = Character.objects.create(
-            avatar_url='https://img.savageaim.com/abcde',
-            lodestone_id=1234567890,
-            user=self._get_user(),
-            name='C4',
-            verified=True,
-            world='Lich',
-        )
-        c5 = Character.objects.create(
-            avatar_url='https://img.savageaim.com/abcde',
-            lodestone_id=1234567890,
-            user=self._get_user(),
-            name='C5',
-            verified=True,
-            world='Lich',
-        )
-        c6 = Character.objects.create(
-            avatar_url='https://img.savageaim.com/abcde',
-            lodestone_id=1234567890,
-            user=self._get_user(),
-            name='C6',
-            verified=True,
-            world='Lich',
-        )
-        c7 = Character.objects.create(
-            avatar_url='https://img.savageaim.com/abcde',
-            lodestone_id=1234567890,
-            user=self._get_user(),
-            name='C7',
-            verified=True,
-            world='Lich',
-        )
-        c8 = Character.objects.create(
-            avatar_url='https://img.savageaim.com/abcde',
-            lodestone_id=1234567890,
-            user=self._get_user(),
-            name='C8',
-            verified=True,
-            world='Lich',
-        )
-
-        # Next make 8 BIS Lists, one for each, and link em to the team
-        b1 = BISList.objects.create(
-            owner=c1,
-            job_id='WAR',
-            bis_mainhand=raid_weapon,
-            bis_offhand=raid_weapon,
-            bis_head=raid_gear,
-            bis_body=tome_gear,
-            bis_hands=raid_gear,
-            bis_legs=raid_gear,
-            bis_feet=tome_gear,
-            bis_earrings=tome_gear,
-            bis_necklace=raid_gear,
-            bis_bracelet=tome_gear,
-            bis_right_ring=tome_gear,
-            bis_left_ring=base_tome_gear,
-            **current_map,
-        )
-        tm1 = team.members.create(character=c1, bis_list=b1, permissions=0)
-
-        b2 = BISList.objects.create(
-            owner=c2,
-            job_id='DRK',
-            bis_mainhand=raid_weapon,
-            bis_offhand=raid_weapon,
-            bis_head=raid_gear,
-            bis_body=tome_gear,
-            bis_hands=raid_gear,
-            bis_legs=raid_gear,
-            bis_feet=tome_gear,
-            bis_earrings=tome_gear,
-            bis_necklace=raid_gear,
-            bis_bracelet=tome_gear,
-            bis_right_ring=tome_gear,
-            bis_left_ring=base_tome_gear,
-            **current_map,
-        )
-        tm2 = team.members.create(character=c2, bis_list=b2, permissions=0)
-
-        b3 = BISList.objects.create(
-            owner=c3,
-            job_id='AST',
-            bis_mainhand=raid_weapon,
-            bis_offhand=raid_weapon,
-            bis_head=raid_gear,
-            bis_body=raid_gear,
-            bis_hands=tome_gear,
-            bis_legs=tome_gear,
-            bis_feet=raid_gear,
-            bis_earrings=tome_gear,
-            bis_necklace=raid_gear,
-            bis_bracelet=raid_gear,
-            bis_right_ring=tome_gear,
-            bis_left_ring=base_tome_gear,
-            **current_map,
-        )
-        tm3 = team.members.create(character=c3, bis_list=b3, lead=True)
-
-        b4 = BISList.objects.create(
-            owner=c4,
-            job_id='SGE',
-            bis_mainhand=raid_weapon,
-            bis_offhand=raid_weapon,
-            bis_head=tome_gear,
-            bis_body=raid_gear,
-            bis_hands=tome_gear,
-            bis_legs=tome_gear,
-            bis_feet=raid_gear,
-            bis_earrings=tome_gear,
-            bis_necklace=raid_gear,
-            bis_bracelet=raid_gear,
-            bis_right_ring=tome_gear,
-            bis_left_ring=base_tome_gear,
-            **current_map,
-        )
-        tm4 = team.members.create(character=c4, bis_list=b4, permissions=0)
-
-        b5 = BISList.objects.create(
-            owner=c5,
-            job_id='MNK',
-            bis_mainhand=raid_weapon,
-            bis_offhand=raid_weapon,
-            bis_head=raid_gear,
-            bis_body=raid_gear,
-            bis_hands=tome_gear,
-            bis_legs=tome_gear,
-            bis_feet=raid_gear,
-            bis_earrings=raid_gear,
-            bis_necklace=tome_gear,
-            bis_bracelet=raid_gear,
-            bis_right_ring=raid_gear,
-            bis_left_ring=tome_gear,
-            **current_map,
-        )
-        tm5 = team.members.create(character=c5, bis_list=b5, permissions=0)
-
-        b6 = BISList.objects.create(
-            owner=c6,
-            job_id='RPR',
-            bis_mainhand=raid_weapon,
-            bis_offhand=raid_weapon,
-            bis_head=tome_gear,
-            bis_body=raid_gear,
-            bis_hands=tome_gear,
-            bis_legs=tome_gear,
-            bis_feet=raid_gear,
-            bis_earrings=raid_gear,
-            bis_necklace=tome_gear,
-            bis_bracelet=raid_gear,
-            bis_right_ring=tome_gear,
-            bis_left_ring=raid_gear,
-            **current_map,
-        )
-        tm6 = team.members.create(character=c6, bis_list=b6, permissions=0)
-
-        b7 = BISList.objects.create(
-            owner=c7,
-            job_id='BRD',
-            bis_mainhand=raid_weapon,
-            bis_offhand=raid_weapon,
-            bis_head=raid_gear,
-            bis_body=tome_gear,
-            bis_hands=raid_gear,
-            bis_legs=raid_gear,
-            bis_feet=tome_gear,
-            bis_earrings=tome_gear,
-            bis_necklace=raid_gear,
-            bis_bracelet=tome_gear,
-            bis_right_ring=tome_gear,
-            bis_left_ring=raid_gear,
-            **current_map,
-        )
-        tm7 = team.members.create(character=c7, bis_list=b7, permissions=0)
-
-        b8 = BISList.objects.create(
-            owner=c8,
-            job_id='BLM',
-            bis_mainhand=raid_weapon,
-            bis_offhand=raid_weapon,
-            bis_head=raid_gear,
-            bis_body=raid_gear,
-            bis_hands=tome_gear,
-            bis_legs=tome_gear,
-            bis_feet=raid_gear,
-            bis_earrings=tome_gear,
-            bis_necklace=raid_gear,
-            bis_bracelet=tome_gear,
-            bis_right_ring=tome_gear,
-            bis_left_ring=raid_gear,
-            **current_map,
-        )
-        tm8 = team.members.create(character=c8, bis_list=b8, permissions=0)
-
-        url = reverse('api:loot_solver', kwargs={'team_id': team.pk})
+        url = reverse('api:loot_solver', kwargs={'team_id': self.team.pk})
         user = self._get_user()
         self.client.force_authenticate(user)
         response = self.client.get(url)
@@ -667,9 +601,8 @@ class LootSolverTestSuite(SavageAimTestCase):
         content = response.json()
 
         first_floor_expected = [
-            {'token': False, 'earrings': c5.id, 'necklace': c7.id, 'bracelet': c6.id, 'ring': c8.id},
-            {'token': False, 'earrings': c6.id, 'necklace': c3.id, 'bracelet': c4.id, 'ring': c5.id},
-            {'token': True, 'earrings': None, 'necklace': c1.id, 'bracelet': c3.id, 'ring': c7.id},
+            {'token': False, 'earrings': self.c5.id, 'necklace': self.c7.id, 'bracelet': self.c6.id, 'ring': self.c5.id},
+            {'token': True, 'earrings': self.c6.id, 'necklace': self.c1.id, 'bracelet': self.c4.id, 'ring': self.c7.id},
         ]
         first_floor_received = content['first_floor']
         self.assertEqual(len(first_floor_expected), len(first_floor_received), first_floor_received)
@@ -677,14 +610,12 @@ class LootSolverTestSuite(SavageAimTestCase):
             self.assertDictEqual(first_floor_expected[i], first_floor_received[i], f'{i+1}/{len(first_floor_received)}')
 
         second_floor_expected = [
-            {'token': False, 'head': c7.id, 'hands': c1.id, 'feet': c8.id, 'tome-accessory-augment': c2.id},
-            {'token': False, 'head': c5.id, 'hands': c7.id, 'feet': c3.id, 'tome-accessory-augment': c1.id},
-            {'token': False, 'head': c8.id, 'hands': c2.id, 'feet': c6.id, 'tome-accessory-augment': c4.id},
-            {'token': True, 'head': c3.id, 'hands': None, 'feet': c5.id, 'tome-accessory-augment': c7.id},
-            {'token': False, 'head': c1.id, 'hands': None, 'feet': c4.id, 'tome-accessory-augment': c8.id},
-            {'token': False, 'head': c2.id, 'hands': None, 'feet': None, 'tome-accessory-augment': c6.id},
-            {'token': False, 'head': None, 'hands': None, 'feet': None, 'tome-accessory-augment': c3.id},
-            {'token': True, 'head': None, 'hands': None, 'feet': None, 'tome-accessory-augment': c5.id},
+            {'token': False, 'head': self.c1.id, 'hands': self.c1.id, 'feet': self.c5.id, 'tome-accessory-augment': self.c8.id},
+            {'token': True, 'head': self.c7.id, 'hands': None, 'feet': self.c3.id, 'tome-accessory-augment': self.c2.id},
+            {'token': False, 'head': self.c5.id, 'hands': None, 'feet': self.c6.id, 'tome-accessory-augment': self.c1.id},
+            {'token': False, 'head': self.c8.id, 'hands': None, 'feet': None, 'tome-accessory-augment': self.c4.id},
+            {'token': False, 'head': None, 'hands': None, 'feet': None, 'tome-accessory-augment': self.c7.id},
+            {'token': True, 'head': None, 'hands': None, 'feet': None, 'tome-accessory-augment': self.c3.id},
         ]
         second_floor_received = content['second_floor']
         self.assertEqual(len(second_floor_expected), len(second_floor_received), second_floor_received)
@@ -692,14 +623,14 @@ class LootSolverTestSuite(SavageAimTestCase):
             self.assertDictEqual(second_floor_expected[i], second_floor_received[i], f'{i+1}/{len(second_floor_received)}')
 
         third_floor_expected = [
-            {'token': False, 'body': c6.id, 'legs': c7.id, 'tome-armour-augment': c4.id},
-            {'token': False, 'body': c5.id, 'legs': c1.id, 'tome-armour-augment': c8.id},
-            {'token': False, 'body': c3.id, 'legs': c2.id, 'tome-armour-augment': c6.id},
-            {'token': True, 'body': c4.id, 'legs': None, 'tome-armour-augment': c7.id},
-            {'token': False, 'body': c8.id, 'legs': None, 'tome-armour-augment': c5.id},
-            {'token': False, 'body': None, 'legs': None, 'tome-armour-augment': c1.id},
-            {'token': False, 'body': None, 'legs': None, 'tome-armour-augment': c3.id},
-            {'token': True, 'body': None, 'legs': None, 'tome-armour-augment': c2.id},
+            {'token': False, 'body': self.c6.id, 'legs': self.c7.id, 'tome-armour-augment': self.c4.id},
+            {'token': False, 'body': self.c5.id, 'legs': self.c1.id, 'tome-armour-augment': self.c8.id},
+            {'token': False, 'body': self.c3.id, 'legs': self.c2.id, 'tome-armour-augment': self.c6.id},
+            {'token': True, 'body': self.c4.id, 'legs': None, 'tome-armour-augment': self.c7.id},
+            {'token': False, 'body': self.c8.id, 'legs': None, 'tome-armour-augment': self.c5.id},
+            {'token': False, 'body': None, 'legs': None, 'tome-armour-augment': self.c1.id},
+            {'token': False, 'body': None, 'legs': None, 'tome-armour-augment': self.c3.id},
+            {'token': True, 'body': None, 'legs': None, 'tome-armour-augment': self.c2.id},
         ]
         third_floor_received = content['third_floor']
         self.assertEqual(len(third_floor_expected), len(third_floor_received), third_floor_received)
