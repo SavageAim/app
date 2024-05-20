@@ -6,7 +6,6 @@ Record new loot and update BIS Lists accordingly.
 """
 # stdlib
 from collections import defaultdict
-from datetime import datetime
 from typing import Dict, List, Tuple, Union
 # lib
 from django.core.exceptions import ValidationError
@@ -15,14 +14,7 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 # local
 from .base import APIView
-from api import notifier
-from api.models import BISList, Gear, Loot, Team, Tier
-from api.serializers import (
-    LootSerializer,
-    LootCreateSerializer,
-    LootCreateWithBISSerializer,
-    TeamSerializer,
-)
+from api.models import Gear, Loot, Team, Tier
 
 Requirements = Dict[str, List[int]]
 PrioBrackets = Dict[int, List[int]]
@@ -137,15 +129,22 @@ class LootSolver(APIView):
                 for priority in sorted(prio_brackets, key=lambda prio: -prio):
                     try:
                         prio_brackets[priority].remove(member_id)
-                        if (priority - 1) not in prio_brackets:
-                            prio_brackets[priority - 1] = [member_id]
-                        else:
-                            prio_brackets[priority - 1].append(member_id)
-
                         try:
                             floor_requirements[slot].remove(member_id)
                         except ValueError:
                             pass
+
+                        # Sanity Check; don't add 0 prio (or anything lower) to the list
+                        new_prio = priority - 1
+                        if new_prio <= 0:
+                            continue
+
+                        if new_prio not in prio_brackets:
+                            prio_brackets[new_prio] = [member_id]
+                        else:
+                            prio_brackets[new_prio].append(member_id)
+                        if prio_brackets[priority] == []:
+                            prio_brackets.pop(priority)
                         break
                     except ValueError:
                         # If they're not in the prio bracket at this prio just keep going
