@@ -43,6 +43,14 @@
         v-if="version === 'fight'"
       />
 
+      <!-- Solver -->
+      <LootSolver
+        :loot-manager-version="version"
+        :tier="team.tier"
+        :url="solverUrl"
+        :user-has-permission="userHasLootManagerPermission"
+      />
+
       <!-- Render the Tier History -->
       <History
         :fetch-data="fetchData"
@@ -61,6 +69,7 @@
 import * as Sentry from '@sentry/vue'
 import { Component } from 'vue-property-decorator'
 import History from '@/components/loot/history.vue'
+import LootSolver from '@/components/loot/solver.vue'
 import PerFightLootManager from '@/components/loot_manager/per_fight.vue'
 import PerItemLootManager from '@/components/loot_manager/per_item.vue'
 import TeamNav from '@/components/team/nav.vue'
@@ -80,6 +89,7 @@ import TeamViewMixin from '@/mixins/team_view_mixin'
     PerFightLootManager,
     PerItemLootManager,
     TeamNav,
+    LootSolver,
   },
 })
 export default class TeamLoot extends TeamViewMixin {
@@ -93,6 +103,10 @@ export default class TeamLoot extends TeamViewMixin {
 
   get url(): string {
     return `/backend/api/team/${this.teamId}/loot/`
+  }
+
+  get solverUrl(): string {
+    return `${this.url}solver/`
   }
 
   get version(): string {

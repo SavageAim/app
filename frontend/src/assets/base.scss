@@ -123,3 +123,13 @@ p.disabled-delete {
 .table.is-bordered .is-il-out-of-range {
   border-color: $border;
 }
+
+.solver-loading-spinner {
+  position: relative;
+  pointer-events: none;
+  opacity: 0.5;
+  &:after {
+    @include loader;
+    color: $link;
+  }
+}
