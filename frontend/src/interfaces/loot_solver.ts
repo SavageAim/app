@@ -1,4 +1,4 @@
-interface FirstFloor {
+export interface FirstFloor {
   earrings: number | null
   necklace: number | null
   bracelet: number | null
@@ -6,7 +6,7 @@ interface FirstFloor {
   token: boolean
 }
 
-interface SecondFloor {
+export interface SecondFloor {
   head: number | null
   hands: number | null
   feet: number | null
@@ -14,14 +14,14 @@ interface SecondFloor {
   token: boolean
 }
 
-interface ThirdFloor {
+export interface ThirdFloor {
   body: number | null
   legs: number | null
   'tome-armour-augment': number | null
   token: boolean
 }
 
-interface FourthFloor {
+export interface FourthFloor {
   weapons: number
   mounts: number
 }

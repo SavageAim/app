@@ -18,19 +18,64 @@
       </div>
     </div>
     <div class="card-content" :class="{'is-hidden': !isShown}">
-      <!-- <ul class="is-hidden-desktop mobile-solver-data" v-if="loaded">
-        <li v-for="history in loot.history" :key="`mobile-history-${history.id}`">
-          <b>Item: </b> {{ history.item }}<br />
-          <b>Obtained By: </b> {{ history.member }}<br />
-          <button v-if="userHasPermission" class="button is-danger is-pulled-right" @click="() => { deleteEntries([history]) }">
-            <i class="material-icons">delete</i>
+      <ul class="is-hidden-desktop mobile-solver-data" v-if="loaded">
+        <li>
+          <b>Fight: </b> {{ tier.fights[0] }}<br />
+          <b>Kills Remaining: </b> {{ data.first_floor.length }}<br />
+          <b>Token Purchase: </b> <span v-if="data.first_floor[0].token">Yes!</span><span v-else>No!</span>
+          <button class="button is-primary is-fullwidth" v-if="showAssignButton" @click="autoAssignFirstFloor">
+            <span class="icon-text">
+              <span class="icon"><i class="material-icons">upload</i></span>
+              <span>Auto-Assign Loot</span>
+            </span>
           </button>
-          <b>On: </b> {{ history.obtained }}<br />
-          <b>Via: </b>
-          <span class="has-text-info" v-if="history.greed">Greed</span>
-          <span class="has-text-primary" v-else>Need</span>
+          <button class="button is-dark is-link is-fullwidth">
+            <span class="icon-text">
+              <span class="icon"><i class="material-icons">insights</i></span>
+              <span>See Distribution</span>
+            </span>
+          </button>
         </li>
-      </ul> -->
+        <li>
+          <b>Fight: </b> {{ tier.fights[1] }}<br />
+          <b>Kills Remaining: </b> {{ data.second_floor.length }}<br />
+          <b>Token Purchase: </b> <span v-if="data.second_floor[0].token">Yes!</span><span v-else>No!</span>
+          <button class="button is-primary is-fullwidth" v-if="showAssignButton" @click="autoAssignSecondFloor">
+            <span class="icon-text">
+              <span class="icon"><i class="material-icons">upload</i></span>
+              <span>Auto-Assign Loot</span>
+            </span>
+          </button>
+          <button class="button is-dark is-link is-fullwidth">
+            <span class="icon-text">
+              <span class="icon"><i class="material-icons">insights</i></span>
+              <span>See Distribution</span>
+            </span>
+          </button>
+        </li>
+        <li>
+          <b>Fight: </b> {{ tier.fights[2] }}<br />
+          <b>Kills Remaining: </b> {{ data.third_floor.length }}<br />
+          <b>Token Purchase: </b> <span v-if="data.third_floor[0].token">Yes!</span><span v-else>No!</span>
+          <button class="button is-primary is-fullwidth" v-if="showAssignButton" @click="autoAssignThirdFloor">
+            <span class="icon-text">
+              <span class="icon"><i class="material-icons">upload</i></span>
+              <span>Auto-Assign Loot</span>
+            </span>
+          </button>
+          <button class="button is-dark is-link is-fullwidth">
+            <span class="icon-text">
+              <span class="icon"><i class="material-icons">insights</i></span>
+              <span>See Distribution</span>
+            </span>
+          </button>
+        </li>
+        <li>
+          <b>Fight: </b> {{ tier.fights[3] }}<br />
+          <b>Weapons Remaining: </b> {{ data.fourth_floor.weapons }}<br />
+          <b>Mounts Remaining: </b> {{ data.fourth_floor.weapons }}
+        </li>
+      </ul>
 
       <!-- Desktop View -->
       <table class="table is-striped is-bordered is-fullwidth is-hidden-touch has-text-centered solver-table" v-if="loaded">
@@ -48,8 +93,8 @@
             <td>{{ data.first_floor.length }}</td>
             <td>
               <div class="field has-addons">
-                <div class="control is-expanded">
-                  <button class="button is-primary is-fullwidth">
+                <div class="control is-expanded" v-if="showAssignButton">
+                  <button class="button is-primary is-fullwidth" @click="autoAssignFirstFloor">
                     <span class="icon-text">
                       <span class="icon"><i class="material-icons">upload</i></span>
                       <span>Auto-Assign Loot</span>
@@ -60,7 +105,7 @@
                   <button class="button is-dark is-link is-fullwidth">
                     <span class="icon-text">
                       <span class="icon"><i class="material-icons">insights</i></span>
-                      <span>See All Kills</span>
+                      <span>See Distribution</span>
                     </span>
                   </button>
                 </div>
@@ -79,8 +124,8 @@
             <td>{{ data.second_floor.length }}</td>
             <td>
               <div class="field has-addons">
-                <div class="control is-expanded">
-                  <button class="button is-primary is-fullwidth">
+                <div class="control is-expanded" v-if="showAssignButton">
+                  <button class="button is-primary is-fullwidth" @click="autoAssignSecondFloor">
                     <span class="icon-text">
                       <span class="icon"><i class="material-icons">upload</i></span>
                       <span>Auto-Assign Loot</span>
@@ -91,7 +136,7 @@
                   <button class="button is-dark is-link is-fullwidth">
                     <span class="icon-text">
                       <span class="icon"><i class="material-icons">insights</i></span>
-                      <span>See All Kills</span>
+                      <span>See Distribution</span>
                     </span>
                   </button>
                 </div>
@@ -111,8 +156,8 @@
             <td>{{ data.third_floor.length }}</td>
             <td>
               <div class="field has-addons">
-                <div class="control is-expanded">
-                  <button class="button is-primary is-fullwidth">
+                <div class="control is-expanded" v-if="showAssignButton">
+                  <button class="button is-primary is-fullwidth" @click="autoAssignThirdFloor">
                     <span class="icon-text">
                       <span class="icon"><i class="material-icons">upload</i></span>
                       <span>Auto-Assign Loot</span>
@@ -123,7 +168,7 @@
                   <button class="button is-dark is-link is-fullwidth">
                     <span class="icon-text">
                       <span class="icon"><i class="material-icons">insights</i></span>
-                      <span>See All Kills</span>
+                      <span>See Distribution</span>
                     </span>
                   </button>
                 </div>
@@ -166,7 +211,7 @@ export default class LootSolver extends SavageAimMixin {
 
   data!: LootSolverData
 
-  isShown = false
+  isShown = true
 
   @Prop()
   lootManagerType!: string
@@ -180,12 +225,13 @@ export default class LootSolver extends SavageAimMixin {
   @Prop()
   userHasPermission!: boolean
 
-  get isPerFightManager(): boolean {
-    return this.lootManagerType === 'fight'
+  get showAssignButton(): boolean {
+    return this.userHasPermission && this.lootManagerType === 'fight'
   }
 
   async fetchData(reload: boolean): Promise<void> {
     // Load the solver data from the API
+    this.loaded = false
     try {
       // Pick a URL at random, 50% odds each time
       const response = await fetch(this.url)
@@ -214,6 +260,18 @@ export default class LootSolver extends SavageAimMixin {
   // Hide / Show the History body
   toggleShown(): void {
     this.isShown = !this.isShown
+  }
+
+  autoAssignFirstFloor(): void {
+    this.$emit('auto-assign-first-floor', this.data.first_floor[0])
+  }
+
+  autoAssignSecondFloor(): void {
+    this.$emit('auto-assign-second-floor', this.data.second_floor[0])
+  }
+
+  autoAssignThirdFloor(): void {
+    this.$emit('auto-assign-third-floor', this.data.third_floor[0])
   }
 }
 </script>
