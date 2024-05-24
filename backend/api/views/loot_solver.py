@@ -179,7 +179,7 @@ class LootSolver(APIView):
 
                     if assignee is not None:
                         break
-                week_data[slot] = assignee
+                week_data[slot.replace('-', ' ').title()] = assignee
 
                 if assignee is None:
                     continue
