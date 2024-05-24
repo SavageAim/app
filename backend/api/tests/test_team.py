@@ -423,6 +423,7 @@ class TeamResource(SavageAimTestCase):
             'name': 'Updated Team Name',
             'tier_id': new_tier.id,
             'team_lead': char.id,
+            'solver_sort_overrides': {'PLD': 1, 'MNK': 19, 'AST': 2},
         }
         response = self.client.put(url, data)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT, response.content)
@@ -462,6 +463,8 @@ class TeamResource(SavageAimTestCase):
         Team Lead Not Int: 'A valid integer is required.'
         Team Lead Invalid: 'Please select a non-proxy Member of the Team to be the new team lead.'
         Proxy Team Lead: 'Please select a non-proxy Member of the Team to be the new team lead.'
+        Solver Sort Override Invalid Job ID: 'Invalid Job ID supplied: {job_id}'
+        Solver Sort Override Position Outside Range: 'Please specify positions between 1 and {total_jobs}'
         """
         user = self._get_user()
         self.client.force_authenticate(user)
@@ -478,6 +481,7 @@ class TeamResource(SavageAimTestCase):
             'name': 'abcde' * 100,
             'tier_id': 'abcde',
             'team_lead': 'abcde',
+            'solver_sort_overrides': {'ABC': 1},
         }
         response = self.client.put(url, data)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, response.content)
@@ -485,11 +489,13 @@ class TeamResource(SavageAimTestCase):
         self.assertEqual(content['name'], ['Ensure this field has no more than 64 characters.'])
         self.assertEqual(content['tier_id'], ['A valid integer is required.'])
         self.assertEqual(content['team_lead'], ['A valid integer is required.'])
+        self.assertEqual(content['solver_sort_overrides'], ['Invalid Job ID supplied: "ABC"'])
 
         data = {
             'name': 'Hi c:',
             'tier_id': 123,
             'team_lead': 123,
+            'solver_sort_overrides': {'PLD': '0'},
         }
         response = self.client.put(url, data)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, response.content)
@@ -499,6 +505,7 @@ class TeamResource(SavageAimTestCase):
             content['team_lead'],
             ['Please select a non-proxy Member of the Team to be the new team lead.'],
         )
+        self.assertEqual(content['solver_sort_overrides'], ['Please specify a position between 1 and 19 (found "0")'])
 
         # Run the team lead test again with a valid character id that isn't on the team
         char = Character.objects.create(
@@ -512,6 +519,7 @@ class TeamResource(SavageAimTestCase):
             'name': 'Hi c:',
             'tier_id': Tier.objects.first().pk,
             'team_lead': char.id,
+            'solver_sort_overrides': {'PLD': 100},
         }
         response = self.client.put(url, data)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, response.content)
@@ -520,6 +528,7 @@ class TeamResource(SavageAimTestCase):
             content['team_lead'],
             ['Please select a non-proxy Member of the Team to be the new team lead.'],
         )
+        self.assertEqual(content['solver_sort_overrides'], ['Please specify a position between 1 and 19 (found "100")'])
 
         # Make the above Character a Member of the Team, but make them a proxy
         char.user = None
