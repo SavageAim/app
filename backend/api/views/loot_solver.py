@@ -5,7 +5,7 @@ Get the loot history and required for a Team.
 Record new loot and update BIS Lists accordingly.
 """
 # stdlib
-from collections import defaultdict
+from collections import defaultdict, deque
 from typing import Dict, List, Tuple, Union
 # lib
 from django.core.exceptions import ValidationError
@@ -14,7 +14,7 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 # local
 from .base import APIView
-from api.models import Gear, Loot, Team, Tier
+from api.models import Gear, Job, Loot, Team, Tier
 
 Requirements = Dict[str, List[int]]
 PrioBrackets = Dict[int, List[int]]
@@ -50,6 +50,30 @@ class LootSolver(APIView):
     FIRST_FLOOR_TOKENS = 3
     SECOND_FLOOR_TOKENS = 4
     THIRD_FLOOR_TOKENS = 4
+
+    @staticmethod
+    def _get_team_solver_sort_order(team: Team) -> List[int]:
+        """
+        Given a Team, apply their solver sort overrides to the default list, then turn that new list into a list of member IDs.
+        Get the full list of Job IDs, 
+        """
+        overrides = team.solver_sort_overrides
+        remaining_default_order = deque(Job.get_in_solver_order().exclude(id__in=overrides).values_list('id', flat=True))
+        positions = {v - 1: k for k, v in overrides.items()}
+        total_jobs = len(overrides) + len(remaining_default_order)
+        job_order = deque()
+        for i in range(total_jobs):
+            if i in positions:
+                job_order.append(positions[i])
+            else:
+                job_order.append(remaining_default_order.popleft())
+
+        # Turn our ordered Job list into the list of team members ordered by the given sort order
+        member_jobs = {
+            member.pk: member.bis_list.job.id
+            for member in team.members.all()
+        }
+        return sorted(member_jobs, key=lambda member_id: job_order.index(member_jobs[member_id]))
 
     @staticmethod
     def _get_requirements_map(team: Team) -> Requirements:
@@ -126,7 +150,7 @@ class LootSolver(APIView):
                 if member_id is None:
                     continue
                 # move the receiver of the item down one bracket, making a new one if you have to
-                for priority in sorted(prio_brackets, key=lambda prio: -prio):
+                for priority in sorted(prio_brackets, reverse=True):
                     try:
                         prio_brackets[priority].remove(member_id)
                         try:
@@ -169,7 +193,7 @@ class LootSolver(APIView):
             for slot in slots:
                 # Check the prio brackets in descending order
                 assignee = None
-                for check_prio in sorted(prio_brackets, key=lambda prio: -prio):
+                for check_prio in sorted(prio_brackets, reverse=True):
                     # Run through the names and find the highest prio assignee
                     for check_id in prio_brackets.get(check_prio, []):
                         if check_id in requirements.get(slot, []):
@@ -203,7 +227,7 @@ class LootSolver(APIView):
 
             # Lastly, if weeks % token_count == 0, reduce everyone's requirement by 1
             if weeks % weeks_per_token == 0:
-                for priority in sorted(prio_brackets, key=lambda prio: prio):
+                for priority in sorted(prio_brackets):
                     prio_brackets[priority - 1] = prio_brackets[priority]
 
                     # Need to also remove a loot item for everyone in the priority bracket to keep the requirements info in check
@@ -300,13 +324,7 @@ class LootSolver(APIView):
         except (Team.DoesNotExist, ValidationError):
             return Response(status=404)
 
-        # Generate the ordering of IDs based on the decided pattern; DPS > Tanks > Healer
-        # Natural DPS ordering is Melee > Ranged > Caster
-        id_ordering = [
-            *obj.members.filter(bis_list__job__role='dps').values_list('id', flat=True),
-            *obj.members.filter(bis_list__job__role='tank').values_list('id', flat=True),
-            *obj.members.filter(bis_list__job__role='heal').values_list('id', flat=True),
-        ]
+        id_ordering = self._get_team_solver_sort_order(obj)
 
         # Generate the requirements map for the Team as it stands
         requirements = self._get_requirements_map(obj)
