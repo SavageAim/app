@@ -639,6 +639,8 @@ class LootSolverTestSuite(SavageAimTestCase):
 
         self.assertEqual(content['fourth_floor'], {'weapons': 8, 'mounts': 8})
 
+        self.fail('This only works if the loot is obtained through history. Purchased loot is not checked. You need to fix this.')
+
     def test_solver_sort_overrides(self):
         """
         Ensure that overriding the solver sort order actually affects the way the members are ordered.
