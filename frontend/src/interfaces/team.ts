@@ -6,5 +6,6 @@ export default interface Team {
   members: TeamMember[]
   invite_code: string
   name: string
+  solver_sort_overrides: { [jobId: string]: number }
   tier: Tier
 }

@@ -113,6 +113,7 @@ export interface TeamMemberUpdateErrors {
 // Interface defining possible errors with the Team Update view
 export interface TeamUpdateErrors {
   name?: string[]
+  solver_sort_overrides?: string[]
   tier_id?: string[]
   team_lead?: string[]
 }
