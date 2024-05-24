@@ -3,7 +3,6 @@ Just a view to get the list of all jobs in the system
 """
 
 # lib
-from django.db.models import Case, When
 from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny
 from rest_framework.request import Request
@@ -44,10 +43,6 @@ class JobSolverSortCollection(APIView):
         Return the full list of Jobs in default ordering (Melee > Ranged > Caster > Tanks > Healer)
         """
         # Permissions won't allow this method to be run by non-auth'd users
-        objs = Job.objects.annotate(solver_sort=Case(
-            When(role='dps', then=0),
-            When(role='tank', then=1),
-            default=2,
-        )).order_by('solver_sort', 'ordering').all()
+        objs = Job.get_in_solver_order()
         data = JobSerializer(objs, many=True).data
         return Response(data)

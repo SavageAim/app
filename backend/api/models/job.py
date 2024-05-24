@@ -27,3 +27,11 @@ class Job(models.Model):
 
     class Meta:
         ordering = ['-role', 'ordering']
+
+    @classmethod
+    def get_in_solver_order(cls):
+        return Job.objects.annotate(solver_sort=models.Case(
+            models.When(role='dps', then=0),
+            models.When(role='tank', then=1),
+            default=2,
+        )).order_by('solver_sort', 'ordering').all()
