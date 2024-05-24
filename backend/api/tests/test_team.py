@@ -465,6 +465,7 @@ class TeamResource(SavageAimTestCase):
         Proxy Team Lead: 'Please select a non-proxy Member of the Team to be the new team lead.'
         Solver Sort Override Invalid Job ID: 'Invalid Job ID supplied: {job_id}'
         Solver Sort Override Position Outside Range: 'Please specify positions between 1 and {total_jobs}'
+        Solver Sort Override Double Position Entry: 'Please specify only one Job per position! (position "{new_position}" was found multiple times)'
         """
         user = self._get_user()
         self.client.force_authenticate(user)
@@ -563,6 +564,7 @@ class TeamResource(SavageAimTestCase):
             owner=char,
         )
         self.team.members.create(character=char, bis_list=bis, lead=False)
+        data['solver_sort_overrides'] = {'PLD': 1, 'WAR': 1}
         response = self.client.put(url, data)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, response.content)
         content = response.json()
@@ -570,6 +572,7 @@ class TeamResource(SavageAimTestCase):
             content['team_lead'],
             ['Please select a non-proxy Member of the Team to be the new team lead.'],
         )
+        self.assertEqual(content['solver_sort_overrides'], ['Please specify only one Job per position! (position "1" was found multiple times)'])
 
     def test_delete(self):
         """

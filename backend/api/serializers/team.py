@@ -41,13 +41,16 @@ class TeamUpdateSerializer(serializers.ModelSerializer):
         """
         job_ids = set(Job.objects.values_list('id', flat=True))
         total_jobs = len(job_ids)
+        seen_positions = set()
         for job_id, new_position in solver_sort_overrides.items():
             if job_id not in job_ids:
                 raise serializers.ValidationError(f'Invalid Job ID supplied: "{job_id}"')
             if new_position < 1 or new_position > total_jobs:
                 raise serializers.ValidationError(f'Please specify a position between 1 and {total_jobs} (found "{new_position}")')
+            if new_position in seen_positions:
+                raise serializers.ValidationError(f'Please specify only one Job per position! (position "{new_position}" was found multiple times)')
 
-            solver_sort_overrides[job_id] = new_position
+            seen_positions.add(new_position)
 
         return solver_sort_overrides
 
