@@ -2,7 +2,7 @@ from .bis_list import BISListCollection, BISListDelete, BISListResource
 from .character import CharacterCollection, CharacterDelete, CharacterResource, CharacterVerification
 from .etro import EtroImport
 from .gear import GearCollection, ItemLevels
-from .job import JobCollection
+from .job import JobCollection, JobSolverSortCollection
 from .lodestone import LodestoneGearImport, LodestoneResource
 from .loot import LootCollection, LootWithBIS
 from .loot_solver import LootSolver
@@ -29,6 +29,7 @@ __all__ = [
     'ItemLevels',
 
     'JobCollection',
+    'JobSolverSortCollection',
 
     'LodestoneGearImport',
     'LodestoneResource',

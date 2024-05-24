@@ -22,6 +22,7 @@ urlpatterns = [
 
     # Job
     path('job/', views.JobCollection.as_view(), name='job_collection'),
+    path('job/solver/', views.JobSolverSortCollection.as_view(), name='job_solver_sort_collection'),
 
     # Lodestone Scraper Hooks
     path('lodestone/<str:character_id>/', views.LodestoneResource.as_view(), name='lodestone_resource'),
