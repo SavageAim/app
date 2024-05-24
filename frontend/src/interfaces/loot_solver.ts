@@ -1,23 +1,23 @@
 export interface FirstFloor {
-  earrings: number | null
-  necklace: number | null
-  bracelet: number | null
-  ring: number | null
+  Earrings: number | null
+  Necklace: number | null
+  Bracelet: number | null
+  Ring: number | null
   token: boolean
 }
 
 export interface SecondFloor {
-  head: number | null
-  hands: number | null
-  feet: number | null
-  'tome-accessory-augment': number | null
+  Head: number | null
+  Hands: number | null
+  Feet: number | null
+  'Tome Accessory Augment': number | null
   token: boolean
 }
 
 export interface ThirdFloor {
-  body: number | null
-  legs: number | null
-  'tome-armour-augment': number | null
+  Body: number | null
+  Legs: number | null
+  'Tome Armour Augment': number | null
   token: boolean
 }
 

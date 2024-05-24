@@ -49,6 +49,7 @@
       <!-- Solver -->
       <LootSolver
         :loot-manager-type="version"
+        :team-member-names="teamMemberNames"
         :tier="team.tier"
         :url="solverUrl"
         :user-has-permission="userHasLootManagerPermission"
@@ -121,6 +122,14 @@ export default class TeamLoot extends TeamViewMixin {
 
   get solverUrl(): string {
     return `${this.url}solver/`
+  }
+
+  get teamMemberNames(): { [id: number]: string } {
+    const memberNames: { [id: number]: string } = {}
+    this.team.members.forEach((member) => {
+      memberNames[member.id] = member.name
+    })
+    return memberNames
   }
 
   get url(): string {

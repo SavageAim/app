@@ -23,7 +23,7 @@
           <b>Fight: </b> {{ tier.fights[0] }}<br />
           <b>Kills Remaining: </b> {{ data.first_floor.length }}<br />
           <b>Token Purchase: </b> <span v-if="data.first_floor[0].token">Yes!</span><span v-else>No!</span>
-          <button class="button is-primary is-fullwidth" v-if="showAssignButton" @click="autoAssignFirstFloor">
+          <button class="button is-primary is-fullwidth" v-if="shouldShowAssignButton" @click="autoAssignFirstFloor">
             <span class="icon-text">
               <span class="icon"><i class="material-icons">upload</i></span>
               <span>Auto-Assign Loot</span>
@@ -40,7 +40,7 @@
           <b>Fight: </b> {{ tier.fights[1] }}<br />
           <b>Kills Remaining: </b> {{ data.second_floor.length }}<br />
           <b>Token Purchase: </b> <span v-if="data.second_floor[0].token">Yes!</span><span v-else>No!</span>
-          <button class="button is-primary is-fullwidth" v-if="showAssignButton" @click="autoAssignSecondFloor">
+          <button class="button is-primary is-fullwidth" v-if="shouldShowAssignButton" @click="autoAssignSecondFloor">
             <span class="icon-text">
               <span class="icon"><i class="material-icons">upload</i></span>
               <span>Auto-Assign Loot</span>
@@ -57,7 +57,7 @@
           <b>Fight: </b> {{ tier.fights[2] }}<br />
           <b>Kills Remaining: </b> {{ data.third_floor.length }}<br />
           <b>Token Purchase: </b> <span v-if="data.third_floor[0].token">Yes!</span><span v-else>No!</span>
-          <button class="button is-primary is-fullwidth" v-if="showAssignButton" @click="autoAssignThirdFloor">
+          <button class="button is-primary is-fullwidth" v-if="shouldShowAssignButton" @click="autoAssignThirdFloor">
             <span class="icon-text">
               <span class="icon"><i class="material-icons">upload</i></span>
               <span>Auto-Assign Loot</span>
@@ -93,7 +93,7 @@
             <td>{{ data.first_floor.length }}</td>
             <td>
               <div class="field has-addons">
-                <div class="control is-expanded" v-if="showAssignButton">
+                <div class="control is-expanded" v-if="shouldShowAssignButton">
                   <button class="button is-primary is-fullwidth" @click="autoAssignFirstFloor">
                     <span class="icon-text">
                       <span class="icon"><i class="material-icons">upload</i></span>
@@ -101,7 +101,7 @@
                     </span>
                   </button>
                 </div>
-                <div class="control is-expanded">
+                <div class="control is-expanded" v-if="data.first_floor.length > 0" @click="showFirstFloorDistribution">
                   <button class="button is-dark is-link is-fullwidth">
                     <span class="icon-text">
                       <span class="icon"><i class="material-icons">insights</i></span>
@@ -124,7 +124,7 @@
             <td>{{ data.second_floor.length }}</td>
             <td>
               <div class="field has-addons">
-                <div class="control is-expanded" v-if="showAssignButton">
+                <div class="control is-expanded" v-if="shouldShowAssignButton">
                   <button class="button is-primary is-fullwidth" @click="autoAssignSecondFloor">
                     <span class="icon-text">
                       <span class="icon"><i class="material-icons">upload</i></span>
@@ -132,7 +132,7 @@
                     </span>
                   </button>
                 </div>
-                <div class="control is-expanded">
+                <div class="control is-expanded" v-if="data.second_floor.length > 0" @click="showSecondFloorDistribution">
                   <button class="button is-dark is-link is-fullwidth">
                     <span class="icon-text">
                       <span class="icon"><i class="material-icons">insights</i></span>
@@ -156,7 +156,7 @@
             <td>{{ data.third_floor.length }}</td>
             <td>
               <div class="field has-addons">
-                <div class="control is-expanded" v-if="showAssignButton">
+                <div class="control is-expanded" v-if="shouldShowAssignButton">
                   <button class="button is-primary is-fullwidth" @click="autoAssignThirdFloor">
                     <span class="icon-text">
                       <span class="icon"><i class="material-icons">upload</i></span>
@@ -164,7 +164,7 @@
                     </span>
                   </button>
                 </div>
-                <div class="control is-expanded">
+                <div class="control is-expanded" v-if="data.third_floor.length > 0" @click="showThirdFloorDistribution">
                   <button class="button is-dark is-link is-fullwidth">
                     <span class="icon-text">
                       <span class="icon"><i class="material-icons">insights</i></span>
@@ -204,6 +204,7 @@ import { Component, Prop } from 'vue-property-decorator'
 import { LootSolverData } from '@/interfaces/loot_solver'
 import SavageAimMixin from '@/mixins/savage_aim_mixin'
 import Tier from '@/interfaces/tier'
+import LootSolverDistributionTable from '@/components/modals/loot_solver_distribution.vue'
 
 @Component
 export default class LootSolver extends SavageAimMixin {
@@ -211,10 +212,13 @@ export default class LootSolver extends SavageAimMixin {
 
   data!: LootSolverData
 
-  isShown = true
+  isShown = false
 
   @Prop()
   lootManagerType!: string
+
+  @Prop()
+  teamMemberNames!: { [id: number]: string }
 
   @Prop()
   tier!: Tier
@@ -225,8 +229,20 @@ export default class LootSolver extends SavageAimMixin {
   @Prop()
   userHasPermission!: boolean
 
-  get showAssignButton(): boolean {
+  get shouldShowAssignButton(): boolean {
     return this.userHasPermission && this.lootManagerType === 'fight'
+  }
+
+  autoAssignFirstFloor(): void {
+    this.$emit('auto-assign-first-floor', this.data.first_floor[0])
+  }
+
+  autoAssignSecondFloor(): void {
+    this.$emit('auto-assign-second-floor', this.data.second_floor[0])
+  }
+
+  autoAssignThirdFloor(): void {
+    this.$emit('auto-assign-third-floor', this.data.third_floor[0])
   }
 
   async fetchData(reload: boolean): Promise<void> {
@@ -257,21 +273,21 @@ export default class LootSolver extends SavageAimMixin {
     this.fetchData(false)
   }
 
+  showFirstFloorDistribution(): void {
+    this.$modal.show(LootSolverDistributionTable, { data: this.data.first_floor, fight: this.tier.fights[0], teamMemberNames: this.teamMemberNames })
+  }
+
+  showSecondFloorDistribution(): void {
+    this.$modal.show(LootSolverDistributionTable, { data: this.data.second_floor, fight: this.tier.fights[1], teamMemberNames: this.teamMemberNames })
+  }
+
+  showThirdFloorDistribution(): void {
+    this.$modal.show(LootSolverDistributionTable, { data: this.data.third_floor, fight: this.tier.fights[2], teamMemberNames: this.teamMemberNames })
+  }
+
   // Hide / Show the History body
   toggleShown(): void {
     this.isShown = !this.isShown
-  }
-
-  autoAssignFirstFloor(): void {
-    this.$emit('auto-assign-first-floor', this.data.first_floor[0])
-  }
-
-  autoAssignSecondFloor(): void {
-    this.$emit('auto-assign-second-floor', this.data.second_floor[0])
-  }
-
-  autoAssignThirdFloor(): void {
-    this.$emit('auto-assign-third-floor', this.data.third_floor[0])
   }
 }
 </script>
