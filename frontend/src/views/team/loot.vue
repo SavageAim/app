@@ -31,6 +31,7 @@
         :send-loot-with-bis="sendLootWithBis"
         :user-has-permission="userHasLootManagerPermission"
         v-if="version === 'item'"
+        ref="perItemLootManager"
       />
 
       <PerFightLootManager
@@ -41,6 +42,21 @@
         :url="url"
         :user-has-permission="userHasLootManagerPermission"
         v-if="version === 'fight'"
+        v-on:reload-solver="reloadSolver"
+        ref="perFightLootManager"
+      />
+
+      <!-- Solver -->
+      <LootSolver
+        :loot-manager-type="version"
+        :team-member-names="teamMemberNames"
+        :tier="team.tier"
+        :url="solverUrl"
+        :user-has-permission="userHasLootManagerPermission"
+        v-on:auto-assign-first-floor="assignFirstFloor"
+        v-on:auto-assign-second-floor="assignSecondFloor"
+        v-on:auto-assign-third-floor="assignThirdFloor"
+        ref="lootSolver"
       />
 
       <!-- Render the Tier History -->
@@ -52,6 +68,7 @@
         :team="team"
         :url="url"
         :user-has-permission="userHasLootManagerPermission"
+        v-on:reload-solver="reloadSolver"
       />
     </template>
   </div>
@@ -61,6 +78,7 @@
 import * as Sentry from '@sentry/vue'
 import { Component } from 'vue-property-decorator'
 import History from '@/components/loot/history.vue'
+import LootSolver from '@/components/loot/solver.vue'
 import PerFightLootManager from '@/components/loot_manager/per_fight.vue'
 import PerItemLootManager from '@/components/loot_manager/per_item.vue'
 import TeamNav from '@/components/team/nav.vue'
@@ -69,10 +87,13 @@ import {
   LootPacket,
   LootResponse,
   LootWithBISPacket,
+  PerFightChosenMember,
 } from '@/interfaces/loot'
 import { LootCreateErrors, LootBISCreateErrors } from '@/interfaces/responses'
 import Team from '@/interfaces/team'
+import TeamMember from '@/interfaces/team_member'
 import TeamViewMixin from '@/mixins/team_view_mixin'
+import { FirstFloor, SecondFloor, ThirdFloor } from '@/interfaces/loot_solver'
 
 @Component({
   components: {
@@ -80,6 +101,7 @@ import TeamViewMixin from '@/mixins/team_view_mixin'
     PerFightLootManager,
     PerItemLootManager,
     TeamNav,
+    LootSolver,
   },
 })
 export default class TeamLoot extends TeamViewMixin {
@@ -91,12 +113,64 @@ export default class TeamLoot extends TeamViewMixin {
 
   team!: Team
 
+  get perFightLootManager(): PerFightLootManager {
+    return this.$refs.perFightLootManager as PerFightLootManager
+  }
+
+  get solver(): LootSolver {
+    return this.$refs.lootSolver as LootSolver
+  }
+
+  get solverUrl(): string {
+    return `${this.url}solver/`
+  }
+
+  get teamMemberNames(): { [id: number]: string } {
+    const memberNames: { [id: number]: string } = {}
+    this.team.members.forEach((member) => {
+      memberNames[member.id] = member.name
+    })
+    return memberNames
+  }
+
   get url(): string {
     return `/backend/api/team/${this.teamId}/loot/`
   }
 
   get version(): string {
     return this.$store.state.user.loot_manager_version
+  }
+
+  assignFirstFloor(data: FirstFloor): void {
+    this.autoAssign('first', data)
+  }
+
+  assignSecondFloor(data: SecondFloor): void {
+    this.autoAssign('second', data)
+  }
+
+  assignThirdFloor(data: ThirdFloor): void {
+    this.autoAssign('third', data)
+  }
+
+  autoAssign(fight: string, data: FirstFloor | SecondFloor | ThirdFloor): void {
+    // Turn data object into a map of item: PFCM
+    const chosenMembers: { [item: string]: PerFightChosenMember } = {}
+    Object.entries(data).forEach(([item, memberId]) => {
+      if (item !== 'token') {
+        const member = this.getTeamMember(memberId)
+        const itemsObtained = this.loot.received[member.name]?.need || 0
+        chosenMembers[item] = {
+          greed: false,
+          greed_list_id: null,
+          member_id: memberId,
+          member_name: member.name,
+          items_received: itemsObtained,
+          job_id: member.bis_list.job.id,
+        }
+      }
+    })
+    this.perFightLootManager.autoAssign(fight, chosenMembers)
   }
 
   async created(): Promise<void> {
@@ -128,9 +202,18 @@ export default class TeamLoot extends TeamViewMixin {
     }
   }
 
+  getTeamMember(memberId: number): TeamMember {
+    return this.team.members.find((member: TeamMember) => member.id === memberId)!
+  }
+
   // Reload called via websockets
   async load(): Promise<void> {
     this.fetchData(true)
+  }
+
+  // Reload the Solver
+  reloadSolver(): void {
+    this.solver.fetchData(true)
   }
 
   async sendLoot(data: LootPacket): Promise<LootCreateErrors | null> {
@@ -151,6 +234,7 @@ export default class TeamLoot extends TeamViewMixin {
       if (response.ok) {
         await this.fetchData(true)
         this.$notify({ text: 'Loot updated!', type: 'is-success' })
+        this.reloadSolver()
       }
       else {
         super.handleError(response.status)
@@ -185,6 +269,7 @@ export default class TeamLoot extends TeamViewMixin {
       if (response.ok) {
         await this.fetchData(true)
         this.$notify({ text: 'Loot updated!', type: 'is-success' })
+        this.reloadSolver()
       }
       else {
         super.handleError(response.status)

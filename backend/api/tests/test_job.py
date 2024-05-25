@@ -33,3 +33,41 @@ class JobCollection(SavageAimTestCase):
         remote_data = response.json()
         for index, item in enumerate(local_data):
             self.assertDictEqual(item, remote_data[index])
+
+    def test_solver_sort_list(self):
+        """
+        List Jobs from the API for the Default Solver Sort order, ensure they're properly returned.
+        """
+        url = reverse('api:job_solver_sort_collection')
+        user = self._get_user()
+        self.client.force_authenticate(user)
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        expected = [
+            'MNK',
+            'DRG',
+            'NIN',
+            'SAM',
+            'RPR',
+
+            'BRD',
+            'MCH',
+            'DNC',
+
+            'BLM',
+            'SMN',
+            'RDM',
+
+            'PLD',
+            'WAR',
+            'DRK',
+            'GNB',
+
+            'WHM',
+            'SCH',
+            'AST',
+            'SGE',
+        ]
+
+        self.assertEqual(expected, [job['id'] for job in response.json()])

@@ -19,6 +19,8 @@ class Team(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     invite_code = models.CharField(max_length=CODE_LEN)
     name = models.CharField(max_length=64)
+    # job_id: overridden_position
+    solver_sort_overrides = models.JSONField(default=dict)
     tier = models.ForeignKey('Tier', on_delete=models.CASCADE)
 
     def __str__(self):

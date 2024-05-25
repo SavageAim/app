@@ -139,6 +139,16 @@ export default class PerFightLootManager extends SavageAimMixin {
   @Prop()
   userHasPermission!: boolean
 
+  autoAssign(fight: string, data: { [item: string]: PerFightChosenMember }): void {
+    this.fight = fight
+    this.$nextTick(() => {
+      Object.entries(data).forEach(([item, member]) => {
+        this.chosenMembers[item] = member
+      })
+      this.$forceUpdate()
+    })
+  }
+
   chooseMember(data: PerFightChosenMember, item: string): void {
     this.chosenMembers[item] = data
     this.$forceUpdate()
@@ -233,6 +243,9 @@ export default class PerFightLootManager extends SavageAimMixin {
 
     // Reset the state
     this.requestingI = false
+
+    // Reload the solver
+    this.$emit('reload-solver')
   }
 
   selectTeamMember(item: string): void {

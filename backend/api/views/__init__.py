@@ -2,9 +2,10 @@ from .bis_list import BISListCollection, BISListDelete, BISListResource
 from .character import CharacterCollection, CharacterDelete, CharacterResource, CharacterVerification
 from .etro import EtroImport
 from .gear import GearCollection, ItemLevels
-from .job import JobCollection
+from .job import JobCollection, JobSolverSortCollection
 from .lodestone import LodestoneGearImport, LodestoneResource
 from .loot import LootCollection, LootWithBIS
+from .loot_solver import LootSolver
 from .notification import NotificationCollection, NotificationResource
 from .team import TeamCollection, TeamResource, TeamInvite
 from .team_member import TeamMemberResource, TeamMemberPermissionsResource
@@ -28,12 +29,15 @@ __all__ = [
     'ItemLevels',
 
     'JobCollection',
+    'JobSolverSortCollection',
 
     'LodestoneGearImport',
     'LodestoneResource',
 
     'LootCollection',
     'LootWithBIS',
+
+    'LootSolver',
 
     'NotificationCollection',
     'NotificationResource',

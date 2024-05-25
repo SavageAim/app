@@ -1,10 +1,11 @@
 """
 Serializers for the Team models
 """
+from typing import Dict
 # lib
 from rest_framework import serializers
 # local
-from api.models import BISList, Character, Team, TeamMember, Tier
+from api.models import BISList, Character, Job, Team, TeamMember, Tier
 from .team_member import TeamMemberSerializer
 from .tier import TierSerializer
 
@@ -25,13 +26,33 @@ class TeamSerializer(serializers.ModelSerializer):
 
 
 class TeamUpdateSerializer(serializers.ModelSerializer):
+    solver_sort_overrides = serializers.DictField(child=serializers.IntegerField(), allow_empty=True)
     team_lead = serializers.IntegerField()
     tier_id = serializers.IntegerField()
 
     class Meta:
         model = Team
-        fields = ['name', 'tier_id', 'team_lead']
+        fields = ['name', 'tier_id', 'team_lead', 'solver_sort_overrides']
         write_only_fields = ['team_lead']
+
+    def validate_solver_sort_overrides(self, solver_sort_overrides: Dict[str, int]) -> Dict[str, int]:
+        """
+        Ensure that no IDs are specified twice, and ensure that the numbers are not higher than the number of jobs defined
+        """
+        job_ids = set(Job.objects.values_list('id', flat=True))
+        total_jobs = len(job_ids)
+        seen_positions = set()
+        for job_id, new_position in solver_sort_overrides.items():
+            if job_id not in job_ids:
+                raise serializers.ValidationError(f'Invalid Job ID supplied: "{job_id}"')
+            if new_position < 1 or new_position > total_jobs:
+                raise serializers.ValidationError(f'Please specify a position between 1 and {total_jobs} (found "{new_position}")')
+            if new_position in seen_positions:
+                raise serializers.ValidationError(f'Please specify only one Job per position! (position "{new_position}" was found multiple times)')
+
+            seen_positions.add(new_position)
+
+        return solver_sort_overrides
 
     def validate_tier_id(self, tier_id: int) -> int:
         """
