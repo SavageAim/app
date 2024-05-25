@@ -253,11 +253,11 @@ export default class History extends SavageAimMixin {
 
   deleteEntries(items: Loot[]): void {
     // Prompt deletion first before sending an api request (we'll use a modal instead of javascript alerts)
-    this.$modal.show(DeleteLoot, { team: this.team, items }, { }, { 
-      closed: () => { 
+    this.$modal.show(DeleteLoot, { team: this.team, items }, { }, {
+      closed: () => {
         this.fetchData(true)
         this.$emit('reload-solver')
-      } 
+      },
     })
   }
 
