@@ -24,12 +24,6 @@
 
       <!-- Actions -->
       <div class="card">
-        <div class="card-header">
-          <div class="card-header-title">
-            <span>Actions</span>
-          </div>
-        </div>
-
         <Actions :bisList="bisList" :character="character" :char-is-proxy="charIsProxy" :url="url" :method="method" v-on="$listeners" />
       </div>
     </div>
