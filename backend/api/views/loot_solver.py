@@ -336,12 +336,12 @@ class LootSolver(APIView):
         return handouts
 
     def _get_first_floor_data(
-                self,
-                requirements: Requirements,
-                history: QuerySet[Loot],
-                id_order: List[int],
-                non_loot_gear_obtained: NonLootGear,
-            ) -> List[HandoutData]:
+        self,
+        requirements: Requirements,
+        history: QuerySet[Loot],
+        id_order: List[int],
+        non_loot_gear_obtained: NonLootGear,
+    ) -> List[HandoutData]:
         """
         Simulate handing out the loot for a first floor clear.
         """
@@ -356,11 +356,11 @@ class LootSolver(APIView):
 
     @staticmethod
     def _get_second_floor_data(
-                requirements: Requirements,
-                history: QuerySet[Loot],
-                id_order: List[int],
-                non_loot_gear_obtained: NonLootGear,
-            ) -> List[HandoutData]:
+        requirements: Requirements,
+        history: QuerySet[Loot],
+        id_order: List[int],
+        non_loot_gear_obtained: NonLootGear,
+    ) -> List[HandoutData]:
         """
         Simulate handing out the loot for a second floor clear.
         """
@@ -374,12 +374,12 @@ class LootSolver(APIView):
         return LootSolver._get_handout_data(LootSolver.SECOND_FLOOR_SLOTS, floor_requirements, prio_brackets, LootSolver.SECOND_FLOOR_TOKENS, weeks)
 
     def _get_third_floor_data(
-                self,
-                requirements: Requirements,
-                history: QuerySet[Loot],
-                id_order: List[int],
-                non_loot_gear_obtained: NonLootGear,
-            ) -> List[HandoutData]:
+        self,
+        requirements: Requirements,
+        history: QuerySet[Loot],
+        id_order: List[int],
+        non_loot_gear_obtained: NonLootGear,
+    ) -> List[HandoutData]:
         """
         Simulate handing out the loot for a third floor clear.
         """
