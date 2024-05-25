@@ -24,7 +24,7 @@
         <p>As a result, this "one item at a time" method made the most sense.</p>
       </template>
       <template v-if="lootManagerVersion === 'fight'">
-        <img src="/per_fight_loot_mngr.webpp" alt="An example of the per item based loot manager" />
+        <img src="/per_fight_loot_mngr.webp" alt="An example of the per item based loot manager" />
         <hr />
         <p>A new version of the Loot Manager that leverages the changes brought to savage loot in Pandæmonium: Anabaseios.</p>
         <p>Since fights can be expected to drop one of all of their potential drops every kill, it's possible to assign all the loot per fight in one go.</p>
