@@ -17,18 +17,6 @@
         </button>
       </template>
 
-      <template v-if="!importLoading">
-        <button class="button is-fullwidth is-link" data-microtip-position="top" role="tooltip" aria-label="Import BIS Gear from Etro.gg" v-if="etroImportable()" @click="etroImport">
-          <span class="icon"><i class="material-icons">cloud_download</i></span>
-          <span>Import from Etro</span>
-        </button>
-        <button class="button is-fullwidth is-disabled" data-microtip-position="top" role="tooltip" aria-label="Please enter an Etro gearset link in the external URL." v-else>
-          <span class="icon"><i class="material-icons">cloud_download</i></span>
-          <span>Import from Etro</span>
-        </button>
-      </template>
-      <button v-else class="button is-static is-loading is-fullwidth">Loading data.</button>
-
       <button class="button is-fullwidth is-link" data-microtip-position="top" role="tooltip" aria-label="Import Current Gear from Lodestone" @click="lodestoneImport" v-if="!importLoading">
         <span class="icon"><i class="material-icons">cloud_download</i></span>
         <span>Import from Lodestone</span>
@@ -63,7 +51,7 @@ import BISListModify from '@/dataclasses/bis_list_modify'
 import BISList from '@/interfaces/bis_list'
 import { CharacterDetails } from '@/interfaces/character'
 import { CreateResponse, BISListErrors } from '@/interfaces/responses'
-import { EtroImportResponse, ImportError, LodestoneImportResponse } from '@/interfaces/imports'
+import { ImportError, LodestoneImportResponse } from '@/interfaces/imports'
 
 @Component
 export default class Actions extends Vue {
@@ -88,16 +76,8 @@ export default class Actions extends Vue {
   @Prop()
   url!: string
 
-  importPattern = /https:\/\/etro\.gg\/gearset\/([-a-z0-9]+)\/?/
-
   get create(): boolean {
     return this.method === 'POST'
-  }
-
-  get etroImportUrl(): string | null {
-    const match = this.importPattern.exec(this.bisList.external_link || '')
-    if (match === null) return null
-    return `/backend/api/import/etro/${match[1]}/`
   }
 
   get lodestoneImportUrl(): string {
@@ -112,11 +92,6 @@ export default class Actions extends Vue {
   get syncableLists(): BISList[] {
     if (this.character.bis_lists == null) return []
     return this.character.bis_lists.filter((list: BISList) => list.id !== this.bisList.id && list.job.id === this.bisList.job_id)
-  }
-
-  @Watch('bisList.external_link', { deep: true })
-  etroImportable(): boolean {
-    return this.importPattern.exec(this.bisList.external_link || '') !== null
   }
 
   @Watch('bisList.job_id', { deep: true })
@@ -134,31 +109,6 @@ export default class Actions extends Vue {
 
   loadCurrentGearFromList(list: BISList): void {
     this.$emit('import-current-data', list)
-  }
-
-  async etroImport(): Promise<void> {
-    const url = this.etroImportUrl
-    if (url === null) return
-    this.importLoading = true
-    try {
-      const response = await fetch(url)
-      if (response.ok) {
-        // Handle the import
-        const data = await response.json() as EtroImportResponse
-        this.$emit('import-bis-data', data)
-      }
-      else {
-        const error = await response.json() as ImportError
-        this.$notify({ text: `Error while importing Etro gearset; ${error.message}`, type: 'is-danger' })
-      }
-    }
-    catch (e) {
-      this.$notify({ text: `Error ${e} when attempting to import Etro data.`, type: 'is-danger' })
-      Sentry.captureException(e)
-    }
-    finally {
-      this.importLoading = false
-    }
   }
 
   async lodestoneImport(): Promise<void> {

@@ -5,6 +5,8 @@
       :character="character"
       :char-is-proxy="charIsProxy"
       :errors="errors"
+      :etro-importable="etroImportUrl() !== null"
+      :import-loading="importLoading"
       :displayOffhand="displayOffhand"
       :minIl="minIl"
       :maxIl="maxIl"
@@ -16,7 +18,7 @@
       v-on:errors="handleErrors"
       v-on:save="$emit('save')"
       v-on:close="$emit('close')"
-      v-on:import-bis-data="importBISData"
+      v-on:import-bis-data="etroImport"
       v-on:import-current-data="importCurrentData"
       v-on:import-current-lodestone-gear="importCurrentLodestoneGear"
 
@@ -28,6 +30,8 @@
       :character="character"
       :char-is-proxy="charIsProxy"
       :errors="errors"
+      :etro-importable="etroImportUrl() !== null"
+      :import-loading="importLoading"
       :displayOffhand="displayOffhand"
       :minIl="minIl"
       :maxIl="maxIl"
@@ -40,7 +44,7 @@
       v-on:errors="handleErrors"
       v-on:save="$emit('save')"
       v-on:close="$emit('close')"
-      v-on:import-bis-data="importBISData"
+      v-on:import-bis-data="etroImport"
       v-on:import-current-data="importCurrentData"
       v-on:import-current-lodestone-gear="importCurrentLodestoneGear"
       :class="[renderDesktop ? 'is-hidden-desktop' : '']"
@@ -49,13 +53,19 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator'
+import * as Sentry from '@sentry/vue'
+import {
+  Component,
+  Prop,
+  Vue,
+  Watch,
+} from 'vue-property-decorator'
 import BISListDesktopForm from '@/components/bis_list/desktop_form.vue'
 import BISListMobileForm from '@/components/bis_list/mobile_form.vue'
 import BISListModify from '@/dataclasses/bis_list_modify'
 import BISList from '@/interfaces/bis_list'
 import { CharacterDetails } from '@/interfaces/character'
-import { EtroImportResponse, LodestoneImportResponse } from '@/interfaces/imports'
+import { EtroImportResponse, ImportError, LodestoneImportResponse } from '@/interfaces/imports'
 import { BISListErrors } from '@/interfaces/responses'
 
 @Component({
@@ -76,8 +86,12 @@ export default class BISListForm extends Vue {
   @Prop({ default: false })
   charIsProxy!: boolean
 
+  etroImportPattern = /https:\/\/etro\.gg\/gearset\/([-a-z0-9]+)\/?/
+
   @Prop({ default() { return {} } })
   externalErrors!: BISListErrors
+
+  importLoading = false
 
   internalErrors: BISListErrors = {}
 
@@ -100,6 +114,38 @@ export default class BISListForm extends Vue {
       ...this.internalErrors,
       ...this.externalErrors,
     }
+  }
+
+  async etroImport(): Promise<void> {
+    const url = this.etroImportUrl()
+    if (url === null) return
+    this.importLoading = true
+    try {
+      const response = await fetch(url)
+      if (response.ok) {
+        // Handle the import
+        const data = await response.json() as EtroImportResponse
+        this.importBISData(data)
+      }
+      else {
+        const error = await response.json() as ImportError
+        this.$notify({ text: `Error while importing Etro gearset; ${error.message}`, type: 'is-danger' })
+      }
+    }
+    catch (e) {
+      this.$notify({ text: `Error ${e} when attempting to import Etro data.`, type: 'is-danger' })
+      Sentry.captureException(e)
+    }
+    finally {
+      this.importLoading = false
+    }
+  }
+
+  @Watch('bisList.external_link', { deep: true })
+  etroImportUrl(): string | null {
+    const match = this.etroImportPattern.exec(this.bisList.external_link || '')
+    if (match === null) return null
+    return `/backend/api/import/etro/${match[1]}/`
   }
 
   jobChange(selectedJob: string): void {

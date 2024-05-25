@@ -45,6 +45,26 @@
       <div v-if="tabsShown.bis">
         <div class="card">
           <BIS :bisList="bisList" :errors="errors" :minIl="minIl" :maxIl="maxIl" :displayOffhand="displayOffhand" />
+          <div class="card-footer">
+            <p class="card-footer-item" v-if="importLoading" data-microtip-position="bottom" role="tooltip" aria-label="Loading...">
+              <span class="icon-text">
+                <span class="icon"><i class="material-icons">downloading</i></span>
+                <span>Import from Etro</span>
+              </span>
+            </p>
+            <a class="card-footer-item" v-else-if="etroImportable" @click="importBis">
+              <span class="icon-text">
+                <span class="icon"><i class="material-icons">cloud_download</i></span>
+                <span>Import from Etro</span>
+              </span>
+            </a>
+            <p class="card-footer-item" v-else data-microtip-position="bottom" role="tooltip" aria-label="Please enter an Etro gearset link in the gearset's URL field.">
+              <span class="icon-text">
+                <span class="icon"><i class="material-icons">cloud_off</i></span>
+                <span>Import from Etro</span>
+              </span>
+            </p>
+          </div>
         </div>
       </div>
 
@@ -110,6 +130,12 @@ export default class BISListMobileForm extends Vue {
 
   @Prop()
   errors!: BISListErrors
+
+  @Prop()
+  etroImportable!: boolean
+
+  @Prop()
+  importLoading!: boolean
 
   // Set up default values for min and max IL, will change as new tiers are released
   @Prop()
@@ -197,6 +223,10 @@ export default class BISListMobileForm extends Vue {
       this.errors.job_id !== undefined
       || this.errors.external_link !== undefined
     )
+  }
+
+  importBis(): void {
+    this.$emit('import-bis-data')
   }
 }
 </script>
