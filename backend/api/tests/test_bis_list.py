@@ -25,7 +25,7 @@ class BISListCollection(SavageAimTestCase):
             user=self._get_user(),
             name='Char 1',
             world='Lich',
-            verified=True,
+            verified=False,
         )
         call_command('seed', stdout=StringIO())
 
@@ -251,7 +251,6 @@ class BISListCollection(SavageAimTestCase):
 
         - Invalid ID
         - Character is not owned by the requesting user
-        - Character is not verified
         """
         user = self._get_user()
         self.client.force_authenticate(user)
@@ -265,13 +264,6 @@ class BISListCollection(SavageAimTestCase):
         self.char.user = self._create_user()
         self.char.save()
         url = reverse('api:bis_collection', kwargs={'character_id': self.char.id})
-        response = self.client.post(url)
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND, response.content)
-
-        # Character is not verified
-        self.char.verified = False
-        self.char.user = user
-        self.char.save()
         response = self.client.post(url)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND, response.content)
 
@@ -291,7 +283,7 @@ class BISListResource(SavageAimTestCase):
             user=self._get_user(),
             name='Char 1',
             world='Lich',
-            verified=True,
+            verified=False,
         )
         call_command('seed', stdout=StringIO())
 
@@ -443,7 +435,6 @@ class BISListResource(SavageAimTestCase):
 
         - Invalid Character ID
         - Character is not owned by the requesting user
-        - Character is not verified
         - Invalid BISList ID
         - Character doesn't own BISList
         """
@@ -466,18 +457,7 @@ class BISListResource(SavageAimTestCase):
         response = self.client.put(url)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND, response.content)
 
-        # Character is not verified
-        self.char.verified = False
-        self.char.user = user
-        self.char.save()
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND, response.content)
-        response = self.client.put(url)
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND, response.content)
-
         # Invalid BISList ID
-        self.char.verified = True
-        self.char.save()
         url = reverse('api:bis_resource', kwargs={'character_id': self.char.id, 'pk': 99999})
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND, response.content)
@@ -517,7 +497,7 @@ class BISListDelete(SavageAimTestCase):
             user=self._get_user(),
             name='Char 1',
             world='Lich',
-            verified=True,
+            verified=False,
         )
         call_command('seed', stdout=StringIO())
 
@@ -657,7 +637,6 @@ class BISListDelete(SavageAimTestCase):
 
         - Invalid Character ID
         - Character is not owned by the requesting user
-        - Character is not verified
         - Invalid BISList ID
         - Character doesn't own BISList
         """
@@ -680,18 +659,7 @@ class BISListDelete(SavageAimTestCase):
         response = self.client.delete(url)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND, response.content)
 
-        # Character is not verified
-        self.char.verified = False
-        self.char.user = user
-        self.char.save()
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND, response.content)
-        response = self.client.delete(url)
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND, response.content)
-
         # Invalid BISList ID
-        self.char.verified = True
-        self.char.save()
         url = reverse('api:bis_delete', kwargs={'character_id': self.char.id, 'pk': 99999})
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND, response.content)

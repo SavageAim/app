@@ -41,7 +41,7 @@ class BISListCollection(BISListBaseView):
         Create a BIS List belonging to the specified character
         """
         try:
-            char = Character.objects.get(pk=character_id, user=request.user, verified=True)
+            char = Character.objects.get(pk=character_id, user=request.user)
         except Character.DoesNotExist:
             return Response(status=404)
 
@@ -70,7 +70,7 @@ class BISListResource(BISListBaseView):
         Read a BISList
         """
         try:
-            char = Character.objects.get(pk=character_id, user=request.user, verified=True)
+            char = Character.objects.get(pk=character_id, user=request.user)
         except Character.DoesNotExist:
             return Response(status=404)
 
@@ -87,7 +87,7 @@ class BISListResource(BISListBaseView):
         Update an existing BISList
         """
         try:
-            char = Character.objects.get(pk=character_id, user=request.user, verified=True)
+            char = Character.objects.get(pk=character_id, user=request.user)
         except Character.DoesNotExist:
             return Response(status=404)
 
@@ -128,7 +128,7 @@ class BISListDelete(APIView):
         If it is, return names and IDs of the Teams it's in use in so we can provide links in the frontend.
         """
         try:
-            char = Character.objects.get(pk=character_id, user=request.user, verified=True)
+            char = Character.objects.get(pk=character_id, user=request.user)
         except Character.DoesNotExist:
             return Response(status=404)
 
@@ -153,7 +153,7 @@ class BISListDelete(APIView):
         Delete the BISList from the DB, ensuring that we can.
         """
         try:
-            char = Character.objects.get(pk=character_id, user=request.user, verified=True)
+            char = Character.objects.get(pk=character_id, user=request.user)
         except Character.DoesNotExist:
             return Response(status=404)
 
