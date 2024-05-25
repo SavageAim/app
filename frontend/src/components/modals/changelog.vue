@@ -31,7 +31,7 @@
       <p>This feature aims to "solve" loot distibution by handing out loot fairly but in a way that ensures you spend the least number of weeks on each fight as possible.</p>
       <p>It is accessible in a dropdown box on the Loot Manager page, and you can see a full set of distribution for all of the required kills.</p>
       <p>People using the Per-Fight Loot Manager (accessible in User Settings) can also auto-assign the week's loot into the slots, allowing for an easy save if you're following it.</p>
-      <p class="has-text-info">For more details, please see <a href="https://wiki.savageaim.com/teams/loot-manager/loot-solver" target="_blank">the wiki page</a> about this feature!</p>
+      <p class="has-text-info">For more details, please see <a href="https://wiki.savageaim.com/teams/loot-solver" target="_blank">the wiki page</a> about this feature!</p>
       <p class="has-text-info">Because it is a Beta feature, there could be some algorithmic inconsistencies. If there are any issues or bugs or anything, please report them on the Discord!</p>
 
       <div class="divider"><i class="material-icons icon">expand_more</i> Continuing UI Consistency <i class="material-icons icon">expand_more</i></div>
