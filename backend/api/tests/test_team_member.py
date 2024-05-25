@@ -40,7 +40,7 @@ class TeamMemberResource(SavageAimTestCase):
             lodestone_id=1234567890,
             user=self._get_user(),
             name='Main Tank',
-            verified=True,
+            verified=False,
             world='Lich',
         )
 
@@ -490,7 +490,7 @@ class TeamMemberPermissionsResource(SavageAimTestCase):
             lodestone_id=1234567890,
             user=self._get_user(),
             name='Main Tank',
-            verified=True,
+            verified=False,
             world='Lich',
         )
 

@@ -8,7 +8,7 @@ from allauth.socialaccount.models import SocialAccount, SocialApp, SocialToken
 from django.core.management import call_command
 from django.utils import timezone
 # local
-from api.models import BISList, Character, Gear, Notification, Team, Tier
+from api.models import BISList, Character, Gear, Job, Notification, Team, Tier
 from api.tasks import verify_character, cleanup
 from .test_base import SavageAimTestCase
 
@@ -98,6 +98,42 @@ class TasksTestSuite(SavageAimTestCase):
             world='Lich',
             verified=False,
         )
+        # Give them a BISList and a Team
+        g = Gear.objects.create(name='Test', item_level=600, has_weapon=True, has_armour=True, has_accessories=True)
+        bis = BISList.objects.create(
+            bis_body=g,
+            bis_bracelet=g,
+            bis_earrings=g,
+            bis_feet=g,
+            bis_hands=g,
+            bis_head=g,
+            bis_left_ring=g,
+            bis_legs=g,
+            bis_mainhand=g,
+            bis_necklace=g,
+            bis_offhand=g,
+            bis_right_ring=g,
+            current_body=g,
+            current_bracelet=g,
+            current_earrings=g,
+            current_feet=g,
+            current_hands=g,
+            current_head=g,
+            current_left_ring=g,
+            current_legs=g,
+            current_mainhand=g,
+            current_necklace=g,
+            current_offhand=g,
+            current_right_ring=g,
+            job=Job.objects.create(display_name='PLD', id='PLD', name='PLD', ordering=0, role='tank'),
+            owner=old_unver,
+        )
+        team = Team.objects.create(
+            invite_code=Team.generate_invite_code(),
+            name='Test Team 1',
+            tier=Tier.objects.create(max_item_level=600, name='Test', raid_gear_name='Test', tome_gear_name='Test'),
+        )
+        team.members.create(character=old_unver, bis_list=bis, lead=True)
         old_ver = Character.objects.create(
             avatar_url='https://img.savageaim.com/abcde',
             lodestone_id=11289475,
@@ -114,8 +150,8 @@ class TasksTestSuite(SavageAimTestCase):
             world='Lich',
             verified=False,
         )
-        # Update all created stamps to 1 week ago
-        Character.objects.update(created=timezone.now() - timedelta(days=7))
+        # Update all created stamps to 2 weeks ago
+        Character.objects.update(created=timezone.now() - timedelta(days=14))
         # Create one last character that's new
         new_unver = Character.objects.create(
             avatar_url='https://img.savageaim.com/abcde',
@@ -131,6 +167,12 @@ class TasksTestSuite(SavageAimTestCase):
         with self.assertRaises(Character.DoesNotExist):
             Character.objects.get(pk=old_unver.pk)
         self.assertEqual(Character.objects.filter(pk__in=[old_ver.pk, new_unver.pk, proxy.pk]).count(), 3)
+
+        # Check that the BIS and Team were properly deleted
+        with self.assertRaises(Team.DoesNotExist):
+            Team.objects.get(pk=team.pk)
+        with self.assertRaises(BISList.DoesNotExist):
+            BISList.objects.get(pk=bis.pk)
 
     @patch('requests.post', side_effect=get_token_response)
     def test_token_refresh(self, mocked_post):

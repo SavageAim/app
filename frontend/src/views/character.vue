@@ -54,7 +54,7 @@
           <div class="message-body">
             <p>Please be aware that this character is yet to be verified.</p>
             <p>Unverified characters are now able to use the system as normal, but will be deleted in 7 days if they are not verified.</p>
-            <p>Any BIS Lists or Teams created with this Character as the owner will also be deleted in that time.</p>
+            <p>Any BIS Lists they own will be deleted, and they will be removed from all Teams they are in.</p>
             <p>In order to verify, please copy the token in the box below, update <a href="https://eu.finalfantasyxiv.com/lodestone/my/setting/profile/" target="_blank">this page</a> with it, then press the "Verify Character" button.</p>
             <hr />
             <div class="field has-addons">
