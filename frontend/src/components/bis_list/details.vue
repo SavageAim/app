@@ -27,7 +27,7 @@
             </select>
           </div>
           <div class="icon is-small is-left">
-            <img :src="`/job_icons/${bisList.job_id}.png`" :alt="`${bisList.job_id} Job Icon`" width="24" height="24" ref="jobIcon" />
+            <img :src="`/job_icons/${bisList.job_id}.webp`" :alt="`${bisList.job_id} Job Icon`" width="24" height="24" ref="jobIcon" />
           </div>
         </div>
         <p v-if="errors.job_id !== undefined" class="help is-danger">{{ errors.job_id[0] }}</p>
