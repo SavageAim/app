@@ -22,53 +22,59 @@
         <li>
           <b>Fight: </b> {{ tier.fights[0] }}<br />
           <b>Kills Remaining: </b> {{ data.first_floor.length }}<br />
-          <span v-if="data.first_floor.length > 0"><b>Token Purchase: </b> <span v-if="data.first_floor[0].token">Yes!</span><span v-else>No!</span></span>
-          <button class="button is-primary is-fullwidth" v-if="shouldShowAssignButton" @click="autoAssignFirstFloor">
-            <span class="icon-text">
-              <span class="icon"><i class="material-icons">upload</i></span>
-              <span>Auto-Assign Loot</span>
-            </span>
-          </button>
-          <button class="button is-dark is-link is-fullwidth">
-            <span class="icon-text">
-              <span class="icon"><i class="material-icons">insights</i></span>
-              <span>See Distribution</span>
-            </span>
-          </button>
+          <template v-if="data.first_floor.length > 0">
+            <b>Token Purchase: </b> <span v-if="data.first_floor[0].token">Yes!</span><span v-else>No!</span>
+            <button class="button is-primary is-fullwidth" v-if="shouldShowAssignButton" @click="autoAssignFirstFloor">
+              <span class="icon-text">
+                <span class="icon"><i class="material-icons">upload</i></span>
+                <span>Auto-Assign Loot</span>
+              </span>
+            </button>
+            <button class="button is-dark is-link is-fullwidth">
+              <span class="icon-text">
+                <span class="icon"><i class="material-icons">insights</i></span>
+                <span>See Distribution</span>
+              </span>
+            </button>
+          </template>
         </li>
         <li>
           <b>Fight: </b> {{ tier.fights[1] }}<br />
           <b>Kills Remaining: </b> {{ data.second_floor.length }}<br />
-          <span v-if="data.second_floor.length > 0"><b>Token Purchase: </b> <span v-if="data.second_floor[0].token">Yes!</span><span v-else>No!</span></span>
-          <button class="button is-primary is-fullwidth" v-if="shouldShowAssignButton" @click="autoAssignSecondFloor">
-            <span class="icon-text">
-              <span class="icon"><i class="material-icons">upload</i></span>
-              <span>Auto-Assign Loot</span>
-            </span>
-          </button>
-          <button class="button is-dark is-link is-fullwidth">
-            <span class="icon-text">
-              <span class="icon"><i class="material-icons">insights</i></span>
-              <span>See Distribution</span>
-            </span>
-          </button>
+          <template v-if="data.second_floor.length > 0">
+            <b>Token Purchase: </b> <span v-if="data.second_floor[0].token">Yes!</span><span v-else>No!</span>
+            <button class="button is-primary is-fullwidth" v-if="shouldShowAssignButton" @click="autoAssignSecondFloor">
+              <span class="icon-text">
+                <span class="icon"><i class="material-icons">upload</i></span>
+                <span>Auto-Assign Loot</span>
+              </span>
+            </button>
+            <button class="button is-dark is-link is-fullwidth">
+              <span class="icon-text">
+                <span class="icon"><i class="material-icons">insights</i></span>
+                <span>See Distribution</span>
+              </span>
+            </button>
+          </template>
         </li>
         <li>
           <b>Fight: </b> {{ tier.fights[2] }}<br />
           <b>Kills Remaining: </b> {{ data.third_floor.length }}<br />
-          <span v-if="data.third_floor.length > 0"><b>Token Purchase: </b> <span v-if="data.third_floor[0].token">Yes!</span><span v-else>No!</span></span>
-          <button class="button is-primary is-fullwidth" v-if="shouldShowAssignButton" @click="autoAssignThirdFloor">
-            <span class="icon-text">
-              <span class="icon"><i class="material-icons">upload</i></span>
-              <span>Auto-Assign Loot</span>
-            </span>
-          </button>
-          <button class="button is-dark is-link is-fullwidth">
-            <span class="icon-text">
-              <span class="icon"><i class="material-icons">insights</i></span>
-              <span>See Distribution</span>
-            </span>
-          </button>
+          <template v-if="data.third_floor.length > 0">
+            <b>Token Purchase: </b> <span v-if="data.third_floor[0].token">Yes!</span><span v-else>No!</span>
+            <button class="button is-primary is-fullwidth" v-if="shouldShowAssignButton" @click="autoAssignThirdFloor">
+              <span class="icon-text">
+                <span class="icon"><i class="material-icons">upload</i></span>
+                <span>Auto-Assign Loot</span>
+              </span>
+            </button>
+            <button class="button is-dark is-link is-fullwidth">
+              <span class="icon-text">
+                <span class="icon"><i class="material-icons">insights</i></span>
+                <span>See Distribution</span>
+              </span>
+            </button>
+          </template>
         </li>
         <li>
           <b>Fight: </b> {{ tier.fights[3] }}<br />
