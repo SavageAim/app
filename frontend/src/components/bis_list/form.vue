@@ -11,6 +11,7 @@
       :minIl="minIl"
       :maxIl="maxIl"
       :method="method"
+      :syncable="syncable()"
       :url="url"
       v-on:job-change="jobChange"
       v-on:update-ilevels="updateItemLevels"
@@ -19,7 +20,7 @@
       v-on:save="$emit('save')"
       v-on:close="$emit('close')"
       v-on:import-bis-data="etroImport"
-      v-on:import-current-data="importCurrentData"
+      v-on:import-current-data="displayLoadModal"
       v-on:import-current-lodestone-gear="lodestoneImport"
 
       v-if="renderDesktop"
@@ -36,6 +37,7 @@
       :minIl="minIl"
       :maxIl="maxIl"
       :method="method"
+      :syncable="syncable()"
       :url="url"
       :simpleActions="!renderDesktop"
       v-on:job-change="jobChange"
@@ -45,7 +47,7 @@
       v-on:save="$emit('save')"
       v-on:close="$emit('close')"
       v-on:import-bis-data="etroImport"
-      v-on:import-current-data="importCurrentData"
+      v-on:import-current-data="displayLoadModal"
       v-on:import-current-lodestone-gear="lodestoneImport"
       :class="[renderDesktop ? 'is-hidden-desktop' : '']"
     />
@@ -67,6 +69,7 @@ import BISList from '@/interfaces/bis_list'
 import { CharacterDetails } from '@/interfaces/character'
 import { EtroImportResponse, ImportError, LodestoneImportResponse } from '@/interfaces/imports'
 import { BISListErrors } from '@/interfaces/responses'
+import LoadCurrentGear from '../modals/load_current_gear.vue'
 
 @Component({
   components: {
@@ -120,6 +123,11 @@ export default class BISListForm extends Vue {
     return `/backend/api/lodestone/${this.character.lodestone_id}/import`
   }
 
+  get syncableLists(): BISList[] {
+    if (this.character.bis_lists == null) return []
+    return this.character.bis_lists.filter((list: BISList) => list.id !== this.bisList.id && list.job.id === this.bisList.job_id)
+  }
+
   calculateCurrentILRange(data: BISList): { minIl: number, maxIl: number } {
     const itemLevels = [
       data.current_mainhand.item_level,
@@ -137,6 +145,10 @@ export default class BISListForm extends Vue {
     ]
 
     return { minIl: Math.min(...itemLevels), maxIl: Math.max(...itemLevels) }
+  }
+
+  displayLoadModal(): void {
+    this.$modal.show(LoadCurrentGear, { bisLists: this.syncableLists, loadBIS: this.importCurrentData })
   }
 
   emitErrorCode(errorCode: number): void {
@@ -247,6 +259,11 @@ export default class BISListForm extends Vue {
 
   mounted(): void {
     this.displayOffhand = this.bisList.job_id === 'PLD'
+  }
+
+  @Watch('bisList.job_id', { deep: true })
+  syncable(): boolean {
+    return this.syncableLists.length > 0
   }
 
   updateItemLevels(values: number[]): void {

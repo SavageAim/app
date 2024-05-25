@@ -16,17 +16,6 @@
           <span>{{ saveText }} &amp; Sync Current Gear</span>
         </button>
       </template>
-
-      <template v-if="!(simple || charIsProxy)">
-        <button class="button is-fullwidth is-link" data-microtip-position="top" role="tooltip" :aria-label="`Load Current gear from another ${bisList.job_id} BIS List.`" v-if="syncable()" @click="displayLoadModal">
-          <span class="icon"><i class="material-icons">content_copy</i></span>
-          <span>Copy Current Gear</span>
-        </button>
-        <button class="button is-fullwidth is-disabled" data-microtip-position="top" role="tooltip" :aria-label="`You have no other ${bisList.job_id} BIS Lists.`" v-else>
-          <span class="icon"><i class="material-icons">content_copy</i></span>
-          <span>Copy Current Gear</span>
-        </button>
-      </template>
     </div>
   </div>
 </template>
@@ -39,7 +28,6 @@ import {
   Vue,
   Watch,
 } from 'vue-property-decorator'
-import LoadCurrentGear from '@/components/modals/load_current_gear.vue'
 import SyncCurrentGear from '@/components/modals/sync_current_gear.vue'
 import BISListModify from '@/dataclasses/bis_list_modify'
 import BISList from '@/interfaces/bis_list'
@@ -88,16 +76,8 @@ export default class Actions extends Vue {
     return this.syncableLists.length > 0
   }
 
-  displayLoadModal(): void {
-    this.$modal.show(LoadCurrentGear, { bisLists: this.syncableLists, loadBIS: this.loadCurrentGearFromList })
-  }
-
   displaySyncModal(): void {
     this.$modal.show(SyncCurrentGear, { bisLists: this.syncableLists, save: this.saveAndSync, verb: this.saveText })
-  }
-
-  loadCurrentGearFromList(list: BISList): void {
-    this.$emit('import-current-data', list)
   }
 
   save(): void {

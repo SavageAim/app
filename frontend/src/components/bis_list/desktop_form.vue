@@ -87,6 +87,21 @@
               <span>Import from Lodestone</span>
             </span>
           </a>
+
+          <template v-if="!charIsProxy">
+            <a class="card-footer-item has-text-link" v-if="syncable" data-microtip-position="top" role="tooltip" :aria-label="`Load Current gear from another ${bisList.job_id} BIS List.`" @click="importFromOtherList">
+              <span class="icon-text">
+                <span class="icon"><i class="material-icons">content_copy</i></span>
+                <span>Copy from Other List</span>
+              </span>
+            </a>
+            <p class="card-footer-item" v-else data-microtip-position="top" role="tooltip" :aria-label="`You have no other ${bisList.job_id} BIS Lists.`">
+              <span class="icon-text">
+                <span class="icon"><i class="material-icons">content_copy</i></span>
+                <span>Copy from Other List</span>
+              </span>
+            </p>
+          </template>
         </div>
       </div>
     </div>
@@ -146,10 +161,17 @@ export default class BISListDesktopForm extends Vue {
   minIl!: number
 
   @Prop()
+  syncable!: boolean
+
+  @Prop()
   url!: string
 
   importBis(): void {
     this.$emit('import-bis-data')
+  }
+
+  importFromOtherList(): void {
+    this.$emit('import-current-data')
   }
 
   importLodestone(): void {
