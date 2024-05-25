@@ -69,194 +69,192 @@
           </div>
         </article>
 
-        <template v-else>
-          <!-- BIS Lists -->
-          <div v-if="bisShown">
-            <div class="level">
-              <div class="level-left">
-                <div class="level-item">
-                  <h2 class="title">BIS Lists</h2>
-                </div>
-              </div>
-              <div class="level-right">
-                <div class="level-item">
-                  <router-link to="./bis_list/" class="button is-success">
-                    <span class="icon"><i class="material-icons">add</i></span>
-                    <span>Add New</span>
-                  </router-link>
-                </div>
+        <!-- BIS Lists -->
+        <div v-if="bisShown">
+          <div class="level">
+            <div class="level-left">
+              <div class="level-item">
+                <h2 class="title">BIS Lists</h2>
               </div>
             </div>
+            <div class="level-right">
+              <div class="level-item">
+                <router-link to="./bis_list/" class="button is-success">
+                  <span class="icon"><i class="material-icons">add</i></span>
+                  <span>Add New</span>
+                </router-link>
+              </div>
+            </div>
+          </div>
 
-            <div class="card" v-for="bis in character.bis_lists" :key="bis.id">
-              <div class="card-header">
-                <div class="card-header-title">
-                  <span>{{ bis.display_name }}</span>
-                </div>
-                <div class="card-header-icon">
-                  <div class="tags has-addons is-hidden-touch">
-                    <span class="tag is-light">
-                      iL
-                    </span>
-                    <span class="tag" :class="[`is-${bis.job.role}`]">
-                      {{ bis.item_level }}
-                    </span>
-                  </div>
-                  <span class="icon">
-                    <img :src="`/job_icons/${bis.job.id}.webp`" :alt="`${bis.job.name} job icon`" width="24" height="24" />
+          <div class="card" v-for="bis in character.bis_lists" :key="bis.id">
+            <div class="card-header">
+              <div class="card-header-title">
+                <span>{{ bis.display_name }}</span>
+              </div>
+              <div class="card-header-icon">
+                <div class="tags has-addons is-hidden-touch">
+                  <span class="tag is-light">
+                    iL
+                  </span>
+                  <span class="tag" :class="[`is-${bis.job.role}`]">
+                    {{ bis.item_level }}
                   </span>
                 </div>
+                <span class="icon">
+                  <img :src="`/job_icons/${bis.job.id}.webp`" :alt="`${bis.job.name} job icon`" width="24" height="24" />
+                </span>
               </div>
-              <div class="card-content">
-                <BISTable :list="bis" />
-                <p class="has-text-info has-text-centered bis-colour-info">Colours generated using item level {{ bis.bis_mainhand.item_level }}</p>
-              </div>
-              <!-- Dropdown for mobile -->
-              <footer class="card-footer is-hidden-desktop">
-                <div class="dropdown is-centered card-footer-item" :class="{'is-active': actionsActive[bis.id] || false}">
-                  <div class="dropdown-trigger">
-                    <a class="icon-text" aria-haspopup="true" :aria-controls="`actions-${bis.id}`" @click="() => { toggleActions(bis.id) }">
-                      <span class="icon"><i class="material-icons">more_vert</i></span>
-                      <span>Actions</span>
-                      <span class="icon">
-                        <i class="material-icons" v-if="actionsActive[bis.id]">expand_less</i>
-                        <i class="material-icons" v-else>expand_more</i>
+            </div>
+            <div class="card-content">
+              <BISTable :list="bis" />
+              <p class="has-text-info has-text-centered bis-colour-info">Colours generated using item level {{ bis.bis_mainhand.item_level }}</p>
+            </div>
+            <!-- Dropdown for mobile -->
+            <footer class="card-footer is-hidden-desktop">
+              <div class="dropdown is-centered card-footer-item" :class="{'is-active': actionsActive[bis.id] || false}">
+                <div class="dropdown-trigger">
+                  <a class="icon-text" aria-haspopup="true" :aria-controls="`actions-${bis.id}`" @click="() => { toggleActions(bis.id) }">
+                    <span class="icon"><i class="material-icons">more_vert</i></span>
+                    <span>Actions</span>
+                    <span class="icon">
+                      <i class="material-icons" v-if="actionsActive[bis.id]">expand_less</i>
+                      <i class="material-icons" v-else>expand_more</i>
+                    </span>
+                  </a>
+                </div>
+                <div class="dropdown-menu" :id="`actions-${bis.id}`" role="menu">
+                  <div class="dropdown-content">
+                    <template v-if="bis.external_link != null">
+                      <a target="_blank" :href="bis.external_link" class="card-footer-item">
+                        <span class="icon-text">
+                          <span class="icon"><i class="material-icons">open_in_new</i></span>
+                          <span>{{ bis.external_link.replace(/https?:\/\//, '').split('/')[0] }}</span>
+                        </span>
+                      </a>
+                      <hr class="dropdown-divider" />
+                    </template>
+                    <router-link :to="`/characters/${character.id}/bis_list/${bis.id}/`" class="card-footer-item">
+                      <span class="icon-text">
+                        <span class="icon"><i class="material-icons">edit</i></span>
+                        <span>Edit BIS</span>
+                      </span>
+                    </router-link>
+                    <hr class="dropdown-divider" />
+                    <!-- clone BIS -->
+                    <a class="card-footer-item" @click="() => { duplicateBIS(bis) }">
+                      <span class="icon-text">
+                        <span class="icon"><i class="material-icons">copy_all</i></span>
+                        <span>Copy</span>
+                      </span>
+                    </a>
+                    <hr class="dropdown-divider" />
+                    <!-- Modal to confirm, Delete BIS -->
+                    <a class="card-footer-item has-text-danger" @click="() => { deleteBIS(bis) }">
+                      <span class="icon-text">
+                        <span class="icon"><i class="material-icons">delete</i></span>
+                        <span>Delete BIS</span>
                       </span>
                     </a>
                   </div>
-                  <div class="dropdown-menu" :id="`actions-${bis.id}`" role="menu">
-                    <div class="dropdown-content">
-                      <template v-if="bis.external_link != null">
-                        <a target="_blank" :href="bis.external_link" class="card-footer-item">
-                          <span class="icon-text">
-                            <span class="icon"><i class="material-icons">open_in_new</i></span>
-                            <span>{{ bis.external_link.replace(/https?:\/\//, '').split('/')[0] }}</span>
-                          </span>
-                        </a>
-                        <hr class="dropdown-divider" />
-                      </template>
-                      <router-link :to="`/characters/${character.id}/bis_list/${bis.id}/`" class="card-footer-item">
-                        <span class="icon-text">
-                          <span class="icon"><i class="material-icons">edit</i></span>
-                          <span>Edit BIS</span>
-                        </span>
-                      </router-link>
-                      <hr class="dropdown-divider" />
-                      <!-- clone BIS -->
-                      <a class="card-footer-item" @click="() => { duplicateBIS(bis) }">
-                        <span class="icon-text">
-                          <span class="icon"><i class="material-icons">copy_all</i></span>
-                          <span>Copy</span>
-                        </span>
-                      </a>
-                      <hr class="dropdown-divider" />
-                      <!-- Modal to confirm, Delete BIS -->
-                      <a class="card-footer-item has-text-danger" @click="() => { deleteBIS(bis) }">
-                        <span class="icon-text">
-                          <span class="icon"><i class="material-icons">delete</i></span>
-                          <span>Delete BIS</span>
-                        </span>
-                      </a>
-                    </div>
-                  </div>
                 </div>
-              </footer>
+              </div>
+            </footer>
 
-              <!-- No Dropdown for Desktop -->
-              <footer class="card-footer has-text-link is-hidden-touch">
-                <a target="_blank" :href="bis.external_link" class="card-footer-item" v-if="bis.external_link != null">
-                  <span class="icon-text">
-                    <span class="icon"><i class="material-icons">open_in_new</i></span>
-                    <span>{{ bis.external_link.replace(/https?:\/\//, '').split('/')[0] }}</span>
-                  </span>
-                </a>
-                <!-- Quick link to edit this bis list -->
-                <router-link :to="`/characters/${character.id}/bis_list/${bis.id}/`" class="card-footer-item">
-                  <span class="icon-text">
-                    <span class="icon"><i class="material-icons">edit</i></span>
-                    <span>Edit BIS</span>
-                  </span>
-                </router-link>
-                <!-- clone BIS -->
-                <a class="card-footer-item" @click="() => { duplicateBIS(bis) }">
-                  <span class="icon-text">
-                    <span class="icon"><i class="material-icons">copy_all</i></span>
-                    <span>Copy</span>
-                  </span>
-                </a>
-                <!-- Modal to confirm, delete BIS -->
-                <a class="card-footer-item has-text-danger" @click="() => { deleteBIS(bis) }">
-                  <span class="icon-text">
-                    <span class="icon"><i class="material-icons">delete</i></span>
-                    <span>Delete BIS</span>
-                  </span>
-                </a>
-              </footer>
-            </div>
-            <div class="subtitle has-text-centered" v-if="character.bis_lists.length === 0">
-              <p>No BIS Lists here yet!</p>
-            </div>
+            <!-- No Dropdown for Desktop -->
+            <footer class="card-footer has-text-link is-hidden-touch">
+              <a target="_blank" :href="bis.external_link" class="card-footer-item" v-if="bis.external_link != null">
+                <span class="icon-text">
+                  <span class="icon"><i class="material-icons">open_in_new</i></span>
+                  <span>{{ bis.external_link.replace(/https?:\/\//, '').split('/')[0] }}</span>
+                </span>
+              </a>
+              <!-- Quick link to edit this bis list -->
+              <router-link :to="`/characters/${character.id}/bis_list/${bis.id}/`" class="card-footer-item">
+                <span class="icon-text">
+                  <span class="icon"><i class="material-icons">edit</i></span>
+                  <span>Edit BIS</span>
+                </span>
+              </router-link>
+              <!-- clone BIS -->
+              <a class="card-footer-item" @click="() => { duplicateBIS(bis) }">
+                <span class="icon-text">
+                  <span class="icon"><i class="material-icons">copy_all</i></span>
+                  <span>Copy</span>
+                </span>
+              </a>
+              <!-- Modal to confirm, delete BIS -->
+              <a class="card-footer-item has-text-danger" @click="() => { deleteBIS(bis) }">
+                <span class="icon-text">
+                  <span class="icon"><i class="material-icons">delete</i></span>
+                  <span>Delete BIS</span>
+                </span>
+              </a>
+            </footer>
           </div>
+          <div class="subtitle has-text-centered" v-if="character.bis_lists.length === 0">
+            <p>No BIS Lists here yet!</p>
+          </div>
+        </div>
 
-          <!-- Teams -->
-          <div v-if="teamsShown">
-            <div class="level">
-              <div class="level-left">
-                <div class="level-item">
-                  <h2 class="title">Teams</h2>
-                </div>
-              </div>
-              <div class="level-right">
-                <div class="level-item">
-                  <router-link to="/team/" class="button is-success">
-                    <span class="icon"><i class="material-icons">add</i></span>
-                    <span>Add New</span>
-                  </router-link>
-                </div>
+        <!-- Teams -->
+        <div v-if="teamsShown">
+          <div class="level">
+            <div class="level-left">
+              <div class="level-item">
+                <h2 class="title">Teams</h2>
               </div>
             </div>
-            <div class="card">
-              <div class="card-content">
-                <router-link class="box" :to="`/team/${team.id}/`" v-for="team in teams" :key="team.id" :set="job = getJob(team)">
-                  <TeamBio :team="team" />
+            <div class="level-right">
+              <div class="level-item">
+                <router-link to="/team/" class="button is-success">
+                  <span class="icon"><i class="material-icons">add</i></span>
+                  <span>Add New</span>
                 </router-link>
               </div>
             </div>
-            <div class="subtitle has-text-centered" v-if="teams.length === 0">
-              <p>No Teams here yet!</p>
+          </div>
+          <div class="card">
+            <div class="card-content">
+              <router-link class="box" :to="`/team/${team.id}/`" v-for="team in teams" :key="team.id" :set="job = getJob(team)">
+                <TeamBio :team="team" />
+              </router-link>
             </div>
           </div>
+          <div class="subtitle has-text-centered" v-if="teams.length === 0">
+            <p>No Teams here yet!</p>
+          </div>
+        </div>
 
-          <!-- Settings -->
-          <div v-if="settingsShown">
-            <div class="level">
-              <div class="level-left">
-                <div class="level-item">
-                  <h2 class="title">Settings</h2>
-                </div>
+        <!-- Settings -->
+        <div v-if="settingsShown">
+          <div class="level">
+            <div class="level-left">
+              <div class="level-item">
+                <h2 class="title">Settings</h2>
               </div>
-            </div>
-            <div class="card">
-              <div class="card-content">
-                <div class="field">
-                  <label class="label" for="alias">Alias</label>
-                  <div class="control">
-                    <input class="input" id="alias" type="text" placeholder="Alias" v-model="character.alias" :class="{'is-danger': errors.alias !== undefined}" />
-                  </div>
-                  <p v-if="errors.alias !== undefined" class="help is-danger">{{ errors.alias[0] }}</p>
-                </div>
-              </div>
-              <footer class="card-footer">
-                <a class="has-text-success card-footer-item" @click="saveDetails">
-                  <span class="icon-text">
-                    <span class="icon"><i class="material-icons">save</i></span>
-                    <span>Save Settings</span>
-                  </span>
-                </a>
-              </footer>
             </div>
           </div>
-        </template>
+          <div class="card">
+            <div class="card-content">
+              <div class="field">
+                <label class="label" for="alias">Alias</label>
+                <div class="control">
+                  <input class="input" id="alias" type="text" placeholder="Alias" v-model="character.alias" :class="{'is-danger': errors.alias !== undefined}" />
+                </div>
+                <p v-if="errors.alias !== undefined" class="help is-danger">{{ errors.alias[0] }}</p>
+              </div>
+            </div>
+            <footer class="card-footer">
+              <a class="has-text-success card-footer-item" @click="saveDetails">
+                <span class="icon-text">
+                  <span class="icon"><i class="material-icons">save</i></span>
+                  <span>Save Settings</span>
+                </span>
+              </a>
+            </footer>
+          </div>
+        </div>
       </div>
     </div>
   </div>
