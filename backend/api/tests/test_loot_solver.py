@@ -639,7 +639,81 @@ class LootSolverTestSuite(SavageAimTestCase):
 
         self.assertEqual(content['fourth_floor'], {'weapons': 8, 'mounts': 8})
 
-        self.fail('This only works if the loot is obtained through history. Purchased loot is not checked. You need to fix this.')
+    def test_solver_handles_loot_not_in_history(self):
+        """
+        Add the same loot as the above test, but do not track it in the History.
+        Also add some external weapons for further testing.
+        Ensure response is the same as the above test.
+        """
+        self.b1.current_mainhand = self.raid_weapon
+        self.b1.current_offhand = self.raid_weapon
+        self.b1.save()
+        self.b2.current_head = self.raid_gear
+        self.b2.current_hands = self.raid_gear
+        self.b2.save()
+        self.b3.current_bracelet = self.raid_gear
+        self.b3.current_head = self.raid_gear
+        self.b3.save()
+        self.b4.current_necklace = self.raid_gear
+        self.b4.current_feet = self.raid_gear
+        self.b4.save()
+        self.b5.current_mainhand = self.raid_weapon
+        self.b5.current_offhand = self.raid_weapon
+        self.b5.save()
+        self.b6.current_right_ring = self.tome_gear
+        self.b6.save()
+        self.b7.current_right_ring = self.tome_gear
+        self.b7.current_hands = self.raid_gear
+        self.b7.save()
+        self.b8.current_left_ring = self.raid_gear
+        self.b8.current_feet = self.raid_gear
+        self.b8.save()
+
+        url = reverse('api:loot_solver', kwargs={'team_id': self.team.pk})
+        user = self._get_user()
+        self.client.force_authenticate(user)
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        content = response.json()
+
+        first_floor_expected = [
+            {'token': False, 'Earrings': self.tm5.id, 'Necklace': self.tm7.id, 'Bracelet': self.tm6.id, 'Ring': self.tm5.id},
+            {'token': True, 'Earrings': self.tm6.id, 'Necklace': self.tm1.id, 'Bracelet': self.tm4.id, 'Ring': self.tm7.id},
+        ]
+        first_floor_received = content['first_floor']
+        self.assertEqual(len(first_floor_expected), len(first_floor_received), first_floor_received)
+        for i in range(len(first_floor_expected)):
+            self.assertDictEqual(first_floor_expected[i], first_floor_received[i], f'{i+1}/{len(first_floor_received)}')
+
+        second_floor_expected = [
+            {'token': False, 'Head': self.tm1.id, 'Hands': self.tm1.id, 'Feet': self.tm5.id, 'Tome Accessory Augment': self.tm8.id},
+            {'token': True, 'Head': self.tm7.id, 'Hands': None, 'Feet': self.tm3.id, 'Tome Accessory Augment': self.tm2.id},
+            {'token': False, 'Head': self.tm5.id, 'Hands': None, 'Feet': self.tm6.id, 'Tome Accessory Augment': self.tm1.id},
+            {'token': False, 'Head': self.tm8.id, 'Hands': None, 'Feet': None, 'Tome Accessory Augment': self.tm4.id},
+            {'token': False, 'Head': None, 'Hands': None, 'Feet': None, 'Tome Accessory Augment': self.tm7.id},
+            {'token': True, 'Head': None, 'Hands': None, 'Feet': None, 'Tome Accessory Augment': self.tm3.id},
+        ]
+        second_floor_received = content['second_floor']
+        self.assertEqual(len(second_floor_expected), len(second_floor_received), second_floor_received)
+        for i in range(len(second_floor_expected)):
+            self.assertDictEqual(second_floor_expected[i], second_floor_received[i], f'{i+1}/{len(second_floor_received)}')
+
+        third_floor_expected = [
+            {'token': False, 'Body': self.tm6.id, 'Legs': self.tm7.id, 'Tome Armour Augment': self.tm4.id},
+            {'token': False, 'Body': self.tm5.id, 'Legs': self.tm1.id, 'Tome Armour Augment': self.tm8.id},
+            {'token': False, 'Body': self.tm3.id, 'Legs': self.tm2.id, 'Tome Armour Augment': self.tm6.id},
+            {'token': True, 'Body': self.tm4.id, 'Legs': None, 'Tome Armour Augment': self.tm7.id},
+            {'token': False, 'Body': self.tm8.id, 'Legs': None, 'Tome Armour Augment': self.tm5.id},
+            {'token': False, 'Body': None, 'Legs': None, 'Tome Armour Augment': self.tm1.id},
+            {'token': False, 'Body': None, 'Legs': None, 'Tome Armour Augment': self.tm3.id},
+            {'token': True, 'Body': None, 'Legs': None, 'Tome Armour Augment': self.tm2.id},
+        ]
+        third_floor_received = content['third_floor']
+        self.assertEqual(len(third_floor_expected), len(third_floor_received), third_floor_received)
+        for i in range(len(third_floor_expected)):
+            self.assertDictEqual(third_floor_expected[i], third_floor_received[i], f'{i+1}/{len(third_floor_received)}')
+
+        self.assertEqual(content['fourth_floor'], {'weapons': 6, 'mounts': 8})
 
     def test_solver_sort_overrides(self):
         """
