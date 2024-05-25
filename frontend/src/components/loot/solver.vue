@@ -22,7 +22,7 @@
         <li>
           <b>Fight: </b> {{ tier.fights[0] }}<br />
           <b>Kills Remaining: </b> {{ data.first_floor.length }}<br />
-          <b>Token Purchase: </b> <span v-if="data.first_floor[0].token">Yes!</span><span v-else>No!</span>
+          <span v-if="data.first_floor.length > 0"><b>Token Purchase: </b> <span v-if="data.first_floor[0].token">Yes!</span><span v-else>No!</span></span>
           <button class="button is-primary is-fullwidth" v-if="shouldShowAssignButton" @click="autoAssignFirstFloor">
             <span class="icon-text">
               <span class="icon"><i class="material-icons">upload</i></span>
@@ -39,7 +39,7 @@
         <li>
           <b>Fight: </b> {{ tier.fights[1] }}<br />
           <b>Kills Remaining: </b> {{ data.second_floor.length }}<br />
-          <b>Token Purchase: </b> <span v-if="data.second_floor[0].token">Yes!</span><span v-else>No!</span>
+          <span v-if="data.second_floor.length > 0"><b>Token Purchase: </b> <span v-if="data.second_floor[0].token">Yes!</span><span v-else>No!</span></span>
           <button class="button is-primary is-fullwidth" v-if="shouldShowAssignButton" @click="autoAssignSecondFloor">
             <span class="icon-text">
               <span class="icon"><i class="material-icons">upload</i></span>
@@ -56,7 +56,7 @@
         <li>
           <b>Fight: </b> {{ tier.fights[2] }}<br />
           <b>Kills Remaining: </b> {{ data.third_floor.length }}<br />
-          <b>Token Purchase: </b> <span v-if="data.third_floor[0].token">Yes!</span><span v-else>No!</span>
+          <span v-if="data.third_floor.length > 0"><b>Token Purchase: </b> <span v-if="data.third_floor[0].token">Yes!</span><span v-else>No!</span></span>
           <button class="button is-primary is-fullwidth" v-if="shouldShowAssignButton" @click="autoAssignThirdFloor">
             <span class="icon-text">
               <span class="icon"><i class="material-icons">upload</i></span>
@@ -91,7 +91,7 @@
           <tr>
             <th rowspan="2">{{ tier.fights[0] }}</th>
             <td>{{ data.first_floor.length }}</td>
-            <td>
+            <td v-if="data.first_floor.length">
               <div class="field has-addons">
                 <div class="control is-expanded" v-if="shouldShowAssignButton">
                   <button class="button is-primary is-fullwidth" @click="autoAssignFirstFloor">
@@ -111,9 +111,10 @@
                 </div>
               </div>
             </td>
+            <td v-else></td>
           </tr>
           <tr>
-            <td colspan="2">
+            <td colspan="2" v-if="data.first_floor.length">
               <span v-if="data.first_floor[0].token">Token Purchase This Kill!</span>
               <span v-else>No Token Purchase This Kill!</span>
             </td>
@@ -122,7 +123,7 @@
           <tr>
             <th rowspan="2">{{ tier.fights[1] }}</th>
             <td>{{ data.second_floor.length }}</td>
-            <td>
+            <td v-if="data.second_floor.length">
               <div class="field has-addons">
                 <div class="control is-expanded" v-if="shouldShowAssignButton">
                   <button class="button is-primary is-fullwidth" @click="autoAssignSecondFloor">
@@ -142,9 +143,10 @@
                 </div>
               </div>
             </td>
+            <td v-else></td>
           </tr>
           <tr>
-            <td colspan="2">
+            <td colspan="2" v-if="data.second_floor.length">
               <span v-if="data.second_floor[0].token">Token Purchase This Kill!</span>
               <span v-else>No Token Purchase This Kill!</span>
             </td>
@@ -154,7 +156,7 @@
           <tr>
             <th rowspan="2">{{ tier.fights[2] }}</th>
             <td>{{ data.third_floor.length }}</td>
-            <td>
+            <td v-if="data.third_floor.length">
               <div class="field has-addons">
                 <div class="control is-expanded" v-if="shouldShowAssignButton">
                   <button class="button is-primary is-fullwidth" @click="autoAssignThirdFloor">
@@ -174,9 +176,10 @@
                 </div>
               </div>
             </td>
+            <td v-else></td>
           </tr>
           <tr>
-            <td colspan="2">
+            <td colspan="2" v-if="data.third_floor.length">
               <span v-if="data.third_floor[0].token">Token Purchase This Kill!</span>
               <span v-else>No Token Purchase This Kill!</span>
             </td>

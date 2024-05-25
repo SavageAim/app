@@ -14,11 +14,12 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 # local
 from .base import APIView
-from api.models import Gear, Job, Loot, Team, Tier
+from api.models import Gear, Job, Loot, Team, TeamMember, Tier
 
 Requirements = Dict[str, List[int]]
 PrioBrackets = Dict[int, List[int]]
 HandoutData = Dict[str, Union[str, bool, None]]
+NonLootGear = Dict[int, List[str]]
 
 
 class LootSolver(APIView):
@@ -125,7 +126,57 @@ class LootSolver(APIView):
         return dict(prio_brackets)
 
     @staticmethod
-    def _get_floor_data(requirements: Requirements, history: QuerySet[Loot], slots: List[str], id_order: List[int]) -> Tuple[int, PrioBrackets, Requirements]:
+    def _get_gear_not_obtained_from_drops(tier: Tier, members: List[TeamMember], history: QuerySet[Loot]) -> NonLootGear:
+        """
+        Check for each Member in the Team for any loot they received that wasn't through drops
+        """
+        history_info = history.values_list('member_id', 'item')
+        loot_gear = defaultdict(list)
+        for (member_id, item) in history_info:
+            loot_gear[member_id].append(item)
+
+        non_loot_gear: Dict[int, List[str]] = {}
+        for member in members:
+            member_bis_gear = []
+            for slot_name in LootSolver.SLOTS:
+                required_slot = slot_name if '_ring' not in slot_name else 'ring'
+                bis_slot: Gear = getattr(member.bis_list, f'bis_{slot_name}')
+                current_slot: Gear = getattr(member.bis_list, f'current_{slot_name}')
+
+                if bis_slot.id != current_slot.id:
+                    continue
+
+                if bis_slot.name == tier.raid_gear_name:
+                    member_bis_gear.append(required_slot)
+                elif bis_slot.name == tier.tome_gear_name:
+                    # Check what augment item is needed
+                    if slot_name in LootSolver.ARMOUR:
+                        token = 'tome-armour-augment'
+                    elif slot_name in LootSolver.ACCESSORIES:
+                        token = 'tome-accessory-augment'
+                    else:
+                        # Shouldn't happen since mainhand bis will ALWAYS be raid weapon
+                        continue
+                    member_bis_gear.append(token)
+
+            # Remove the stuff they got through the history
+            for history_item in loot_gear[member.id]:
+                try:
+                    member_bis_gear.remove(history_item)
+                except ValueError:
+                    # They haven't updated their list ;-;
+                    pass
+            non_loot_gear[member.id] = member_bis_gear
+        return non_loot_gear
+
+    @staticmethod
+    def _get_floor_data(
+        requirements: Requirements,
+        history: QuerySet[Loot],
+        slots: List[str],
+        id_order: List[int],
+        non_loot_gear: NonLootGear,
+    ) -> Tuple[int, PrioBrackets, Requirements]:
         """
         Turn a requirements map and history into the priority bracket information, along with how many clears have already been recorded for the fight.
         Also generate and return the updated Requirements from the Loot History
@@ -173,6 +224,39 @@ class LootSolver(APIView):
                     except ValueError:
                         # If they're not in the prio bracket at this prio just keep going
                         continue
+
+        # Also check loot not tracked in the history
+        for member_id in id_order:
+            # Go through the slots, if they're in the requirements map, remove the user from them and move them down a prio
+            for non_loot_item in non_loot_gear.get(member_id, []):
+                if non_loot_item not in floor_requirements:
+                    continue
+
+                for priority in sorted(prio_brackets, reverse=True):
+                    try:
+                        prio_brackets[priority].remove(member_id)
+                        try:
+                            floor_requirements[non_loot_item].remove(member_id)
+                        except ValueError:
+                            pass
+
+                        if prio_brackets[priority] == []:
+                            prio_brackets.pop(priority)
+
+                        # Sanity Check; don't add 0 prio (or anything lower) to the list
+                        new_prio = priority - 1
+                        if new_prio <= 0:
+                            continue
+
+                        if new_prio not in prio_brackets:
+                            prio_brackets[new_prio] = [member_id]
+                        else:
+                            prio_brackets[new_prio].append(member_id)
+                        break
+                    except ValueError:
+                        # If they're not in the prio bracket at this prio just keep going
+                        continue
+
         # Remove the 0 key
         prio_brackets.pop(0, None)
         return clears, prio_brackets, floor_requirements
@@ -252,36 +336,73 @@ class LootSolver(APIView):
 
         return handouts
 
-    def _get_first_floor_data(self, requirements: Requirements, history: QuerySet[Loot], id_order: List[int]) -> List[HandoutData]:
+    def _get_first_floor_data(
+            self,
+            requirements: Requirements,
+            history: QuerySet[Loot],
+            id_order: List[int],
+            non_loot_gear_obtained: NonLootGear,
+        ) -> List[HandoutData]:
         """
         Simulate handing out the loot for a first floor clear.
         """
-        weeks, prio_brackets, floor_requirements = self._get_floor_data(requirements, history, self.FIRST_FLOOR_SLOTS, id_order)
+        weeks, prio_brackets, floor_requirements = self._get_floor_data(
+            requirements,
+            history,
+            self.FIRST_FLOOR_SLOTS,
+            id_order,
+            non_loot_gear_obtained,
+        )
         return self._get_handout_data(self.FIRST_FLOOR_SLOTS, floor_requirements, prio_brackets, self.FIRST_FLOOR_TOKENS, weeks)
 
-    def _get_second_floor_data(self, requirements: Requirements, history: QuerySet[Loot], id_order: List[int]) -> List[HandoutData]:
+    @staticmethod
+    def _get_second_floor_data(
+            requirements: Requirements,
+            history: QuerySet[Loot],
+            id_order: List[int],
+            non_loot_gear_obtained: NonLootGear,
+        ) -> List[HandoutData]:
         """
         Simulate handing out the loot for a second floor clear.
         """
-        weeks, prio_brackets, floor_requirements = self._get_floor_data(requirements, history, self.SECOND_FLOOR_SLOTS, id_order)
-        return self._get_handout_data(self.SECOND_FLOOR_SLOTS, floor_requirements, prio_brackets, self.SECOND_FLOOR_TOKENS, weeks)
+        weeks, prio_brackets, floor_requirements = LootSolver._get_floor_data(
+            requirements,
+            history,
+            LootSolver.SECOND_FLOOR_SLOTS,
+            id_order,
+            non_loot_gear_obtained,
+        )
+        return LootSolver._get_handout_data(LootSolver.SECOND_FLOOR_SLOTS, floor_requirements, prio_brackets, LootSolver.SECOND_FLOOR_TOKENS, weeks)
 
-    def _get_third_floor_data(self, requirements: Requirements, history: QuerySet[Loot], id_order: List[int]) -> List[HandoutData]:
+    def _get_third_floor_data(
+            self,
+            requirements: Requirements,
+            history: QuerySet[Loot],
+            id_order: List[int],
+            non_loot_gear_obtained: NonLootGear,
+        ) -> List[HandoutData]:
         """
         Simulate handing out the loot for a third floor clear.
         """
-        weeks, prio_brackets, floor_requirements = self._get_floor_data(requirements, history, self.THIRD_FLOOR_SLOTS, id_order)
+        weeks, prio_brackets, floor_requirements = self._get_floor_data(
+            requirements,
+            history,
+            self.THIRD_FLOOR_SLOTS,
+            id_order,
+            non_loot_gear_obtained,
+        )
         return self._get_handout_data(self.THIRD_FLOOR_SLOTS, floor_requirements, prio_brackets, self.THIRD_FLOOR_TOKENS, weeks)
 
-    def _get_fourth_floor_data(self, history: QuerySet[Loot], team_size: int) -> HandoutData:
+    def _get_fourth_floor_data(self, history: QuerySet[Loot], team_size: int, non_loot_gear_obtained: NonLootGear) -> HandoutData:
         """
         Simulate handing out the loot for a fourth floor clear.
         Different from how the others are handled, because we just check how many people already have bis weapon, and also how many mounts have been obtained.
         """
         weapons_obtained = history.filter(item='mainhand', greed=False).count()
+        non_loot_weapons = len([member_id for member_id in non_loot_gear_obtained if 'mainhand' in non_loot_gear_obtained[member_id]])
         mounts_obtained = history.filter(item='mount').count()
         return {
-            'weapons': team_size - weapons_obtained,
+            'weapons': team_size - weapons_obtained - non_loot_weapons,
             'mounts': team_size - mounts_obtained,
         }
 
@@ -326,17 +447,20 @@ class LootSolver(APIView):
 
         id_ordering = self._get_team_solver_sort_order(obj)
 
-        # Generate the requirements map for the Team as it stands
+        # Generate the requirements map for the Team
         requirements = self._get_requirements_map(obj)
 
         # Gather the loot details for the Team so far so we can calculate things like mounts needed or how many clears have already happened
         history = Loot.objects.filter(team=obj, tier=obj.tier)
 
+        # Determine what items were obtained by each member outside of drops from a fight (purchased / obtained elsewhere)
+        non_loot_gear_obtained = self._get_gear_not_obtained_from_drops(obj.tier, obj.members.all(), history)
+
         # Run the four functions  gather them all up and build up a map for the response
-        first = self._get_first_floor_data(requirements, history, id_ordering)
-        second = self._get_second_floor_data(requirements, history, id_ordering)
-        third = self._get_third_floor_data(requirements, history, id_ordering)
-        fourth = self._get_fourth_floor_data(history, obj.members.count())
+        first = self._get_first_floor_data(requirements, history, id_ordering, non_loot_gear_obtained)
+        second = self._get_second_floor_data(requirements, history, id_ordering, non_loot_gear_obtained)
+        third = self._get_third_floor_data(requirements, history, id_ordering, non_loot_gear_obtained)
+        fourth = self._get_fourth_floor_data(history, obj.members.count(), non_loot_gear_obtained)
 
         # Build and return the response
         return Response({
