@@ -103,7 +103,7 @@
                     </span>
                   </div>
                   <span class="icon">
-                    <img :src="`/job_icons/${bis.job.id}.png`" :alt="`${bis.job.name} job icon`" width="24" height="24" />
+                    <img :src="`/job_icons/${bis.job.id}.webp`" :alt="`${bis.job.name} job icon`" width="24" height="24" />
                   </span>
                 </div>
               </div>

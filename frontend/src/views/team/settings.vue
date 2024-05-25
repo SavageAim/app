@@ -115,7 +115,7 @@
                     <tr>
                       <td v-for="jobId in teamSolverSortOrder" :key="`solver-${jobId}`">
                         <span class="icon">
-                          <img :src="`/job_icons/${jobId}.png`" :alt="`${jobId} job icon`" width="24" height="24" draggable="false" />
+                          <img :src="`/job_icons/${jobId}.webp`" :alt="`${jobId} job icon`" width="24" height="24" draggable="false" />
                         </span>
                       </td>
                     </tr>
@@ -144,7 +144,7 @@
                               </select>
                             </div>
                             <div class="icon is-small is-left">
-                              <img :src="`/job_icons/${jobId}.png`" :alt="`${jobId} Job Icon`" width="24" height="24" ref="jobIcon" />
+                              <img :src="`/job_icons/${jobId}.webp`" :alt="`${jobId} Job Icon`" width="24" height="24" ref="jobIcon" />
                             </div>
                           </div>
                         </div>

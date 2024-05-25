@@ -188,3 +188,8 @@ pnpm-debug.log*
 changelogs/*.png
 
 ./database-data/*
+
+# Ignore pngs, forces use of .webp images
+public/**/*.png
+# Except materia.png for favicon
+!public/materia.png

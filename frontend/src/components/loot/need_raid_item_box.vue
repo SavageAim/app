@@ -15,7 +15,7 @@
           </span>
         </div>
         <span class="icon">
-          <img :src="`/job_icons/${entry.job_icon_name}.png`" :alt="`${entry.job_icon_name} job icon`" width="24" height="24" />
+          <img :src="`/job_icons/${entry.job_icon_name}.webp`" :alt="`${entry.job_icon_name} job icon`" width="24" height="24" />
         </span>
       </div>
     </div>

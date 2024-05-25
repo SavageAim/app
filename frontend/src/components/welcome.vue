@@ -4,7 +4,7 @@
       <div class="card-header">
         <div class="card-header-title is-centered">
           <figure class="image is-64x64">
-            <img ref="materia" class="is-rounded" :src="`/materia/${cls}.png`" alt="Savage Aim Materia Logo" width="64" height="64" @click="changeMateria" />
+            <img ref="materia" class="is-rounded" :src="`/materia/${cls}.webp`" alt="Savage Aim Materia Logo" width="64" height="64" @click="changeMateria" />
           </figure>
           <h2 class="title">Savage <span :class="`has-text-${cls}`" class="ease">Aim</span></h2>
         </div>

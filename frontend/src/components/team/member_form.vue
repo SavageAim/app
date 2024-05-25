@@ -34,7 +34,7 @@
                 </select>
               </div>
               <div class="icon is-small is-left" v-if="bisListId != -1">
-                <img :src="`/job_icons/${bisIcon}.png`" :alt="`${bisIcon} job icon`" width="24" height="24" ref="jobIcon" />
+                <img :src="`/job_icons/${bisIcon}.webp`" :alt="`${bisIcon} job icon`" width="24" height="24" ref="jobIcon" />
               </div>
             </div>
             <div class="control">

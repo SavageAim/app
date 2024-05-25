@@ -3,8 +3,8 @@
     <article class="media">
       <div class="media-left is-hidden-mobile">
         <div class="icon" v-if="displayIcons">
-          <img v-if="isLead()" src="/party_lead.png" alt="Team Leader" width="32" height="32" />
-          <img v-else src="/party_member.png" alt="Team Member" width="32" height="32" />
+          <img v-if="isLead()" src="/party_lead.webp" alt="Team Leader" width="32" height="32" />
+          <img v-else src="/party_member.webp" alt="Team Member" width="32" height="32" />
         </div>
       </div>
       <div class="media-content">
@@ -18,7 +18,7 @@
     <div class="level is-hidden-mobile">
       <div v-for="member in team.members" :key="member.id" class="level-item">
         <span class="icon" data-microtip-position="top" role="tooltip" :aria-label="member.name">
-          <img :src="`/job_icons/${member.bis_list.job.id}.png`" :alt="`${member.bis_list.job.display_name} Job Icon`" height="24" width="24" />
+          <img :src="`/job_icons/${member.bis_list.job.id}.webp`" :alt="`${member.bis_list.job.display_name} Job Icon`" height="24" width="24" />
         </span>
       </div>
     </div>

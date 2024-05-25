@@ -64,7 +64,7 @@
             </div>
             <div class="right">
               <span class="icon" v-if="chosenMembers[item].job_id !== null">
-                <img :src="`/job_icons/${chosenMembers[item].job_id}.png`" :alt="`${chosenMembers[item].job_id} job icon`" width="24" height="24" />
+                <img :src="`/job_icons/${chosenMembers[item].job_id}.webp`" :alt="`${chosenMembers[item].job_id} job icon`" width="24" height="24" />
               </span>
             </div>
           </a>

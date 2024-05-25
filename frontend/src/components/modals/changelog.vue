@@ -39,6 +39,7 @@
 
       <div class="divider"><i class="material-icons icon">expand_more</i> Fixes & Improvements <i class="material-icons icon">expand_more</i></div>
       <p>Attempting to optimize queries on the Loot Manager page to improve performance!</p>
+      <p>Converted PNG images to WebP format to give smaller images to download!</p>
     </div>
   </div>
 </template>
