@@ -28,7 +28,7 @@
         </div>
 
         <!-- Navigation -->
-        <div class="card" v-if="character.verified">
+        <div class="card">
           <div class="card-content">
             <aside class="menu">
               <ul class="menu-list">
@@ -53,9 +53,9 @@
           </div>
           <div class="message-body">
             <p>Please be aware that this character is yet to be verified.</p>
-            <p>Unverified characters cannot create gear lists, or interact with teams.</p>
+            <p>Unverified characters are now able to use the system as normal, but will be deleted in 7 days if they are not verified.</p>
+            <p>Any BIS Lists or Teams created with this Character as the owner will also be deleted in that time.</p>
             <p>In order to verify, please copy the token in the box below, update <a href="https://eu.finalfantasyxiv.com/lodestone/my/setting/profile/" target="_blank">this page</a> with it, then press the "Verify Character" button.</p>
-            <p>Unverified characters are removed from the system after 24h.</p>
             <hr />
             <div class="field has-addons">
               <div class="control is-expanded">
@@ -214,7 +214,7 @@
               </div>
             </div>
           </div>
-          <div class="card">
+          <div class="card" v-if="teams.length">
             <div class="card-content">
               <router-link class="box" :to="`/team/${team.id}/`" v-for="team in teams" :key="team.id" :set="job = getJob(team)">
                 <TeamBio :team="team" />
