@@ -73,6 +73,21 @@
           </div>
         </div>
         <Current :bisList="bisList" :errors="errors" :minIl="minIl" :maxIl="maxIl" :displayOffhand="displayOffhand" />
+
+        <div class="card-footer">
+          <p class="card-footer-item" v-if="importLoading" data-microtip-position="bottom" role="tooltip" aria-label="Loading...">
+            <span class="icon-text">
+              <span class="icon"><i class="material-icons">downloading</i></span>
+              <span>Import from Lodestone</span>
+            </span>
+          </p>
+          <a class="card-footer-item has-text-link" v-else @click="importLodestone">
+            <span class="icon-text">
+              <span class="icon"><i class="material-icons">cloud_download</i></span>
+              <span>Import from Lodestone</span>
+            </span>
+          </a>
+        </div>
       </div>
     </div>
   </div>
@@ -135,6 +150,10 @@ export default class BISListDesktopForm extends Vue {
 
   importBis(): void {
     this.$emit('import-bis-data')
+  }
+
+  importLodestone(): void {
+    this.$emit('import-current-lodestone-gear')
   }
 }
 </script>

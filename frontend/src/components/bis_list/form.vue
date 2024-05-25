@@ -20,7 +20,7 @@
       v-on:close="$emit('close')"
       v-on:import-bis-data="etroImport"
       v-on:import-current-data="importCurrentData"
-      v-on:import-current-lodestone-gear="importCurrentLodestoneGear"
+      v-on:import-current-lodestone-gear="lodestoneImport"
 
       v-if="renderDesktop"
     />
@@ -46,7 +46,7 @@
       v-on:close="$emit('close')"
       v-on:import-bis-data="etroImport"
       v-on:import-current-data="importCurrentData"
-      v-on:import-current-lodestone-gear="importCurrentLodestoneGear"
+      v-on:import-current-lodestone-gear="lodestoneImport"
       :class="[renderDesktop ? 'is-hidden-desktop' : '']"
     />
   </div>
@@ -116,6 +116,33 @@ export default class BISListForm extends Vue {
     }
   }
 
+  get lodestoneImportUrl(): string {
+    return `/backend/api/lodestone/${this.character.lodestone_id}/import`
+  }
+
+  calculateCurrentILRange(data: BISList): { minIl: number, maxIl: number } {
+    const itemLevels = [
+      data.current_mainhand.item_level,
+      data.current_offhand.item_level,
+      data.current_head.item_level,
+      data.current_body.item_level,
+      data.current_hands.item_level,
+      data.current_legs.item_level,
+      data.current_feet.item_level,
+      data.current_earrings.item_level,
+      data.current_necklace.item_level,
+      data.current_bracelet.item_level,
+      data.current_left_ring.item_level,
+      data.current_right_ring.item_level,
+    ]
+
+    return { minIl: Math.min(...itemLevels), maxIl: Math.max(...itemLevels) }
+  }
+
+  emitErrorCode(errorCode: number): void {
+    this.$emit('error-code', errorCode)
+  }
+
   async etroImport(): Promise<void> {
     const url = this.etroImportUrl()
     if (url === null) return
@@ -146,19 +173,6 @@ export default class BISListForm extends Vue {
     const match = this.etroImportPattern.exec(this.bisList.external_link || '')
     if (match === null) return null
     return `/backend/api/import/etro/${match[1]}/`
-  }
-
-  jobChange(selectedJob: string): void {
-    this.displayOffhand = selectedJob === 'PLD'
-  }
-
-  updateItemLevels(values: number[]): void {
-    // Always comes in as [min, max]
-    [this.minIl, this.maxIl] = values
-  }
-
-  emitErrorCode(errorCode: number): void {
-    this.$emit('error-code', errorCode)
   }
 
   handleErrors(errors: BISListErrors): void {
@@ -198,27 +212,46 @@ export default class BISListForm extends Vue {
     })
   }
 
+  jobChange(selectedJob: string): void {
+    this.displayOffhand = selectedJob === 'PLD'
+  }
+
+  async lodestoneImport(): Promise<void> {
+    this.importLoading = true
+    try {
+      const response = await fetch(`${this.lodestoneImportUrl}/${this.bisList.job_id}`)
+      if (response.ok) {
+        // Handle the import
+        const data = await response.json() as LodestoneImportResponse
+        this.importCurrentLodestoneGear(data)
+      }
+      else {
+        const error = await response.json() as ImportError
+        if (response.status === 406) {
+          this.$notify({ text: error.message, type: 'is-link' })
+        }
+        else {
+          // Only add the "Error while ..." text when it's not for the wrong job error
+          this.$notify({ text: `Error while importing Lodestone gear; ${error.message}`, type: 'is-danger' })
+        }
+      }
+    }
+    catch (e) {
+      this.$notify({ text: `Error ${e} when attempting to import Lodestone data.`, type: 'is-danger' })
+      Sentry.captureException(e)
+    }
+    finally {
+      this.importLoading = false
+    }
+  }
+
   mounted(): void {
     this.displayOffhand = this.bisList.job_id === 'PLD'
   }
 
-  calculateCurrentILRange(data: BISList): { minIl: number, maxIl: number } {
-    const itemLevels = [
-      data.current_mainhand.item_level,
-      data.current_offhand.item_level,
-      data.current_head.item_level,
-      data.current_body.item_level,
-      data.current_hands.item_level,
-      data.current_legs.item_level,
-      data.current_feet.item_level,
-      data.current_earrings.item_level,
-      data.current_necklace.item_level,
-      data.current_bracelet.item_level,
-      data.current_left_ring.item_level,
-      data.current_right_ring.item_level,
-    ]
-
-    return { minIl: Math.min(...itemLevels), maxIl: Math.max(...itemLevels) }
+  updateItemLevels(values: number[]): void {
+    // Always comes in as [min, max]
+    [this.minIl, this.maxIl] = values
   }
 }
 </script>
