@@ -68,6 +68,7 @@
         :team="team"
         :url="url"
         :user-has-permission="userHasLootManagerPermission"
+        v-on:reload-solver="reloadSolver"
       />
     </template>
   </div>

@@ -253,7 +253,12 @@ export default class History extends SavageAimMixin {
 
   deleteEntries(items: Loot[]): void {
     // Prompt deletion first before sending an api request (we'll use a modal instead of javascript alerts)
-    this.$modal.show(DeleteLoot, { team: this.team, items }, { }, { closed: () => { this.fetchData(true) } })
+    this.$modal.show(DeleteLoot, { team: this.team, items }, { }, { 
+      closed: () => { 
+        this.fetchData(true)
+        this.$emit('reload-solver')
+      } 
+    })
   }
 
   deleteMultipleEntries(): void {
@@ -293,6 +298,7 @@ export default class History extends SavageAimMixin {
     const response = await this.sendLoot(data)
     if (response === null) {
       this.createData = { item: 'na', member: -1, obtained: '' }
+      this.$emit('reload-solver')
     }
     else {
       this.errors = response

@@ -264,7 +264,6 @@ export default class LootSolver extends SavageAimMixin {
       if (response.ok) {
         // Parse the JSON and save it in instance variables
         this.data = (await response.json()) as LootSolverData
-        console.log(this.data)
         this.loaded = true
         if (reload) this.$forceUpdate()
       }

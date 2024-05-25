@@ -343,7 +343,6 @@ export default class TeamSettings extends TeamViewMixin {
         // Parse the JSON into a team and save it
         const details = (await response.json()) as Job[]
         this.solverDefault = details.map((job: Job) => job.id)
-        console.log(this.teamSolverSortOrder)
       }
       else {
         this.$notify({ text: 'Could not load Jobs for Solver Order; help display will not work.', type: 'is-warning' })
@@ -400,8 +399,6 @@ export default class TeamSettings extends TeamViewMixin {
       team_lead: this.teamLeadId,
       solver_sort_overrides: sortOverrides,
     }
-
-    console.log(updateObj)
 
     try {
       const response = await fetch(this.url, {

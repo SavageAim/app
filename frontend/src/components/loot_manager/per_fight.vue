@@ -147,7 +147,6 @@ export default class PerFightLootManager extends SavageAimMixin {
       })
       this.$forceUpdate()
     })
-    console.log(this.fight, this.chosenMembers)
   }
 
   chooseMember(data: PerFightChosenMember, item: string): void {
