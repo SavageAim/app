@@ -144,7 +144,7 @@ import {
     NeedTomeItemBox,
   },
 })
-export default class LoadCurrentGear extends Vue {
+export default class PerFightMemberSelect extends Vue {
   @Prop()
   choose!: (data: PerFightChosenMember, item: string) => void
 

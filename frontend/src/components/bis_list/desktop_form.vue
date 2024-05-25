@@ -24,12 +24,6 @@
 
       <!-- Actions -->
       <div class="card">
-        <div class="card-header">
-          <div class="card-header-title">
-            <span>Actions</span>
-          </div>
-        </div>
-
         <Actions :bisList="bisList" :character="character" :char-is-proxy="charIsProxy" :url="url" :method="method" v-on="$listeners" />
       </div>
     </div>
@@ -42,6 +36,26 @@
           </div>
         </div>
         <BIS :bisList="bisList" :errors="errors" :minIl="minIl" :maxIl="maxIl" :displayOffhand="displayOffhand" />
+        <div class="card-footer">
+          <p class="card-footer-item" v-if="importLoading" data-microtip-position="bottom" role="tooltip" aria-label="Loading...">
+            <span class="icon-text">
+              <span class="icon"><i class="material-icons">downloading</i></span>
+              <span>Import from Etro</span>
+            </span>
+          </p>
+          <a class="card-footer-item has-text-link" v-else-if="etroImportable" @click="importBis">
+            <span class="icon-text">
+              <span class="icon"><i class="material-icons">cloud_download</i></span>
+              <span>Import from Etro</span>
+            </span>
+          </a>
+          <p class="card-footer-item" v-else data-microtip-position="bottom" role="tooltip" aria-label="Please enter an Etro gearset link in the gearset's URL field.">
+            <span class="icon-text">
+              <span class="icon"><i class="material-icons">cloud_off</i></span>
+              <span>Import from Etro</span>
+            </span>
+          </p>
+        </div>
       </div>
     </div>
 
@@ -53,6 +67,36 @@
           </div>
         </div>
         <Current :bisList="bisList" :errors="errors" :minIl="minIl" :maxIl="maxIl" :displayOffhand="displayOffhand" />
+
+        <div class="card-footer">
+          <p class="card-footer-item" v-if="importLoading" data-microtip-position="bottom" role="tooltip" aria-label="Loading...">
+            <span class="icon-text">
+              <span class="icon"><i class="material-icons">downloading</i></span>
+              <span>Import from Lodestone</span>
+            </span>
+          </p>
+          <a class="card-footer-item has-text-link" v-else @click="importLodestone">
+            <span class="icon-text">
+              <span class="icon"><i class="material-icons">cloud_download</i></span>
+              <span>Import from Lodestone</span>
+            </span>
+          </a>
+
+          <template v-if="!charIsProxy">
+            <a class="card-footer-item has-text-link" v-if="syncable" data-microtip-position="top" role="tooltip" :aria-label="`Load Current gear from another ${bisList.job_id} BIS List.`" @click="importFromOtherList">
+              <span class="icon-text">
+                <span class="icon"><i class="material-icons">content_copy</i></span>
+                <span>Copy from Other List</span>
+              </span>
+            </a>
+            <p class="card-footer-item" v-else data-microtip-position="top" role="tooltip" :aria-label="`You have no other ${bisList.job_id} BIS Lists.`">
+              <span class="icon-text">
+                <span class="icon"><i class="material-icons">content_copy</i></span>
+                <span>Copy from Other List</span>
+              </span>
+            </p>
+          </template>
+        </div>
       </div>
     </div>
   </div>
@@ -94,6 +138,12 @@ export default class BISListDesktopForm extends Vue {
   @Prop()
   errors!: BISListErrors
 
+  @Prop()
+  etroImportable!: boolean
+
+  @Prop()
+  importLoading!: boolean
+
   // Set up default values for min and max IL, will change as new tiers are released
   @Prop()
   maxIl!: number
@@ -105,7 +155,22 @@ export default class BISListDesktopForm extends Vue {
   minIl!: number
 
   @Prop()
+  syncable!: boolean
+
+  @Prop()
   url!: string
+
+  importBis(): void {
+    this.$emit('import-bis-data')
+  }
+
+  importFromOtherList(): void {
+    this.$emit('import-current-data')
+  }
+
+  importLodestone(): void {
+    this.$emit('import-current-lodestone-gear')
+  }
 }
 </script>
 

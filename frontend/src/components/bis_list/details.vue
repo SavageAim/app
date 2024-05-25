@@ -37,7 +37,7 @@
 
   <div class="field is-horizontal">
     <div class="field-label is-normal">
-      <label class="label">Extra URL</label>
+      <label class="label">URL</label>
     </div>
     <div class="field-body">
       <div class="field">

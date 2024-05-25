@@ -34,8 +34,15 @@
       <p class="has-text-info">For more details, please see <a href="https://wiki.savageaim.com/teams/loot-solver" target="_blank">the wiki page</a> about this feature!</p>
       <p class="has-text-info">Because it is a Beta feature, there could be some algorithmic inconsistencies. If there are any issues or bugs or anything, please report them on the Discord!</p>
 
-      <div class="divider"><i class="material-icons icon">expand_more</i> Continuing UI Consistency <i class="material-icons icon">expand_more</i></div>
-      <p>Colours of Action buttons in BIS List pages have been changed to a darker blue to free-up the lighter blue for specific purposes.</p>
+      <div class="divider"><i class="material-icons icon">expand_more</i> BIS List Actions Revamp <i class="material-icons icon">expand_more</i></div>
+      <p>
+        In the interest of improving UX, Action buttons that only affect part of the BIS Form have been moved to the relevant sections:
+        <ul>
+          <li>The "Import From Etro" button is now attached to the bottom of the BIS Gear section.</li>
+          <li>Similarly, the "Import from Lodestone" and "Copy from Other List" buttons are now on the bottom of the Current Gear section.</li>
+        </ul>
+      </p>
+      <p>The Actions box now only contains the Create/Save buttons, and the header of this box has been removed since it's now irrelevant to have one.</p>
 
       <div class="divider"><i class="material-icons icon">expand_more</i> Fixes & Improvements <i class="material-icons icon">expand_more</i></div>
       <p>Attempting to optimize queries on the Loot Manager page to improve performance!</p>
