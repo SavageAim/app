@@ -12,7 +12,7 @@
     </div>
     <div class="card-content content">
       <h2 class="has-text-primary subtitle">{{ version }}</h2>
-      <div class="divider"><i class="material-icons icon">expand_more</i> The Final Pre-Dawntrail Release <i class="material-icons icon">expand_more</i></div>
+      <div class="divider"><i class="material-icons icon">expand_more</i> The Final Pre-Dawntrail (Non-Bugfix) Release <i class="material-icons icon">expand_more</i></div>
       <p>Good day fellow Warrior of Light, I hope that this message finds you well.</p>
       <p>I've been hard at work on some community requested features / changes, and on interesting new mechanics that I hope people will take advantage of for the new expansion!</p>
       <p>As a result, these patch notes are pretty large, but I encourage you to at least scroll through and read the various headings!</p>
