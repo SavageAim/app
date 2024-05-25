@@ -56,7 +56,6 @@ class LootSolver(APIView):
     def _get_team_solver_sort_order(team: Team) -> List[int]:
         """
         Given a Team, apply their solver sort overrides to the default list, then turn that new list into a list of member IDs.
-        Get the full list of Job IDs, 
         """
         overrides = team.solver_sort_overrides
         remaining_default_order = deque(Job.get_in_solver_order().exclude(id__in=overrides).values_list('id', flat=True))
@@ -337,12 +336,12 @@ class LootSolver(APIView):
         return handouts
 
     def _get_first_floor_data(
-            self,
-            requirements: Requirements,
-            history: QuerySet[Loot],
-            id_order: List[int],
-            non_loot_gear_obtained: NonLootGear,
-        ) -> List[HandoutData]:
+                self,
+                requirements: Requirements,
+                history: QuerySet[Loot],
+                id_order: List[int],
+                non_loot_gear_obtained: NonLootGear,
+            ) -> List[HandoutData]:
         """
         Simulate handing out the loot for a first floor clear.
         """
@@ -357,11 +356,11 @@ class LootSolver(APIView):
 
     @staticmethod
     def _get_second_floor_data(
-            requirements: Requirements,
-            history: QuerySet[Loot],
-            id_order: List[int],
-            non_loot_gear_obtained: NonLootGear,
-        ) -> List[HandoutData]:
+                requirements: Requirements,
+                history: QuerySet[Loot],
+                id_order: List[int],
+                non_loot_gear_obtained: NonLootGear,
+            ) -> List[HandoutData]:
         """
         Simulate handing out the loot for a second floor clear.
         """
@@ -375,12 +374,12 @@ class LootSolver(APIView):
         return LootSolver._get_handout_data(LootSolver.SECOND_FLOOR_SLOTS, floor_requirements, prio_brackets, LootSolver.SECOND_FLOOR_TOKENS, weeks)
 
     def _get_third_floor_data(
-            self,
-            requirements: Requirements,
-            history: QuerySet[Loot],
-            id_order: List[int],
-            non_loot_gear_obtained: NonLootGear,
-        ) -> List[HandoutData]:
+                self,
+                requirements: Requirements,
+                history: QuerySet[Loot],
+                id_order: List[int],
+                non_loot_gear_obtained: NonLootGear,
+            ) -> List[HandoutData]:
         """
         Simulate handing out the loot for a third floor clear.
         """
