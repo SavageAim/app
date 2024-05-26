@@ -11,13 +11,10 @@
     <div class="card-content">
       <h2 class="subtitle">Are you sure you want to delete this Character?</h2>
       <hr />
-      <CharacterBio :character="character" :displayUnverified="false" />
+      <CharacterBio :character="character" />
       <hr />
       <h2 class="subtitle">Results of Deletion</h2>
-      <div v-if="!character.verified">
-        Character isn't verified, so it is safe to delete!
-      </div>
-      <div v-else-if="loading">
+      <div v-if="loading">
         <button class="button is-static is-loading is-fullwidth">Loading</button>
       </div>
       <div class="content" v-else>
@@ -92,7 +89,7 @@ export default class DeleteCharacter extends Vue {
   }
 
   mounted(): void {
-    if (this.character.verified) this.getDeleteInfo()
+    this.getDeleteInfo()
   }
 
   async getDeleteInfo(): Promise<void> {

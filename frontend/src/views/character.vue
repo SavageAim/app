@@ -8,7 +8,7 @@
       <div class="column is-one-quarter-desktop">
         <div class="card">
           <div class="card-content">
-            <CharacterBio :character="character" :displayUnverified="false" />
+            <CharacterBio :character="character" />
           </div>
           <footer class="card-footer">
             <button class="card-footer-item is-loading is-ghost button" v-if="updating"></button>
@@ -451,7 +451,7 @@ export default class Character extends SavageAimMixin {
   }
 
   async updateChar(): Promise<void> {
-    if (!this.character.verified || this.updating) return
+    if (this.updating) return
 
     this.updating = true
     // Reload data from the Lodestone, and send an update request to the API.
