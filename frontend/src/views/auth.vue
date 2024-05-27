@@ -20,7 +20,7 @@
       </div>
       <div class="card-content">
         <div class="buttons is-centered">
-          <a :href="LOGIN_URL" class="button is-blurple">
+          <a :href="buttonUrl" class="button is-blurple">
             <span class="icon is-24x24"><img id="discord-logo" src="/discord.svg" alt="Discord Logo" width="24" height="24" /></span>
             <span>Login with Discord</span>
           </a>
@@ -43,8 +43,18 @@ import SavageAimMixin from '@/mixins/savage_aim_mixin'
   },
 })
 export default class Auth extends SavageAimMixin {
+  @Prop({ default: '' })
+  next!: string
+
   @Prop({ default: false })
   redirect!: boolean
+
+  get buttonUrl(): string {
+    if (this.next === '') {
+      return this.LOGIN_URL
+    }
+    return `${this.LOGIN_URL}?next=${this.next}`
+  }
 
   @Watch('$store.state.user.id')
   checkAuth(): void {
@@ -57,6 +67,7 @@ export default class Auth extends SavageAimMixin {
     // If the user is authenticated, we don't need to be here
     this.checkAuth()
     document.title = 'Login - Savage Aim'
+    console.log(this.buttonUrl)
   }
 
   // Handlers for the other potential error messages
