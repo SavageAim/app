@@ -37,12 +37,7 @@
         </div>
         <BIS :bisList="bisList" :errors="errors" :minIl="minIl" :maxIl="maxIl" :displayOffhand="displayOffhand" />
         <div class="card-footer">
-          <p class="card-footer-item" v-if="importLoading" data-microtip-position="bottom" role="tooltip" aria-label="Loading...">
-            <span class="icon-text">
-              <span class="icon"><i class="material-icons">downloading</i></span>
-              <span>Import from Etro</span>
-            </span>
-          </p>
+          <p class="card-footer-item is-loading" v-if="importLoading"></p>
           <a class="card-footer-item has-text-link" v-else-if="etroImportable" @click="importBis">
             <span class="icon-text">
               <span class="icon"><i class="material-icons">cloud_download</i></span>
@@ -69,12 +64,7 @@
         <Current :bisList="bisList" :errors="errors" :minIl="minIl" :maxIl="maxIl" :displayOffhand="displayOffhand" />
 
         <div class="card-footer">
-          <p class="card-footer-item" v-if="importLoading" data-microtip-position="bottom" role="tooltip" aria-label="Loading...">
-            <span class="icon-text">
-              <span class="icon"><i class="material-icons">downloading</i></span>
-              <span>Import from Lodestone</span>
-            </span>
-          </p>
+          <p class="card-footer-item is-loading" v-if="importLoading"></p>
           <a class="card-footer-item has-text-link" v-else @click="importLodestone">
             <span class="icon-text">
               <span class="icon"><i class="material-icons">cloud_download</i></span>
