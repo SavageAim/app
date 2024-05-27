@@ -62,6 +62,7 @@
       <div class="divider"><i class="material-icons icon">expand_more</i> Fixes & Improvements <i class="material-icons icon">expand_more</i></div>
       <p>Attempting to optimize queries on the Loot Manager page to improve performance!</p>
       <p>Converted PNG images to WebP format to give smaller images to download!</p>
+      <p>Visiting a page that requires being logged in will now redirect you to the same page after you have logged in!</p>
 
       <div class="divider"><i class="material-icons icon">expand_more</i> Next Steps <i class="material-icons icon">expand_more</i></div>
       <p>SavageAim will be going for as long as I'm playing XIV, so this isn't some sort of closing down message!</p>

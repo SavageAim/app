@@ -190,39 +190,38 @@ class LootSolver(APIView):
         prio_brackets = LootSolver._generate_priority_brackets(floor_requirements, id_order)
 
         # Sim through the existing clear data and update prio brackets with how things have evolved in the past
-        history_data: Dict[str, Dict[str, int]] = defaultdict(dict)
+        history_data: Dict[str, Dict[str, List[int]]] = defaultdict(lambda: defaultdict(list))
         for item in relevant_history:
-            history_data[item.obtained][item.item] = item.member_id
+            # Use a list so we can potentially handle split clears?
+            history_data[item.obtained][item.item].append(item.member_id)
 
         for obtained in history_data:
             for slot in slots:
-                member_id = history_data[obtained].get(slot)
-                if member_id is None:
-                    continue
-                # move the receiver of the item down one bracket, making a new one if you have to
-                for priority in sorted(prio_brackets, reverse=True):
-                    try:
-                        prio_brackets[priority].remove(member_id)
+                for member_id in history_data[obtained].get(slot, []):
+                    # move the receiver of the item down one bracket, making a new one if you have to
+                    for priority in sorted(prio_brackets, reverse=True):
                         try:
-                            floor_requirements[slot].remove(member_id)
+                            prio_brackets[priority].remove(member_id)
+                            try:
+                                floor_requirements[slot].remove(member_id)
+                            except ValueError:
+                                pass
+                            if prio_brackets[priority] == []:
+                                prio_brackets.pop(priority)
+
+                            # Sanity Check; don't add 0 prio (or anything lower) to the list
+                            new_prio = priority - 1
+                            if new_prio <= 0:
+                                continue
+
+                            if new_prio not in prio_brackets:
+                                prio_brackets[new_prio] = [member_id]
+                            else:
+                                prio_brackets[new_prio].append(member_id)
+                            break
                         except ValueError:
-                            pass
-
-                        # Sanity Check; don't add 0 prio (or anything lower) to the list
-                        new_prio = priority - 1
-                        if new_prio <= 0:
+                            # If they're not in the prio bracket at this prio just keep going
                             continue
-
-                        if new_prio not in prio_brackets:
-                            prio_brackets[new_prio] = [member_id]
-                        else:
-                            prio_brackets[new_prio].append(member_id)
-                        if prio_brackets[priority] == []:
-                            prio_brackets.pop(priority)
-                        break
-                    except ValueError:
-                        # If they're not in the prio bracket at this prio just keep going
-                        continue
 
         # Also check loot not tracked in the history
         for member_id in id_order:
