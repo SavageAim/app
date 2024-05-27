@@ -28,7 +28,7 @@
       </div>
     </div>
 
-    <p>If the Job of the Etro Gearset is supported by the gear equipped according to Lodestone, your current gear from Lodestone will be used for the BIS.</p>
+    <p>If the Job of the Etro set matches your current Lodestone details, then your Current Gear will be imported from there.</p>
     <p>Otherwise, your Current Gear will be set to the Tier's Crafted Set!</p>
   </div>
 </template>
