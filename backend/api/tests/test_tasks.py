@@ -9,7 +9,7 @@ from django.core.management import call_command
 from django.utils import timezone
 # local
 from api.models import BISList, Character, Gear, Job, Notification, Team, Tier
-from api.tasks import verify_character, cleanup
+from api.tasks import cleanup, verify_character, remind_users_to_verify
 from .test_base import SavageAimTestCase
 
 
@@ -350,3 +350,34 @@ class TasksTestSuite(SavageAimTestCase):
         error = 'Lodestone may be down.'
         message = f'The verification of {char} has failed! Reason: {error}'
         self.assertEqual(notif.text, message)
+
+    def test_verify_reminder(self):
+        """
+        Create a non-verified character that is 6 days old.
+        Run the task twice.
+        Ensure we get 1 notification about it.
+        """
+        old_unver = Character.objects.create(
+            avatar_url='https://img.savageaim.com/abcde',
+            lodestone_id=1234567890,
+            user=self._get_user(),
+            name='Char 1',
+            world='Lich',
+            verified=False,
+        )
+        Character.objects.update(created=timezone.now() - timedelta(days=5))
+        # Run the reminder function once, ensure the notification is created
+        remind_users_to_verify()
+        self.assertEqual(Notification.objects.count(), 1)
+        notif = Notification.objects.first()
+        self.assertEqual(notif.link, f'/characters/{old_unver.id}/')
+        self.assertEqual(
+            notif.text,
+            f'"{old_unver}" has not been verified in at least 5 days! In 2 more they will be deleted!',
+        )
+
+        # Run the function again, ensure that there is still only one notif
+        Character.objects.update(created=timezone.now() - timedelta(days=6))
+        remind_users_to_verify()
+        self.assertEqual(Notification.objects.count(), 1)
+        self.assertEqual(Notification.objects.first().pk, notif.pk)
