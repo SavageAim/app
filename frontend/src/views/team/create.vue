@@ -30,7 +30,7 @@
             <p v-if="errors.tier_id !== undefined" class="help is-danger">{{ errors.tier_id[0] }}</p>
           </div>
           <div class="divider"><i class="material-icons icon">expand_more</i> Team Leader <i class="material-icons icon">expand_more</i></div>
-          <TeamMemberForm ref="form" :bis-list-id-errors="errors.bis_list_id" :character-id-errors="errors.character_id" v-if="characters.length" />
+          <TeamMemberForm ref="form" :bis-list-id-errors="errors.bis_list_id" :character-id-errors="errors.character_id" v-if="characters.length && !createFormUsed" />
           <template v-else>
             <p class="no-chars-message">Your account currently has no Characters.</p>
             <p class="no-chars-message">Provide a Lodestone Character URL, and Etro.gg Gearset URL and a Character will automatically be made for you!</p>
@@ -40,7 +40,8 @@
           </template>
         </div>
         <div class="card-footer">
-          <a class="card-footer-item has-text-success" @click="create" v-if="characters.length">
+          <p class="card-footer-item is-loading" v-if="requesting || createFormRunning"></p>
+          <a class="card-footer-item has-text-success" @click="create" v-else-if="characters.length && !createFormUsed">
             <span class="icon-text">
               <span class="icon"><i class="material-icons">add</i></span>
               Create Team
@@ -75,7 +76,13 @@ import Tier from '@/interfaces/tier'
   },
 })
 export default class TeamCreate extends SavageAimMixin {
+  createFormRunning = false
+
+  createFormUsed = false
+
   errors: TeamCreateErrors = {}
+
+  requesting = false
 
   teamName = ''
 
@@ -85,7 +92,12 @@ export default class TeamCreate extends SavageAimMixin {
 
   // Values for sending
   get bisListId(): string {
-    return (this.$refs.form as TeamMemberForm).bisListId
+    try {
+      return (this.$refs.form as TeamMemberForm).bisListId
+    }
+    catch (e) {
+      return `${this.characterCreateForm.bisList?.id || '-1'}`
+    }
   }
 
   get characters(): Character[] {
@@ -97,7 +109,12 @@ export default class TeamCreate extends SavageAimMixin {
   }
 
   get characterId(): string {
-    return (this.$refs.form as TeamMemberForm).characterId
+    try {
+      return (this.$refs.form as TeamMemberForm).characterId
+    }
+    catch (e) {
+      return `${this.characterCreateForm.character?.id || '-1'}`
+    }
   }
 
   get tier(): Tier | null {
@@ -109,6 +126,9 @@ export default class TeamCreate extends SavageAimMixin {
   }
 
   async create(): Promise<void> {
+    if (this.requesting) return
+    this.requesting = true
+
     const body = JSON.stringify({
       name: this.teamName,
       tier_id: this.tierId,
@@ -142,15 +162,23 @@ export default class TeamCreate extends SavageAimMixin {
       this.$notify({ text: `Error ${e} when attempting to create a Team.`, type: 'is-danger' })
       Sentry.captureException(e)
     }
+    finally {
+      this.requesting = false
+    }
   }
 
   async createCharAndTeam(): Promise<void> {
+    if (this.createFormRunning) return
     this.errors = {}
     if (this.tier === null) {
       this.errors.tier_id = ['Please select a Tier!']
       return
     }
-    await this.characterCreateForm.createTeam(this.teamName, this.tier)
+    this.createFormUsed = true
+    this.createFormRunning = true
+    const created = await this.characterCreateForm.createCharAndBIS(this.tier)
+    if (created) await this.create()
+    this.createFormRunning = false
   }
 
   async load(): Promise<void> {

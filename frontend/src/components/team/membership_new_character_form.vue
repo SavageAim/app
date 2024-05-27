@@ -37,14 +37,20 @@
 import * as Sentry from '@sentry/vue'
 import { Component, Vue } from 'vue-property-decorator'
 import { CharacterScrapeData, CharacterScrapeError } from '@/interfaces/lodestone'
-import Team from '@/interfaces/team'
 import Tier from '@/interfaces/tier'
 import SavageAimMixin from '@/mixins/savage_aim_mixin'
 import { Character } from '@/interfaces/character'
 import { CharacterCreateErrors, CreateResponse } from '@/interfaces/responses'
+import { EtroImportResponse, ImportError, LodestoneImportResponse } from '@/interfaces/imports'
+import BISListModify from '@/dataclasses/bis_list_modify'
+import Gear from '@/interfaces/gear'
 
 @Component
 export default class TeamMemberCreateNewCharacterForm extends SavageAimMixin {
+  bisList: BISListModify | null = null
+
+  character: Character | null = null
+
   characterCreateUrl = '/backend/api/character/'
 
   characterErrors: string[] = []
@@ -59,6 +65,8 @@ export default class TeamMemberCreateNewCharacterForm extends SavageAimMixin {
 
   etroLoaded = false
 
+  etroUrlRegex = /https:\/\/etro\.gg\/gearset\/([-a-z0-9]+)\/?/
+
   get etroUrlField(): HTMLInputElement {
     return this.$refs.etroUrl as HTMLInputElement
   }
@@ -67,11 +75,73 @@ export default class TeamMemberCreateNewCharacterForm extends SavageAimMixin {
     return this.$refs.lodestoneUrl as HTMLInputElement
   }
 
-  private async createCharacter(): Promise<number> {
+  private checkFieldsHaveValidURLs(): boolean {
     this.characterErrors = []
     this.characterLoaded = false
+    this.etroErrors = []
+    this.etroLoaded = false
+
+    // Ensure both fields are filled correctly, return true if errors are found, false otherwise
+    const lodestoneUrl = this.lodestoneUrlField.value
+    let match = this.characterUrlRegex.exec(lodestoneUrl)
+    if (match === null) {
+      this.characterErrors = ['Please provide a valid Lodestone Character URL!']
+    }
+
+    const etroUrl = this.etroUrlField.value
+    match = this.etroUrlRegex.exec(etroUrl)
+    if (match === null) {
+      this.etroErrors = ['Please provide a valid Etro.gg Gearset URL!']
+    }
+
+    return (this.characterErrors.length > 0) || (this.etroErrors.length > 0)
+  }
+
+  private async createBIS(tier: Tier): Promise<BISListModify | null> {
+    const bisList = new BISListModify()
+    // Import BIS Data
+    const bisData = await this.importBISGear()
+    if (bisData === null) return null
+
+    // Import or Generate Current Data
+    const currentData = await this.importCurrentGear(bisData.job_id, tier)
+    if (currentData === null) return null
+
+    // Compile, create, and return BIS
+    bisList.importBIS(bisData)
+    bisList.importCurrentLodestoneGear(currentData)
+
+    const body = JSON.stringify(bisList)
+    const charId = this.character?.id || ''
+    const url = `/backend/api/character/${charId}/bis_lists/`
+    try {
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': this.$cookies.get('csrftoken'),
+        },
+        body,
+      })
+
+      if (response.ok) {
+        const json = await response.json() as CreateResponse
+        bisList.id = json.id
+        return bisList
+      }
+      this.etroErrors = ['Something went wrong creating your BIS List.']
+    }
+    catch (e) {
+      this.$notify({ text: `Error ${e} when attempting to create BIS List.`, type: 'is-danger' })
+      Sentry.captureException(e)
+    }
+    return null
+  }
+
+  private async createCharacter(): Promise<Character | null> {
+    if (this.character !== null) return this.character
     const char = await this.importCharacter()
-    if (char === null) return -1
+    if (char === null) return null
 
     const body = JSON.stringify(char)
     try {
@@ -87,8 +157,8 @@ export default class TeamMemberCreateNewCharacterForm extends SavageAimMixin {
       if (response.ok) {
         // Attempt to parse the json, get the id, and then redirect
         const json = await response.json() as CreateResponse
-        this.$store.dispatch('fetchCharacters')
-        return json.id
+        char.id = json.id
+        return char
       }
       super.handleError(response.status)
       const json = await response.json() as CharacterCreateErrors
@@ -104,16 +174,71 @@ export default class TeamMemberCreateNewCharacterForm extends SavageAimMixin {
       this.$notify({ text: `Error ${e} when attempting to create Character.`, type: 'is-danger' })
       Sentry.captureException(e)
     }
-    finally {
-      this.characterLoaded = true
-    }
-    return -1
+    return null
   }
 
-  public async createTeam(teamName: string, tier: Tier): Promise<void> {
-    const charId = await this.createCharacter()
-    if (charId === -1) return
+  public async createCharAndBIS(tier: Tier): Promise<boolean> {
+    if (this.checkFieldsHaveValidURLs()) return false
+
+    const char = await this.createCharacter()
+    // It'll be an error
+    if (char === null) return false
+    this.character = char
+    this.characterLoaded = true
+
     // TODO - Make BIS stuff
+    const bis = await this.createBIS(tier)
+    if (bis === null) return false
+    this.bisList = bis
+    this.etroLoaded = true
+
+    // State Refresh. When form is used, it should block changing the page.
+    this.$store.dispatch('fetchCharacters')
+    return true
+  }
+
+  private getCraftedCurrentGear(tier: Tier): LodestoneImportResponse {
+    const craftedIl = tier.max_item_level - 25
+    const gearType = this.$store.state.gear.find((g: Gear) => g.item_level === craftedIl && g.has_weapon && g.has_armour && g.has_accessories)!
+    return {
+      job_id: '',
+      mainhand: gearType.id,
+      offhand: gearType.id,
+      head: gearType.id,
+      body: gearType.id,
+      hands: gearType.id,
+      legs: gearType.id,
+      feet: gearType.id,
+      earrings: gearType.id,
+      necklace: gearType.id,
+      bracelet: gearType.id,
+      left_ring: gearType.id,
+      right_ring: gearType.id,
+      min_il: craftedIl,
+      max_il: craftedIl,
+    }
+  }
+
+  private async importBISGear(): Promise<EtroImportResponse | null> {
+    const etroUrl = this.etroUrlField.value
+    const match = this.etroUrlRegex.exec(etroUrl)
+    if (match === null) return null
+    const url = `/backend/api/import/etro/${match[1]}/`
+    try {
+      const response = await fetch(url)
+      if (response.ok) {
+        // Handle the import
+        const data = await response.json() as EtroImportResponse
+        return data
+      }
+      const error = await response.json() as ImportError
+      this.etroErrors = [error.message]
+    }
+    catch (e) {
+      this.$notify({ text: `Error ${e} when attempting to import Etro data.`, type: 'is-danger' })
+      Sentry.captureException(e)
+    }
+    return null
   }
 
   private async importCharacter(): Promise<Character | null> {
@@ -168,9 +293,27 @@ export default class TeamMemberCreateNewCharacterForm extends SavageAimMixin {
     return null
   }
 
-  public async joinTeam(team: Team): Promise<void> {
-    const charId = await this.createCharacter()
-    if (charId === -1) return
+  private async importCurrentGear(jobId: string, tier: Tier): Promise<LodestoneImportResponse | null> {
+    try {
+      const response = await fetch(`/backend/api/lodestone/${this.character!.lodestone_id}/import/${jobId}`)
+      if (response.ok) {
+        // Handle the import
+        const data = await response.json() as LodestoneImportResponse
+        return data
+      }
+      if (response.status === 406) {
+        // Couldn't import because of wrong job, generate tier crafted
+        return this.getCraftedCurrentGear(tier)
+      }
+      // Only add the "Error while ..." text when it's not for the wrong job error
+      const error = await response.json() as ImportError
+      this.$notify({ text: `Error while importing Lodestone gear; ${error.message}`, type: 'is-danger' })
+    }
+    catch (e) {
+      this.$notify({ text: `Error ${e} when attempting to import Lodestone data.`, type: 'is-danger' })
+      Sentry.captureException(e)
+    }
+    return null
   }
 }
 </script>

@@ -31,7 +31,7 @@
               <div class="card-header">
                 <div class="card-header-title">Select a Character and BIS List</div>
               </div>
-              <div class="card-content" v-if="characters.length">
+              <div class="card-content" v-if="characters.length && !createFormUsed">
                 <TeamMemberForm ref="form" :bis-list-id-errors="errors.bis_list_id" :character-id-errors="errors.character_id" />
                 <button class="button is-success" @click="join">
                   <span class="icon"><i class="material-icons">login</i></span>
@@ -53,7 +53,8 @@
                 <TeamMemberCreateNewCharacterForm ref="characterCreateForm" />
               </div>
               <div class="card-footer">
-                <a class="card-footer-item has-text-success" v-if="characters.length" @click="join">
+                <p class="card-footer-item is-loading" v-if="requesting || createFormRunning"></p>
+                <a class="card-footer-item has-text-success" v-else-if="characters.length && !createFormUsed" @click="join">
                   <span class="icon-text">
                     <span class="icon"><i class="material-icons">login</i></span>
                     <span>Join Team!</span>
@@ -119,18 +120,29 @@ import TeamMemberCreateNewCharacterForm from '@/components/team/membership_new_c
   },
 })
 export default class TeamJoin extends SavageAimMixin {
-  teamLoaded = false
+  createFormRunning = false
+
+  createFormUsed = false
 
   errors: TeamMemberUpdateErrors = {}
+
+  requesting = false
 
   team!: Team
 
   @Prop()
   teamId!: string
 
+  teamLoaded = false
+
   // Values for sending
   get bisListId(): string {
-    return (this.$refs.form as TeamMemberForm).bisListId
+    try {
+      return (this.$refs.form as TeamMemberForm).bisListId
+    }
+    catch (e) {
+      return `${this.characterCreateForm.bisList?.id || '-1'}`
+    }
   }
 
   get characters(): Character[] {
@@ -142,7 +154,12 @@ export default class TeamJoin extends SavageAimMixin {
   }
 
   get characterId(): string {
-    return (this.$refs.form as TeamMemberForm).characterId
+    try {
+      return (this.$refs.form as TeamMemberForm).characterId
+    }
+    catch (e) {
+      return `${this.characterCreateForm.character?.id || '-1'}`
+    }
   }
 
   get teamProxies(): TeamMember[] {
@@ -159,7 +176,11 @@ export default class TeamJoin extends SavageAimMixin {
   }
 
   async createCharAndJoin(): Promise<void> {
-    await this.characterCreateForm.joinTeam(this.team)
+    this.createFormUsed = true
+    this.createFormRunning = true
+    const created = await this.characterCreateForm.createCharAndBIS(this.team.tier)
+    if (created) await this.join()
+    this.createFormRunning = false
   }
 
   created(): void {
@@ -194,7 +215,9 @@ export default class TeamJoin extends SavageAimMixin {
   }
 
   async join(): Promise<void> {
+    if (this.requesting) return
     this.errors = {}
+    this.requesting = true
 
     const body = JSON.stringify({ bis_list_id: this.bisListId, character_id: this.characterId })
     try {
@@ -223,6 +246,9 @@ export default class TeamJoin extends SavageAimMixin {
     catch (e) {
       this.$notify({ text: `Error ${e} when attempting to create BIS List.`, type: 'is-danger' })
       Sentry.captureException(e)
+    }
+    finally {
+      this.requesting = false
     }
   }
 
