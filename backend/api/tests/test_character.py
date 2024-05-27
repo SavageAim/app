@@ -173,7 +173,7 @@ class CharacterResource(SavageAimTestCase):
             user=self._get_user(),
             name='Char 1',
             world='Lich',
-            verified=True,
+            verified=False,
         )
         # Create a bislist for the character as well
         bis_gear = Gear.objects.first()
@@ -458,7 +458,7 @@ class CharacterDelete(SavageAimTestCase):
             user=self._get_user(),
             name='Char 1',
             world='Lich',
-            verified=True,
+            verified=False,
         )
         # Create a bislist for the character as well
         bis_gear = Gear.objects.first()
@@ -642,7 +642,6 @@ class CharacterDelete(SavageAimTestCase):
 
         - ID doesn't exist
         - Character doesn't belong to specified User
-        - Character is not verified
         """
         user = self._get_user()
         self.client.force_authenticate(user)
@@ -666,10 +665,4 @@ class CharacterDelete(SavageAimTestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND, response.content)
         response = self.client.delete(url)
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND, response.content)
-
-        # Character is not verified
-        char.user = user
-        char.save()
-        response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND, response.content)

@@ -31,33 +31,39 @@
               <div class="card-header">
                 <div class="card-header-title">Select a Character and BIS List</div>
               </div>
-              <div class="card-content" v-if="characters.length">
+              <div class="card-content" v-if="characters.length && !createFormUsed">
                 <TeamMemberForm ref="form" :bis-list-id-errors="errors.bis_list_id" :character-id-errors="errors.character_id" />
                 <button class="button is-success" @click="join">
                   <span class="icon"><i class="material-icons">login</i></span>
                   <span>Join!</span>
                 </button>
               </div>
-              <div class="card-content content" v-else>
-                <p>
-                  Your account currently has no Characters. You have two choices as to how you proceed;
-                  <ol>
-                    <li>
-                      If a Character you own is listed in the Claim a Proxy card <span class="is-hidden-desktop">below</span><span class="is-hidden-touch">to the right</span>, you may click on them to attempt to claim them.
-                      <br />
-                      When verified, you will have automatically joined the Team and will not need to visit this page again.
-                    </li>
-                    <li>
-                      If your Character isn't present as a Proxy, you may click the button below to open the Add Character page in a new tab.
-                      <br />
-                      When added and verified, return to this tab and this page should have instantly updated to display a dropdown with your new Character in it.
-                    </li>
-                  </ol>
-                </p>
-                <a href="/characters/new/" target="_blank" class="button is-success is-fullwidth">
+              <div class="card-content" v-else>
+                <div class="content">
+                  <p>
+                    Your account currently has no Characters. To join this Team, you have the following choices;
+                    <ol>
+                      <li v-if="teamProxies.length > 0">If one of the Characters in the "Claim a Proxy Character" card <span class="is-hidden-desktop">below</span><span class="is-hidden-touch">to the right</span> is yours, click on them to go through the process of claiming them.</li>
+                      <li>You can create a new Character from scratch by visiting the <a href="/characters/new/" target="_blank">New Character</a> page.</li>
+                      <li>You can also provide a Lodestone Character and Etro Gearset URL in the form below and click Join, which will do the creation automatically.</li>
+                    </ol>
+                  </p>
+                </div>
+                <hr />
+                <TeamMemberCreateNewCharacterForm ref="characterCreateForm" />
+              </div>
+              <div class="card-footer">
+                <p class="card-footer-item is-loading" v-if="requesting || createFormRunning"></p>
+                <a class="card-footer-item has-text-success" v-else-if="characters.length && !createFormUsed" @click="join">
                   <span class="icon-text">
-                    <span class="icon"><i class="material-icons">open_in_new</i></span>
-                    <span>Add Character</span>
+                    <span class="icon"><i class="material-icons">login</i></span>
+                    <span>Join Team!</span>
+                  </span>
+                </a>
+                <a class="card-footer-item has-text-success" v-else @click="createCharAndJoin">
+                  <span class="icon-text">
+                    <span class="icon"><i class="material-icons">login</i></span>
+                    <span>Join Team!</span>
                   </span>
                 </a>
               </div>
@@ -103,35 +109,57 @@ import { TeamCreateResponse, TeamMemberUpdateErrors } from '@/interfaces/respons
 import Team from '@/interfaces/team'
 import TeamMember from '@/interfaces/team_member'
 import SavageAimMixin from '@/mixins/savage_aim_mixin'
+import TeamMemberCreateNewCharacterForm from '@/components/team/membership_new_character_form.vue'
 
 @Component({
   components: {
     CharacterBio,
     TeamBio,
     TeamMemberForm,
+    TeamMemberCreateNewCharacterForm,
   },
 })
 export default class TeamJoin extends SavageAimMixin {
-  teamLoaded = false
+  createFormRunning = false
+
+  createFormUsed = false
 
   errors: TeamMemberUpdateErrors = {}
+
+  requesting = false
 
   team!: Team
 
   @Prop()
   teamId!: string
 
+  teamLoaded = false
+
   // Values for sending
   get bisListId(): string {
-    return (this.$refs.form as TeamMemberForm).bisListId
+    try {
+      return (this.$refs.form as TeamMemberForm).bisListId
+    }
+    catch (e) {
+      return `${this.characterCreateForm.bisList?.id || '-1'}`
+    }
   }
 
   get characters(): Character[] {
     return this.$store.state.characters
   }
 
+  get characterCreateForm(): TeamMemberCreateNewCharacterForm {
+    return this.$refs.characterCreateForm as TeamMemberCreateNewCharacterForm
+  }
+
   get characterId(): string {
-    return (this.$refs.form as TeamMemberForm).characterId
+    try {
+      return (this.$refs.form as TeamMemberForm).characterId
+    }
+    catch (e) {
+      return `${this.characterCreateForm.character?.id || '-1'}`
+    }
   }
 
   get teamProxies(): TeamMember[] {
@@ -145,6 +173,14 @@ export default class TeamJoin extends SavageAimMixin {
   claim(character: Character): void {
     // Open the modal which will handle it all for us
     this.$modal.show(ClaimCharacterModal, { details: character, teamId: this.team.id, code: this.team.invite_code })
+  }
+
+  async createCharAndJoin(): Promise<void> {
+    this.createFormUsed = true
+    this.createFormRunning = true
+    const created = await this.characterCreateForm.createCharAndBIS(this.team.tier)
+    if (created) await this.join()
+    this.createFormRunning = false
   }
 
   created(): void {
@@ -179,7 +215,9 @@ export default class TeamJoin extends SavageAimMixin {
   }
 
   async join(): Promise<void> {
+    if (this.requesting) return
     this.errors = {}
+    this.requesting = true
 
     const body = JSON.stringify({ bis_list_id: this.bisListId, character_id: this.characterId })
     try {
@@ -208,6 +246,9 @@ export default class TeamJoin extends SavageAimMixin {
     catch (e) {
       this.$notify({ text: `Error ${e} when attempting to create BIS List.`, type: 'is-danger' })
       Sentry.captureException(e)
+    }
+    finally {
+      this.requesting = false
     }
   }
 

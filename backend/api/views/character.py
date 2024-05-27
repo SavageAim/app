@@ -74,7 +74,7 @@ class CharacterResource(APIView):
         Update certain fields of a Character
         """
         try:
-            obj = Character.objects.get(pk=pk, user=request.user, verified=True)
+            obj = Character.objects.get(pk=pk, user=request.user)
         except Character.DoesNotExist:
             return Response(status=404)
 
@@ -127,7 +127,7 @@ class CharacterDelete(APIView):
         Check through the DB for any information regarding the Character in question
         """
         try:
-            obj = Character.objects.get(pk=pk, user=request.user, verified=True)
+            obj = Character.objects.get(pk=pk, user=request.user)
         except Character.DoesNotExist:
             return Response(status=404)
 

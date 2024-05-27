@@ -115,6 +115,13 @@ def verify_fail(char: models.Character, error: str):
     _create_notif(user, text, link, 'verify_fail')
 
 
+def verify_reminder(char: models.Character):
+    text = f'"{char}" has not been verified in at least 5 days! In 2 more they will be deleted!'
+    link = f'/characters/{char.id}/'
+    user = char.user
+    _create_notif(user, text, link, 'verify_reminder')
+
+
 def verify_success(char: models.Character):
     text = f'The verification of {char} has succeeded!'
     link = f'/characters/{char.id}/'

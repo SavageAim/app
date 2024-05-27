@@ -124,7 +124,7 @@ p.disabled-delete {
   border-color: $border;
 }
 
-.solver-loading-spinner {
+.solver-loading-spinner, .card-footer-item.is-loading {
   position: relative;
   pointer-events: none;
   opacity: 0.5;

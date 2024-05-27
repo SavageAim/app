@@ -151,8 +151,6 @@ class TeamCollection(SavageAimTestCase):
         url = reverse('api:team_collection')
         self.client.force_authenticate(self._get_user())
 
-        self.char.verified = True
-        self.char.save()
         data = {
             'name': 'Test',
             'tier_id': Tier.objects.first().pk,
@@ -171,7 +169,7 @@ class TeamCollection(SavageAimTestCase):
 
         Character ID Not Sent: 'This field is required.'
         Character ID Not Int:  'A valid integer is required.'
-        Character ID Invalid: 'Please select a valid, verified Character that you own.'
+        Character ID Invalid: 'Please select a valid Character that you own.'
         BIS List ID Not Sent: 'This field is required.'
         BIS List ID Not Int: 'A valid integer is required.'
         BIS List doesn't belong to any of your characters: 'Please select a valid BISList belonging to your Character.'
@@ -217,7 +215,7 @@ class TeamCollection(SavageAimTestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, response.content)
         content = response.json()
         self.assertEqual(content['bis_list_id'], ['Please select a valid BISList belonging to your Character.'])
-        self.assertEqual(content['character_id'], ['Please select a valid, verified Character that you own.'])
+        self.assertEqual(content['character_id'], ['Please select a valid Character that you own.'])
         self.assertEqual(content['tier_id'], ['Please select a valid Tier.'])
 
         # Test with valid unverified char, and someone elses' bis list
@@ -265,7 +263,6 @@ class TeamCollection(SavageAimTestCase):
         response = self.client.post(url, data)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, response.content)
         content = response.json()
-        self.assertEqual(content['character_id'], ['Please select a valid, verified Character that you own.'])
         self.assertEqual(content['bis_list_id'], ['Please select a valid BISList belonging to your Character.'])
 
         # Lastly check the top level validate error
@@ -783,7 +780,7 @@ class TeamInvite(SavageAimTestCase):
             user=user,
             name='Char 1',
             world='Lich',
-            verified=True,
+            verified=False,
         )
         g = Gear.objects.first()
         bis = BISList.objects.create(
@@ -837,7 +834,7 @@ class TeamInvite(SavageAimTestCase):
 
         Character ID Sent: 'This field is required.'
         Character ID Not Int:  'A valid integer is required.'
-        Character ID Invalid: 'Please select a valid, verified Character that you own.'
+        Character ID Invalid: 'Please select a valid Character that you own.'
         Character already in team: 'This Character is already a member of the Team.'
         BIS List ID Not Sent: 'This field is required.'
         BIS List ID Not Int: 'A valid integer is required.'
@@ -871,7 +868,7 @@ class TeamInvite(SavageAimTestCase):
         response = self.client.post(url, data)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, response.content)
         content = response.json()
-        self.assertEqual(content['character_id'], ['Please select a valid, verified Character that you own.'])
+        self.assertEqual(content['character_id'], ['Please select a valid Character that you own.'])
         self.assertEqual(content['bis_list_id'], ['Please select a valid BISList belonging to your Character.'])
 
         # Test with valid unverified char, and someone elses' bis list
@@ -917,7 +914,6 @@ class TeamInvite(SavageAimTestCase):
         response = self.client.post(url, data)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, response.content)
         content = response.json()
-        self.assertEqual(content['character_id'], ['Please select a valid, verified Character that you own.'])
         self.assertEqual(content['bis_list_id'], ['Please select a valid BISList belonging to your Character.'])
 
         # Make the character a member of the team

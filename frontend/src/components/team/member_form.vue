@@ -11,7 +11,6 @@
         </div>
       </div>
       <p v-if="characterIdErrors !== undefined" class="help is-danger">{{ characterIdErrors[0] }}</p>
-      <p v-if="!characterVerified" class="help is-danger">This character hasn't been verified yet. Visit <router-link :to="`/characters/${characterId}/`">this page</router-link> to verify them!</p>
     </div>
 
     <div class="field">
@@ -84,8 +83,6 @@ export default class TeamMemberForm extends SavageAimMixin {
 
   characterId = this.initialCharacterId
 
-  characterVerified = true
-
   refreshNote = false
 
   get bisIcon(): string {
@@ -112,31 +109,10 @@ export default class TeamMemberForm extends SavageAimMixin {
     return `/backend/api/character/${id}/`
   }
 
-  checkVerified(): void {
-    // Check if the character we selected is verified or not
-    if (this.characterId === '-1') {
-      this.characterVerified = true
-      return
-    }
-
-    // If it's an actual character we should check it in the list
-    if (this.chosen != null) {
-      this.characterVerified = this.chosen.verified
-    }
-  }
-
   @Watch('characterId')
   async fetchBis(): Promise<void> {
     // Whenever the character id is changed we should fetch the BIS Lists
     this.bisListsLoaded = false
-
-    // Since we're not filtering out unverified users to be a bit more helpful to users, we should check verification here
-    // Check it's an actual character
-    this.checkVerified()
-    if ((!this.characterVerified) || parseInt(this.characterId, 10) === -1) {
-      this.bisLists = []
-      return
-    }
 
     // If not, go fetch the bis lists for the character
     const url = this.characterUrl(this.characterId)

@@ -15,7 +15,7 @@ from django.utils import timezone
 # local
 from . import notifier
 from .lodestone_scraper import LodestoneScraper
-from .models import Character
+from .models import Character, Notification, Team
 
 logger = get_task_logger(__name__)
 
@@ -87,18 +87,43 @@ def verify_character(pk: int):
         async_to_sync(channel_layer.group_send)(f'user-updates-{obj.user.id}', {'type': 'character', 'id': obj.pk})
 
 
+@shared_task(name='verify_reminder')
+def remind_users_to_verify():
+    """
+    Find non-verified Characters that are 5 days old.
+    Send Notifications to remind the User to verify.
+    """
+    logger.debug(f'Running at: {timezone.now()}')
+    older_than = timezone.now() - timedelta(days=5)
+    logger.debug(f'Reminding unverified characters older than {older_than}.')
+
+    characters = Character.objects.filter(verified=False, user__isnull=False, created__lt=older_than)
+    logger.debug(f'Found {characters.count()} characters. Reminding their Users.')
+    for char in characters:
+        # Check that there wasn't already a reminder sent about this Character
+        if not Notification.objects.filter(type='verify_reminder', link=f'/characters/{char.id}/').exists():
+            notifier.verify_reminder(char)
+
+
 @shared_task(name='cleanup')
 def cleanup():
     """
-    Cleanup the DB of all unverified (non-proxy) characters made more than 24h ago
+    Cleanup the DB of all unverified (non-proxy) characters made more than 7 days ago
     """
     logger.debug(f'Running at: {timezone.now()}')
-    older_than = timezone.now() - timedelta(hours=24)
+    older_than = timezone.now() - timedelta(days=7)
     logger.debug(f'Deleting unverified characters older than {older_than}.')
 
     objs = Character.objects.filter(verified=False, user__isnull=False, created__lt=older_than)
     logger.debug(f'Found {objs.count()} characters. Deleting them.')
-    objs.delete()
+    for char in objs:
+        # Remove them from every team they are a member of
+        teams = Team.objects.filter(members__character=char).distinct()
+        for team in teams:
+            team.remove_character(char, False)
+
+        char.bis_lists.all().delete()
+        char.delete()
 
 
 @shared_task(name='refresh_tokens')

@@ -22,6 +22,10 @@ app.conf.beat_schedule = {
         'task': 'cleanup',
         'schedule': crontab(minute=0),
     },
+    'remind_to_verify': {
+        'task': 'verify_reminder',
+        'schedule': crontab(minute=0),
+    },
     'refresh_oauth_tokens': {
         'task': 'refresh_tokens',
         'schedule': crontab(hour=0, minute=0),

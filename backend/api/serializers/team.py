@@ -96,9 +96,9 @@ class TeamCreateSerializer(serializers.ModelSerializer):
         """
         # Ensure it corresponds with a member of this team
         try:
-            Character.objects.get(pk=character_id, user=self.context['user'], verified=True)
+            Character.objects.get(pk=character_id, user=self.context['user'])
         except Character.DoesNotExist:
-            raise serializers.ValidationError('Please select a valid, verified Character that you own.')
+            raise serializers.ValidationError('Please select a valid Character that you own.')
 
         return character_id
 

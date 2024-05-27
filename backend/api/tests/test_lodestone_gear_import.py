@@ -79,5 +79,5 @@ class LodestoneGearImport(SavageAimTestCase):
         self.assertEqual(response.status_code, status.HTTP_406_NOT_ACCEPTABLE)
         self.assertEqual(
             response.json()['message'],
-            'Error occurred when attempting to import gear. Gear was expected to be for "SAM", but "GLA PLD" was found.',
+            'Couldn\'t import Gear from Lodestone. Gear was expected to be for "SAM", but "GLA PLD" was found.',
         )
