@@ -67,7 +67,6 @@ export default class Auth extends SavageAimMixin {
     // If the user is authenticated, we don't need to be here
     this.checkAuth()
     document.title = 'Login - Savage Aim'
-    console.log(this.buttonUrl)
   }
 
   // Handlers for the other potential error messages
