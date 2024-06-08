@@ -67,9 +67,24 @@ class LodestoneGearImport(SavageAimTestCase):
         self.assertEqual(content['right_ring']['name'], 'Ascension')
         self.assertIsNone(content['left_ring'])
 
-    def test_import_400_and_404(self):
+    def test_import_400(self):
         """
-        Test Plan;
-            - Send requests with bad ids and jobs and ensure we get valid responses.
+        Send invalid data, ensure proper errors are given
         """
-        self.assertEqual(1, 2)
+        url = reverse('api:plugin_import')
+        user = self._get_user()
+        self.client.force_authenticate(user)
+
+        # Generate a valid data block for importing
+        # Expect use of new extra_import fields on Gear
+        # Also include an item that isn't in the website DB, ensure it just returns None
+        request_data = {
+            'offhand': {'item_level': 560},
+            'head': {'name': 'Allegiance Blinder'},
+        }
+
+        response = self.client.post(url, request_data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, response.content)
+        self.assertEqual(response.json()['mainhand'], ['This field is required.'])
+        self.assertEqual(response.json()['offhand']['name'], ['This field is required.'])
+        self.assertEqual(response.json()['head']['item_level'], ['This field is required.'])
