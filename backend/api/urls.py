@@ -64,4 +64,5 @@ urlpatterns = [
 
     # UserView
     path('me/', views.UserView.as_view(), name='user'),
+    path('me/token/', views.UserTokenView.as_view(), name='user_token'),
 ]

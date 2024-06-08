@@ -3,6 +3,7 @@ A view to identify if the user is authenticated or not, for ease
 """
 
 # lib
+from rest_framework.authtoken.models import Token
 from rest_framework.permissions import BasePermission
 from rest_framework.response import Response
 # local
@@ -54,6 +55,31 @@ class UserView(APIView):
         # Update the username
         request.user.first_name = serializer.validated_data.get('username', request.user.first_name)
         request.user.save()
+
+        # Send websocket packet for updates
+        self._send_to_user(request.user, {'type': 'settings'})
+
+        return Response(status=201)
+
+
+class UserTokenView(APIView):
+    """
+    A view for handling updates to a User's Token.
+    """
+
+    def patch(self, request) -> Response:
+        """
+        Regenerate a User's Token
+        """
+        try:
+            obj = request.user.auth_token
+        except Token.DoesNotExist:
+            obj = None
+
+        if obj is not None:
+            obj.delete()
+
+        Token.objects.create(user=request.user)
 
         # Send websocket packet for updates
         self._send_to_user(request.user, {'type': 'settings'})

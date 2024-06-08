@@ -11,7 +11,7 @@ from .team import TeamCollection, TeamResource, TeamInvite
 from .team_member import TeamMemberResource, TeamMemberPermissionsResource
 from .team_proxy import TeamProxyCollection, TeamProxyResource, TeamProxyClaim
 from .tier import TierCollection
-from .user import UserView
+from .user import UserView, UserTokenView
 
 __all__ = [
     'BISListCollection',
@@ -56,4 +56,5 @@ __all__ = [
     'TierCollection',
 
     'UserView',
+    'UserTokenView',
 ]

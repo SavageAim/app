@@ -26,7 +26,7 @@
         <div class="card-header-title">API Key</div>
       </div>
       <div class="card-content">
-        <button v-if="token === null" class="button is-success is-fullwidth">Generate an API Key!</button>
+        <button v-if="token === null" class="button is-success is-fullwidth" @click="getToken">Generate an API Key!</button>
         <div class="field has-addons" v-else>
           <div class="control is-expanded">
             <input class="input is-dark" id="apiKey" type="text" :value="token" readonly />
