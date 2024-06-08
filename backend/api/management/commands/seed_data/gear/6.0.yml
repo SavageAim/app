@@ -1,13 +1,57 @@
-- has_accessories: true
-  has_armour: false
-  has_weapon: false
+- has_accessories: True
+  has_armour: False
+  has_weapon: False
   item_level: 560
   name: 'The Last'
-- has_accessories: false
+- has_accessories: False
   has_armour: True
   has_weapon: True
   item_level: 560
   name: 'Endwalker AF'
+  extra_import_classes:
+    # Armour
+    - Reverence
+    - Pummeler's
+    - Ignominy
+    - Allegiance
+    - Tiamat
+    - Reaper's
+    - Anchorite's
+    - Saotome
+    - Hachiya
+    - Brioso
+    - Pioneer's
+    - Etoile
+    - Spaekona's
+    - Convoker's
+    - Atrophy
+    - Theophany
+    - Academic's
+    - Astronomia
+    - Didact's
+  extra_import_names:
+    # Weapons
+    - Lightbringer
+    - Gigantaxe
+    - Chaosbringer
+    - Hyperion
+    - Abel's Lance
+    - Burning Fists
+    - Murasame
+    - Mutsunokami
+    - Perseus's Bow
+    - Ataktos
+    - Terpsichore
+    - Asura's Rod
+    - Abraxas
+    - Wild Rose
+    - Xoanon
+    - Epeolatry
+    - Diana
+    - Death Sickle
+    - Hagneia
+    - Hero's Shield
+
 - has_accessories: True
   has_armour: True
   has_weapon: True
