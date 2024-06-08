@@ -67,7 +67,7 @@ class LodestoneGearImport(ImportAPIView):
         filtered_gear = Gear.objects.filter(
             item_level__gte=data['min_il'],
             item_level__lte=data['max_il'],
-        ).values('name', 'id')
+        ).values('name', 'id', 'extra_import_classes', 'extra_import_names')
         response = {
             'job_id': expected_job,
             'min_il': data['min_il'],

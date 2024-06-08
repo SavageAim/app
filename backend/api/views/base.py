@@ -96,13 +96,25 @@ class ImportAPIView(APIView):
     @staticmethod
     def _get_gear_id(gear_selection: Dict[str, str], item_name: str) -> str:
         """
-        Find the id of the gear piece that matches the name closest
+        Find the id of the gear piece that matches the name closest.
+        Check the extra_import_classes for distance also
+        However, if item_name is present in extra_import_names, immediately return the id
         """
         diff = float('inf')
         gear_id = None
         for details in gear_selection:
+            if item_name in details['extra_import_names']:
+                return details['id']
+
             curr_diff = jellyfish.levenshtein_distance(details['name'], item_name)
             if curr_diff < diff:
                 diff = curr_diff
                 gear_id = details['id']
+
+            for extra_class in details['extra_import_classes']:
+                curr_diff = jellyfish.levenshtein_distance(extra_class, item_name)
+                if curr_diff < diff:
+                    diff = curr_diff
+                    gear_id = details['id']
+
         return gear_id
