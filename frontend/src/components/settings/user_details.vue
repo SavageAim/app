@@ -43,6 +43,7 @@
 </template>
 
 <script lang="ts">
+import * as Sentry from '@sentry/vue'
 import { Component, Prop, Vue } from 'vue-property-decorator'
 import { SettingsErrors } from '@/interfaces/responses'
 
@@ -61,12 +62,36 @@ export default class UserDetailsSettings extends Vue {
     return this.$refs.input as HTMLInputElement
   }
 
+  get tokenUrl(): string {
+    return '/backend/api/me/token/'
+  }
+
   changeUsername(): void {
     this.$emit('changeUsername', this.input.value)
   }
 
   async getToken(): Promise<void> {
-    console.log('getToken')
+    try {
+      const response = await fetch(this.tokenUrl, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': this.$cookies.get('csrftoken'),
+        },
+      })
+
+      if (response.ok) {
+        // Just give a message saying it was successful
+        this.$notify({ text: 'API Key generated!', type: 'is-success' })
+      }
+      else {
+        this.$notify({ text: 'Could not generate API Key. Please try again later.', type: 'is-danger' })
+      }
+    }
+    catch (e) {
+      this.$notify({ text: `Error ${e} when attempting to generate API Key.`, type: 'is-danger' })
+      Sentry.captureException(e)
+    }
   }
 }
 </script>
