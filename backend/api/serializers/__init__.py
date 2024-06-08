@@ -4,6 +4,7 @@ from .gear import GearSerializer
 from .job import JobSerializer
 from .loot import LootSerializer, LootCreateSerializer, LootCreateWithBISSerializer
 from .notification import NotificationSerializer
+from .plugin import PluginImportSerializer, PluginImportResponseSerializer
 from .settings import SettingsSerializer
 from .team import (
     TeamSerializer,
@@ -31,6 +32,9 @@ __all__ = [
     'LootCreateWithBISSerializer',
 
     'NotificationSerializer',
+
+    'PluginImportSerializer',
+    'PluginImportResponseSerializer',
 
     'SettingsSerializer',
 

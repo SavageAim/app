@@ -7,6 +7,7 @@ from .lodestone import LodestoneGearImport, LodestoneResource
 from .loot import LootCollection, LootWithBIS
 from .loot_solver import LootSolver
 from .notification import NotificationCollection, NotificationResource
+from .plugin import PluginImport
 from .team import TeamCollection, TeamResource, TeamInvite
 from .team_member import TeamMemberResource, TeamMemberPermissionsResource
 from .team_proxy import TeamProxyCollection, TeamProxyResource, TeamProxyClaim
@@ -41,6 +42,8 @@ __all__ = [
 
     'NotificationCollection',
     'NotificationResource',
+
+    'PluginImport',
 
     'TeamCollection',
     'TeamResource',
