@@ -5,6 +5,7 @@ export default interface User {
   id: number | null,
   loot_manager_version: string,
   notifications: NotificationSettings,
+  token: string | null,
   theme: string,
   username: string,
 }

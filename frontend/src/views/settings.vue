@@ -44,6 +44,7 @@
       <div class="column">
         <UserDetailsSettings
           :errors="errors"
+          :token="token"
           :username="username"
           v-on:changeUsername="changeUsername"
           v-if="activeTab.details"
@@ -107,6 +108,8 @@ export default class Settings extends SavageAimMixin {
   notifications = {
     ...this.user.notifications,
   }
+
+  token = this.user.token
 
   theme = this.user.theme
 
