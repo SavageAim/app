@@ -41,10 +41,8 @@ class Command(BaseCommand):
         data = yaml.safe_load(file)
         for item in data:
             self.stdout.write(f'\t{item["name"]}')
-            try:
-                with transaction.atomic():
-                    model.objects.create(**item)
-            except IntegrityError:
+            _, created = model.objects.get_or_create(**item)
+            if not created:
                 self.stdout.write('\t\tSkipping, as it is already in the DB.')
 
     def import_jobs(self, file):
