@@ -1,14 +1,3 @@
-# 7.0
-- raid_gear_name: ''
-  tome_gear_name: ''
-  max_item_level: 735
-  name: 'Arcadion'
-  fights:
-    - "Arcadion: 1"
-    - "Arcadion: 2"
-    - "Arcadion: 3"
-    - "Arcadion: 4"
-
 # 6.4
 - raid_gear_name: 'Ascension'
   tome_gear_name: 'Augmented Credendum'
