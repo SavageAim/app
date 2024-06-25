@@ -12,10 +12,37 @@
     </div>
     <div class="card-content content">
       <h2 class="has-text-primary subtitle">{{ version }}</h2>
+      <div class="divider"><i class="material-icons icon">expand_more</i> Dawntrail Release <i class="material-icons icon">expand_more</i></div>
+      <p>Happy first new expansion for SavageAim, and a happy 7.0 to all of you wonderful gamers out there!</p>
+      <p>Added two new Jobs!</p>
+      <p>
+        <div class="icon-text">
+          <span class="icon">
+            <img :src="`/job_icons/VPR.webp`" :alt="`Viper Job Icon`" width="24" height="24" />
+          </span>
+          <span>Viper - Melee (Scouting) DPS</span>
+        </div>
+        <div class="icon-text">
+          <span class="icon">
+            <img :src="`/job_icons/PCT.webp`" :alt="`Pictomancer Job Icon`" width="24" height="24" />
+          </span>
+          <span>Pictomancer - Magical Ranged DPS</span>
+        </div>
+      </p>
+      <p>
+        Added Gear associated with Dawntrail's release;
+        <ul>
+          <li>Level 100 Dungeon Accessories - Item Level 690</li>
+          <li>Dawntrail Artefact Weapons and Armour - Item Level 690</li>
+          <li>Aesthetics Tome Weapons, Armour, and Accessories - Item Level 700</li>
+          <li>EX Trial Weapons and Accessories - Item Level 710</li>
+        </ul>
+      </p>
+      <p>Names have been kept out of the changelog to avoid spoilers, so please be careful when updating your current gear to ensure you don't spoil yourself!</p>
+
       <div class="divider"><i class="material-icons icon">expand_more</i> API Keys <i class="material-icons icon">expand_more</i></div>
-      <p>In order to allow easy access to Savage Aim from outside the website, I've added API Keys to Users.</p>
-      <p>These can be generated in the User Settings page.</p>
-      <p>As an example of something to use this new feature for, check out the Savage Aim Github page. Something there might catch your eye!</p>
+      <p>Users can now generate personal API Keys in the User Settings page.</p>
+      <p>You can use these keys to access your data from outside of the website, like from our new fancy <a href="https://github.com/SavageAim/plugin" target="_blank">Dalamud plugin!</a></p>
       <p class="has-text-info">Be sure to regenerate your key if you feel like there is a chance it has been compromised!</p>
 
       <div class="divider"><i class="material-icons icon">expand_more</i> Fixes & Improvements <i class="material-icons icon">expand_more</i></div>
