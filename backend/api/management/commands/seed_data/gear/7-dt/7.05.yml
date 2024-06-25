@@ -1,0 +1,25 @@
+- has_accessories: True
+  has_armour: True
+  has_weapon: True
+  item_level: 710
+  name: 'First Tier Crafted'
+- has_accessories: True
+  has_armour: True
+  has_weapon: True
+  item_level: 720
+  name: 'First Tier Tome Gear'
+- has_accessories: True
+  has_armour: True
+  has_weapon: True
+  item_level: 730
+  name: 'Augmented First Tier Tome Gear'
+- has_accessories: True
+  has_armour: True
+  has_weapon: False
+  item_level: 730
+  name: 'First Tier Gear'
+- has_accessories: False
+  has_armour: False
+  has_weapon: True
+  item_level: 735
+  name: 'First Tier Gear'
