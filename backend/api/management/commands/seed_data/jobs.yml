@@ -68,37 +68,47 @@
   display_name: 'Reaper'
   ordering: 4
   role: 'dps'
+- name: 'viper'
+  id: 'VPR'
+  display_name: 'Viper'
+  ordering: 5
+  role: 'dps'
 
 # Phys Ranged
 - name: 'bard'
   id: 'BRD'
   display_name: 'Bard'
-  ordering: 5
+  ordering: 6
   role: 'dps'
 - name: 'machinist'
   id: 'MCH'
   display_name: 'Machinist'
-  ordering: 6
+  ordering: 7
   role: 'dps'
 - name: 'dancer'
   id: 'DNC'
   display_name: 'Dancer'
-  ordering: 7
+  ordering: 8
   role: 'dps'
 
 # Casters
 - name: 'blackmage'
   id: 'BLM'
   display_name: 'Black Mage'
-  ordering: 8
+  ordering: 9
   role: 'dps'
 - name: 'summoner'
   id: 'SMN'
   display_name: 'Summoner'
-  ordering: 9
+  ordering: 10
   role: 'dps'
 - name: 'redmage'
   id: 'RDM'
   display_name: 'Red Mage'
-  ordering: 10
+  ordering: 11
+  role: 'dps'
+- name: 'pictomancer'
+  id: 'PCT'
+  display_name: 'Pictomancer'
+  ordering: 12
   role: 'dps'

@@ -22,11 +22,16 @@ class Command(BaseCommand):
             self.stdout.write(self.style.HTTP_REDIRECT('Seeding Tiers'))
             self.import_file(f, models.Tier)
 
-        with scandir(gear_data_dir) as gear_files:
-            for file in gear_files:
-                self.stdout.write(self.style.HTTP_REDIRECT(f'Seeding Gear from {file.name}'))
-                with open(gear_data_dir / file.name, 'r') as f:
-                    self.import_file(f, models.Gear)
+        with scandir(gear_data_dir) as expac_dirs:
+            for expac_dir in expac_dirs:
+                if not expac_dir.is_dir():
+                    continue
+
+                with scandir(expac_dir.path) as gear_files:
+                    for file in gear_files:
+                        self.stdout.write(self.style.HTTP_REDIRECT(f'Seeding Gear from {file.name}'))
+                        with open(file.path, 'r') as f:
+                            self.import_file(f, models.Gear)
 
         # Lastly we import the Job data.
         # This is handled *slightly* differently because the 'ordering' key in this file will most likely change
@@ -41,10 +46,8 @@ class Command(BaseCommand):
         data = yaml.safe_load(file)
         for item in data:
             self.stdout.write(f'\t{item["name"]}')
-            try:
-                with transaction.atomic():
-                    model.objects.create(**item)
-            except IntegrityError:
+            _, created = model.objects.get_or_create(**item)
+            if not created:
                 self.stdout.write('\t\tSkipping, as it is already in the DB.')
 
     def import_jobs(self, file):
