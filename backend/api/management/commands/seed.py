@@ -4,7 +4,6 @@ from os import scandir
 import yaml
 from django.conf import settings
 from django.core.management.base import BaseCommand
-from django.db import IntegrityError, transaction
 # local
 from api import models
 
