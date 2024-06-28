@@ -14,20 +14,14 @@
       <h2 class="has-text-primary subtitle">{{ version }}</h2>
       <div class="divider"><i class="material-icons icon">expand_more</i> Dawntrail Release <i class="material-icons icon">expand_more</i></div>
       <p>Happy first new expansion for SavageAim, and a happy 7.0 to all of you wonderful gamers out there!</p>
-      <p>Added two new Jobs!</p>
-      <p>
-        <div class="icon-text">
-          <span class="icon">
-            <img :src="`/job_icons/VPR.webp`" :alt="`Viper Job Icon`" width="24" height="24" />
-          </span>
-          <span>Viper - Melee (Scouting) DPS</span>
-        </div>
-        <div class="icon-text">
-          <span class="icon">
-            <img :src="`/job_icons/PCT.webp`" :alt="`Pictomancer Job Icon`" width="24" height="24" />
-          </span>
-          <span>Pictomancer - Magical Ranged DPS</span>
-        </div>
+      <p class="changelog-icon-text">
+        <span>Added two new Jobs!</span>
+        <span class="icon">
+          <img src="/job_icons/VPR.webp" alt="Viper Job Icon" width="24" height="24" />
+        </span>
+        <span class="icon">
+          <img src="/job_icons/PCT.webp" alt="Pictomancer Job Icon" width="24" height="24" />
+        </span>
       </p>
       <p>
         Added Gear associated with Dawntrail's release;
@@ -42,7 +36,7 @@
 
       <div class="divider"><i class="material-icons icon">expand_more</i> API Keys <i class="material-icons icon">expand_more</i></div>
       <p>Users can now generate personal API Keys in the User Settings page.</p>
-      <p>You can use these keys to access your data from outside of the website, like from our new fancy <a href="https://github.com/SavageAim/plugin" target="_blank">Dalamud plugin!</a></p>
+      <p>You can use these keys to access your data from outside of the website, like with the soon-to-be-released Dalamud plugin! (please look forward to it)</p>
       <p class="has-text-info">Be sure to regenerate your key if you feel like there is a chance it has been compromised!</p>
 
       <div class="divider"><i class="material-icons icon">expand_more</i> Fixes & Improvements <i class="material-icons icon">expand_more</i></div>
@@ -68,3 +62,10 @@ export default class Changelog extends Vue {
   }
 }
 </script>
+
+<style lang="scss">
+.changelog-icon-text {
+  display: inline-flex;
+  gap: 1rem;
+}
+</style>
