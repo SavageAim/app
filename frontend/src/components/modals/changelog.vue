@@ -27,7 +27,7 @@
         Added Gear associated with Dawntrail's release;
         <ul>
           <li>Level 100 Dungeon Accessories - Item Level 690</li>
-          <li>Dawntrail Artefact Weapons and Armour - Item Level 690</li>
+          <li>Dawntrail Artifact Weapons and Armour - Item Level 690</li>
           <li>Aesthetics Tome Weapons, Armour, and Accessories - Item Level 700</li>
           <li>EX Trial Weapons and Accessories - Item Level 710</li>
         </ul>
