@@ -23,6 +23,9 @@
           <img src="/job_icons/PCT.webp" alt="Pictomancer Job Icon" width="24" height="24" />
         </span>
       </p>
+      <p class="has-text-info">The current icons are temporary. Once XIVAPI's repo gets the fancy shaded ones, I'll update them!</p>
+
+      <div class="divider"><i class="material-icons icon">expand_more</i> FFXIV 7.0 <i class="material-icons icon">expand_more</i></div>
       <p>
         Added Gear associated with Dawntrail's release;
         <ul>
