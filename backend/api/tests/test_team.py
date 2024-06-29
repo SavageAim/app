@@ -503,7 +503,7 @@ class TeamResource(SavageAimTestCase):
             content['team_lead'],
             ['Please select a non-proxy Member of the Team to be the new team lead.'],
         )
-        self.assertEqual(content['solver_sort_overrides'], ['Please specify a position between 1 and 19 (found "0")'])
+        self.assertEqual(content['solver_sort_overrides'], ['Please specify a position between 1 and 21 (found "0")'])
 
         # Run the team lead test again with a valid character id that isn't on the team
         char = Character.objects.create(
@@ -526,7 +526,7 @@ class TeamResource(SavageAimTestCase):
             content['team_lead'],
             ['Please select a non-proxy Member of the Team to be the new team lead.'],
         )
-        self.assertEqual(content['solver_sort_overrides'], ['Please specify a position between 1 and 19 (found "100")'])
+        self.assertEqual(content['solver_sort_overrides'], ['Please specify a position between 1 and 21 (found "100")'])
 
         # Make the above Character a Member of the Team, but make them a proxy
         char.user = None
@@ -569,7 +569,10 @@ class TeamResource(SavageAimTestCase):
             content['team_lead'],
             ['Please select a non-proxy Member of the Team to be the new team lead.'],
         )
-        self.assertEqual(content['solver_sort_overrides'], ['Please specify only one Job per position! (position "1" was found multiple times)'])
+        self.assertEqual(
+            content['solver_sort_overrides'],
+            ['Please specify only one Job per position! (position "1" was found multiple times)'],
+        )
 
     def test_delete(self):
         """

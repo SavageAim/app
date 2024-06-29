@@ -50,6 +50,7 @@ class JobCollection(SavageAimTestCase):
             'NIN',
             'SAM',
             'RPR',
+            'VPR',
 
             'BRD',
             'MCH',
@@ -58,6 +59,7 @@ class JobCollection(SavageAimTestCase):
             'BLM',
             'SMN',
             'RDM',
+            'PCT',
 
             'PLD',
             'WAR',

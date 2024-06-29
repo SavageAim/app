@@ -39,7 +39,7 @@ class LodestoneScraper(SavageAimTestCase):
         expected = {
             'avatar_url': (
                 'https://img2.finalfantasyxiv.com/f/ce3cf70bc9048943a57001f987830daa_'
-                '7206469080400ed57a5373d0a9c55c59fc0_96x96.jpg'
+                '7206469080400ed57a5373d0a9c55c59fc0.jpg'
             ),
             'name': 'Eira Erikawa',
             'world': 'Lich',

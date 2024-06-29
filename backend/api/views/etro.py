@@ -77,7 +77,7 @@ class EtroImport(ImportAPIView):
 
         # Turn the names into SA gear ids
         sa_gear = Gear.objects.filter(
-            item_level__gte=min_il, 
+            item_level__gte=min_il,
             item_level__lte=max_il,
         ).values('name', 'id', 'extra_import_classes', 'extra_import_names')
         response = {
