@@ -78,25 +78,25 @@ export default class App extends Vue {
     // Do all the set up and handling of the websocket
     const sock = new WebSocket(`${process.env.VUE_APP_WS_URL}/ws/updates/`)
 
-    sock.onmessage = (msg: MessageEvent) => {
+    sock.onmessage = async (msg: MessageEvent) => {
       const payload = JSON.parse(msg.data) as SocketPayload
 
       switch (payload.model) {
       case 'bis':
         break
       case 'character':
-        this.$store.dispatch('fetchCharacters')
+        await this.$store.dispatch('fetchCharacters')
         break
       case 'loot':
         break
       case 'notification':
-        this.$store.dispatch('fetchNotifications')
+        await this.$store.dispatch('fetchNotifications')
         break
       case 'settings':
-        this.$store.dispatch('fetchUser')
+        await this.$store.dispatch('fetchUser')
         break
       case 'team':
-        this.$store.dispatch('fetchTeams')
+        await this.$store.dispatch('fetchTeams')
         break
       default:
         Vue.notify({ text: `Unexpected packet model "${payload.model}" received.`, type: 'is-warning' })

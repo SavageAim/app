@@ -1,0 +1,133 @@
+- has_accessories: True
+  has_armour: False
+  has_weapon: False
+  item_level: 690
+  name: 'Epochal'
+- has_accessories: False
+  has_armour: True
+  has_weapon: True
+  item_level: 690
+  name: 'Dawntrail Artifact Gear'
+  extra_import_classes:
+    # Armour
+    # Tank
+    # PLD
+    - Caballarius
+    # WAR
+    - Agoge
+    # DRK
+    - Fallen's
+    # GNB
+    - Bastion's
+    
+    # Melee
+    # DRG
+    - Heavensbound
+    # RPR
+    - Assassin's
+    # MNK
+    - Hesychast's
+    # SAM
+    - Sakonji
+    # NIN
+    - Momochi
+    # VPR
+    - Viper's
+
+    # Phys Ranged
+    # BRD
+    - Bihu
+    # MCH
+    - Forerider's
+    # DNC
+    - Horos
+
+    # Magic Ranged
+    # BLM
+    - Archmage's
+    # SMN
+    - Glyphic
+    # RDM
+    - Roseblood
+    # PCT
+    - Pictomancer's
+
+    # Healer
+    # WHM
+    - Piety
+    # SCH
+    - Pedagogy
+    # AST
+    - Ephemerist's
+    # SGE
+    - Asklepian
+  extra_import_names:
+    # Weapons
+    # Tank
+    # PLD
+    - Clarent
+    - Galahad Shield
+    # WAR
+    - Ferocity
+    # DRK
+    - Maleficus
+    # GNB
+    - Chastiefol
+
+    # Melee
+    # DRG
+    - Gae Assail
+    # RPR
+    - Vendetta
+    # MNK
+    - Suwaiyas
+    # SAM
+    - Kogarasumaru
+    # NIN
+    - Shiranui
+    # VPR
+    - Sargatanas
+
+    # Phys Ranged
+    # BRD
+    - Gastraphetes
+    # MCH
+    - Sthalmann Special
+    # DNC
+    - Soma
+
+    # Mage Ranged
+    # BLM
+    - Gridarvor
+    # SMN
+    - The Grand Grimoire
+    # RDM
+    - Colada
+    # PCT
+    - Angel Brush
+
+    # Healer
+    # WHM
+    - Serenity
+    # SCH
+    - Eclecticism
+    # AST
+    - Metis
+    # SGE
+    - Metanoia
+
+- has_accessories: True
+  has_armour: True
+  has_weapon: True
+  item_level: 700
+  name: 'Neo Kingdom'
+- has_accessories: True
+  has_armour: False
+  has_weapon: False
+  item_level: 710
+  name: 'Resilient'
+- has_accessories: False
+  has_armour: False
+  has_weapon: True
+  item_level: 710
+  name: 'Skyruin'

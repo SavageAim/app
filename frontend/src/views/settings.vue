@@ -44,6 +44,7 @@
       <div class="column">
         <UserDetailsSettings
           :errors="errors"
+          :token="token"
           :username="username"
           v-on:changeUsername="changeUsername"
           v-if="activeTab.details"
@@ -108,6 +109,8 @@ export default class Settings extends SavageAimMixin {
     ...this.user.notifications,
   }
 
+  token = this.user.token
+
   theme = this.user.theme
 
   username = this.user.username
@@ -166,6 +169,7 @@ export default class Settings extends SavageAimMixin {
   // Reset the settings when the User changes
   @Watch('$store.state.user', { deep: true })
   reset(): void {
+    this.token = this.$store.state.user.token
     this.theme = this.$store.state.user.theme
     this.notifications = { ...this.$store.state.user.notifications }
   }
@@ -199,8 +203,6 @@ export default class Settings extends SavageAimMixin {
       if (response.ok) {
         // Just give a message saying it was successful
         this.$notify({ text: 'Update successful!', type: 'is-success' })
-        // Update the user in the system too
-        this.$store.dispatch('fetchUser')
         // Reset Errors
         this.errors = {}
       }

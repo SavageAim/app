@@ -48,6 +48,7 @@ TEMPLATES = [
 INSTALLED_APPS = [
     'api',
     'rest_framework',
+    'rest_framework.authtoken',
     'channels',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -104,7 +105,11 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_RENDERER_CLASSES': [
         'rest_framework.renderers.JSONRenderer',
-    ]
+    ],
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
+    ],
 }
 
 CSRF_COOKIE_SECURE = True
@@ -184,7 +189,7 @@ sentry_sdk.init(
     # If you wish to associate users to errors (assuming you are using
     # django.contrib.auth) you may enable sending PII data.
     send_default_pii=True,
-    release='savageaim@20240531',
+    release='savageaim@20240629',
 )
 
 # Channels

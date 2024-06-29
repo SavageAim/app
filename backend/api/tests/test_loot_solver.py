@@ -809,6 +809,7 @@ class LootSolverTestSuite(SavageAimTestCase):
             'AST': 4,
             'DRK': 5,
             'BLM': 3,
+            'SGE': 18,
         }
         self.team.save()
         self.team.refresh_from_db()

@@ -1,5 +1,6 @@
 from django.urls import reverse
 from rest_framework import status
+from rest_framework.authtoken.models import Token
 from .test_base import SavageAimTestCase
 from api.models import Settings
 
@@ -8,6 +9,9 @@ class User(SavageAimTestCase):
     """
     Test the /me/ endpoint for logged in and anonymous users
     """
+
+    def tearDown(self):
+        Token.objects.all().delete()
 
     def test_anonymous_user(self):
         """
@@ -95,3 +99,54 @@ class User(SavageAimTestCase):
         url = reverse('api:user')
         response = self.client.put(url)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+
+class TestUserTokenView(SavageAimTestCase):
+    """
+    Test that creating a Token for a User works.
+    Test for a User creating a new Token, and one regenerating their token.
+    """
+
+    def test_create_new_token(self):
+        """
+        Create a User without a Token.
+        Send request to generate a Token.
+        Read User data, ensure we get a Token back.
+        """
+        read_url = reverse('api:user')
+        token_url = reverse('api:user_token')
+        user = self._get_user()
+        self.client.force_authenticate(user)
+
+        with self.assertRaises(Token.DoesNotExist):
+            user.auth_token
+
+        # Generate a Token
+        response = self.client.patch(token_url)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        # Read User, ensure we get a Token back
+        response = self.client.get(read_url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIsNotNone(response.json()['token'])
+
+    def test_regenerate_token(self):
+        """
+        Create a User with an existing Token.
+        Send request to re-generate a Token.
+        Read User data, ensure we get a NEW Token back.
+        """
+        read_url = reverse('api:user')
+        token_url = reverse('api:user_token')
+        user = self._get_user()
+        self.client.force_authenticate(user)
+        token = Token.objects.create(user=user)
+
+        # Generate a Token
+        response = self.client.patch(token_url)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        # Read User, ensure we get a Token back
+        response = self.client.get(read_url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertNotEqual(response.json()['token'], token.key)

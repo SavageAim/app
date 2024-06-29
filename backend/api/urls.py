@@ -19,6 +19,7 @@ urlpatterns = [
 
     # Imports
     path('import/etro/<str:id>/', views.EtroImport.as_view(), name='etro_import'),
+    path('import/plugin/', views.PluginImport.as_view(), name='plugin_import'),
 
     # Job
     path('job/', views.JobCollection.as_view(), name='job_collection'),
@@ -64,4 +65,5 @@ urlpatterns = [
 
     # UserView
     path('me/', views.UserView.as_view(), name='user'),
+    path('me/token/', views.UserTokenView.as_view(), name='user_token'),
 ]

@@ -14,5 +14,5 @@ __all__ = [
 class GearSerializer(serializers.ModelSerializer):
 
     class Meta:
-        fields = '__all__'
+        exclude = ['extra_import_classes', 'extra_import_names']
         model = Gear

@@ -1,0 +1,77 @@
+- has_accessories: True
+  has_armour: True
+  has_weapon: True
+  item_level: 640
+  name: 'Diadochos'
+- has_accessories: True
+  has_armour: True
+  has_weapon: False
+  item_level: 640
+  name: 'Anabaseios'
+- has_accessories: False
+  has_armour: False
+  has_weapon: True
+  item_level: 645
+  name: 'Voidcast'
+- has_accessories: True
+  has_armour: True
+  has_weapon: True
+  item_level: 650
+  name: 'Credendum'
+  extra_import_names:
+    - Polaris Point
+    - Wrathgrinder
+    - Blood Rapture
+    - Cerberus Fang
+    - Night's Wolf
+    - Avatar's Scythe
+    - Dragon's Beard Fists
+    - Higan Shigan
+    - Shinobi Knives
+    - Bluebird's Nest
+    - Vitória do Povo
+    - Twin Moons
+    - Ignis Malus
+    - Encounter in Lilies
+    - Lamplight Crook
+    - Bunny's Crescent
+    - Faerie Fancy
+    - Stargazer
+    - Isnae Phis
+    - Vessel
+- has_accessories: True
+  has_armour: True
+  has_weapon: True
+  item_level: 660
+  name: 'Augmented Credendum'
+  extra_import_names:
+    - Augmented Polaris Point
+    - Augmented Wrathgrinder
+    - Augmented Blood Rapture
+    - Augmented Cerberus Fang
+    - Augmented Night's Wolf
+    - Augmented Avatar's Scythe
+    - Augmented Dragon's Beard Fists
+    - Augmented Higan Shigan
+    - Augmented Shinobi Knives
+    - Augmented Bluebird's Nest
+    - Augmented Vitória do Povo
+    - Augmented Twin Moons
+    - Augmented Ignis Malus
+    - Augmented Encounter in Lilies
+    - Augmented Lamplight Crook
+    - Augmented Bunny's Crescent
+    - Augmented Faerie Fancy
+    - Augmented Stargazer
+    - Augmented Isnae Phis
+    - Augmented Vessel
+- has_accessories: True
+  has_armour: True
+  has_weapon: False
+  item_level: 660
+  name: 'Ascension'
+- has_accessories: False
+  has_armour: False
+  has_weapon: True
+  item_level: 665
+  name: 'Ascension'

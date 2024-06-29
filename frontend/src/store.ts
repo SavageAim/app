@@ -47,6 +47,7 @@ const DEFAULT_USER = {
     verify_fail: true,
     verify_success: true,
   },
+  token: null,
   theme: 'beta',
   username: '',
 }

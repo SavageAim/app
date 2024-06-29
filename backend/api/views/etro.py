@@ -76,7 +76,10 @@ class EtroImport(ImportAPIView):
             gear_names['mainhand'] = relic['baseItem']['name']
 
         # Turn the names into SA gear ids
-        sa_gear = Gear.objects.filter(item_level__gte=min_il, item_level__lte=max_il).values('name', 'id')
+        sa_gear = Gear.objects.filter(
+            item_level__gte=min_il,
+            item_level__lte=max_il,
+        ).values('name', 'id', 'extra_import_classes', 'extra_import_names')
         response = {
             'name': name,
             'job_id': job_id,

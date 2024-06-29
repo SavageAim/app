@@ -19,6 +19,7 @@ class UserSerializer(serializers.Serializer):
     loot_manager_version = serializers.SerializerMethodField()
     notifications = serializers.SerializerMethodField()
     theme = serializers.SerializerMethodField()
+    token = serializers.CharField(source='auth_token.key', default=None)
     username = serializers.SerializerMethodField()
 
     def get_avatar_url(self, obj) -> str:
