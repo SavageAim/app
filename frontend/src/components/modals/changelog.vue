@@ -14,18 +14,9 @@
       <h2 class="has-text-primary subtitle">{{ version }}</h2>
       <div class="divider"><i class="material-icons icon">expand_more</i> Dawntrail Release <i class="material-icons icon">expand_more</i></div>
       <p>Happy first new expansion for SavageAim, and a happy 7.0 to all of you wonderful gamers out there!</p>
-      <p class="changelog-icon-text">
-        <span>Added two new Jobs!</span>
-        <span class="icon">
-          <img src="/job_icons/VPR.webp" alt="Viper Job Icon" width="24" height="24" />
-        </span>
-        <span class="icon">
-          <img src="/job_icons/PCT.webp" alt="Pictomancer Job Icon" width="24" height="24" />
-        </span>
-      </p>
+      <p>Added Viper (VPR) and Pictomancer (PCT)!</p>
       <p class="has-text-info">The current icons are temporary. Once XIVAPI's repo gets the fancy shaded ones, I'll update them!</p>
 
-      <div class="divider"><i class="material-icons icon">expand_more</i> FFXIV 7.0 <i class="material-icons icon">expand_more</i></div>
       <p>
         Added Gear associated with Dawntrail's release;
         <ul>
@@ -67,8 +58,4 @@ export default class Changelog extends Vue {
 </script>
 
 <style lang="scss">
-.changelog-icon-text {
-  display: inline-flex;
-  gap: 1rem;
-}
 </style>
