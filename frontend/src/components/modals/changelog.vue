@@ -12,36 +12,11 @@
     </div>
     <div class="card-content content">
       <h2 class="has-text-primary subtitle">{{ version }}</h2>
-      <div class="divider"><i class="material-icons icon">expand_more</i> Dawntrail Release <i class="material-icons icon">expand_more</i></div>
-      <p>Happy first new expansion for SavageAim, and a happy 7.0 to all of you wonderful gamers out there!</p>
-      <p>Added Viper (VPR) and Pictomancer (PCT)!</p>
-      <p class="has-text-info">The current icons are temporary. Once XIVAPI's repo gets the fancy shaded ones, I'll update them!</p>
-
-      <p>
-        Added Gear associated with Dawntrail's release;
-        <ul>
-          <li>Level 100 Dungeon Accessories - Item Level 690</li>
-          <li>Dawntrail Artifact Weapons and Armour - Item Level 690</li>
-          <li>Aesthetics Tome Weapons, Armour, and Accessories - Item Level 700</li>
-          <li>EX Trial Weapons and Accessories - Item Level 710</li>
-        </ul>
-      </p>
-      <p>Names have been kept out of the changelog to avoid spoilers, so please be careful when updating your current gear to ensure you don't spoil yourself!</p>
-
-      <div class="divider"><i class="material-icons icon">expand_more</i> API Keys <i class="material-icons icon">expand_more</i></div>
-      <p>Users can now generate personal API Keys in the User Settings page.</p>
-      <p>You can use these keys to access your data from outside of the website, like with the soon-to-be-released Dalamud plugin! (please look forward to it)</p>
-      <p class="has-text-info">Be sure to regenerate your key if you feel like there is a chance it has been compromised!</p>
-
-      <div class="divider"><i class="material-icons icon">expand_more</i> Fixes & Improvements <i class="material-icons icon">expand_more</i></div>
-      <p>
-        Improved handling for importing gear where the name on the platform is for a collection of items that have their own names.
-        This should be a massive improvement for people who use the automated imports from places like Etro or the Lodestone.
-        <ul>
-          <li>Credendum and Augmented Credendum Weapons all have their own unique names, most of which would not have been imported as the proper Gear name previously.</li>
-          <li>Artifact Gear has unique names for every job set, and the weapons typically all have their own unique names as well.</li>
-        </ul>
-      </p>
+      <div class="divider"><i class="material-icons icon">expand_more</i> Dalamud Plugin Release <i class="material-icons icon">expand_more</i></div>
+      <p>I am happy to announce that the Dalamud plugin that was teased in the last release is finally up and ready to use.</p>
+      <p>Currently, it must be installed as a custom plugin repo due to Dalamud Team's build systems being on hold</p>
+      <p>The code and installation instructions are located <a href="https://github.com/SavageAim/plugin" target="_blank">here!</a></p>
+      <p>If there are any questions or issues, please report them as you would anything with the website itself!</p>
     </div>
   </div>
 </template>
