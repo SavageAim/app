@@ -277,6 +277,22 @@ class LootSolverTestSuite(SavageAimTestCase):
         BISList.objects.all().delete()
         Character.objects.all().delete()
 
+    # def test_list(self):
+    #     from django.conf import settings
+    #     from django.db import connection, reset_queries
+
+    #     settings.DEBUG = True
+    #     reset_queries()
+
+    #     # Run a list as the user
+    #     url = reverse('api:team_collection')
+    #     user = self._get_user()
+    #     self.client.force_authenticate(user)
+    #     response = self.client.get(url)
+    #     self.assertEqual(response.status_code, status.HTTP_200_OK, response.content)
+
+    #     print(len(connection.queries))
+
     def test_requirements_map_generation(self):
         """
         Build up a full test team, and run the requirements map function separately to ensure it builds the map correctly.
