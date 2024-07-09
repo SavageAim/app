@@ -17,6 +17,10 @@
       <p>Currently, it must be installed as a custom plugin repo due to Dalamud Team's build systems being on hold</p>
       <p>The code and installation instructions are located <a href="https://github.com/SavageAim/plugin" target="_blank">here!</a></p>
       <p>If there are any questions or issues, please report them as you would anything with the website itself!</p>
+      
+      
+      <div class="divider"><i class="material-icons icon">expand_more</i> Fixes &amp; Improvements <i class="material-icons icon">expand_more</i></div>
+      <p>Improved fetching of Teams from the database to improve speed and lessen the load on the server.</p>
     </div>
   </div>
 </template>
