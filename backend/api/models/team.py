@@ -15,6 +15,43 @@ CHARS = string.ascii_letters + string.digits
 CODE_LEN = 32
 
 
+class TeamManager(models.Manager):
+
+    def get_queryset(self):
+        return super().get_queryset().prefetch_related(
+            'members',
+            'members__character',
+            'members__character__user',
+            'members__bis_list',
+            'members__bis_list__bis_body',
+            'members__bis_list__bis_bracelet',
+            'members__bis_list__bis_earrings',
+            'members__bis_list__bis_feet',
+            'members__bis_list__bis_hands',
+            'members__bis_list__bis_head',
+            'members__bis_list__bis_left_ring',
+            'members__bis_list__bis_legs',
+            'members__bis_list__bis_mainhand',
+            'members__bis_list__bis_necklace',
+            'members__bis_list__bis_offhand',
+            'members__bis_list__bis_right_ring',
+            'members__bis_list__current_body',
+            'members__bis_list__current_bracelet',
+            'members__bis_list__current_earrings',
+            'members__bis_list__current_feet',
+            'members__bis_list__current_hands',
+            'members__bis_list__current_head',
+            'members__bis_list__current_left_ring',
+            'members__bis_list__current_legs',
+            'members__bis_list__current_mainhand',
+            'members__bis_list__current_necklace',
+            'members__bis_list__current_offhand',
+            'members__bis_list__current_right_ring',
+            'members__bis_list__job',
+            'members__bis_list__owner',
+        )
+
+
 class Team(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     invite_code = models.CharField(max_length=CODE_LEN)
@@ -22,6 +59,8 @@ class Team(models.Model):
     # job_id: overridden_position
     solver_sort_overrides = models.JSONField(default=dict)
     tier = models.ForeignKey('Tier', on_delete=models.CASCADE)
+
+    objects = TeamManager()
 
     def __str__(self):
         return f'Team {self.name} @ {self.tier.name}'
