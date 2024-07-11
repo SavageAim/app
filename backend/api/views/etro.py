@@ -5,6 +5,9 @@ Given an etro id, convert it into a format that uses Savage Aim ids
 from typing import Dict
 # lib
 import coreapi
+from drf_spectacular.utils import inline_serializer, OpenApiResponse
+from drf_spectacular.views import extend_schema
+from rest_framework import serializers
 from rest_framework.request import Request
 from rest_framework.response import Response
 # local
@@ -34,9 +37,39 @@ class EtroImport(ImportAPIView):
     Import an etro gearset using coreapi and levenshtein distance
     """
 
+    @extend_schema(
+        responses={
+            200: OpenApiResponse(
+                response=inline_serializer(
+                    'EtroImportResponse',
+                    {
+                        'mainhand': serializers.IntegerField(),
+                        'offhand': serializers.IntegerField(),
+                        'head': serializers.IntegerField(),
+                        'body': serializers.IntegerField(),
+                        'hands': serializers.IntegerField(),
+                        'legs': serializers.IntegerField(),
+                        'feet': serializers.IntegerField(),
+                        'earrings': serializers.IntegerField(),
+                        'necklace': serializers.IntegerField(),
+                        'bracelet': serializers.IntegerField(),
+                        'right_ring': serializers.IntegerField(),
+                        'left_ring': serializers.IntegerField(),
+                    },
+                ),
+                description='Map of slot name to the IDs of the Gear objects that *should* match the item on the slot of the Etro set.'
+            ),
+            400: OpenApiResponse(
+                description='An error occurred on Etro\'s end. Error message from Etro will be included in the response',
+                response=inline_serializer('EtroImport400Response', {'message': serializers.CharField()}),
+            ),
+        },
+    )
     def get(self, request: Request, id: str) -> Response:
         """
-        Given an Etro Gearset ID, load the equipment from it
+        Attempt to load the information of an Etro Gearset, and turn it into information SavageAim can use.
+
+        Names are mapped to Gear instances using name similarity, and is not 100% guaranteed to be correct.
         """
         # Instantiate a Client instance for CoreAPI
         client = coreapi.Client()
