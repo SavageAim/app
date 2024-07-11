@@ -5,6 +5,9 @@ Characters are tied to requesting users, so implicitly all the views below will 
 """
 
 # lib
+from drf_spectacular.utils import inline_serializer, OpenApiResponse
+from drf_spectacular.views import extend_schema
+from rest_framework import serializers
 from rest_framework.request import Request
 from rest_framework.response import Response
 # local
@@ -24,19 +27,35 @@ class CharacterCollection(APIView):
     Provides list and create methods.
     """
 
+    @extend_schema(
+        responses={
+            200: OpenApiResponse(
+                response=CharacterCollectionSerializer(many=True),
+                description='List of all the Characters belonging to the User.',
+            ),
+        },
+    )
     def get(self, request: Request) -> Response:
         """
-        Return a list of Characters belonging to a certain User
+        Retrieve all of the Characters belonging to the requesting User.
         """
         # Permissions won't allow this method to be run by non-auth'd users
         objs = Character.objects.filter(user=request.user)
         data = CharacterCollectionSerializer(objs, many=True).data
         return Response(data)
 
+    @extend_schema(
+        request=CharacterCollectionSerializer,
+        responses={
+            201: OpenApiResponse(
+                response=inline_serializer('CreateResponse', {'id': serializers.IntegerField()}),
+                description='The ID of the created Character',
+            ),
+        },
+    )
     def post(self, request: Request) -> Response:
         """
-        Characters are verified via celery.
-        This view will create the data in the DB
+        Create a new, un-verified Character, that belongs to the requesting User.
         """
         # Put the sent data into the serializer for validation
         serializer = CharacterCollectionSerializer(data=request.data)
@@ -55,11 +74,19 @@ class CharacterResource(APIView):
     Handling character specific requests
     """
 
+    @extend_schema(
+        responses={
+            200: CharacterDetailsSerializer,
+            404: OpenApiResponse(
+                description='The given Character ID did not belong to a valid Character owned by the requesting User.',
+            ),
+        },
+    )
     def get(self, request: Request, pk: int) -> Response:
         """
-        Read the data of a Character.
+        Read the data of a specified Character.
 
-        This view will return full data, including a list of gearsets and teams and such
+        This endpoint will return the full data of the Character, including associated BISLists and Teams.
         """
         try:
             obj = Character.objects.get(pk=pk, user=request.user)
@@ -69,9 +96,20 @@ class CharacterResource(APIView):
         data = CharacterDetailsSerializer(instance=obj).data
         return Response(data)
 
+    @extend_schema(
+        request=CharacterUpdateSerializer,
+        responses={
+            204: OpenApiResponse(description='Character was successfully updated!'),
+            404: OpenApiResponse(
+                description='The given Character ID did not belong to a valid Character owned by the requesting User.',
+            ),
+        },
+    )
     def put(self, request: Request, pk: int, partial: bool = False) -> Response:
         """
-        Update certain fields of a Character
+        Update the information of a Character.
+
+        Requires sending the full object to update.
         """
         try:
             obj = Character.objects.get(pk=pk, user=request.user)
@@ -92,7 +130,21 @@ class CharacterResource(APIView):
 
         return Response(status=204)
 
+    @extend_schema(
+        request=CharacterUpdateSerializer,
+        responses={
+            204: OpenApiResponse(description='Character was successfully updated!'),
+            404: OpenApiResponse(
+                description='The given Character ID did not belong to a valid Character owned by the requesting User.',
+            ),
+        },
+    )
     def patch(self, request: Request, pk: int) -> Response:
+        """
+        Update the information of a Character.
+
+        Can handle partial update requests, only changed fields need to be sent to this endpoint.
+        """
         return self.put(request, pk, True)
 
 
@@ -101,9 +153,20 @@ class CharacterVerification(APIView):
     A class specifically for triggering the verification process
     """
 
+    @extend_schema(
+        request=CharacterUpdateSerializer,
+        responses={
+            202: OpenApiResponse(description='Character verification has been requested!'),
+            404: OpenApiResponse(
+                description='The given Character ID did not belong to a valid, unverified, Character owned by the requesting User.',
+            ),
+        },
+    )
     def post(self, request: Request, pk: int) -> Response:
         """
-        On receipt of this request, we add the given character to the queue for verification (if needed)
+        Trigger the verification process for a given Character.
+
+        The process involves checking that the token associated with the Character is present on the Lodestone profile.
         """
         try:
             Character.objects.get(pk=pk, user=request.user, verified=False)
@@ -122,9 +185,33 @@ class CharacterDelete(APIView):
     Has a GET request to get what will be affected by the deletion of this Character.
     """
 
+    @extend_schema(
+        responses={
+            200: OpenApiResponse(
+                response=inline_serializer(
+                    'CharacterDeleteReadResponse',
+                    {
+                        'lead': serializers.BooleanField(),
+                        'members': serializers.IntegerField(),
+                        'name': serializers.CharField(),
+                    },
+                    many=True,
+                ),
+                description='A list of Teams that will be affected by the Character\'s deletion.',
+            ),
+            404: OpenApiResponse(
+                description='The given Character ID did not belong to a valid Character owned by the requesting User.',
+            ),
+        },
+
+    )
     def get(self, request: Request, pk: int) -> Response:
         """
-        Check through the DB for any information regarding the Character in question
+        Check what will happen if this Character would be deleted.
+        Returns a list of Teams that the Character is in, including the following fields;
+        - name: The name of the Team
+        - lead: Whether the Character is the leader of the Team.
+        - members: How many members are in the Team.
         """
         try:
             obj = Character.objects.get(pk=pk, user=request.user)
@@ -142,9 +229,21 @@ class CharacterDelete(APIView):
 
         return Response(info)
 
+    @extend_schema(
+        responses={
+            204: OpenApiResponse(description='Character was deleted successfully!'),
+            404: OpenApiResponse(
+                description='The given Character ID did not belong to a valid Character owned by the requesting User.',
+            ),
+        },
+    )
     def delete(self, request: Request, pk: int) -> Response:
         """
-        Delete the Character from the DB, doing all the things that are stated will happen
+        Delete the Character from the system.
+        This can also trigger the following effects where appropriate;
+        - Disbanding Teams where the Character is the only Member
+        - Handing leadership of a Team to another Member if the Character is the leader
+        - Leaving the Team if the Character is not the leader.
         """
         try:
             obj = Character.objects.get(pk=pk, user=request.user)

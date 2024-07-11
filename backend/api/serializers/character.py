@@ -5,6 +5,7 @@ Serializers for the Character model
 from re import compile
 from typing import Dict, List, Union
 # lib
+from drf_spectacular.utils import extend_schema_field, inline_serializer
 from rest_framework import serializers
 # local
 from api.models import Character
@@ -35,6 +36,12 @@ class CharacterCollectionSerializer(serializers.ModelSerializer):
         """
         return char.user is None
 
+    @extend_schema_field(
+        inline_serializer(
+            'CharacterCollectionBISListSummary', 
+            {'id': serializers.IntegerField(), 'name': serializers.CharField()},
+        ),
+    )
     def get_bis_lists(self, char: Character) -> List[Dict[str, Union[str, int]]]:
         """
         Return summaries of bis lists
