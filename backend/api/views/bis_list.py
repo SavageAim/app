@@ -7,6 +7,9 @@ Can only create and update from these views, no listing since they are returned 
 from typing import List
 # lib
 from django.db.models.deletion import ProtectedError
+from rest_framework import serializers
+from drf_spectacular.utils import inline_serializer, OpenApiResponse
+from drf_spectacular.views import extend_schema
 from rest_framework.request import Request
 from rest_framework.response import Response
 # local
@@ -35,10 +38,19 @@ class BISListCollection(BISListBaseView):
     """
     Allows for the creation of new BIS Lists
     """
+    queryset = BISList
+    serializer_class = BISListModifySerializer
 
+    @extend_schema(
+        tags=['bis_list'],
+        responses={
+            201: inline_serializer('CreateResponse', {'id': serializers.IntegerField()}),
+            404: OpenApiResponse(description='The given Character ID did not belong to a valid Character owned by the requesting User'),
+        },
+    )
     def post(self, request: Request, character_id: int) -> Response:
         """
-        Create a BIS List belonging to the specified character
+        Create a new BIS List belonging to the specified Character.
         """
         try:
             char = Character.objects.get(pk=character_id, user=request.user)
@@ -65,9 +77,22 @@ class BISListResource(BISListBaseView):
     Allows for the reading and updating of a BISList
     """
 
+    @extend_schema(
+        tags=['bis_list'],
+        responses={
+            200: BISListSerializer,
+            404: OpenApiResponse(
+                description=(
+                    'The given Character ID did not belong to a valid Character owned by the requesting User.'
+                    '\nAlternatively the BISList ID does not belong to a valid Character.'
+                )
+            ),
+        },
+
+    )
     def get(self, request: Request, character_id: int, pk: int) -> Response:
         """
-        Read a BISList
+        Read a specific BISList instance, belonging to a specified Character.
         """
         try:
             char = Character.objects.get(pk=character_id, user=request.user)
@@ -82,9 +107,22 @@ class BISListResource(BISListBaseView):
         data = BISListSerializer(instance=obj).data
         return Response(data)
 
+    @extend_schema(
+        tags=['bis_list'],
+        request=BISListModifySerializer,
+        responses={
+            204: OpenApiResponse(description='BISList was updated successfully!'),
+            404: OpenApiResponse(
+                description=(
+                    'The given Character ID did not belong to a valid Character owned by the requesting User.'
+                    '\nAlternatively the BISList ID does not belong to a valid Character.'
+                )
+            ),
+        },
+    )
     def put(self, request: Request, character_id: int, pk: int) -> Response:
         """
-        Update an existing BISList
+        Update the details of a BISList that belongs to a specified Character.
         """
         try:
             char = Character.objects.get(pk=character_id, user=request.user)
@@ -120,9 +158,33 @@ class BISListDelete(APIView):
     Has a GET request to get information on if we can delete this BISList.
     """
 
+    @extend_schema(
+        tags=['bis_list'],
+        responses={
+            200: OpenApiResponse(
+                response=inline_serializer(
+                    'DeleteReadResponse',
+                    {
+                        'id': serializers.IntegerField(),
+                        'member': serializers.IntegerField(),
+                        'name': serializers.CharField(),
+                    },
+                    many=True,
+                ),
+                description='A list of places where the BIS List is in use. If this list is empty, the BISList is safe to delete!',
+            ),
+            404: OpenApiResponse(
+                description=(
+                    'The given Character ID did not belong to a valid Character owned by the requesting User.'
+                    '\nAlternatively the BISList ID does not belong to a valid Character.'
+                )
+            ),
+        },
+
+    )
     def get(self, request: Request, character_id: int, pk: int) -> Response:
         """
-        Check if we are able to delete a sepcified BIS List.
+        Check if we are able to delete a specified Character's BIS List.
 
         We can only do this if the BIS List is not in use in any Teams.
         If it is, return names and IDs of the Teams it's in use in so we can provide links in the frontend.
@@ -148,9 +210,25 @@ class BISListDelete(APIView):
 
         return Response(info)
 
+    @extend_schema(
+        tags=['bis_list'],
+        request=BISListModifySerializer,
+        responses={
+            204: OpenApiResponse(description='BISList was deleted successfully!'),
+            400: OpenApiResponse(description='BISList could not be deleted.'),
+            404: OpenApiResponse(
+                description=(
+                    'The given Character ID did not belong to a valid Character owned by the requesting User.'
+                    '\nAlternatively the BISList ID does not belong to a valid Character.'
+                )
+            ),
+        },
+    )
     def delete(self, request: Request, character_id: int, pk: int) -> Response:
         """
-        Delete the BISList from the DB, ensuring that we can.
+        Delete the BISList from the DB.
+
+        If the BISList is not currently deleteable, this method will return a 400 error.
         """
         try:
             char = Character.objects.get(pk=character_id, user=request.user)
