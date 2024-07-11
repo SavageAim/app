@@ -13,6 +13,8 @@ import sentry_sdk
 from os import environ
 from pathlib import Path
 from sentry_sdk.integrations.django import DjangoIntegration
+from . import VERSION
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -60,6 +62,9 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.discord',
+
+    # API Schema
+    'drf_spectacular',
 ]
 
 MIDDLEWARE = [
@@ -110,6 +115,16 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.TokenAuthentication',
     ],
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+}
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'SavageAim',
+    'DESCRIPTION': 'FFXIV BIS Management Website',
+    'VERSION': VERSION,
+    'SERVE_INCLUDE_SCHEMA': False,
+    'SERVERS': [{'url': 'https://savageaim.com/backend/api', 'description': 'Main API Url'}],
+    'SCHEMA_PATH_PREFIX': '/backend/api',
 }
 
 CSRF_COOKIE_SECURE = True
@@ -189,7 +204,7 @@ sentry_sdk.init(
     # If you wish to associate users to errors (assuming you are using
     # django.contrib.auth) you may enable sending PII data.
     send_default_pii=True,
-    release='savageaim@20240629',
+    release=f'savageaim@{VERSION}',
 )
 
 # Channels
