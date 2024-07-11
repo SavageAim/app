@@ -10,6 +10,9 @@ from typing import Dict, List, Tuple, Union
 # lib
 from django.core.exceptions import ValidationError
 from django.db.models import QuerySet
+from drf_spectacular.utils import inline_serializer, OpenApiResponse
+from drf_spectacular.views import extend_schema
+from rest_framework import serializers
 from rest_framework.request import Request
 from rest_framework.response import Response
 # local
@@ -404,9 +407,53 @@ class LootSolver(APIView):
             'mounts': team_size - mounts_obtained,
         }
 
+    @extend_schema(
+        tags=['team_loot'],
+        responses={
+            200: inline_serializer(
+                'LootSolverResponse',
+                {
+                    'first_floor': inline_serializer(
+                        'LootSolverFirstFloorResponse',
+                        {
+                            slot: serializers.ListField(child=serializers.IntegerField())
+                            for slot in FIRST_FLOOR_SLOTS
+                        },
+                    ),
+                    'second_floor': inline_serializer(
+                        'LootSolverSecondFloorResponse',
+                        {
+                            slot: serializers.ListField(child=serializers.IntegerField())
+                            for slot in SECOND_FLOOR_SLOTS
+                        },
+                    ),
+                    'third_floor': inline_serializer(
+                        'LootSolverThirdFloorResponse',
+                        {
+                            slot: serializers.ListField(child=serializers.IntegerField())
+                            for slot in THIRD_FLOOR_SLOTS
+                        },
+                    ),
+                    'fourth_floor': inline_serializer(
+                        'LootSolverFourthFloorResponse',
+                        {
+                            'weapons': serializers.IntegerField(),
+                            'mounts': serializers.IntegerField(),
+                        },
+                    ),
+                }
+            )
+        },
+    )
     def get(self, request: Request, team_id: str) -> Response:
         """
-        Fetch the current solver information for the team
+        Run the Loot Solver for the specified Team.
+
+        The Loot Solver is a system that attempts to generate an ordering for each piece of loot every week,
+        in order to attempt and finish gearing as fast as possible for each of the first three fights of a Tier.
+
+        For the first three floors, each slot will have a list of TeamMember IDs in the order you should hand them out.
+        For the final fight, it simply returns the number of Weapons and Mounts required.
         """
         try:
             obj = Team.objects.select_related(
