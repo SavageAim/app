@@ -122,7 +122,7 @@ SPECTACULAR_SETTINGS = {
     'DESCRIPTION': 'FFXIV BIS Management Website',
     'VERSION': VERSION,
     'SERVE_INCLUDE_SCHEMA': False,
-    'SERVERS': [{'url': 'https://savageaim.com/backend/api', 'description': 'Main API Url'}],
+    'SERVERS': [{'url': 'https://savageaim.com/', 'description': 'Main Site'}],
     'SCHEMA_PATH_PREFIX': '/backend/api',
 }
 
