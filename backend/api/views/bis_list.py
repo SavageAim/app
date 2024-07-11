@@ -44,7 +44,10 @@ class BISListCollection(BISListBaseView):
     @extend_schema(
         tags=['bis_list'],
         responses={
-            201: inline_serializer('CreateResponse', {'id': serializers.IntegerField()}),
+            201: OpenApiResponse(
+                response=inline_serializer('CreateResponse', {'id': serializers.IntegerField()}),
+                description='The ID of the created BISList',
+            ),
             404: OpenApiResponse(description='The given Character ID did not belong to a valid Character owned by the requesting User'),
         },
     )
@@ -88,7 +91,6 @@ class BISListResource(BISListBaseView):
                 )
             ),
         },
-
     )
     def get(self, request: Request, character_id: int, pk: int) -> Response:
         """
@@ -163,7 +165,7 @@ class BISListDelete(APIView):
         responses={
             200: OpenApiResponse(
                 response=inline_serializer(
-                    'DeleteReadResponse',
+                    'BISListDeleteReadResponse',
                     {
                         'id': serializers.IntegerField(),
                         'member': serializers.IntegerField(),
@@ -212,7 +214,6 @@ class BISListDelete(APIView):
 
     @extend_schema(
         tags=['bis_list'],
-        request=BISListModifySerializer,
         responses={
             204: OpenApiResponse(description='BISList was deleted successfully!'),
             400: OpenApiResponse(description='BISList could not be deleted.'),
