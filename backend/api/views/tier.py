@@ -18,12 +18,13 @@ class TierCollection(APIView):
     """
     Get a list of Tiers in the system
     """
-
+    queryset = Tier
+    serializer_class = TierSerializer(many=True)
     permission_classes = [AllowAny]
 
     def get(self, request: Request) -> Response:
         """
-        Return a list of Characters belonging to a certain User
+        Return the list of Tiers tracked in the system.
         """
         # Permissions won't allow this method to be run by non-auth'd users
         objs = Tier.objects.all()
