@@ -19,6 +19,7 @@ urlpatterns = [
 
     # Imports
     path('import/etro/<str:id>/', views.EtroImport.as_view(), name='etro_import'),
+    path('import/xivgear/<str:id>/', views.XIVGearImport.as_view(), name='xivgear_import'),
     path('import/plugin/', views.PluginImport.as_view(), name='plugin_import'),
 
     # Job

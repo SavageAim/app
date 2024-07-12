@@ -118,7 +118,11 @@ class XIVGearImport(ImportAPIView):
                 items = sheet_sets[0]['items']
                 imported_data['name'] = sheet_sets[0]['name']
             else:
-                set_index = request.query_params.get('set', -1)
+                try:
+                    set_index = int(request.query_params.get('set', -1))
+                except ValueError:
+                    return Response({'message': '`set` query parameter was not a valid number.'}, 400)
+
                 if set_index not in range(len(sheet_sets)):
                     # Return the set names and indices for the user to pick one from
                     return Response(
@@ -170,14 +174,14 @@ class XIVGearImport(ImportAPIView):
         # Loop through each gear slot and fetch the id based off the name
         for slot, item_name in sa_gear.items():
             if slot in self.ARMOUR_SLOTS:
-                response[slot] = self._get_gear_id(gear_records.filter(has_armour=True), item_name)
+                imported_data[slot] = self._get_gear_id(gear_records.filter(has_armour=True), item_name)
             elif slot in self.ACCESSORY_SLOTS:
-                response[slot] = self._get_gear_id(gear_records.filter(has_accessories=True), item_name)
+                imported_data[slot] = self._get_gear_id(gear_records.filter(has_accessories=True), item_name)
             else:
-                response[slot] = self._get_gear_id(gear_records.filter(has_weapon=True), item_name)
+                imported_data[slot] = self._get_gear_id(gear_records.filter(has_weapon=True), item_name)
 
         # Check for offhand
         if job_id != 'PLD':
-            response['offhand'] = response['mainhand']
+            imported_data['offhand'] = imported_data['mainhand']
 
-        return Response(response)
+        return Response(imported_data)
