@@ -42,6 +42,7 @@ class BISListCollection(BISListBaseView):
     serializer_class = BISListModifySerializer
 
     @extend_schema(
+        operation_id='bis_list_create',
         tags=['bis_list'],
         responses={
             201: OpenApiResponse(
@@ -81,6 +82,7 @@ class BISListResource(BISListBaseView):
     """
 
     @extend_schema(
+        operation_id='bis_list_read',
         tags=['bis_list'],
         responses={
             200: BISListSerializer,
@@ -110,6 +112,7 @@ class BISListResource(BISListBaseView):
         return Response(data)
 
     @extend_schema(
+        operation_id='bis_list_update',
         tags=['bis_list'],
         request=BISListModifySerializer,
         responses={
@@ -161,6 +164,7 @@ class BISListDelete(APIView):
     """
 
     @extend_schema(
+        operation_id='bis_list_delete_check',
         tags=['bis_list'],
         responses={
             200: OpenApiResponse(
@@ -213,6 +217,7 @@ class BISListDelete(APIView):
         return Response(info)
 
     @extend_schema(
+        operation_id='bis_list_delete',
         tags=['bis_list'],
         responses={
             204: OpenApiResponse(description='BISList was deleted successfully!'),

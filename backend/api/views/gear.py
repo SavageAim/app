@@ -30,6 +30,7 @@ class GearCollection(APIView):
             OpenApiParameter('item_level_min', int, description='Set a minimum item level (inclusive) of Gear returned.'),
             OpenApiParameter('item_level_max', int, description='Set a maximum item level (inclusive) of Gear returned.'),
         ],
+        operation_id='gear_list',
     )
     def get(self, request: Request) -> Response:
         """
@@ -68,6 +69,7 @@ class ItemLevels(APIView):
         responses={
             200: inline_serializer('ItemLevels', {'min': serializers.IntegerField(), 'max': serializers.IntegerField()}),
         },
+        operation_id='read_item_level_range',
     )
     def get(self, request: Request) -> Response:
         """

@@ -40,6 +40,7 @@ class LodestoneResource(APIView):
             400: OpenApiResponse(description='An error occurred when retrieving info from the Lodestone.'),
             404: OpenApiResponse(description='Character ID was not found on the Lodestone.'),
         },
+        operation_id='lodestone_character_data_scrape',
     )
     def get(self, request: Request, character_id: str) -> Response:
         """
@@ -84,6 +85,7 @@ class LodestoneGearImport(ImportAPIView):
             404: OpenApiResponse(response=inline_serializer('LodestoneImport400Response', {'message': serializers.CharField()})),
             406: OpenApiResponse(response=inline_serializer('LodestoneImport400Response', {'message': serializers.CharField()})),
         },
+        operation_id='lodestone_scrape_character_current_gear',
     )
     def get(self, request: Request, character_id: str, expected_job: str) -> Response:
         """

@@ -34,6 +34,7 @@ class CharacterCollection(APIView):
                 description='List of all the Characters belonging to the User.',
             ),
         },
+        operation_id='character_list',
     )
     def get(self, request: Request) -> Response:
         """
@@ -52,6 +53,7 @@ class CharacterCollection(APIView):
                 description='The ID of the created Character',
             ),
         },
+        operation_id='character_create',
     )
     def post(self, request: Request) -> Response:
         """
@@ -81,6 +83,7 @@ class CharacterResource(APIView):
                 description='The given Character ID did not belong to a valid Character owned by the requesting User.',
             ),
         },
+        operation_id='character_read',
     )
     def get(self, request: Request, pk: int) -> Response:
         """
@@ -104,6 +107,7 @@ class CharacterResource(APIView):
                 description='The given Character ID did not belong to a valid Character owned by the requesting User.',
             ),
         },
+        operation_id='character_update',
     )
     def put(self, request: Request, pk: int, partial: bool = False) -> Response:
         """
@@ -138,6 +142,7 @@ class CharacterResource(APIView):
                 description='The given Character ID did not belong to a valid Character owned by the requesting User.',
             ),
         },
+        operation_id='character_partial_update',
     )
     def patch(self, request: Request, pk: int) -> Response:
         """
@@ -161,6 +166,7 @@ class CharacterVerification(APIView):
                 description='The given Character ID did not belong to a valid, unverified, Character owned by the requesting User.',
             ),
         },
+        operation_id='request_character_verification',
     )
     def post(self, request: Request, pk: int) -> Response:
         """
@@ -203,7 +209,7 @@ class CharacterDelete(APIView):
                 description='The given Character ID did not belong to a valid Character owned by the requesting User.',
             ),
         },
-
+        operation_id='character_delete_check',
     )
     def get(self, request: Request, pk: int) -> Response:
         """
@@ -236,6 +242,7 @@ class CharacterDelete(APIView):
                 description='The given Character ID did not belong to a valid Character owned by the requesting User.',
             ),
         },
+        operation_id='character_delete',
     )
     def delete(self, request: Request, pk: int) -> Response:
         """

@@ -444,6 +444,7 @@ class LootSolver(APIView):
                 }
             )
         },
+        operation_id='run_loot_solver',
     )
     def get(self, request: Request, team_id: str) -> Response:
         """

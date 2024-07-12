@@ -64,6 +64,7 @@ class EtroImport(ImportAPIView):
                 response=inline_serializer('EtroImport400Response', {'message': serializers.CharField()}),
             ),
         },
+        operation_id='import_gear_from_etro',
     )
     def get(self, request: Request, id: str) -> Response:
         """
