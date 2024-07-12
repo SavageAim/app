@@ -1,7 +1,7 @@
 // Slight variation on bis_list that is used for sending create / update requests
 // Done as a class instead of an interface to allow for functions and such
 import BISList from '@/interfaces/bis_list'
-import { EtroImportResponse, LodestoneImportResponse } from '@/interfaces/imports'
+import { ExternalBISGearImportResponse, LodestoneImportResponse } from '@/interfaces/imports'
 
 export default class BISListModify {
   public id = -1
@@ -74,7 +74,7 @@ export default class BISListModify {
     return newList
   }
 
-  importBIS(data: EtroImportResponse): void {
+  importBIS(data: ExternalBISGearImportResponse): void {
     if (this.name === '') this.name = data.name
     this.job_id = data.job_id
     this.bis_mainhand_id = data.mainhand

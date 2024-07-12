@@ -41,7 +41,7 @@ import Tier from '@/interfaces/tier'
 import SavageAimMixin from '@/mixins/savage_aim_mixin'
 import { Character } from '@/interfaces/character'
 import { CharacterCreateErrors, CreateResponse } from '@/interfaces/responses'
-import { EtroImportResponse, ImportError, LodestoneImportResponse } from '@/interfaces/imports'
+import { ExternalBISGearImportResponse, ImportError, LodestoneImportResponse } from '@/interfaces/imports'
 import BISListModify from '@/dataclasses/bis_list_modify'
 import Gear from '@/interfaces/gear'
 
@@ -219,7 +219,7 @@ export default class TeamMemberCreateNewCharacterForm extends SavageAimMixin {
     }
   }
 
-  private async importBISGear(): Promise<EtroImportResponse | null> {
+  private async importBISGear(): Promise<ExternalBISGearImportResponse | null> {
     const etroUrl = this.etroUrlField.value
     const match = this.etroUrlRegex.exec(etroUrl)
     if (match === null) return null
@@ -228,7 +228,7 @@ export default class TeamMemberCreateNewCharacterForm extends SavageAimMixin {
       const response = await fetch(url)
       if (response.ok) {
         // Handle the import
-        const data = await response.json() as EtroImportResponse
+        const data = await response.json() as ExternalBISGearImportResponse
         return data
       }
       const error = await response.json() as ImportError

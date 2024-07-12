@@ -6,6 +6,7 @@
       :char-is-proxy="charIsProxy"
       :errors="errors"
       :etro-importable="etroImportUrl() !== null"
+      :xiv-gear-importable="xivGearImportUrl() !== null"
       :import-loading="importLoading"
       :displayOffhand="displayOffhand"
       :minIl="minIl"
@@ -19,7 +20,8 @@
       v-on:errors="handleErrors"
       v-on:save="$emit('save')"
       v-on:close="$emit('close')"
-      v-on:import-bis-data="etroImport"
+      v-on:import-etro-bis-data="etroImport"
+      v-on:import-xivgear-bis-data="xivGearImport"
       v-on:import-current-data="displayLoadModal"
       v-on:import-current-lodestone-gear="lodestoneImport"
 
@@ -32,6 +34,7 @@
       :char-is-proxy="charIsProxy"
       :errors="errors"
       :etro-importable="etroImportUrl() !== null"
+      :xiv-gear-importable="xivGearImportUrl() !== null"
       :import-loading="importLoading"
       :displayOffhand="displayOffhand"
       :minIl="minIl"
@@ -46,7 +49,8 @@
       v-on:errors="handleErrors"
       v-on:save="$emit('save')"
       v-on:close="$emit('close')"
-      v-on:import-bis-data="etroImport"
+      v-on:import-etro-bis-data="etroImport"
+      v-on:import-xivgear-bis-data="xivGearImport"
       v-on:import-current-data="displayLoadModal"
       v-on:import-current-lodestone-gear="lodestoneImport"
       :class="[renderDesktop ? 'is-hidden-desktop' : '']"
@@ -67,9 +71,15 @@ import BISListMobileForm from '@/components/bis_list/mobile_form.vue'
 import BISListModify from '@/dataclasses/bis_list_modify'
 import BISList from '@/interfaces/bis_list'
 import { CharacterDetails } from '@/interfaces/character'
-import { EtroImportResponse, ImportError, LodestoneImportResponse } from '@/interfaces/imports'
+import {
+  ExternalBISGearImportResponse,
+  ImportError,
+  LodestoneImportResponse,
+  XIVGearSheetSelection,
+} from '@/interfaces/imports'
 import { BISListErrors } from '@/interfaces/responses'
-import LoadCurrentGear from '../modals/load_current_gear.vue'
+import LoadCurrentGear from '@/components/modals/load_current_gear.vue'
+import XIVGearSheetSetSelection from '@/components/modals/xivgear_sheet_set_selection.vue'
 
 @Component({
   components: {
@@ -106,6 +116,8 @@ export default class BISListForm extends Vue {
 
   @Prop()
   url!: string
+
+  xivGearImportPattern = /https:\/\/xivgear.app\/\?page=sl\|([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/
 
   // Set up default values for min and max IL, will change as new tiers are released
   maxIl = this.$store.state.maxItemLevel
@@ -163,7 +175,7 @@ export default class BISListForm extends Vue {
       const response = await fetch(url)
       if (response.ok) {
         // Handle the import
-        const data = await response.json() as EtroImportResponse
+        const data = await response.json() as ExternalBISGearImportResponse
         this.importBISData(data)
       }
       else {
@@ -180,6 +192,38 @@ export default class BISListForm extends Vue {
     }
   }
 
+  async xivGearImport(setNum: number): Promise<void> {
+    let url = this.xivGearImportUrl()
+    if (url === null) return
+
+    if (setNum !== undefined) url = `${url}?set=${setNum}`
+    this.importLoading = true
+    try {
+      const response = await fetch(url)
+      if (response.status === 200) {
+        // Handle the import
+        const data = await response.json() as ExternalBISGearImportResponse
+        this.importBISData(data)
+      }
+      else if (response.status === 202) {
+        // Display a Modal to select the set you want to use, since the link is for a sheet.
+        const data = await response.json() as XIVGearSheetSelection[]
+        this.$modal.show(XIVGearSheetSetSelection, { doImport: this.xivGearImport, sheets: data })
+      }
+      else {
+        const error = await response.json() as ImportError
+        this.$notify({ text: `Error while importing XIVGear gearset; ${error.message}`, type: 'is-danger' })
+      }
+    }
+    catch (e) {
+      this.$notify({ text: `Error ${e} when attempting to import XIVGear data.`, type: 'is-danger' })
+      Sentry.captureException(e)
+    }
+    finally {
+      this.importLoading = false
+    }
+  }
+
   @Watch('bisList.external_link', { deep: true })
   etroImportUrl(): string | null {
     const match = this.etroImportPattern.exec(this.bisList.external_link || '')
@@ -187,11 +231,25 @@ export default class BISListForm extends Vue {
     return `/backend/api/import/etro/${match[1]}/`
   }
 
+  @Watch('bisList.external_link', { deep: true })
+  xivGearImportUrl(): string | null {
+    const testUrl = this.bisList.external_link || ''
+    if (testUrl === '') return null
+
+    if (testUrl.startsWith('https://xivgear.app')) {
+      this.bisList.external_link = decodeURI(testUrl)
+    }
+
+    const match = this.xivGearImportPattern.exec(testUrl)
+    if (match === null) return null
+    return `/backend/api/import/xivgear/${match[1]}/`
+  }
+
   handleErrors(errors: BISListErrors): void {
     this.internalErrors = errors
   }
 
-  importBISData(data: EtroImportResponse): void {
+  importBISData(data: ExternalBISGearImportResponse): void {
     if (data.min_il < this.minIl) this.minIl = data.min_il
     if (data.max_il > this.maxIl) this.maxIl = data.max_il
     Vue.nextTick(() => {

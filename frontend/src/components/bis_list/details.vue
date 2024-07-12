@@ -42,7 +42,7 @@
     <div class="field-body">
       <div class="field">
         <div class="control">
-          <input class="input" :class="{'is-danger': errors.external_link !== undefined}" v-model="bisList.external_link" placeholder="i.e. Etro, Ariyala, etc" />
+          <input class="input" :class="{'is-danger': errors.external_link !== undefined}" v-model="bisList.external_link" placeholder="i.e. Etro, XIVGear, etc" />
         </div>
         <p v-if="errors.external_link !== undefined" class="help is-danger">{{ errors.external_link[0] }}</p>
       </div>
