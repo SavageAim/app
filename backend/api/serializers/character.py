@@ -38,7 +38,7 @@ class CharacterCollectionSerializer(serializers.ModelSerializer):
 
     @extend_schema_field(
         inline_serializer(
-            'CharacterCollectionBISListSummary', 
+            'CharacterCollectionBISListSummary',
             {'id': serializers.IntegerField(), 'name': serializers.CharField()},
         ),
     )

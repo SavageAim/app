@@ -4,9 +4,7 @@ Given a map of slot names to item names and levels, return a map of the slots to
 # stdlib
 from typing import Dict
 # lib
-from drf_spectacular.utils import inline_serializer, OpenApiResponse
 from drf_spectacular.views import extend_schema
-from rest_framework import serializers
 from rest_framework.request import Request
 from rest_framework.response import Response
 # local

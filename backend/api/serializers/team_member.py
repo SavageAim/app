@@ -29,7 +29,7 @@ class TeamMemberSerializer(serializers.ModelSerializer):
 
     @extend_schema_field(
         inline_serializer(
-            'TeamMemberPermissions', 
+            'TeamMemberPermissions',
             {notif: serializers.BooleanField() for notif in TeamMember.PERMISSION_FLAGS},
         ),
     )

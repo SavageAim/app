@@ -3,9 +3,8 @@ A view to identify if the user is authenticated or not, for ease
 """
 
 # lib
-from drf_spectacular.utils import inline_serializer, OpenApiResponse
+from drf_spectacular.utils import OpenApiResponse
 from drf_spectacular.views import extend_schema
-from rest_framework import serializers
 from rest_framework.authtoken.models import Token
 from rest_framework.permissions import BasePermission
 from rest_framework.response import Response

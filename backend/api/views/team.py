@@ -35,8 +35,8 @@ class TeamCollection(APIView):
     @extend_schema(
         parameters=[
             OpenApiParameter(
-                'char_id', 
-                int, 
+                'char_id',
+                int,
                 description='Filter the response to Teams that the specified Character is in.'),
         ],
     )

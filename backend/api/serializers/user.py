@@ -42,7 +42,7 @@ class UserSerializer(serializers.Serializer):
 
     @extend_schema_field(
         inline_serializer(
-            'UserNotifications', 
+            'UserNotifications',
             {notif: serializers.BooleanField() for notif in Settings.NOTIFICATIONS},
         ),
     )

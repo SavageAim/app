@@ -3,7 +3,7 @@ Just a view to get the list of all gear in the system
 """
 
 # lib
-from drf_spectacular.utils import extend_schema, inline_serializer, OpenApiParameter, OpenApiResponse
+from drf_spectacular.utils import extend_schema, inline_serializer, OpenApiParameter
 from rest_framework import serializers
 from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny

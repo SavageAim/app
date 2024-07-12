@@ -100,7 +100,7 @@ class TeamProxyResource(APIView):
         tags=['team_proxy'],
         responses={
             200: inline_serializer(
-                'ProxyMemberReadResponse', 
+                'ProxyMemberReadResponse',
                 {
                     'team': TeamSerializer(),
                     'member': TeamMemberSerializer(),
@@ -190,7 +190,7 @@ class TeamProxyClaim(APIView):
         """
         Allow a User to make an attempt to claim ownership of a pre-existing Proxy Character.
         This view can be used by anyone who has the `invite_code` for the Team.
-        
+
         It will create a copy of the Character in the requesting User's account.
         When they successfully validate their copy, the system will replace all instances of the proxied Character with their valid one.
         """

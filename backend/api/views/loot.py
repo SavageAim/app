@@ -28,6 +28,7 @@ from api.serializers import (
 
 PERMISSION_NAME = 'loot_manager'
 
+
 # Define Serializers for the response info.
 class GreedItemSerializer(serializers.Serializer):
     bis_list_id = serializers.IntegerField()
@@ -286,7 +287,7 @@ class LootCollection(APIView):
                         'LootReceived',
                         {
                             '[member_name: str]': inline_serializer(
-                                'LootReceivedEntry', 
+                                'LootReceivedEntry',
                                 {
                                     'need': serializers.IntegerField(),
                                     'greed': serializers.IntegerField(),
