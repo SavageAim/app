@@ -10,6 +10,9 @@ from typing import Dict, List
 # lib
 from django.core.exceptions import ValidationError
 from django.db.models import QuerySet
+from drf_spectacular.utils import inline_serializer, OpenApiResponse
+from drf_spectacular.views import extend_schema
+from rest_framework import serializers
 from rest_framework.request import Request
 from rest_framework.response import Response
 # local
@@ -24,6 +27,51 @@ from api.serializers import (
 )
 
 PERMISSION_NAME = 'loot_manager'
+
+# Define Serializers for the response info.
+class GreedItemSerializer(serializers.Serializer):
+    bis_list_id = serializers.IntegerField()
+    bis_list_name = serializers.CharField()
+    current_gear_name = serializers.CharField()
+    current_gear_il = serializers.IntegerField()
+    job_icon_name = serializers.CharField()
+    job_role = serializers.CharField()
+
+
+class TomeGreedItemSerializer(serializers.Serializer):
+    bis_list_id = serializers.IntegerField()
+    job_icon_name = serializers.CharField()
+    job_role = serializers.CharField()
+    required = serializers.IntegerField()
+
+
+class NeedGearSerializer(serializers.Serializer):
+    member_id = serializers.IntegerField()
+    character_name = serializers.CharField()
+    current_gear_name = serializers.CharField()
+    current_gear_il = serializers.IntegerField()
+    job_icon_name = serializers.CharField()
+    job_role = serializers.CharField()
+
+
+class TomeNeedGearSerializer(serializers.Serializer):
+    member_id = serializers.IntegerField()
+    character_name = serializers.CharField()
+    job_icon_name = serializers.CharField()
+    job_role = serializers.CharField()
+    required = serializers.IntegerField()
+
+
+class GreedGearSerializer(serializers.Serializer):
+    member_id = serializers.IntegerField()
+    character_name = serializers.CharField()
+    greed_lists = serializers.ListField(child=GreedItemSerializer(many=True))
+
+
+class TomeGreedGearSerializer(serializers.Serializer):
+    member_id = serializers.IntegerField()
+    character_name = serializers.CharField()
+    greed_lists = serializers.ListField(child=TomeGreedItemSerializer(many=True))
 
 
 class LootCollection(APIView):
@@ -227,9 +275,151 @@ class LootCollection(APIView):
             response[slot] = slot_data
         return response
 
+    @extend_schema(
+        tags=['team_loot'],
+        responses={
+            200: inline_serializer(
+                'LootListResponse',
+                {
+                    'history': LootSerializer(many=True),
+                    'received': inline_serializer(
+                        'LootReceived',
+                        {
+                            '[member_name: str]': inline_serializer(
+                                'LootReceivedEntry', 
+                                {
+                                    'need': serializers.IntegerField(),
+                                    'greed': serializers.IntegerField(),
+                                },
+                            ),
+                        },
+                    ),
+                    'gear': inline_serializer(
+                        'LootGearRequiredResponse',
+                        {
+                            'mainhand': inline_serializer(
+                                'RaidRequiredData',
+                                {
+                                    'need': NeedGearSerializer(many=True),
+                                    'greed': GreedGearSerializer(many=True),
+                                }
+                            ),
+                            'offhand': inline_serializer(
+                                'RaidRequiredData',
+                                {
+                                    'need': NeedGearSerializer(many=True),
+                                    'greed': GreedGearSerializer(many=True),
+                                }
+                            ),
+                            'head': inline_serializer(
+                                'RaidRequiredData',
+                                {
+                                    'need': NeedGearSerializer(many=True),
+                                    'greed': GreedGearSerializer(many=True),
+                                }
+                            ),
+                            'body': inline_serializer(
+                                'RaidRequiredData',
+                                {
+                                    'need': NeedGearSerializer(many=True),
+                                    'greed': GreedGearSerializer(many=True),
+                                }
+                            ),
+                            'hands': inline_serializer(
+                                'RaidRequiredData',
+                                {
+                                    'need': NeedGearSerializer(many=True),
+                                    'greed': GreedGearSerializer(many=True),
+                                }
+                            ),
+                            'legs': inline_serializer(
+                                'RaidRequiredData',
+                                {
+                                    'need': NeedGearSerializer(many=True),
+                                    'greed': GreedGearSerializer(many=True),
+                                }
+                            ),
+                            'feet': inline_serializer(
+                                'RaidRequiredData',
+                                {
+                                    'need': NeedGearSerializer(many=True),
+                                    'greed': GreedGearSerializer(many=True),
+                                }
+                            ),
+                            'earrings': inline_serializer(
+                                'RaidRequiredData',
+                                {
+                                    'need': NeedGearSerializer(many=True),
+                                    'greed': GreedGearSerializer(many=True),
+                                }
+                            ),
+                            'necklace': inline_serializer(
+                                'RaidRequiredData',
+                                {
+                                    'need': NeedGearSerializer(many=True),
+                                    'greed': GreedGearSerializer(many=True),
+                                }
+                            ),
+                            'bracelet': inline_serializer(
+                                'RaidRequiredData',
+                                {
+                                    'need': NeedGearSerializer(many=True),
+                                    'greed': GreedGearSerializer(many=True),
+                                }
+                            ),
+                            'ring': inline_serializer(
+                                'RaidRequiredData',
+                                {
+                                    'need': NeedGearSerializer(many=True),
+                                    'greed': GreedGearSerializer(many=True),
+                                }
+                            ),
+                            'tome-accessory-augment': inline_serializer(
+                                'TomeAugmentRequiredData',
+                                {
+                                    'need': TomeNeedGearSerializer(many=True),
+                                    'greed': TomeGreedGearSerializer(many=True),
+                                }
+                            ),
+                            'tome-armour-augment': inline_serializer(
+                                'TomeAugmentRequiredData',
+                                {
+                                    'need': TomeNeedGearSerializer(many=True),
+                                    'greed': TomeGreedGearSerializer(many=True),
+                                }
+                            ),
+                            'mount': inline_serializer(
+                                'RaidRequiredData',
+                                {
+                                    'need': NeedGearSerializer(many=True),
+                                    'greed': GreedGearSerializer(many=True),
+                                }
+                            ),
+                            'tome-weapon-token': inline_serializer(
+                                'RaidRequiredData',
+                                {
+                                    'need': NeedGearSerializer(many=True),
+                                    'greed': GreedGearSerializer(many=True),
+                                }
+                            ),
+                            'tome-weapon-augment': inline_serializer(
+                                'RaidRequiredData',
+                                {
+                                    'need': NeedGearSerializer(many=True),
+                                    'greed': GreedGearSerializer(many=True),
+                                }
+                            ),
+                        },
+                    )
+                }
+            ),
+            404: OpenApiResponse(description='The provided Team ID does not refer to a valid Team that the User has a Character in.'),
+        },
+        operation_id='loot_list',
+    )
     def get(self, request: Request, team_id: str) -> Response:
         """
-        Get loot history and current need/greed status for a team
+        Get Loot history and current need/greed status for a team
         """
         try:
             obj = Team.objects.select_related(
@@ -292,10 +482,23 @@ class LootCollection(APIView):
         team_data = TeamSerializer(obj).data
         return Response({'team': team_data, 'loot': loot_data})
 
+    @extend_schema(
+        tags=['team_loot'],
+        responses={
+            201: OpenApiResponse(
+                response=inline_serializer('LootRecordCreateResponse', {'id': serializers.IntegerField()}),
+                description='The ID of the created Loot record',
+            ),
+            404: OpenApiResponse(description='The provided Team ID does not refer to a valid Team that the User has a Character in.'),
+        },
+        request=LootCreateSerializer(),
+        operation_id='loot_create',
+    )
     def post(self, request: Request, team_id: str) -> Response:
         """
-        Attempt to create new Loot entries.
-        Any updates sent here will also update Character's BIS Lists
+        Create new Loot entry for the specified Team.
+
+        This method does not touch the BISLists, only creates Loot records to be displayed in the Loot History.
         """
         team = self._get_team_with_permission(request, team_id, PERMISSION_NAME)
         if team is None:
@@ -311,10 +514,26 @@ class LootCollection(APIView):
 
         return Response({'id': serializer.instance.pk}, status=201)
 
-    def delete(self, request: Request, team_id: str) -> Response:
+
+class LootDelete(APIView):
+
+    @extend_schema(
+        tags=['team_loot'],
+        responses={
+            204: OpenApiResponse(
+                description='The supplied Loot records were deleted successfully',
+            ),
+            404: OpenApiResponse(description='The provided Team ID does not refer to a valid Team that the User has a Character in.'),
+        },
+        request=inline_serializer('LootDeleteRequest', {'items': serializers.ListField(child=serializers.IntegerField())}),
+        operation_id='loot_delete',
+    )
+    def post(self, request: Request, team_id: str) -> Response:
         """
-        Remove Loot entries from the Team's history.
-        Entries to delete are specified in the request body.
+        Delete Loot records for a Team.
+
+        Will delete any Loot records with valid IDs in the list provided, regardless of Tier they are from.
+        Any IDs either not in the system, or that don't belong to the specified Team, will be ignored silently.
         """
         team = self._get_team_with_permission(request, team_id, PERMISSION_NAME)
         if team is None:
@@ -335,10 +554,26 @@ class LootWithBIS(APIView):
     Has stricter serializer since it affects two models instead of one
     """
 
+    @extend_schema(
+        tags=['team_loot'],
+        responses={
+            201: OpenApiResponse(
+                response=inline_serializer('LootRecordCreateWithBISResponse', {'id': serializers.IntegerField()}),
+                description='The ID of the created Loot record',
+            ),
+            404: OpenApiResponse(description='The provided Team ID does not refer to a valid Team that the User has a Character in.'),
+        },
+        request=LootCreateWithBISSerializer(),
+        operation_id='loot_create_with_bis_update',
+    )
     def post(self, request: Request, team_id: str) -> Response:
         """
-        Attempt to create new Loot entries.
-        Any updates sent here will also update Character's BIS Lists
+        Create new Loot entry for the specified Team.
+
+        This method will also update the involved BIS List's Current gear for the slot to be the BIS item.
+        As a result, this method should only be called with gear that are direct drops from fights, and not obtained via tomes / upgrades.
+
+        The `greed_bis_id` is required if the item is given not for the Character's main BIS List associated with the Team, so that the correct list can be updated.
         """
         team = self._get_team_with_permission(request, team_id, PERMISSION_NAME)
         if team is None:
