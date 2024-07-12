@@ -1,6 +1,3 @@
-WHOLE_SHEET_URL = 'https://xivgear.app/?page=sl|cbf28d78-86f4-4d3a-b92e-c8be8e2f1aa4'
-
-
 from io import StringIO
 from django.core.management import call_command
 from django.urls import reverse
