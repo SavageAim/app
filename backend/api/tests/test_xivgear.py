@@ -195,10 +195,18 @@ class XIVGearImportTests(SavageAimTestCase):
 
     def test_import_400(self):
         """
-        Send a request with an invalid ID, check we get a proper error
+        Send requests that will generate 400 errors for the various cases that cause them.
+        - Test with an invalid id (gives a 500 error on their system atm)
+        - `set` param is not a number
+        - xivapi fails (not sure if i can test this but i have handling for it in place)
         """
         url = reverse('api:xivgear_import', kwargs={'id': 'abcde'})
         user = self._get_user()
         self.client.force_authenticate(user)
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+        url = reverse('api:xivgear_import', kwargs={'id': 'cbf28d78-86f4-4d3a-b92e-c8be8e2f1aa4'})
+        response = self.client.get(url + '?set=abcde')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.json()['message'], '`set` query parameter was not a valid number.')
