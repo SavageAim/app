@@ -82,8 +82,8 @@ class LodestoneGearImport(ImportAPIView):
                 },
             ),
             400: OpenApiResponse(response=inline_serializer('LodestoneImport400Response', {'message': serializers.CharField()})),
-            404: OpenApiResponse(response=inline_serializer('LodestoneImport400Response', {'message': serializers.CharField()})),
-            406: OpenApiResponse(response=inline_serializer('LodestoneImport400Response', {'message': serializers.CharField()})),
+            404: OpenApiResponse(response=inline_serializer('LodestoneImport404Response', {'message': serializers.CharField()})),
+            406: OpenApiResponse(response=inline_serializer('LodestoneImport406Response', {'message': serializers.CharField()})),
         },
         operation_id='lodestone_scrape_character_current_gear',
     )
