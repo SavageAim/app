@@ -3,6 +3,7 @@ Serializers for the Team Member model
 """
 from typing import Dict
 # lib
+from drf_spectacular.utils import extend_schema_field, inline_serializer
 from rest_framework import serializers
 # local
 from api.models import BISList, Character, TeamMember
@@ -26,6 +27,12 @@ class TeamMemberSerializer(serializers.ModelSerializer):
         model = TeamMember
         exclude = ['team']
 
+    @extend_schema_field(
+        inline_serializer(
+            'TeamMemberPermissions', 
+            {notif: serializers.BooleanField() for notif in TeamMember.PERMISSION_FLAGS},
+        ),
+    )
     def get_permissions(self, obj: TeamMember) -> Dict[str, bool]:
         """
         Generate a dictionary of permission classes to a flag stating whether or not this character has that permission

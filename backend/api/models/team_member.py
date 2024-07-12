@@ -5,6 +5,42 @@ Link model between Teams, Characters and the List they are currently using
 from django.db import models
 
 
+class TeamMemberManager(models.Manager):
+
+    def get_queryset(self):
+        return super().get_queryset().select_related(
+            'character',
+            'character__user',
+            'bis_list',
+            'bis_list__bis_body',
+            'bis_list__bis_bracelet',
+            'bis_list__bis_earrings',
+            'bis_list__bis_feet',
+            'bis_list__bis_hands',
+            'bis_list__bis_head',
+            'bis_list__bis_left_ring',
+            'bis_list__bis_legs',
+            'bis_list__bis_mainhand',
+            'bis_list__bis_necklace',
+            'bis_list__bis_offhand',
+            'bis_list__bis_right_ring',
+            'bis_list__current_body',
+            'bis_list__current_bracelet',
+            'bis_list__current_earrings',
+            'bis_list__current_feet',
+            'bis_list__current_hands',
+            'bis_list__current_head',
+            'bis_list__current_left_ring',
+            'bis_list__current_legs',
+            'bis_list__current_mainhand',
+            'bis_list__current_necklace',
+            'bis_list__current_offhand',
+            'bis_list__current_right_ring',
+            'bis_list__job',
+            'bis_list__owner',
+        )
+
+
 class TeamMember(models.Model):
     # Map of permission name to the number to compare against bitwise
     PERMISSION_FLAGS = {
