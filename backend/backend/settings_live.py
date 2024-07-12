@@ -125,6 +125,7 @@ SPECTACULAR_SETTINGS = {
     'SERVE_INCLUDE_SCHEMA': False,
     'SERVERS': [{'url': 'https://savageaim.com/', 'description': 'Main Site'}],
     'SCHEMA_PATH_PREFIX': '/backend/api',
+    'DISABLE_ERRORS_AND_WARNINGS': True,
 }
 
 CSRF_COOKIE_SECURE = True

@@ -486,7 +486,7 @@ class LootCollection(APIView):
         tags=['team_loot'],
         responses={
             201: OpenApiResponse(
-                response=inline_serializer('LootRecordCreateResponse', {'id': serializers.IntegerField()}),
+                response=inline_serializer('CreateResponse', {'id': serializers.IntegerField()}),
                 description='The ID of the created Loot record',
             ),
             404: OpenApiResponse(description='The provided Team ID does not refer to a valid Team that the User has a Character in.'),

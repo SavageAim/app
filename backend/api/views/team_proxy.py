@@ -40,7 +40,7 @@ class TeamProxyCollection(APIView):
         ),
         responses={
             201: OpenApiResponse(
-                response=inline_serializer('ProxyMemberCreateResponse', {'id': serializers.IntegerField()}),
+                response=inline_serializer('CreateResponse', {'id': serializers.IntegerField()}),
                 description='The ID of the created Proxy Member',
             ),
             400: OpenApiResponse(
