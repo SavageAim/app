@@ -16,19 +16,19 @@
 
     <div class="field is-horizontal">
       <div class="field-label is-normal">
-        <label class="label" for="etroUrl">Gearset</label>
+        <label class="label" for="bisUrl">Gearset</label>
       </div>
       <div class="field-body">
         <div class="field">
           <div class="control is-expanded">
-            <input class="input" :class="{'is-danger': etroErrors.length > 0, 'is-success': etroLoaded}" id="etroUrl" type="url" placeholder="https://etro.gg/gearset/xxxxxxx/" ref="etroUrl" />
+            <input class="input" :class="{'is-danger': bisUrlErrors.length > 0, 'is-success': bisLoaded}" id="bisUrl" type="url" placeholder="https://etro.gg/gearset/xxxxxxx/ | https://xivgear.app/?page=sl|xxxxxxxxxx" ref="bisUrl" />
           </div>
-          <p v-for="(error, i) in etroErrors" :key="`etro-error-${i}`" class="help is-danger">{{ error }}</p>
+          <p v-for="(error, i) in bisUrlErrors" :key="`etro-error-${i}`" class="help is-danger">{{ error }}</p>
         </div>
       </div>
     </div>
 
-    <p>If the Job of the Etro set matches your current Lodestone details, then your Current Gear will be imported from there.</p>
+    <p>If the Job of the BIS Gearset matches your current Lodestone details, then your Current Gear will be imported from there.</p>
     <p>Otherwise, your Current Gear will be set to the Tier's Crafted Set!</p>
   </div>
 </template>
@@ -61,14 +61,29 @@ export default class TeamMemberCreateNewCharacterForm extends SavageAimMixin {
 
   characterUrlRegex = /https:\/\/[a-z]{2}\.finalfantasyxiv\.com\/lodestone\/character\/([0-9]+)\/?/
 
-  etroErrors: string[] = []
+  bisUrlErrors: string[] = []
 
-  etroLoaded = false
+  bisLoaded = false
 
   etroUrlRegex = /https:\/\/etro\.gg\/gearset\/([-a-z0-9]+)\/?/
 
-  get etroUrlField(): HTMLInputElement {
-    return this.$refs.etroUrl as HTMLInputElement
+  xivGearUrlRegex = /https:\/\/xivgear.app\/\?page=sl\|([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/
+
+  get bisUrlField(): HTMLInputElement {
+    return this.$refs.bisUrl as HTMLInputElement
+  }
+
+  bisUrl(): string {
+    const url = this.bisUrlField.value
+    try {
+      const decodedUrl = decodeURI(url)
+      if (decodedUrl !== url) this.bisUrlField.value = decodedUrl
+      return decodedUrl
+    }
+    catch (e: unknown) {
+      console.log('invalid url')
+    }
+    return url
   }
 
   get lodestoneUrlField(): HTMLInputElement {
@@ -78,23 +93,24 @@ export default class TeamMemberCreateNewCharacterForm extends SavageAimMixin {
   private checkFieldsHaveValidURLs(): boolean {
     this.characterErrors = []
     this.characterLoaded = false
-    this.etroErrors = []
-    this.etroLoaded = false
+    this.bisUrlErrors = []
+    this.bisLoaded = false
 
     // Ensure both fields are filled correctly, return true if errors are found, false otherwise
     const lodestoneUrl = this.lodestoneUrlField.value
-    let match = this.characterUrlRegex.exec(lodestoneUrl)
+    const match = this.characterUrlRegex.exec(lodestoneUrl)
     if (match === null) {
       this.characterErrors = ['Please provide a valid Lodestone Character URL!']
     }
 
-    const etroUrl = this.etroUrlField.value
-    match = this.etroUrlRegex.exec(etroUrl)
-    if (match === null) {
-      this.etroErrors = ['Please provide a valid Etro.gg Gearset URL!']
+    const bisUrl = this.bisUrl()
+    const etroMatch = this.etroUrlRegex.exec(bisUrl)
+    const xivGearMatch = this.xivGearUrlRegex.exec(bisUrl)
+    if (etroMatch === null && xivGearMatch === null) {
+      this.bisUrlErrors = ['Please provide a valid Etro.gg/XIVGear.app Gearset URL!']
     }
 
-    return (this.characterErrors.length > 0) || (this.etroErrors.length > 0)
+    return (this.characterErrors.length > 0) || (this.bisUrlErrors.length > 0)
   }
 
   private async createBIS(tier: Tier): Promise<BISListModify | null> {
@@ -129,7 +145,7 @@ export default class TeamMemberCreateNewCharacterForm extends SavageAimMixin {
         bisList.id = json.id
         return bisList
       }
-      this.etroErrors = ['Something went wrong creating your BIS List.']
+      this.bisUrlErrors = ['Something went wrong creating your BIS List.']
     }
     catch (e) {
       this.$notify({ text: `Error ${e} when attempting to create BIS List.`, type: 'is-danger' })
@@ -190,7 +206,7 @@ export default class TeamMemberCreateNewCharacterForm extends SavageAimMixin {
     const bis = await this.createBIS(tier)
     if (bis === null) return false
     this.bisList = bis
-    this.etroLoaded = true
+    this.bisLoaded = true
 
     // State Refresh. When form is used, it should block changing the page.
     this.$store.dispatch('fetchCharacters')
@@ -220,7 +236,15 @@ export default class TeamMemberCreateNewCharacterForm extends SavageAimMixin {
   }
 
   private async importBISGear(): Promise<ExternalBISGearImportResponse | null> {
-    const etroUrl = this.etroUrlField.value
+    // Pass the request to either the Etro or XIVGear method where appropriate
+    const bisUrl = this.bisUrl()
+    if (this.etroUrlRegex.exec(bisUrl) !== null) return this.importEtroBISGear()
+    if (this.xivGearUrlRegex.exec(bisUrl) !== null) return this.importXIVGearBISGear()
+    return null
+  }
+
+  private async importEtroBISGear(): Promise<ExternalBISGearImportResponse | null> {
+    const etroUrl = this.bisUrl()
     const match = this.etroUrlRegex.exec(etroUrl)
     if (match === null) return null
     const url = `/backend/api/import/etro/${match[1]}/`
@@ -232,10 +256,43 @@ export default class TeamMemberCreateNewCharacterForm extends SavageAimMixin {
         return data
       }
       const error = await response.json() as ImportError
-      this.etroErrors = [error.message]
+      this.bisUrlErrors = [error.message]
     }
     catch (e) {
       this.$notify({ text: `Error ${e} when attempting to import Etro data.`, type: 'is-danger' })
+      Sentry.captureException(e)
+    }
+    return null
+  }
+
+  async importXIVGearBISGear(): Promise<ExternalBISGearImportResponse | null> {
+    const xivGearUrl = this.bisUrl()
+    const match = this.xivGearUrlRegex.exec(xivGearUrl)
+    if (match === null) return null
+    const url = `/backend/api/import/xivgear/${match[1]}/`
+
+    try {
+      const response = await fetch(url)
+      if (response.status === 200) {
+        // Handle the import
+        const data = await response.json() as ExternalBISGearImportResponse
+        return data
+      }
+      if (response.status === 202) {
+        // Warn the user that the Sheet Selection is not supported on this page, and ask them to re-export the single set
+        this.bisUrlErrors = [
+          'The provided XIVGear URL contains multiple sets.',
+          'This page does not provide the ability to select a set from your sheet.',
+          'Please either Export a single set url from XIVGear, or import the BIS manually on your Character\'s page!.',
+        ]
+      }
+      else if (!response.ok) {
+        const error = await response.json() as ImportError
+        this.bisUrlErrors = [error.message]
+      }
+    }
+    catch (e) {
+      this.$notify({ text: `Error ${e} when attempting to import XIVGear data.`, type: 'is-danger' })
       Sentry.captureException(e)
     }
     return null

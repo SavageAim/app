@@ -33,7 +33,7 @@
           <TeamMemberForm ref="form" :bis-list-id-errors="errors.bis_list_id" :character-id-errors="errors.character_id" v-if="characters.length && !createFormUsed" />
           <template v-else>
             <p class="no-chars-message">Your account currently has no Characters.</p>
-            <p class="no-chars-message">Provide a Lodestone Character URL, and Etro.gg Gearset URL and a Character will automatically be made for you!</p>
+            <p class="no-chars-message">Provide a Lodestone Character URL, and either an <code>Etro.gg</code> or <code>XIVGear.app</code> Gearset URL, and a Character will automatically be made for you!</p>
             <p class="no-chars-message">Otherwise, visit the <a href="/characters/new/" target="_blank">New Character</a> page if you'd like to do the full process yourself!</p>
             <hr />
             <TeamMemberCreateNewCharacterForm ref="characterCreateForm" />
