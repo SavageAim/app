@@ -35,6 +35,7 @@ urlpatterns = [
 
     # Loot
     path('team/<str:team_id>/loot/', views.LootCollection.as_view(), name='loot_collection'),
+    path('team/<str:team_id>/loot/delete/', views.LootDelete.as_view(), name='loot_delete'),
     path('team/<str:team_id>/loot/bis/', views.LootWithBIS.as_view(), name='loot_with_bis'),
 
     # LootSolver

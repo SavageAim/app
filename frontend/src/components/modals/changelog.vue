@@ -17,10 +17,16 @@
       <p>Currently, it must be installed as a custom plugin repo due to Dalamud Team's build systems being on hold</p>
       <p>The code and installation instructions are located <a href="https://github.com/SavageAim/plugin" target="_blank">here!</a></p>
       <p>If there are any questions or issues, please report them as you would anything with the website itself!</p>
-      
-      
+
+      <div class="divider"><i class="material-icons icon">expand_more</i> API Schema <i class="material-icons icon">expand_more</i></div>
+      <p>In the last release, API Keys were added to allow external access for possibly building an ecosystem of tools.</p>
+      <p>However, it only dawned on me recently that the API isn't obvious for anyone other than me.</p>
+      <p>There is now an OpenAPI schema available at <a href="https://savageaim.com/backend/schema/" target="_blank">https://savageaim.com/backend/schema/</a>.</p>
+      <p>This set of documentation is mostly manually written so if there are any questions, feel free to ask on Discord/Github!</p>
+
       <div class="divider"><i class="material-icons icon">expand_more</i> Fixes &amp; Improvements <i class="material-icons icon">expand_more</i></div>
       <p>Improved fetching of Teams from the database to improve speed and lessen the load on the server.</p>
+      <p>Added "API Schema" and "Plugin" links to the footer icons.</p>
     </div>
   </div>
 </template>

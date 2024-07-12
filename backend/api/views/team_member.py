@@ -9,6 +9,8 @@ Basically just a management interface of Team Membership;
 
 # lib
 from django.core.exceptions import ValidationError
+from drf_spectacular.utils import OpenApiResponse
+from drf_spectacular.views import extend_schema
 from rest_framework.request import Request
 from rest_framework.response import Response
 # local
@@ -25,10 +27,19 @@ class TeamMemberResource(APIView):
     """
     Management of Team Member Objects
     """
+    queryset = TeamMember
+    serializer_class = TeamMemberSerializer
 
+    @extend_schema(
+        tags=['team_member'],
+        responses={
+            200: TeamMemberSerializer,
+            404: OpenApiResponse(description='The Team ID does not exist or the Member ID is not valid.'),
+        }
+    )
     def get(self, request: Request, team_id: str, pk: id) -> Response:
         """
-        Get the Data for a single Team Member record
+        Read the Membership data for a Character that the requesting User owns in a given Team.
         """
         try:
             obj = TeamMember.objects.get(pk=pk, team_id=team_id, character__user=request.user)
@@ -38,9 +49,18 @@ class TeamMemberResource(APIView):
         data = TeamMemberSerializer(instance=obj).data
         return Response(data)
 
+    @extend_schema(
+        tags=['team_member'],
+        request=TeamMemberModifySerializer,
+        responses={
+            204: OpenApiResponse(description='Membership information updated successfully!'),
+            400: OpenApiResponse(description='Sent data is invalid.'),
+            404: OpenApiResponse(description='The Team ID does not exist or the Member ID is not valid.'),
+        }
+    )
     def put(self, request: Request, team_id: str, pk: id) -> Response:
         """
-        Update a pre-existing Team Member object, potentially changing both the linked character and bis list
+        Update some of the Membership data for a Character that the requesting User owns in a given Team.
         """
         try:
             obj = TeamMember.objects.get(pk=pk, team_id=team_id, character__user=request.user)
@@ -61,10 +81,20 @@ class TeamMemberResource(APIView):
 
         return Response(status=204)
 
+    @extend_schema(
+        tags=['team_member'],
+        responses={
+            204: OpenApiResponse(description='Membership information deleted successfully!'),
+            404: OpenApiResponse(description='The Team ID does not exist or the Member ID is not valid.'),
+        }
+    )
     def delete(self, request: Request, team_id: str, pk: id) -> Response:
         """
-        Team Members can leave a team
-        Team leaders can kick team members
+        Delete the Membership record for a Member of a Team.
+
+        This method can be run by two people;
+        1. The owner of the Member can run this method to leave the specified Team.
+        2. The leader of the Team can run this method to kick the specified Member from the Team.
         """
         try:
             obj = TeamMember.objects.get(pk=pk, team_id=team_id)
@@ -122,9 +152,25 @@ class TeamMemberPermissionsResource(APIView):
     Allow for the updating of Team Member permissions by the Team Lead
     """
 
+    @extend_schema(
+        tags=['team_member'],
+        request=TeamMemberPermissionsModifySerializer,
+        responses={
+            204: OpenApiResponse(description='The Member\'s permissions have been updated successfully!'),
+            400: OpenApiResponse(description='Sent data is invalid.'),
+            404: OpenApiResponse(description='The Team ID does not exist or the Member ID is not valid. Alternatively, the requesting User is not the Team Lead.'),
+        }
+    )
     def put(self, request: Request, team_id: str, pk: id) -> Response:
         """
-        Update a pre-existing Team Member object, potentially changing both the linked character and bis list
+        Update the Permissions that a Member of a Team has.
+        This method can only be run by the Team Leader.
+
+        The permissions use a bitflag approach with the following numbers;
+        - `loot_manager` = `1`
+        - `proxy_manager` = `2`
+
+        Sending a value of `3` gives both permissions.
         """
         # Make sure the user in question is the Team Leader
         team = self._get_team_as_leader(request, team_id)

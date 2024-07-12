@@ -54,14 +54,14 @@ export default class DeleteLoot extends Vue {
   team!: Team
 
   get url(): string {
-    return `/backend/api/team/${this.team.id}/loot/`
+    return `/backend/api/team/${this.team.id}/loot/delete/`
   }
 
   async deleteLoot(): Promise<void> {
     const body = JSON.stringify({ items: this.items.map((item: Loot) => item.id) })
     try {
       const response = await fetch(this.url, {
-        method: 'DELETE',
+        method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'X-CSRFToken': Vue.$cookies.get('csrftoken'),

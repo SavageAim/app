@@ -4,6 +4,7 @@ Given a map of slot names to item names and levels, return a map of the slots to
 # stdlib
 from typing import Dict
 # lib
+from drf_spectacular.views import extend_schema
 from rest_framework.request import Request
 from rest_framework.response import Response
 # local
@@ -16,10 +17,15 @@ class PluginImport(ImportAPIView):
     """
     Convert names and item levels from in game items to Savage Aim Gear Items.
     """
+    serializer_class = PluginImportResponseSerializer
 
+    @extend_schema(
+        request=PluginImportSerializer,
+    )
     def post(self, request: Request) -> Response:
         """
-        Convert names from in-game into Gear instances.
+        Given a set of names taken from in-game, turn the in-game names into the names and IDs of Gear records in the DB.
+        This allows the plugin to send a valid update request using the official in-system Gear IDs.
         """
         # Use Serializer for validating the provided data
         serializer = PluginImportSerializer(data=request.data)

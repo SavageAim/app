@@ -4,7 +4,7 @@ from .etro import EtroImport
 from .gear import GearCollection, ItemLevels
 from .job import JobCollection, JobSolverSortCollection
 from .lodestone import LodestoneGearImport, LodestoneResource
-from .loot import LootCollection, LootWithBIS
+from .loot import LootCollection, LootDelete, LootWithBIS
 from .loot_solver import LootSolver
 from .notification import NotificationCollection, NotificationResource
 from .plugin import PluginImport
@@ -36,6 +36,7 @@ __all__ = [
     'LodestoneResource',
 
     'LootCollection',
+    'LootDelete',
     'LootWithBIS',
 
     'LootSolver',

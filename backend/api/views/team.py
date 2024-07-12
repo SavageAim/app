@@ -7,6 +7,9 @@ This links to requesting users, which is how we check permissions
 
 # lib
 from django.core.exceptions import ValidationError
+from drf_spectacular.utils import inline_serializer, OpenApiResponse, OpenApiParameter
+from drf_spectacular.views import extend_schema
+from rest_framework import serializers
 from rest_framework.request import Request
 from rest_framework.response import Response
 # local
@@ -26,11 +29,20 @@ class TeamCollection(APIView):
     Methods to interact with a list of Teams that the User has a character in.
     Provides list and create methods.
     """
+    queryset = Team
+    serializer_class = TeamSerializer(many=True)
 
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                'char_id',
+                int,
+                description='Filter the response to Teams that the specified Character is in.'),
+        ],
+    )
     def get(self, request: Request) -> Response:
         """
-        Return a list of teams for the User.
-        Returns a list of all teams the User has characters in, which can be filtered further by query params
+        Return a list of the Teams that the requesting User has Characters in.
         """
         objs = Team.objects.filter(members__character__user=request.user).order_by('name').distinct()
 
@@ -46,9 +58,22 @@ class TeamCollection(APIView):
         data = TeamSerializer(objs, many=True).data
         return Response(data)
 
+    @extend_schema(
+        request=TeamCreateSerializer,
+        responses={
+            201: OpenApiResponse(
+                response=inline_serializer('CreateResponse', {'id': serializers.UUIDField()}),
+                description='The ID of the created Team.',
+            ),
+            400: OpenApiResponse(
+                response=TeamCreateSerializer,
+                description='Errors occurred during validation of sent data. The values will all be lists of strings for any keys that are present.',
+            ),
+        }
+    )
     def post(self, request: Request) -> Response:
         """
-        Create a new team, with the data for the team lead team member
+        Create a new Team.
         """
         # Ensure the data we were sent is valid
         serializer = TeamCreateSerializer(data=request.data, context={'user': request.user})
@@ -80,10 +105,18 @@ class TeamResource(APIView):
     Handling team specific requests
     """
 
+    @extend_schema(
+        responses={
+            200: TeamSerializer,
+            404: OpenApiResponse(
+                description='Team ID is invalid, or the requesting User has no Characters in the Team.',
+            ),
+        }
+    )
     def get(self, request: Request, pk: str) -> Response:
         """
-        Read the data of a Team.
-        It must be a Team that the requesting user controls a character in, or the request will fail
+        Read the data of a specified Team.
+        The requesting User must have a Character in the Team to be able to read it.
         """
         try:
             obj = Team.objects.filter(members__character__user=request.user).distinct().get(pk=pk)
@@ -93,10 +126,23 @@ class TeamResource(APIView):
         data = TeamSerializer(instance=obj).data
         return Response(data)
 
+    @extend_schema(
+        request=TeamUpdateSerializer,
+        responses={
+            204: OpenApiResponse(description='The Team details have been updated successfully!'),
+            400: OpenApiResponse(
+                response=TeamUpdateSerializer,
+                description='A map of any errors for the provided Character and BIS data. The values will all be lists of strings for any keys that are present.',
+            ),
+            404: OpenApiResponse(
+                description='Team ID is invalid, or the requesting User does not own the leader of the Team.',
+            ),
+        }
+    )
     def put(self, request: Request, pk: str) -> Response:
         """
-        Update some data about the Team
-        This request can only be run by the user whose character is the team lead
+        Update information about a specified Team.
+        The requesting User must own the Character who leads the Team in order to run this method.
         """
         obj = self._get_team_as_leader(request, pk)
         if obj is None:
@@ -121,9 +167,19 @@ class TeamResource(APIView):
             self._send_to_user(tm.character.user, {'type': 'character', 'id': tm.character.pk})
         return Response(status=204)
 
+    @extend_schema(
+        request=None,
+        responses={
+            204: OpenApiResponse(description='The `invite_code` was successfully regenerated!'),
+            404: OpenApiResponse(
+                description='Team ID is invalid, or the requesting User does not own the leader of the Team.',
+            ),
+        }
+    )
     def patch(self, request: Request, pk: str) -> Response:
         """
-        Regenerate the Team's token
+        Regenerate the Team's `invite_code`.
+        The requesting User must own the Character who leads the Team in order to run this method.
         """
         obj = self._get_team_as_leader(request, pk)
         if obj is None:
@@ -133,11 +189,19 @@ class TeamResource(APIView):
         obj.save()
         return Response(status=204)
 
+    @extend_schema(
+        request=None,
+        responses={
+            204: OpenApiResponse(description='The Team was successfully disbanded!'),
+            404: OpenApiResponse(
+                description='Team ID is invalid, or the requesting User does not own the leader of the Team.',
+            ),
+        }
+    )
     def delete(self, request: Request, pk: str) -> Response:
         """
-        Disband a Team
-
-        Notify all non leader members of the Team being disbanded
+        Disband a Team.
+        The requesting User must own the Character who leads the Team in order to run this method.
         """
         obj = self._get_team_as_leader(request, pk)
         if obj is None:
@@ -161,10 +225,17 @@ class TeamInvite(APIView):
     Used to check that an invite code is valid, pull information, and add members to a Team
     """
 
+    @extend_schema(
+        request=None,
+        responses={
+            200: OpenApiResponse(description='The supplied `invite_code` is valid!'),
+            404: OpenApiResponse(description='The supplied `invite_code` is invalid.'),
+        }
+    )
     def head(self, request: Request, invite_code: str) -> Response:
         """
-        Check a Team's existence purely by URL.
-        Will be used by the frontend to check invite code validity without loading team data
+        Check that a Team exists using only its `invite_code`.
+        Used by the frontend to validate a User's supplied `invite_code` without having to load the whole Team's data.
         """
         try:
             Team.objects.get(invite_code=invite_code)
@@ -173,10 +244,16 @@ class TeamInvite(APIView):
 
         return Response(status=200)
 
+    @extend_schema(
+        request=None,
+        responses={
+            200: TeamSerializer,
+            404: OpenApiResponse(description='A Team with the given `invite_code` does not exist.'),
+        }
+    )
     def get(self, request: Request, invite_code: str) -> Response:
         """
-        Return a list of teams for the User.
-        Returns a list of all teams the User has characters in, which can be filtered further by query params
+        Retrieve the data for a Team whose `invite_code` matches the one that is supplied.
         """
         try:
             obj = Team.objects.get(invite_code=invite_code)
@@ -186,10 +263,23 @@ class TeamInvite(APIView):
         data = TeamSerializer(obj).data
         return Response(data)
 
+    @extend_schema(
+        request=TeamMemberModifySerializer,
+        responses={
+            201: OpenApiResponse(
+                response=inline_serializer('CreateResponse', {'id': serializers.UUIDField()}),
+                description='The ID of the created Team Member',
+            ),
+            400: OpenApiResponse(
+                response=TeamMemberModifySerializer,
+                description='Errors occurred during validation of sent data. The values will all be lists of strings for any keys that are present.',
+            ),
+            404: OpenApiResponse(description='A Team with the given `invite_code` does not exist.'),
+        }
+    )
     def post(self, request: Request, invite_code: str) -> Response:
         """
-        Add a new team member to the team via the invite link
-        Characters can only be on a team once
+        Allow a User to accept an invitation to join a Team by choosing a Character and BISList.
         """
         try:
             obj = Team.objects.get(invite_code=invite_code)

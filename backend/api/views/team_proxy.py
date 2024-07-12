@@ -6,6 +6,9 @@ This adjusted views give access to the proxy system and allow users to create an
 
 # lib
 from django.core.exceptions import ValidationError
+from drf_spectacular.utils import inline_serializer, OpenApiResponse
+from drf_spectacular.views import extend_schema
+from rest_framework import serializers
 from rest_framework.request import Request
 from rest_framework.response import Response
 # local
@@ -26,10 +29,34 @@ class TeamProxyCollection(APIView):
     Handle creation of new Proxy Characters for a Team
     """
 
+    @extend_schema(
+        tags=['team_proxy'],
+        request=inline_serializer(
+            'TeamProxyMemberCreateRequest',
+            {
+                'character': CharacterCollectionSerializer,
+                'bis_data': BISListModifySerializer,
+            },
+        ),
+        responses={
+            201: OpenApiResponse(
+                response=inline_serializer('CreateResponse', {'id': serializers.IntegerField()}),
+                description='The ID of the created Proxy Member',
+            ),
+            400: OpenApiResponse(
+                response=inline_serializer(
+                    'ProxyMemberCreateValidationErrors',
+                    {'character': CharacterCollectionSerializer, 'bis': BISListModifySerializer},
+                ),
+                description='A map of any errors for the provided Character and BIS data. The values will all be lists of strings for any keys that are present.',
+            ),
+            404: OpenApiResponse(description='The Team ID does not exist, the Member ID is not valid, or the requesting User does not have permission.'),
+        },
+    )
     def post(self, request: Request, team_id: str) -> Response:
         """
-        Create a new Proxy Character in the specified Team.
-        Can currently only be done by the Team Lead.
+        Add a new Proxy Member to the Team.
+        This request can be run by anyone in the Team with the `proxy_manager` permissions.
         """
         team = self._get_team_with_permission(request, team_id, PERMISSION_NAME)
         if team is None:
@@ -69,10 +96,23 @@ class TeamProxyResource(APIView):
     Handle a single Proxy Character record (read / update)
     """
 
+    @extend_schema(
+        tags=['team_proxy'],
+        responses={
+            200: inline_serializer(
+                'ProxyMemberReadResponse',
+                {
+                    'team': TeamSerializer(),
+                    'member': TeamMemberSerializer(),
+                },
+            ),
+            404: OpenApiResponse(description='The Team ID does not exist, the Member ID is not valid, or the requesting User does not have permission.'),
+        },
+    )
     def get(self, request: Request, team_id: str, pk: int) -> Response:
         """
-        Read the details of a single Proxy record.
-        Can only be performed by a Team Lead
+        Read the details of a specific Proxied Team Member.
+        This request can be run by anyone in the Team with the `proxy_manager` permissions.
         """
         team = self._get_team_with_permission(request, team_id, PERMISSION_NAME)
         if team is None:
@@ -88,11 +128,24 @@ class TeamProxyResource(APIView):
         member_data = TeamMemberSerializer(instance=obj).data
         return Response({'team': team_data, 'member': member_data})
 
+    @extend_schema(
+        tags=['team_proxy'],
+        request=BISListModifySerializer,
+        responses={
+            204: OpenApiResponse(
+                description='The BIS data of the Proxy Member was updated successfully!',
+            ),
+            400: OpenApiResponse(
+                response=BISListModifySerializer,
+                description='A map of any errors for the provided Character and BIS data. The values will all be lists of strings for any keys that are present.',
+            ),
+            404: OpenApiResponse(description='The Team ID does not exist, the Member ID is not valid, or the requesting User does not have permission.'),
+        },
+    )
     def put(self, request: Request, team_id: str, pk: int) -> Response:
         """
-        Update the details of a single Proxy record.
-        Can only be performed by a Team Lead.
-        Only really updates the BIS List since there's not much need to update anything else.
+        Update the BIS information for a Proxy Team Member.
+        This request can be run by anyone in the Team with the `proxy_manager` permissions.
         """
         team = self._get_team_with_permission(request, team_id, PERMISSION_NAME)
         if team is None:
@@ -122,9 +175,24 @@ class TeamProxyClaim(APIView):
     For a little security, the view will expect the invite code to be sent in the data.
     """
 
+    @extend_schema(
+        tags=['team_proxy'],
+        request=inline_serializer('ProxyClaimRequest', {'invite_code': serializers.CharField()}),
+        responses={
+            201: OpenApiResponse(
+                response=inline_serializer('ProxyMemberClaimResponse', {'id': serializers.IntegerField()}),
+                description='The ID of the copy of the Proxy Member',
+            ),
+            404: OpenApiResponse(description='The Team ID does not exist, the Member ID is not valid, or the `invite_code` is incorrect.'),
+        },
+    )
     def post(self, request: Request, team_id: str, pk: int) -> Response:
         """
-        Make an attempt to claim a Proxy Character
+        Allow a User to make an attempt to claim ownership of a pre-existing Proxy Character.
+        This view can be used by anyone who has the `invite_code` for the Team.
+
+        It will create a copy of the Character in the requesting User's account.
+        When they successfully validate their copy, the system will replace all instances of the proxied Character with their valid one.
         """
         invite_code = request.data.get('invite_code', '')
         try:

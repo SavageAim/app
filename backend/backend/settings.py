@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 from os import environ
 from pathlib import Path
+from . import VERSION
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -48,6 +49,9 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.discord',
+
+    # API Schema
+    'drf_spectacular',
 ]
 
 MIDDLEWARE = [
@@ -110,8 +114,17 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.TokenAuthentication',
     ],
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
 
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'SavageAim',
+    'DESCRIPTION': 'FFXIV BIS Management Website',
+    'VERSION': VERSION,
+    'SERVE_INCLUDE_SCHEMA': False,
+    'SERVERS': [{'url': 'https://savageaim.com/', 'description': 'Main Site'}],
+    'SCHEMA_PATH_PREFIX': '/backend/api',
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators

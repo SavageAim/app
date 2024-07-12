@@ -4,6 +4,7 @@ Serializer for a request user's information
 # stdlib
 from typing import Dict
 # lib
+from drf_spectacular.utils import extend_schema_field, inline_serializer
 from rest_framework import serializers
 # local
 from api.models import Settings
@@ -39,6 +40,12 @@ class UserSerializer(serializers.Serializer):
         except (AttributeError, Settings.DoesNotExist):
             return Settings.LOOT_MANAGER_DEFAULT
 
+    @extend_schema_field(
+        inline_serializer(
+            'UserNotifications',
+            {notif: serializers.BooleanField() for notif in Settings.NOTIFICATIONS},
+        ),
+    )
     def get_notifications(self, obj) -> Dict[str, bool]:
         """
         Populate a full dictionary of notifications, filling defaults in as needed

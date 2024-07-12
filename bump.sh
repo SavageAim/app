@@ -3,7 +3,7 @@
 # Function to handle doing the bump details
 do_bump() {
     # Just use sed to replace the current version with the new one in the files that need it
-    sed -i "s/$CURRENT_VERSION/$NEW_VERSION/" frontend/.env frontend/src/main.ts backend/backend/settings_live.py
+    sed -i "s/$CURRENT_VERSION/$NEW_VERSION/" frontend/.env frontend/src/main.ts backend/backend/__init__.py
 }
 
 

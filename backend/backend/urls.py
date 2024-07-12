@@ -20,12 +20,15 @@ from django.contrib.auth.views import LogoutView
 from django.http import HttpResponse
 from django.urls import path, include
 from django.views.generic.base import RedirectView
+from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 
 patterns = [
     path('admin/', admin.site.urls),
     path('api/', include(('api.urls', 'api'))),
     path('health/', lambda _: HttpResponse()),
     path('logout/', LogoutView.as_view()),
+    path('schema.yaml', SpectacularAPIView.as_view(), name='schema'),
+    path('schema/', SpectacularSwaggerView.as_view(url_name='schema'), name='schema-ui'),
 
     # Auth stuff (TODO - replace this because it's sorta workaroundy)
     path('accounts/', include(discord_urls)),

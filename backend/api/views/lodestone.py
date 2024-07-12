@@ -9,6 +9,9 @@ Webscraping-on-demand endpoint to pull the following info from Lodestone;
 """
 
 # lib
+from drf_spectacular.utils import inline_serializer, OpenApiResponse
+from drf_spectacular.views import extend_schema
+from rest_framework import serializers
 from rest_framework.views import APIView
 from rest_framework.request import Request
 from rest_framework.response import Response
@@ -23,9 +26,25 @@ class LodestoneResource(APIView):
     Retrieve character data for a given Character ID
     """
 
+    @extend_schema(
+        responses={
+            200: inline_serializer(
+                'LodestoneCharacterScrapeResponse',
+                {
+                    'avatar_url': serializers.URLField(),
+                    'name': serializers.CharField(),
+                    'world': serializers.CharField(),
+                    'dc': serializers.CharField(),
+                },
+            ),
+            400: OpenApiResponse(description='An error occurred when retrieving info from the Lodestone.'),
+            404: OpenApiResponse(description='Character ID was not found on the Lodestone.'),
+        },
+        operation_id='lodestone_character_data_scrape',
+    )
     def get(self, request: Request, character_id: str) -> Response:
         """
-        Scrape the Lodestone and return the found character data
+        Read the given Character's Lodestone page, and scrape the required information for the system.
         """
         scraper = LodestoneScraper.get_instance()
         try:
@@ -43,9 +62,36 @@ class LodestoneGearImport(ImportAPIView):
     Given a Character ID, retrieve its current job and gear details, which the view code can turn into valid gear items
     """
 
+    @extend_schema(
+        responses={
+            200: inline_serializer(
+                'LodestoneGearImportResponse',
+                {
+                    'mainhand': serializers.IntegerField(),
+                    'offhand': serializers.IntegerField(),
+                    'head': serializers.IntegerField(),
+                    'body': serializers.IntegerField(),
+                    'hands': serializers.IntegerField(),
+                    'legs': serializers.IntegerField(),
+                    'feet': serializers.IntegerField(),
+                    'earrings': serializers.IntegerField(),
+                    'necklace': serializers.IntegerField(),
+                    'bracelet': serializers.IntegerField(),
+                    'right_ring': serializers.IntegerField(),
+                    'left_ring': serializers.IntegerField(),
+                },
+            ),
+            400: OpenApiResponse(response=inline_serializer('LodestoneImport400Response', {'message': serializers.CharField()})),
+            404: OpenApiResponse(response=inline_serializer('LodestoneImport404Response', {'message': serializers.CharField()})),
+            406: OpenApiResponse(response=inline_serializer('LodestoneImport406Response', {'message': serializers.CharField()})),
+        },
+        operation_id='lodestone_scrape_character_current_gear',
+    )
     def get(self, request: Request, character_id: str, expected_job: str) -> Response:
         """
-        Scrape the Lodestone and return the gear and job information
+        Read the given Character's Lodestone page, and scrape their currently equipped gear.
+
+        If the gear on the site is not useable by the `expected_job`, this view will return an error.
         """
         try:
             Job.objects.get(id=expected_job)
