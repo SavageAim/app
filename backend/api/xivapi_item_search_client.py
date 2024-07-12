@@ -18,19 +18,19 @@ class XIVAPISearchClient:
         """
         Given the Item IDs, retrieve their data from XIVAPI and return a map of ids to the name and item_level
         """
+        results = {}
         # Compile the payload body and send it to the URL
         payload = {
             'indexes': cls.indexes,
             'columns': cls.columns,
             'body': {
                 'query': {
-                    'bool': {
-                        'filter': [
-                            {'ids': {'values': item_ids}}
-                        ]
+                    'ids': {
+                        'values': item_ids,
                     }
-                }
-            }
+                },
+                'size': len(item_ids),
+            },
         }
         url = cls.url
         if API_KEY is not None:
@@ -38,8 +38,7 @@ class XIVAPISearchClient:
         response = requests.post(url, json=payload)
         response.raise_for_status()
 
-        results = {}
         for item in response.json().get('Results', []):
             results[item['ID']] = {'name': item['Name'], 'item_level': item['LevelItem']}
-        
+
         return results
