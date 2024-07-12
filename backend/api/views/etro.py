@@ -43,6 +43,10 @@ class EtroImport(ImportAPIView):
                 response=inline_serializer(
                     'EtroImportResponse',
                     {
+                        'name': serializers.CharField(),
+                        'job_id': serializers.CharField(),
+                        'min_il': serializers.IntegerField(),
+                        'max_il': serializers.IntegerField(),
                         'mainhand': serializers.IntegerField(),
                         'offhand': serializers.IntegerField(),
                         'head': serializers.IntegerField(),

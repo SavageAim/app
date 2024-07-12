@@ -8,7 +8,7 @@ import requests
 API_KEY = os.environ.get('XIVAPI_KEY', None)
 
 
-class XIVAPIItemSearcher:
+class XIVAPISearchClient:
     url = 'https://xivapi.com/search'
     indexes = 'item'
     columns = ','.join(['ID', 'Name', 'LevelItem'])

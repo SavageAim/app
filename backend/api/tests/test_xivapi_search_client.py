@@ -1,5 +1,5 @@
 from .test_base import SavageAimTestCase
-from ..xivapi_item_search_client import XIVAPIItemSearcher
+from ..xivapi_item_search_client import XIVAPISearchClient
 
 
 class XIVAPISearchTestSuit(SavageAimTestCase):
@@ -15,4 +15,4 @@ class XIVAPISearchTestSuit(SavageAimTestCase):
             42722: {'name': 'Neo Kingdom Thighboots of Fending', 'item_level': 700},
             42788: {'name': 'Skyruin Gunblade', 'item_level': 710},
         }
-        self.assertDictEqual(expected, XIVAPIItemSearcher.get_item_information(*expected.keys()))
+        self.assertDictEqual(expected, XIVAPISearchClient.get_item_information(*expected.keys()))

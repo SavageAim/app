@@ -1,0 +1,5 @@
+SINGLE_SET_URL = 'https://xivgear.app/?page=sl|289656d9-dc12-4625-a8ac-4d5c32e444f4'
+WHOLE_SHEET_URL = 'https://xivgear.app/?page=sl|cbf28d78-86f4-4d3a-b92e-c8be8e2f1aa4'
+RELIC_SHEET_URL = 'https://xivgear.app/?page=sl|96f0e9f9-e128-4db4-8e36-d3b81e0eb533'
+WHOLE_SHEET_WITH_ONLY_ONE_SET_URL = 'https://xivgear.app/?page=sl|511f9882-30ac-4d8b-b3c4-391c3659211e'
+PLD_SHEET_URL = 'https://xivgear.app/?page=sl|b8528957-011e-4af0-84d6-79ad8e24ac91'
