@@ -28,7 +28,7 @@ class LodestoneGearImport(SavageAimTestCase):
         Test Plan;
             - Import Eira and ensure her gear matches what I currently had equipped
         """
-        url = reverse('api:lodestone_gear_import', kwargs={'character_id': '22909725', 'expected_job': 'MNK'})
+        url = reverse('api:lodestone_gear_import', kwargs={'character_id': '22909725', 'expected_job': 'GNB'})
         user = self._get_user()
         self.client.force_authenticate(user)
         response = self.client.get(url)
@@ -36,21 +36,21 @@ class LodestoneGearImport(SavageAimTestCase):
 
         # Build an expected data packet
         expected = {
-            'job_id': 'MNK',
-            'mainhand': Gear.objects.get(name='Voidcast').pk,
-            'offhand': Gear.objects.get(name='Voidcast').pk,
-            'head': Gear.objects.get(name='Diadochos', has_armour=True).pk,
-            'body': Gear.objects.get(name='Diadochos', has_armour=True).pk,
-            'hands': Gear.objects.get(name='Diadochos', has_armour=True).pk,
-            'legs': Gear.objects.get(name='Diadochos', has_armour=True).pk,
-            'feet': Gear.objects.get(name='Diadochos', has_armour=True).pk,
-            'earrings': Gear.objects.get(name='Ascension', has_accessories=True).pk,
-            'necklace': Gear.objects.get(name='Augmented Credendum', has_accessories=True).pk,
-            'bracelet': Gear.objects.get(name='Ascension', has_accessories=True).pk,
-            'right_ring': Gear.objects.get(name='Ascension', has_accessories=True).pk,
-            'left_ring': Gear.objects.get(name='Augmented Credendum', has_accessories=True).pk,
-            'min_il': 640,
-            'max_il': 660,
+            'job_id': 'GNB',
+            'mainhand': Gear.objects.get(name='Neo Kingdom').pk,
+            'offhand': Gear.objects.get(name='Neo Kingdom').pk,
+            'head': Gear.objects.get(name='Neo Kingdom', has_armour=True).pk,
+            'body': Gear.objects.get(name='Neo Kingdom', has_armour=True).pk,
+            'hands': Gear.objects.get(name='Neo Kingdom', has_armour=True).pk,
+            'legs': Gear.objects.get(name='Neo Kingdom', has_armour=True).pk,
+            'feet': Gear.objects.get(name='Neo Kingdom', has_armour=True).pk,
+            'earrings': Gear.objects.get(name='Neo Kingdom', has_accessories=True).pk,
+            'necklace': Gear.objects.get(name='Neo Kingdom', has_accessories=True).pk,
+            'bracelet': Gear.objects.get(name='Neo Kingdom', has_accessories=True).pk,
+            'right_ring': Gear.objects.get(name='Neo Kingdom', has_accessories=True).pk,
+            'left_ring': Gear.objects.get(name='Epochal', has_accessories=True).pk,
+            'min_il': 690,
+            'max_il': 700,
         }
         self.maxDiff = None
         self.assertDictEqual(response.json(), expected)
@@ -79,5 +79,5 @@ class LodestoneGearImport(SavageAimTestCase):
         self.assertEqual(response.status_code, status.HTTP_406_NOT_ACCEPTABLE)
         self.assertEqual(
             response.json()['message'],
-            'Couldn\'t import Gear from Lodestone. Gear was expected to be for "SAM", but "PGL MNK" was found.',
+            'Couldn\'t import Gear from Lodestone. Gear was expected to be for "SAM", but "GNB" was found.',
         )

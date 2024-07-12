@@ -1486,7 +1486,7 @@ class LootTestSuite(SavageAimTestCase):
         """
         user = self._get_user()
         self.client.force_authenticate(user)
-        url = reverse('api:loot_collection', kwargs={'team_id': self.team.pk})
+        url = reverse('api:loot_delete', kwargs={'team_id': self.team.pk})
 
         # Create some Loot entries for this Team, along with one for a new Team (just to make sure filtering works)
         other_team = Team.objects.create(
@@ -1529,7 +1529,7 @@ class LootTestSuite(SavageAimTestCase):
         )
 
         body = {'items': [l1.pk, l3.pk, l4.pk]}
-        response = self.client.delete(url, body)
+        response = self.client.post(url, body)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT, response.content)
         with self.assertRaises(Loot.DoesNotExist):
             Loot.objects.get(pk=l1.pk)
@@ -1553,7 +1553,7 @@ class LootTestSuite(SavageAimTestCase):
         url = reverse('api:loot_collection', kwargs={'team_id': 'abcde'})
         self.assertEqual(self.client.get(url).status_code, status.HTTP_404_NOT_FOUND)
         self.assertEqual(self.client.post(url).status_code, status.HTTP_404_NOT_FOUND)
-        self.assertEqual(self.client.delete(url).status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(self.client.post(f'{url}delete/').status_code, status.HTTP_404_NOT_FOUND)
         self.assertEqual(self.client.post(f'{url}bis/').status_code, status.HTTP_404_NOT_FOUND)
 
         # Not having a character in the team
@@ -1562,11 +1562,11 @@ class LootTestSuite(SavageAimTestCase):
         url = reverse('api:loot_collection', kwargs={'team_id': self.team.pk})
         self.assertEqual(self.client.get(url).status_code, status.HTTP_404_NOT_FOUND)
         self.assertEqual(self.client.post(url).status_code, status.HTTP_404_NOT_FOUND)
-        self.assertEqual(self.client.delete(url).status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(self.client.post(f'{url}delete/').status_code, status.HTTP_404_NOT_FOUND)
         self.assertEqual(self.client.post(f'{url}bis/').status_code, status.HTTP_404_NOT_FOUND)
 
         # POST while not team lead
         self.client.force_authenticate(self.main_tank.user)
         self.assertEqual(self.client.post(url).status_code, status.HTTP_404_NOT_FOUND)
-        self.assertEqual(self.client.delete(url).status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(self.client.post(f'{url}delete/').status_code, status.HTTP_404_NOT_FOUND)
         self.assertEqual(self.client.post(f'{url}bis/').status_code, status.HTTP_404_NOT_FOUND)

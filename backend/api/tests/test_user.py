@@ -54,7 +54,7 @@ class User(SavageAimTestCase):
 
         data = {'theme': 'blue', 'notifications': {'verify_fail': False}, 'loot_manager_version': 'fight', 'username': 'abcde'}
         response = self.client.put(url, data)
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED, response)
+        self.assertEqual(response.status_code, status.HTTP_200_OK, response)
         user.refresh_from_db()
         self.assertEqual(user.settings.loot_manager_version, 'fight')
         self.assertEqual(user.settings.theme, 'blue')
@@ -64,7 +64,7 @@ class User(SavageAimTestCase):
         # Run it again to hit the other block
         data = {'theme': 'purple', 'notifications': {'verify_success': True}, 'username': 'abcde'}
         response = self.client.put(url, data)
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
         user.refresh_from_db()
         self.assertEqual(user.settings.theme, 'purple')
         self.assertFalse(user.settings.notifications['verify_fail'])
