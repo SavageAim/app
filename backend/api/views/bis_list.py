@@ -46,7 +46,7 @@ class BISListCollection(BISListBaseView):
         tags=['bis_list'],
         responses={
             201: OpenApiResponse(
-                response=inline_serializer('CreateResponse', {'id': serializers.IntegerField()}),
+                response=inline_serializer('BISListCreateResponse', {'id': serializers.IntegerField()}),
                 description='The ID of the created BISList',
             ),
             404: OpenApiResponse(description='The given Character ID did not belong to a valid Character owned by the requesting User'),

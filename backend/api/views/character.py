@@ -49,7 +49,7 @@ class CharacterCollection(APIView):
         request=CharacterCollectionSerializer,
         responses={
             201: OpenApiResponse(
-                response=inline_serializer('CreateResponse', {'id': serializers.IntegerField()}),
+                response=inline_serializer('CharacterCreateResponse', {'id': serializers.IntegerField()}),
                 description='The ID of the created Character',
             ),
         },
