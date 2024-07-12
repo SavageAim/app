@@ -3,6 +3,9 @@ A view to identify if the user is authenticated or not, for ease
 """
 
 # lib
+from drf_spectacular.utils import inline_serializer, OpenApiResponse
+from drf_spectacular.views import extend_schema
+from rest_framework import serializers
 from rest_framework.authtoken.models import Token
 from rest_framework.permissions import BasePermission
 from rest_framework.response import Response
@@ -25,18 +28,28 @@ class UserPermissions(BasePermission):
 
 class UserView(APIView):
     """
-    A simple method to get the (useful) information about the current user.
-    Will return 404 if the request is unauthenticated, which will prompt the UI to display a login button instead
+    Returns the data of the requesting User.
+    If there is no authenticated User, this will return a default set of information, including an `id` of `null`.
     """
     permission_classes = [UserPermissions]
+    serializer_class = UserSerializer
 
+    @extend_schema(tags=['user'])
     def get(self, request) -> Response:
         data = UserSerializer(request.user).data
         return Response(data)
 
+    @extend_schema(
+        tags=['user'],
+        request=SettingsSerializer,
+        responses={
+            200: OpenApiResponse(description='Settings update was successful!'),
+        },
+    )
     def put(self, request) -> Response:
         """
-        Update a User's serializer
+        Update the Settings of the logged in User.
+        Also allows the User to update their username.
         """
         try:
             obj = request.user.settings
@@ -59,7 +72,7 @@ class UserView(APIView):
         # Send websocket packet for updates
         self._send_to_user(request.user, {'type': 'settings'})
 
-        return Response(status=201)
+        return Response(status=200)
 
 
 class UserTokenView(APIView):
@@ -67,9 +80,16 @@ class UserTokenView(APIView):
     A view for handling updates to a User's Token.
     """
 
+    @extend_schema(
+        tags=['user'],
+        request=None,
+        responses={
+            201: OpenApiResponse(description='API Key regenerated successfully!'),
+        },
+    )
     def patch(self, request) -> Response:
         """
-        Regenerate a User's Token
+        Regenerate the User's API Key
         """
         try:
             obj = request.user.auth_token
