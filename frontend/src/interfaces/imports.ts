@@ -2,7 +2,12 @@ export interface ImportError {
   message: string
 }
 
-export interface EtroImportResponse {
+export interface XIVGearSheetSelection {
+  name: string
+  index: number
+}
+
+export interface ExternalBISGearImportResponse {
   job_id: string
   job_name: string
   mainhand: number

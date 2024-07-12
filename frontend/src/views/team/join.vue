@@ -41,7 +41,7 @@
                     <ol>
                       <li v-if="teamProxies.length > 0">If one of the Characters in the "Claim a Proxy Character" card <span class="is-hidden-desktop">below</span><span class="is-hidden-touch">to the right</span> is yours, click on them to go through the process of claiming them.</li>
                       <li>You can create a new Character from scratch by visiting the <a href="/characters/new/" target="_blank">New Character</a> page.</li>
-                      <li>You can also provide a Lodestone Character and Etro Gearset URL in the form below and click Join, which will do the creation automatically.</li>
+                      <li>You can also provide a Lodestone Character URL, and either an <code>Etro.gg</code> or <code>XIVGear.app</code> Gearset URL, in the form below and click Join, which will do the creation automatically.</li>
                     </ol>
                   </p>
                 </div>

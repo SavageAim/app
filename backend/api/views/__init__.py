@@ -13,6 +13,7 @@ from .team_member import TeamMemberResource, TeamMemberPermissionsResource
 from .team_proxy import TeamProxyCollection, TeamProxyResource, TeamProxyClaim
 from .tier import TierCollection
 from .user import UserView, UserTokenView
+from .xivgear import XIVGearImport
 
 __all__ = [
     'BISListCollection',
@@ -61,4 +62,6 @@ __all__ = [
 
     'UserView',
     'UserTokenView',
+
+    'XIVGearImport',
 ]

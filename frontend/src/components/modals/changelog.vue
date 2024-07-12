@@ -12,7 +12,12 @@
     </div>
     <div class="card-content content">
       <h2 class="has-text-primary subtitle">{{ version }}</h2>
-      <div class="divider"><i class="material-icons icon">expand_more</i> Dalamud Plugin Release <i class="material-icons icon">expand_more</i></div>
+      <div class="divider"><i class="material-icons icon">expand_more</i> XIVGear Support <i class="material-icons icon">expand_more</i></div>
+      <p>You can now also import BIS data from XIVGear.app</p>
+      <p>If you provide a URL that contains multiple sets, you will be prompted with a popup to select which one to load.</p>
+      <p class="has-text-info">Please note that this feature is only on the main BIS pages, the quick signup form can only handle single set URLs!</p>
+
+      <div class="divider"><i class="material-icons icon">expand_more</i> Dalamud Plugin <i class="material-icons icon">expand_more</i></div>
       <p>I am happy to announce that the Dalamud plugin that was teased in the last release is finally up and ready to use.</p>
       <p>Currently, it must be installed as a custom plugin repo due to Dalamud Team's build systems being on hold</p>
       <p>The code and installation instructions are located <a href="https://github.com/SavageAim/plugin" target="_blank">here!</a></p>

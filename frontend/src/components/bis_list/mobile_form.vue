@@ -47,16 +47,22 @@
           <BIS :bisList="bisList" :errors="errors" :minIl="minIl" :maxIl="maxIl" :displayOffhand="displayOffhand" />
           <div class="card-footer">
             <p class="card-footer-item is-loading" v-if="importLoading"></p>
-            <a class="card-footer-item" v-else-if="etroImportable" @click="importBis">
+            <a class="card-footer-item has-text-link" v-else-if="etroImportable" @click="importEtroBis">
               <span class="icon-text">
                 <span class="icon"><i class="material-icons">cloud_download</i></span>
                 <span>Import from Etro</span>
               </span>
             </a>
-            <p class="card-footer-item" v-else data-microtip-position="bottom" role="tooltip" aria-label="Please enter an Etro gearset link in the gearset's URL field.">
+            <a class="card-footer-item has-text-link" v-else-if="xivGearImportable" @click="importXIVGearBis">
+              <span class="icon-text">
+                <span class="icon"><i class="material-icons">cloud_download</i></span>
+                <span>Import from XIVGear</span>
+              </span>
+            </a>
+            <p class="card-footer-item" v-else data-microtip-position="bottom" role="tooltip" aria-label="Please enter an Etro/XIVGear gearset link in the gearset's URL field.">
               <span class="icon-text">
                 <span class="icon"><i class="material-icons">cloud_off</i></span>
-                <span>Import from Etro</span>
+                <span>Import</span>
               </span>
             </p>
           </div>
@@ -247,8 +253,8 @@ export default class BISListMobileForm extends Vue {
     )
   }
 
-  importBis(): void {
-    this.$emit('import-bis-data')
+  importEtroBis(): void {
+    this.$emit('import-etro-bis-data')
   }
 
   importFromOtherList(): void {
@@ -257,6 +263,10 @@ export default class BISListMobileForm extends Vue {
 
   importLodestone(): void {
     this.$emit('import-current-lodestone-gear')
+  }
+
+  importXIVGearBis(): void {
+    this.$emit('import-xivgear-bis-data')
   }
 }
 </script>
