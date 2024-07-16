@@ -38,7 +38,7 @@ export default class XIVGearSheetSetSelection extends Vue {
   @Prop()
   sheets!: XIVGearSheetSelection[]
 
-  importSet(setNum: number) {
+  importSet(setNum: number): void {
     this.doImport(setNum)
     this.$emit('close')
   }

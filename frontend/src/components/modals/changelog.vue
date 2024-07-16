@@ -12,6 +12,14 @@
     </div>
     <div class="card-content content">
       <h2 class="has-text-primary subtitle">{{ version }}</h2>
+      <div class="divider"><i class="material-icons icon">expand_more</i> FFXIV 7.01 Update <i class="material-icons icon">expand_more</i></div>
+      <p>
+        Added the following new types of Gear released in 7.01;
+        <ul>
+          <li>Light-heavy Armour and Accessories - Item Level 710</li>
+        </ul>
+      </p>
+
       <div class="divider"><i class="material-icons icon">expand_more</i> XIVGear Support <i class="material-icons icon">expand_more</i></div>
       <p>You can now also import BIS data from XIVGear.app</p>
       <p>If you provide a URL that contains multiple sets, you will be prompted with a popup to select which one to load.</p>
