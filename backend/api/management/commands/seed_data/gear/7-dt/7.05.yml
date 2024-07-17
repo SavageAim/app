@@ -1,0 +1,25 @@
+- has_accessories: True
+  has_armour: True
+  has_weapon: True
+  item_level: 710
+  name: 'Crafted'
+- has_accessories: True
+  has_armour: True
+  has_weapon: True
+  item_level: 720
+  name: 'Tome'
+- has_accessories: True
+  has_armour: True
+  has_weapon: True
+  item_level: 730
+  name: 'Augmented Tome'
+- has_accessories: True
+  has_armour: True
+  has_weapon: False
+  item_level: 730
+  name: 'Raid'
+- has_accessories: False
+  has_armour: False
+  has_weapon: True
+  item_level: 735
+  name: 'Raid'
