@@ -151,7 +151,7 @@ class XIVGearImport(ImportAPIView):
             return Response({'message': e.response.text}, 400)
         
         if len(gear_names) != len(sa_gear):
-            return Response({'message': 'XIVAPI appears to be missing gear information, please try again later!'}, 400)
+            return Response({'message': 'Could not find some of the items on XIVAPI, please try again later!'}, 400)
 
         # Use the returned map to calculate the min and max ils, and also replace IDs with names in sa_gear
         min_il = float('inf')
