@@ -41,7 +41,7 @@ class CharacterCollection(APIView):
         Retrieve all of the Characters belonging to the requesting User.
         """
         # Permissions won't allow this method to be run by non-auth'd users
-        objs = Character.objects.filter(user=request.user)
+        objs = Character.objects.with_summaries().filter(user=request.user)
         data = CharacterCollectionSerializer(objs, many=True).data
         return Response(data)
 
@@ -92,7 +92,7 @@ class CharacterResource(APIView):
         This endpoint will return the full data of the Character, including associated BISLists and Teams.
         """
         try:
-            obj = Character.objects.get(pk=pk, user=request.user)
+            obj = Character.objects.with_details().get(pk=pk, user=request.user)
         except Character.DoesNotExist:
             return Response(status=404)
 
