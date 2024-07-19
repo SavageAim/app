@@ -3,10 +3,11 @@ Model for managing the game's jobs
 
 Will probably use the job code (PLD etc) as the id, and maintain ordering separately
 """
+import auto_prefetch
 from django.db import models
 
 
-class Job(models.Model):
+class Job(auto_prefetch.Model):
     TANK = 'tank'
     HEAL = 'heal'
     DPS = 'dps'
@@ -25,7 +26,7 @@ class Job(models.Model):
     def __str__(self):
         return self.name
 
-    class Meta:
+    class Meta(auto_prefetch.Model.Meta):
         ordering = ['-role', 'ordering']
 
     @classmethod

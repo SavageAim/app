@@ -124,7 +124,7 @@ class LootCollection(APIView):
         for member in obj.members.all():
             greed_lists[member.id] = {}
             # Loop through the member's greed BIS Lists
-            for bis_list in BISList.objects.with_all_relations().filter(owner=member.character):
+            for bis_list in BISList.objects.filter(owner=member.character):
                 for slot in self.AUTOMATED_SLOTS:
                     greed_lists[member.id].setdefault(slot, [])
 

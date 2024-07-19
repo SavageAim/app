@@ -3,11 +3,12 @@ Model for storing the types of Gear in the game
 
 Will be starting with just 6.0 gear
 """
+import auto_prefetch
 from django.contrib.postgres.fields import ArrayField
 from django.db import models
 
 
-class Gear(models.Model):
+class Gear(auto_prefetch.Model):
     # Arrays of extra names to check / use when importing Gear that has unique names.
     # extra_import_classes are checked with Levenstein distance.
     extra_import_classes = ArrayField(models.CharField(max_length=64), default=list)
@@ -20,6 +21,6 @@ class Gear(models.Model):
     item_level = models.IntegerField()
     name = models.TextField()
 
-    class Meta:
+    class Meta(auto_prefetch.Model.Meta):
         unique_together = ['name', 'item_level']
         ordering = ['-item_level', '-id']
