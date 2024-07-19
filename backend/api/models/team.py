@@ -18,7 +18,7 @@ CODE_LEN = 32
 class TeamManager(models.Manager):
 
     def get_queryset(self):
-        return super().get_queryset().prefetch_related(
+        return super().get_queryset().select_related('tier').prefetch_related(
             'members',
             'members__character',
             'members__character__user',
