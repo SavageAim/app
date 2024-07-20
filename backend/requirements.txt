@@ -26,6 +26,7 @@ defusedxml==0.7.1
 Deprecated==1.2.13
 Django==3.2.25
 django-allauth==0.47.0
+django-auto-prefetch==1.9.0
 djangorestframework==3.14.0
 drf-spectacular==0.27.2
 gunicorn==22.0.0

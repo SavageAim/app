@@ -6,6 +6,7 @@ Is tied to a User
 import string
 from random import choice
 # lib
+import auto_prefetch
 from django.contrib.auth.models import User
 from django.db import models
 
@@ -13,43 +14,7 @@ CHARACTERS = string.ascii_letters + string.digits
 RANDOM_CHARS = 30
 
 
-class CharacterDetailsManager(models.Manager):
-
-    def with_summaries(self):
-        return self.prefetch_related('bis_lists', 'bis_lists__job')
-
-    def with_details(self):
-        return self.prefetch_related(
-            'bis_lists',
-            'bis_lists__bis_body',
-            'bis_lists__bis_bracelet',
-            'bis_lists__bis_earrings',
-            'bis_lists__bis_feet',
-            'bis_lists__bis_hands',
-            'bis_lists__bis_head',
-            'bis_lists__bis_left_ring',
-            'bis_lists__bis_legs',
-            'bis_lists__bis_mainhand',
-            'bis_lists__bis_necklace',
-            'bis_lists__bis_offhand',
-            'bis_lists__bis_right_ring',
-            'bis_lists__current_body',
-            'bis_lists__current_bracelet',
-            'bis_lists__current_earrings',
-            'bis_lists__current_feet',
-            'bis_lists__current_hands',
-            'bis_lists__current_head',
-            'bis_lists__current_left_ring',
-            'bis_lists__current_legs',
-            'bis_lists__current_mainhand',
-            'bis_lists__current_necklace',
-            'bis_lists__current_offhand',
-            'bis_lists__current_right_ring',
-            'bis_lists__job',
-        )
-
-
-class Character(models.Model):
+class Character(auto_prefetch.Model):
     alias = models.CharField(max_length=64, default='')
     avatar_url = models.URLField()
     # This is used to delete unverified characters after 24h (celery stuff)
@@ -57,11 +22,9 @@ class Character(models.Model):
     lodestone_id = models.TextField()
     name = models.CharField(max_length=60)
     token = models.CharField(max_length=40)
-    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+    user = auto_prefetch.ForeignKey(User, on_delete=models.CASCADE, null=True)
     verified = models.BooleanField(default=False)
     world = models.CharField(max_length=60)
-
-    objects = CharacterDetailsManager()
 
     def __str__(self) -> str:
         return self.display_name
