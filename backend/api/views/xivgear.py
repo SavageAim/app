@@ -149,8 +149,7 @@ class XIVGearImport(ImportAPIView):
             gear_names = XIVAPISearchClient.get_item_information(*sa_gear.values())
         except requests.HTTPError as e:
             return Response({'message': e.response.text}, 400)
-
-        if len(gear_names) != len(sa_gear):
+        except ValueError:
             return Response({'message': 'Could not find some of the items on XIVAPI, please try again later!'}, 400)
 
         # Use the returned map to calculate the min and max ils, and also replace IDs with names in sa_gear
