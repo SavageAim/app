@@ -13,15 +13,20 @@
     <div class="card-content content">
       <h2 class="has-text-primary subtitle">{{ version }}</h2>
       <div class="divider"><i class="material-icons icon">expand_more</i> FFXIV 7.05 Update <i class="material-icons icon">expand_more</i></div>
+      <p>The newest Tier, <code>AAC Light-heavyweight Tier</code>, has begun! Be sure to set your Team to be progging this new tier!</p>
       <p>
         Added the following new types of Gear released in 7.05;
         <ul>
-          <!-- <li>Light-heavy Armour and Accessories - Item Level 710</li> -->
+          <li>SEVENOHFIVECRAFTED Weapons, Armour, and Accessories - Item Level 710</li>
+          <li>SEVENOHFIVETOME Weapons, Armour, and Accessories - Item Level 720</li>
+          <li>Augmented SEVENOHFIVETOME Weapons, Armour, and Accessories - Item Level 730</li>
+          <li>SEVENOHFIVERAID Armour, and Accessories - Item Level 730</li>
+          <li>SEVENOHFIVERAID Weapons - Item Level 735</li>
         </ul>
       </p>
 
       <div class="divider"><i class="material-icons icon">expand_more</i> Fixes &amp; Improvements <i class="material-icons icon">expand_more</i></div>
-      <p>Moved to new beta version of XIVAPI, should fix XIVGear importing!</p>
+      <p>Moved to using the beta version of XIVAPI, should fix XIVGear importing!</p>
     </div>
   </div>
 </template>

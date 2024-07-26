@@ -2,24 +2,24 @@
   has_armour: True
   has_weapon: True
   item_level: 710
-  name: 'Crafted'
+  name: 'SEVENOHFIVECRAFTED'
 - has_accessories: True
   has_armour: True
   has_weapon: True
   item_level: 720
-  name: 'Tome'
+  name: 'SEVENOHFIVETOME'
 - has_accessories: True
   has_armour: True
   has_weapon: True
   item_level: 730
-  name: 'Augmented Tome'
+  name: 'Augmented SEVENOHFIVETOME'
 - has_accessories: True
   has_armour: True
   has_weapon: False
   item_level: 730
-  name: 'Raid'
+  name: 'SEVENOHFIVERAID'
 - has_accessories: False
   has_armour: False
   has_weapon: True
   item_level: 735
-  name: 'Raid'
+  name: 'SEVENOHFIVERAID'
