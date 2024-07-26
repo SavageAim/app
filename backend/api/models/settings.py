@@ -5,11 +5,12 @@ Settings currently stored;
     - notification settings
 """
 # lib
+import auto_prefetch
 from django.contrib.auth.models import User
 from django.db import models
 
 
-class Settings(models.Model):
+class Settings(auto_prefetch.Model):
     LOOT_MANAGER_DEFAULT = 'item'
     LOOT_MANAGER_VERSIONS = [
         (LOOT_MANAGER_DEFAULT, LOOT_MANAGER_DEFAULT),
@@ -31,4 +32,4 @@ class Settings(models.Model):
     loot_manager_version = models.CharField(max_length=10, choices=LOOT_MANAGER_VERSIONS, default=LOOT_MANAGER_DEFAULT)
     notifications = models.JSONField(default=dict)
     theme = models.CharField(max_length=24)
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='settings')
+    user = auto_prefetch.OneToOneField(User, on_delete=models.CASCADE, related_name='settings')

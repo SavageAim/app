@@ -4,77 +4,43 @@ The main class of the system;
 Links together characters, jobs and gear into a single list
 """
 from typing import List
+import auto_prefetch
 from django.db import models
 from django.db.models import Q
 
 
-class BISListManager(models.Manager):
+class BISList(auto_prefetch.Model):
+    bis_body = auto_prefetch.ForeignKey('Gear', on_delete=models.CASCADE, related_name='bis_body_set')
+    bis_bracelet = auto_prefetch.ForeignKey('Gear', on_delete=models.CASCADE, related_name='bis_bracelet_set')
+    bis_earrings = auto_prefetch.ForeignKey('Gear', on_delete=models.CASCADE, related_name='bis_earrings_set')
+    bis_feet = auto_prefetch.ForeignKey('Gear', on_delete=models.CASCADE, related_name='bis_feet_set')
+    bis_hands = auto_prefetch.ForeignKey('Gear', on_delete=models.CASCADE, related_name='bis_hands_set')
+    bis_head = auto_prefetch.ForeignKey('Gear', on_delete=models.CASCADE, related_name='bis_head_set')
+    bis_left_ring = auto_prefetch.ForeignKey('Gear', on_delete=models.CASCADE, related_name='bis_left_ring_set')
+    bis_legs = auto_prefetch.ForeignKey('Gear', on_delete=models.CASCADE, related_name='bis_legs_set')
+    bis_mainhand = auto_prefetch.ForeignKey('Gear', on_delete=models.CASCADE, related_name='bis_mainhand_set')
+    bis_necklace = auto_prefetch.ForeignKey('Gear', on_delete=models.CASCADE, related_name='bis_necklace_set')
+    bis_offhand = auto_prefetch.ForeignKey('Gear', on_delete=models.CASCADE, related_name='bis_offhand_set')
+    bis_right_ring = auto_prefetch.ForeignKey('Gear', on_delete=models.CASCADE, related_name='bis_right_ring_set')
 
-    def with_all_relations(self):
-        return self.select_related(
-            'bis_body',
-            'bis_bracelet',
-            'bis_earrings',
-            'bis_feet',
-            'bis_hands',
-            'bis_head',
-            'bis_left_ring',
-            'bis_legs',
-            'bis_mainhand',
-            'bis_necklace',
-            'bis_offhand',
-            'bis_right_ring',
-            'current_body',
-            'current_bracelet',
-            'current_earrings',
-            'current_feet',
-            'current_hands',
-            'current_head',
-            'current_left_ring',
-            'current_legs',
-            'current_mainhand',
-            'current_necklace',
-            'current_offhand',
-            'current_right_ring',
-            'job',
-            'owner',
-        )
-
-
-class BISList(models.Model):
-    bis_body = models.ForeignKey('Gear', on_delete=models.CASCADE, related_name='bis_body_set')
-    bis_bracelet = models.ForeignKey('Gear', on_delete=models.CASCADE, related_name='bis_bracelet_set')
-    bis_earrings = models.ForeignKey('Gear', on_delete=models.CASCADE, related_name='bis_earrings_set')
-    bis_feet = models.ForeignKey('Gear', on_delete=models.CASCADE, related_name='bis_feet_set')
-    bis_hands = models.ForeignKey('Gear', on_delete=models.CASCADE, related_name='bis_hands_set')
-    bis_head = models.ForeignKey('Gear', on_delete=models.CASCADE, related_name='bis_head_set')
-    bis_left_ring = models.ForeignKey('Gear', on_delete=models.CASCADE, related_name='bis_left_ring_set')
-    bis_legs = models.ForeignKey('Gear', on_delete=models.CASCADE, related_name='bis_legs_set')
-    bis_mainhand = models.ForeignKey('Gear', on_delete=models.CASCADE, related_name='bis_mainhand_set')
-    bis_necklace = models.ForeignKey('Gear', on_delete=models.CASCADE, related_name='bis_necklace_set')
-    bis_offhand = models.ForeignKey('Gear', on_delete=models.CASCADE, related_name='bis_offhand_set')
-    bis_right_ring = models.ForeignKey('Gear', on_delete=models.CASCADE, related_name='bis_right_ring_set')
-
-    current_body = models.ForeignKey('Gear', on_delete=models.CASCADE, related_name='current_body_set')
-    current_bracelet = models.ForeignKey('Gear', on_delete=models.CASCADE, related_name='current_bracelet_set')
-    current_earrings = models.ForeignKey('Gear', on_delete=models.CASCADE, related_name='current_earrings_set')
-    current_feet = models.ForeignKey('Gear', on_delete=models.CASCADE, related_name='current_feet_set')
-    current_hands = models.ForeignKey('Gear', on_delete=models.CASCADE, related_name='current_hands_set')
-    current_head = models.ForeignKey('Gear', on_delete=models.CASCADE, related_name='current_head_set')
-    current_left_ring = models.ForeignKey('Gear', on_delete=models.CASCADE, related_name='current_left_ring_set')
-    current_legs = models.ForeignKey('Gear', on_delete=models.CASCADE, related_name='current_legs_set')
-    current_mainhand = models.ForeignKey('Gear', on_delete=models.CASCADE, related_name='current_mainhand_set')
-    current_necklace = models.ForeignKey('Gear', on_delete=models.CASCADE, related_name='current_necklace_set')
-    current_offhand = models.ForeignKey('Gear', on_delete=models.CASCADE, related_name='current_offhand_set')
-    current_right_ring = models.ForeignKey('Gear', on_delete=models.CASCADE, related_name='current_right_ring_set')
+    current_body = auto_prefetch.ForeignKey('Gear', on_delete=models.CASCADE, related_name='current_body_set')
+    current_bracelet = auto_prefetch.ForeignKey('Gear', on_delete=models.CASCADE, related_name='current_bracelet_set')
+    current_earrings = auto_prefetch.ForeignKey('Gear', on_delete=models.CASCADE, related_name='current_earrings_set')
+    current_feet = auto_prefetch.ForeignKey('Gear', on_delete=models.CASCADE, related_name='current_feet_set')
+    current_hands = auto_prefetch.ForeignKey('Gear', on_delete=models.CASCADE, related_name='current_hands_set')
+    current_head = auto_prefetch.ForeignKey('Gear', on_delete=models.CASCADE, related_name='current_head_set')
+    current_left_ring = auto_prefetch.ForeignKey('Gear', on_delete=models.CASCADE, related_name='current_left_ring_set')
+    current_legs = auto_prefetch.ForeignKey('Gear', on_delete=models.CASCADE, related_name='current_legs_set')
+    current_mainhand = auto_prefetch.ForeignKey('Gear', on_delete=models.CASCADE, related_name='current_mainhand_set')
+    current_necklace = auto_prefetch.ForeignKey('Gear', on_delete=models.CASCADE, related_name='current_necklace_set')
+    current_offhand = auto_prefetch.ForeignKey('Gear', on_delete=models.CASCADE, related_name='current_offhand_set')
+    current_right_ring = auto_prefetch.ForeignKey('Gear', on_delete=models.CASCADE, related_name='current_right_ring_set')
     external_link = models.URLField(null=True)
-    job = models.ForeignKey('Job', on_delete=models.CASCADE)
+    job = auto_prefetch.ForeignKey('Job', on_delete=models.CASCADE)
     name = models.CharField(max_length=64, default='')
-    owner = models.ForeignKey('Character', on_delete=models.CASCADE, related_name='bis_lists')
+    owner = auto_prefetch.ForeignKey('Character', on_delete=models.CASCADE, related_name='bis_lists')
 
-    objects = BISListManager()
-
-    class Meta:
+    class Meta(auto_prefetch.Model.Meta):
         ordering = ['-job__role', 'job__ordering', 'name']
 
     def __str__(self) -> str:
