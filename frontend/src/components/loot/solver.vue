@@ -30,7 +30,7 @@
                 <span>Auto-Assign Loot</span>
               </span>
             </button>
-            <button class="button is-dark is-link is-fullwidth">
+            <button class="button is-dark is-link is-fullwidth" @click="showFirstFloorDistribution">
               <span class="icon-text">
                 <span class="icon"><i class="material-icons">insights</i></span>
                 <span>See Distribution</span>
@@ -49,7 +49,7 @@
                 <span>Auto-Assign Loot</span>
               </span>
             </button>
-            <button class="button is-dark is-link is-fullwidth">
+            <button class="button is-dark is-link is-fullwidth" @click="showSecondFloorDistribution">
               <span class="icon-text">
                 <span class="icon"><i class="material-icons">insights</i></span>
                 <span>See Distribution</span>
@@ -68,7 +68,7 @@
                 <span>Auto-Assign Loot</span>
               </span>
             </button>
-            <button class="button is-dark is-link is-fullwidth">
+            <button class="button is-dark is-link is-fullwidth" @click="showThirdFloorDistribution">
               <span class="icon-text">
                 <span class="icon"><i class="material-icons">insights</i></span>
                 <span>See Distribution</span>
@@ -107,7 +107,7 @@
                     </span>
                   </button>
                 </div>
-                <div class="control is-expanded" v-if="data.first_floor.length > 0" @click="showFirstFloorDistribution">
+                <div class="control is-expanded" @click="showFirstFloorDistribution">
                   <button class="button is-dark is-link is-fullwidth">
                     <span class="icon-text">
                       <span class="icon"><i class="material-icons">insights</i></span>
@@ -139,7 +139,7 @@
                     </span>
                   </button>
                 </div>
-                <div class="control is-expanded" v-if="data.second_floor.length > 0" @click="showSecondFloorDistribution">
+                <div class="control is-expanded" @click="showSecondFloorDistribution">
                   <button class="button is-dark is-link is-fullwidth">
                     <span class="icon-text">
                       <span class="icon"><i class="material-icons">insights</i></span>
@@ -172,7 +172,7 @@
                     </span>
                   </button>
                 </div>
-                <div class="control is-expanded" v-if="data.third_floor.length > 0" @click="showThirdFloorDistribution">
+                <div class="control is-expanded" @click="showThirdFloorDistribution">
                   <button class="button is-dark is-link is-fullwidth">
                     <span class="icon-text">
                       <span class="icon"><i class="material-icons">insights</i></span>
