@@ -841,9 +841,9 @@ class LootSolverTestSuite(SavageAimTestCase):
         content = response.json()
 
         first_floor_expected = [
-            {'token': False, 'Earrings': self.tm6.id, 'Necklace': self.tm8.id, 'Bracelet': self.tm5.id, 'Ring': self.tm7.id},
-            {'token': False, 'Earrings': self.tm5.id, 'Necklace': self.tm3.id, 'Bracelet': self.tm4.id, 'Ring': self.tm6.id},
-            {'token': True, 'Earrings': None, 'Necklace': self.tm2.id, 'Bracelet': self.tm3.id, 'Ring': self.tm8.id},
+            {'token': False, 'Earrings': self.tm6.id, 'Necklace': self.tm3.id, 'Bracelet': self.tm5.id, 'Ring': self.tm8.id},
+            {'token': False, 'Earrings': self.tm5.id, 'Necklace': self.tm7.id, 'Bracelet': self.tm4.id, 'Ring': self.tm6.id},
+            {'token': True, 'Earrings': None, 'Necklace': self.tm2.id, 'Bracelet': self.tm3.id, 'Ring': self.tm5.id},
         ]
         first_floor_received = content['first_floor']
         self.assertEqual(len(first_floor_expected), len(first_floor_received), first_floor_received)
@@ -851,15 +851,16 @@ class LootSolverTestSuite(SavageAimTestCase):
             self.assertDictEqual(first_floor_expected[i], first_floor_received[i], f'{i+1}/{len(first_floor_received)}')
 
         second_floor_expected = [
-            {'token': False, 'Head': self.tm8.id, 'Hands': self.tm2.id, 'Feet': self.tm3.id, 'Tome Accessory Augment': self.tm7.id},
-            {'token': False, 'Head': self.tm1.id, 'Hands': self.tm7.id, 'Feet': self.tm5.id, 'Tome Accessory Augment': self.tm8.id},
-            {'token': False, 'Head': self.tm2.id, 'Hands': self.tm1.id, 'Feet': self.tm6.id, 'Tome Accessory Augment': self.tm4.id},
-            {'token': True, 'Head': self.tm3.id, 'Hands': None, 'Feet': self.tm8.id, 'Tome Accessory Augment': self.tm7.id},
-            {'token': False, 'Head': self.tm5.id, 'Hands': None, 'Feet': self.tm4.id, 'Tome Accessory Augment': self.tm2.id},
-            {'token': False, 'Head': self.tm7.id, 'Hands': None, 'Feet': None, 'Tome Accessory Augment': self.tm1.id},
-            {'token': False, 'Head': None, 'Hands': None, 'Feet': None, 'Tome Accessory Augment': self.tm6.id},
+            {'token': False, 'Head': self.tm2.id, 'Hands': self.tm7.id, 'Feet': self.tm8.id, 'Tome Accessory Augment': self.tm1.id},
+            {'token': False, 'Head': self.tm3.id, 'Hands': self.tm2.id, 'Feet': self.tm5.id, 'Tome Accessory Augment': self.tm8.id},
+            {'token': False, 'Head': self.tm7.id, 'Hands': self.tm1.id, 'Feet': self.tm6.id, 'Tome Accessory Augment': self.tm4.id},
+            {'token': True, 'Head': self.tm8.id, 'Hands': None, 'Feet': self.tm3.id, 'Tome Accessory Augment': self.tm2.id},
+            {'token': False, 'Head': self.tm5.id, 'Hands': None, 'Feet': self.tm4.id, 'Tome Accessory Augment': self.tm7.id},
+            {'token': False, 'Head': self.tm1.id, 'Hands': None, 'Feet': None, 'Tome Accessory Augment': self.tm6.id},
+            {'token': False, 'Head': None, 'Hands': None, 'Feet': None, 'Tome Accessory Augment': self.tm2.id},
             {'token': True, 'Head': None, 'Hands': None, 'Feet': None, 'Tome Accessory Augment': self.tm3.id},
         ]
+
         second_floor_received = content['second_floor']
         self.assertEqual(len(second_floor_expected), len(second_floor_received), second_floor_received)
         for i in range(len(second_floor_expected)):
@@ -870,9 +871,9 @@ class LootSolverTestSuite(SavageAimTestCase):
             {'token': False, 'Body': self.tm8.id, 'Legs': self.tm7.id, 'Tome Armour Augment': self.tm3.id},
             {'token': False, 'Body': self.tm5.id, 'Legs': self.tm1.id, 'Tome Armour Augment': self.tm6.id},
             {'token': True, 'Body': self.tm4.id, 'Legs': None, 'Tome Armour Augment': self.tm2.id},
-            {'token': False, 'Body': self.tm3.id, 'Legs': None, 'Tome Armour Augment': self.tm8.id},
-            {'token': False, 'Body': None, 'Legs': None, 'Tome Armour Augment': self.tm7.id},
-            {'token': False, 'Body': None, 'Legs': None, 'Tome Armour Augment': self.tm5.id},
+            {'token': False, 'Body': self.tm3.id, 'Legs': None, 'Tome Armour Augment': self.tm7.id},
+            {'token': False, 'Body': None, 'Legs': None, 'Tome Armour Augment': self.tm8.id},
+            {'token': False, 'Body': None, 'Legs': None, 'Tome Armour Augment': self.tm6.id},
             {'token': True, 'Body': None, 'Legs': None, 'Tome Armour Augment': self.tm1.id},
         ]
         third_floor_received = content['third_floor']
@@ -1026,12 +1027,12 @@ class LootSolverTestSuite(SavageAimTestCase):
 
         # Also run the second floor function and check that everything is returned in the order we expect
         second_floor_expected = [
-            {'token': False, 'Head': self.tm1.id, 'Hands': self.tm1.id, 'Feet': self.tm5.id, 'Tome Accessory Augment': self.tm8.id},
-            {'token': True, 'Head': self.tm7.id, 'Hands': None, 'Feet': self.tm3.id, 'Tome Accessory Augment': self.tm2.id},
-            {'token': False, 'Head': self.tm5.id, 'Hands': None, 'Feet': self.tm6.id, 'Tome Accessory Augment': self.tm1.id},
-            {'token': False, 'Head': self.tm8.id, 'Hands': None, 'Feet': None, 'Tome Accessory Augment': self.tm4.id},
-            {'token': False, 'Head': None, 'Hands': None, 'Feet': None, 'Tome Accessory Augment': self.tm7.id},
-            {'token': True, 'Head': None, 'Hands': None, 'Feet': None, 'Tome Accessory Augment': self.tm3.id},
+            {'token': False, 'Head': self.tm8.id, 'Hands': self.tm1.id, 'Feet': self.tm5.id, 'Tome Accessory Augment': self.tm2.id},
+            {'token': True, 'Head': self.tm1.id, 'Hands': None, 'Feet': self.tm3.id, 'Tome Accessory Augment': self.tm7.id},
+            {'token': False, 'Head': self.tm5.id, 'Hands': None, 'Feet': self.tm6.id, 'Tome Accessory Augment': self.tm8.id},
+            {'token': False, 'Head': self.tm7.id, 'Hands': None, 'Feet': None, 'Tome Accessory Augment': self.tm1.id},
+            {'token': False, 'Head': None, 'Hands': None, 'Feet': None, 'Tome Accessory Augment': self.tm4.id},
+            {'token': True, 'Head': None, 'Hands': None, 'Feet': None, 'Tome Accessory Augment': self.tm2.id},
         ]
         second_floor_received = LootSolver._get_second_floor_data(LootSolver._get_requirements_map(self.team), Loot.objects.all(), id_order, received)
         self.assertEqual(len(second_floor_expected), len(second_floor_received), second_floor_received)
