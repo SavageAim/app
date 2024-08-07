@@ -261,6 +261,10 @@ class LootSolver(APIView):
         # Remove the 0 key
         prio_brackets.pop(0, None)
         return clears, prio_brackets, floor_requirements
+    
+    @staticmethod
+    def _get_output_slot_name(slot: str) -> str:
+        return slot.replace('-', ' ').title()
 
     @staticmethod
     def _get_handout_data(slots: List[str], requirements: Requirements, prio_brackets: PrioBrackets, weeks_per_token: int, weeks: int) -> List[HandoutData]:
@@ -274,6 +278,82 @@ class LootSolver(APIView):
         while len(prio_brackets) > 0:
             weeks += 1
             week_data = {'token': False}
+            
+            # Check what items we no longer need this week and add them to the handout info
+            for slot, needs in requirements.items():
+                if len(needs) == 0:
+                    week_data[LootSolver._get_output_slot_name(slot)] = None
+
+            # Build up a map of who is needed to sort every required item for the week
+            required_slots_for_week = set(slot for slot in requirements if LootSolver._get_output_slot_name(slot) not in week_data)
+            needed_item_count = len(required_slots_for_week)
+
+            # Loop through the people in priority order, populating a map of who needs what until all of the required items for the week are covered
+            # This ensures each item is given to the person with the highest priority of getting it
+            done = False
+            potential_loot_members: Dict[int, List[str]] = {}
+            for priority in sorted(prio_brackets, reverse=True):
+                for member_id in prio_brackets[priority]:
+                    required = [slot for slot in requirements if member_id in requirements[slot]]
+                    potential_loot_members[member_id] = required
+
+                    # Subtract from the set of things needed this week
+                    required_slots_for_week -= set(required)
+
+                    # Check that we have enough potential members to cover each available item
+                    if len(potential_loot_members) >= needed_item_count and len(required_slots_for_week) == 0:
+                        done = True
+                        break
+                if done:
+                    break
+
+            # At this point, we have a mapping of potential member_ids to the items they still need this week.
+            # It has the minimum required amount of people such that every Need item can be handed out to someone.
+            # Now we determine who actually gets what
+            # There is a 3 step priority system to sorting out handouts;
+            # 1 - Anyone who has only one potential item
+            # 2 - Anyone who is the only person who needs a given item
+            # 3 - Go down the list from highest to lowest priority and just give them one of the needed items
+            # Whenever we give someone an item, we remove them from the potential list, remove their item from everyone elses'
+            # If anyone gets reduced to 1 item left, they get added to the queue
+            handout_queue = deque()
+
+            # Handle the two special cases first
+            # 1 - Anyone who only has 1 item they can get
+            for member_id, member_items in potential_loot_members.items():
+                if len(member_items) == 1:
+                    handout_queue.append((member_id, member_items[0]))
+
+            # 2 - Anyone who has a unique item in their list
+            for member_id, member_items in potential_loot_members.items():
+                member_items_set = set(member_items)
+                other_set = set()
+                for other_member_id, other_member_items in potential_loot_members.items():
+                    if member_id == other_member_id:
+                        continue
+                    other_set |= set(other_member_items)
+
+                uniques = member_items_set - other_set
+                if len(uniques) > 0:
+                    handout_queue.append((member_id, list(uniques)[0]))
+
+            # Loop until we get all the requirements
+            while len(week_data) < len(requirements) and len(potential_loot_members) > 0:
+                # Check if we've already had someone in the handout queue, if not we get the first id and item
+                if len(handout_queue) > 0:
+                    member_id, item = handout_queue.popleft()
+                else:
+                    member_id = list(potential_loot_members)[0]
+                    member_items = potential_loot_members.pop(member_id, [])
+                    if len(member_items) == 0:
+                        continue
+                    item = member_items[0]
+
+                # Attempt to give this item to the chosen member, if it's not already in the week's data
+                output_item_name = LootSolver._get_output_slot_name(item)
+                if output_item_name in week_data:
+                    continue
+
             # Run through the slots
             for slot in slots:
                 # Check the prio brackets in descending order
@@ -288,7 +368,7 @@ class LootSolver(APIView):
 
                     if assignee is not None:
                         break
-                week_data[slot.replace('-', ' ').title()] = assignee
+                week_data[LootSolver._get_output_slot_name(slot)] = assignee
 
                 if assignee is None:
                     continue
