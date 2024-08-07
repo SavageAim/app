@@ -1466,3 +1466,74 @@ class LootSolverV2TestSuite(SavageAimTestCase):
             self.assertDictEqual(third_floor_expected[i], third_floor_received[i], f'{i+1}/{len(third_floor_received)}')
 
         self.assertEqual(content['fourth_floor'], {'weapons': 8, 'mounts': 8})
+
+    def test_for_single_person_requiring_loot(self):
+        """
+        Make it so only a single person in the team requires loot, ensure the solver manages this scenario properly
+        """
+        self.tm2.delete()
+        self.tm3.delete()
+        self.tm4.delete()
+        self.tm5.delete()
+        self.tm6.delete()
+        self.tm7.delete()
+        self.tm8.delete()
+        self.team.refresh_from_db()
+
+        # Generate the expected requirements
+        expected = {
+            'necklace': [self.tm1.id],
+
+            'head': [self.tm1.id],
+            'hands': [self.tm1.id],
+            'tome-accessory-augment': [
+                *([self.tm1.id] * 3),
+            ],
+
+            'legs': [self.tm1.id],
+            'tome-armour-augment': [
+                *([self.tm1.id] * 2),
+            ],
+
+            'mainhand': [self.tm1.id],
+        }
+        received = dict(LootSolver._get_requirements_map(self.team))
+        self.assertDictEqual(expected, received)
+
+        # Now run the solver and ensure that the single user who needs stuff is funneled items as fast as possible
+        url = reverse('api:loot_solver', kwargs={'team_id': self.team.pk})
+        user = self._get_user()
+        self.client.force_authenticate(user)
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        content = response.json()
+
+        first_floor_expected = [
+            {'token': False, 'Earrings': None, 'Necklace': self.tm1.id, 'Bracelet': None, 'Ring': None},
+        ]
+        first_floor_received = content['first_floor']
+        self.assertEqual(len(first_floor_expected), len(first_floor_received), first_floor_received)
+        for i in range(len(first_floor_expected)):
+            self.assertDictEqual(first_floor_expected[i], first_floor_received[i], f'{i+1}/{len(first_floor_received)}')
+
+        second_floor_expected = [
+            {'token': False, 'Head': self.tm1.id, 'Hands': self.tm1.id, 'Feet': None, 'Tome Accessory Augment': self.tm1.id},
+            {'token': False, 'Head': None, 'Hands': None, 'Feet': None, 'Tome Accessory Augment': self.tm1.id},
+            {'token': False, 'Head': None, 'Hands': None, 'Feet': None, 'Tome Accessory Augment': self.tm1.id},
+        ]
+        second_floor_received = content['second_floor']
+        self.assertEqual(len(second_floor_expected), len(second_floor_received), second_floor_received)
+        for i in range(len(second_floor_expected)):
+            self.assertDictEqual(second_floor_expected[i], second_floor_received[i], f'{i+1}/{len(second_floor_received)}')
+
+        third_floor_expected = [
+            {'token': False, 'Body': None, 'Legs': self.tm1.id, 'Tome Armour Augment': self.tm1.id},
+            {'token': False, 'Body': None, 'Legs': None, 'Tome Armour Augment': self.tm1.id},
+        ]
+        third_floor_received = content['third_floor']
+        self.assertEqual(len(third_floor_expected), len(third_floor_received), third_floor_received)
+        for i in range(len(third_floor_expected)):
+            self.assertDictEqual(third_floor_expected[i], third_floor_received[i], f'{i+1}/{len(third_floor_received)}')
+
+        # Mounts will still be 8 since it's history based
+        self.assertEqual(content['fourth_floor'], {'weapons': 1, 'mounts': 1})
