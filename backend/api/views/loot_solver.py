@@ -334,8 +334,8 @@ class LootSolver(APIView):
                     other_set |= set(other_member_items)
 
                 uniques = member_items_set - other_set
-                if len(uniques) > 0:
-                    handout_queue.append((member_id, list(uniques)[0]))
+                for unique_item in uniques:
+                    handout_queue.append((member_id, unique_item))
 
             # Loop until we get all the requirements
             while len(week_data) < len(requirements) and len(potential_loot_members) > 0:
