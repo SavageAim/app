@@ -277,7 +277,7 @@ class LootSolver(APIView):
             remove_slots = [remove_slots[-1]] + remove_slots[:-1]
         while len(prio_brackets) > 0:
             weeks += 1
-            week_data = {'token': False}
+            week_data = {}
             
             # Check what items we no longer need this week and add them to the handout info
             for slot, needs in requirements.items():
@@ -344,8 +344,10 @@ class LootSolver(APIView):
                     member_id, item = handout_queue.popleft()
                 else:
                     member_id = list(potential_loot_members)[0]
-                    member_items = potential_loot_members.pop(member_id, [])
+                    member_items = potential_loot_members.get(member_id, [])
                     if len(member_items) == 0:
+                        # Remove the member and re-loop
+                        potential_loot_members.pop(member_id, None)
                         continue
                     item = member_items[0]
 
@@ -354,38 +356,38 @@ class LootSolver(APIView):
                 if output_item_name in week_data:
                     continue
 
-            # Run through the slots
-            for slot in slots:
-                # Check the prio brackets in descending order
-                assignee = None
-                for check_prio in sorted(prio_brackets, reverse=True):
-                    # Run through the names and find the highest prio assignee
-                    for check_id in prio_brackets.get(check_prio, []):
-                        if check_id in requirements.get(slot, []):
-                            assignee = check_id
-                            requirements[slot].remove(assignee)
-                            break
-
-                    if assignee is not None:
-                        break
-                week_data[LootSolver._get_output_slot_name(slot)] = assignee
-
-                if assignee is None:
-                    continue
+                # At this point, the item is guaranteed to go to this person
+                week_data[output_item_name] = member_id
+                requirements[item].remove(member_id)
 
                 # Reduce the requirement number of the person and add them to the end of the list
-                new_prio = check_prio - 1
-                prio_brackets[check_prio].remove(assignee)
-                if prio_brackets[check_prio] == []:
-                    # If this empties the list, destroy it
-                    prio_brackets.pop(check_prio, None)
+                prio = None
+                for check_prio, names in prio_brackets.items():
+                    if member_id in names:
+                        prio = check_prio
+                        break
+                new_prio = prio - 1
+                prio_brackets[prio].remove(member_id)
+                if prio_brackets[prio] == []:
+                        # If this empties the list, destroy it
+                        prio_brackets.pop(check_prio, None)
                 if new_prio > 0:
                     # If the assignee's new prio (number of items they need) isn't 0, add them to the lower prio
+                    if new_prio not in prio_brackets:
+                        prio_brackets[new_prio] = []
+                    prio_brackets[new_prio].append(member_id)
+
+                # Now we need to remove the member_id from potentials, and also remove the item from anyone else
+                potential_loot_members.pop(member_id)
+                for other_member_id, other_member_items in potential_loot_members.items():
                     try:
-                        prio_brackets[new_prio].append(assignee)
-                    except KeyError:
-                        # Defaultdict doesn't re-default if the list is removed
-                        prio_brackets[new_prio] = [assignee]
+                        other_member_items.remove(item)
+                    except:
+                        # If the item isn't in the list, that's fine
+                        continue
+                    if len(other_member_items) == 1:
+                        # Put the person and their item into the queue
+                        handout_queue.append((other_member_id, other_member_items[0]))
 
             # Add the week data to the handouts list
             handouts.append(week_data)
@@ -414,6 +416,8 @@ class LootSolver(APIView):
                     # 0 is also the max and we removed it?
                     pass
                 week_data['token'] = True
+            else:
+                week_data['token'] = False
 
         return handouts
 
