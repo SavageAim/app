@@ -155,10 +155,12 @@ class XIVGearImport(ImportAPIView):
         # Use the returned map to calculate the min and max ils, and also replace IDs with names in sa_gear
         min_il = float('inf')
         max_il = float('-inf')
+        item_levels = {}
         for slot, xivapi_id in list(sa_gear.items()):
             details = gear_names[xivapi_id]
             sa_gear[slot] = details['name']
             il = details['item_level']
+            item_levels[details['name']] = il
             if il > max_il:
                 max_il = il
             if il < min_il:
@@ -176,11 +178,11 @@ class XIVGearImport(ImportAPIView):
         # Loop through each gear slot and fetch the id based off the name
         for slot, item_name in sa_gear.items():
             if slot in self.ARMOUR_SLOTS:
-                imported_data[slot] = self._get_gear_id(gear_records.filter(has_armour=True), item_name)
+                imported_data[slot] = self._get_gear_id(gear_records.filter(has_armour=True, item_level=item_levels[item_name]), item_name)
             elif slot in self.ACCESSORY_SLOTS:
-                imported_data[slot] = self._get_gear_id(gear_records.filter(has_accessories=True), item_name)
+                imported_data[slot] = self._get_gear_id(gear_records.filter(has_accessories=True, item_level=item_levels[item_name]), item_name)
             else:
-                imported_data[slot] = self._get_gear_id(gear_records.filter(has_weapon=True), item_name)
+                imported_data[slot] = self._get_gear_id(gear_records.filter(has_weapon=True, item_level=item_levels[item_name]), item_name)
 
         # Check for offhand
         if job_id != 'PLD':
