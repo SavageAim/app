@@ -278,7 +278,7 @@ class LootSolver(APIView):
         while len(prio_brackets) > 0:
             weeks += 1
             week_data = {}
-            
+
             # Check what items we no longer need this week and add them to the handout info
             for slot, needs in requirements.items():
                 if len(needs) == 0:
@@ -338,7 +338,7 @@ class LootSolver(APIView):
                     handout_queue.append((member_id, unique_item))
 
             # Loop until we get all the requirements
-            while len(week_data) < len(requirements) and len(potential_loot_members) > 0:
+            while len(week_data) < len(requirements) and (len(potential_loot_members) > 0 or len(handout_queue) > 0):
                 # Check if we've already had someone in the handout queue, if not we get the first id and item
                 if len(handout_queue) > 0:
                     member_id, item = handout_queue.popleft()
@@ -369,8 +369,8 @@ class LootSolver(APIView):
                 new_prio = prio - 1
                 prio_brackets[prio].remove(member_id)
                 if prio_brackets[prio] == []:
-                        # If this empties the list, destroy it
-                        prio_brackets.pop(check_prio, None)
+                    # If this empties the list, destroy it
+                    prio_brackets.pop(check_prio, None)
                 if new_prio > 0:
                     # If the assignee's new prio (number of items they need) isn't 0, add them to the lower prio
                     if new_prio not in prio_brackets:
@@ -378,7 +378,7 @@ class LootSolver(APIView):
                     prio_brackets[new_prio].append(member_id)
 
                 # Now we need to remove the member_id from potentials, and also remove the item from anyone else
-                potential_loot_members.pop(member_id)
+                potential_loot_members.pop(member_id, None)
                 for other_member_id, other_member_items in potential_loot_members.items():
                     try:
                         other_member_items.remove(item)
