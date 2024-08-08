@@ -12,6 +12,7 @@ class LodestoneScraper(SavageAimTestCase):
     """
     Test that the Lodestone Scraper returns what is expected for its various methods
     """
+    maxDiff = None
 
     def test_token_check(self):
         """
@@ -79,13 +80,13 @@ class LodestoneScraper(SavageAimTestCase):
                 'hands': 'Koga Tekko',
                 'legs': 'Augmented Ironworks Brais of Scouting',
                 'feet': 'Koga Kyahan',
-                'earrings': 'Menphina\'s Earring',
+                'earrings': 'Azeyma\'s Earrings',
                 'necklace': 'Aetherial Brass Gorget',
                 'bracelet': 'Dawn Wristguards',
                 'right_ring': 'Brand-new Ring',
                 'left_ring': 'Weathered Ring',
             },
-            'max_il': 430,
+            'max_il': 560,
             'min_il': 5,
         }
         data = SCRAPER.get_current_gear(ALT_CHAR_ID, 'NIN')
