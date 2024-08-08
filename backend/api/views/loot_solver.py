@@ -261,7 +261,7 @@ class LootSolver(APIView):
         # Remove the 0 key
         prio_brackets.pop(0, None)
         return clears, prio_brackets, floor_requirements
-    
+
     @staticmethod
     def _get_output_slot_name(slot: str) -> str:
         return slot.replace('-', ' ').title()
@@ -382,7 +382,7 @@ class LootSolver(APIView):
                 for other_member_id, other_member_items in potential_loot_members.items():
                     try:
                         other_member_items.remove(item)
-                    except:
+                    except ValueError:
                         # If the item isn't in the list, that's fine
                         continue
                     if len(other_member_items) == 1:
