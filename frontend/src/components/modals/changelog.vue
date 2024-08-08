@@ -12,8 +12,10 @@
     </div>
     <div class="card-content content">
       <h2 class="has-text-primary subtitle">{{ version }}</h2>
-      <div class="divider"><i class="material-icons icon">expand_more</i> Fixes &amp; Improvements <i class="material-icons icon">expand_more</i></div>
-      <p>Fixed an issue where the "Show Loot Distribution" buttons on the mobile view of the Loot Solver did not cause the popup to appear!</p>
+      <div class="divider"><i class="material-icons icon">expand_more</i> Loot Solver Update <i class="material-icons icon">expand_more</i></div>
+      <p>Discovered a major issue with the Loot Solver algorithm being inefficient due to it being super naive.</p>
+      <p>This release improves the algorithm to be more true to the "top N people get items every week".</p>
+      <p>A whole writeup of the methodology is available <a href="https://github.com/orgs/SavageAim/discussions/1" target="_blank">here</a>, in case anyone wants to have a read!</p>
     </div>
   </div>
 </template>
