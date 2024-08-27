@@ -136,8 +136,7 @@ export default class BISListForm extends Vue {
   }
 
   get syncableLists(): BISList[] {
-    if (this.character.bis_lists == null || !this.renderDesktop) return []
-    console.log(this.character.bis_lists)
+    if (!this.renderDesktop || this.character == null || this.character.bis_lists == null) return []
     return this.character.bis_lists.filter((list: BISList) => list.id !== this.bisList.id && list.job.id === this.bisList.job_id)
   }
 

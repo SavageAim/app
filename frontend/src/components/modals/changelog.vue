@@ -12,8 +12,15 @@
     </div>
     <div class="card-content content">
       <h2 class="has-text-primary subtitle">{{ version }}</h2>
-      <div class="divider"><i class="material-icons icon">expand_more</i> Fixes and Improvements <i class="material-icons icon">expand_more</i></div>
-      <p>Fixed an issue that was happening when trying to Auto-Assign Loot from the Solver when there were Greed slots for the week.</p>
+      <div class="divider"><i class="material-icons icon">expand_more</i> Bugfixes <i class="material-icons icon">expand_more</i></div>
+      <p>
+        Set the weeks-per-token-purchase for the second fight of a Tier to <code>3</code>, as accessory augments are only 3 tokens instead of 4.
+        <ul>
+          <li>This shouldn't affect the loot distrib rolls, only it now requires less weeks to get there!</li>
+        </ul>
+      </p>
+      <p>Fixed some issues with proxy character pages not rendering properly.</p>
+      <p>Fixed errors occurring when trying to import from Lodestone when the Character is missing equipment.</p>
     </div>
   </div>
 </template>

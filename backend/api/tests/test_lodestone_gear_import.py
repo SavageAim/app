@@ -37,20 +37,76 @@ class LodestoneGearImport(SavageAimTestCase):
         # Build an expected data packet
         expected = {
             'job_id': 'GNB',
-            'mainhand': Gear.objects.get(name='Neo Kingdom').pk,
-            'offhand': Gear.objects.get(name='Neo Kingdom').pk,
-            'head': Gear.objects.get(name='Neo Kingdom', has_armour=True).pk,
-            'body': Gear.objects.get(name='Neo Kingdom', has_armour=True).pk,
-            'hands': Gear.objects.get(name='Neo Kingdom', has_armour=True).pk,
-            'legs': Gear.objects.get(name='Neo Kingdom', has_armour=True).pk,
-            'feet': Gear.objects.get(name='Neo Kingdom', has_armour=True).pk,
-            'earrings': Gear.objects.get(name='Neo Kingdom', has_accessories=True).pk,
-            'necklace': Gear.objects.get(name='Neo Kingdom', has_accessories=True).pk,
-            'bracelet': Gear.objects.get(name='Neo Kingdom', has_accessories=True).pk,
-            'right_ring': Gear.objects.get(name='Neo Kingdom', has_accessories=True).pk,
-            'left_ring': Gear.objects.get(name='Epochal', has_accessories=True).pk,
-            'min_il': 690,
-            'max_il': 700,
+            'mainhand': Gear.objects.get(name='Archeo Kingdom').pk,
+            'offhand': Gear.objects.get(name='Archeo Kingdom').pk,
+            'head': Gear.objects.get(name='Dark Horse Champion', has_armour=True).pk,
+            'body': Gear.objects.get(name='Augmented Quetzalli', has_armour=True).pk,
+            'hands': Gear.objects.get(name='Quetzalli', has_armour=True).pk,
+            'legs': Gear.objects.get(name='Archeo Kingdom', has_armour=True).pk,
+            'feet': Gear.objects.get(name='Archeo Kingdom', has_armour=True).pk,
+            'earrings': Gear.objects.get(name='Dark Horse Champion', has_accessories=True).pk,
+            'necklace': Gear.objects.get(name='Dark Horse Champion', has_accessories=True).pk,
+            'bracelet': Gear.objects.get(name='Augmented Quetzalli', has_accessories=True).pk,
+            'right_ring': Gear.objects.get(name='Archeo Kingdom', has_accessories=True).pk,
+            'left_ring': Gear.objects.get(name='Dark Horse Champion', has_accessories=True).pk,
+            'min_il': 710,
+            'max_il': 730,
+        }
+        self.maxDiff = None
+        self.assertDictEqual(response.json(), expected)
+
+    def test_import_with_missing_gear(self):
+        """
+        Test Plan;
+            - Create a Job and Gear for starting gear so that the import works out properly.
+            - Import a character with missing gear slots, ensure that the API doesn't break.
+        """
+        Job.objects.create(name='Pugilist', id='PGL', role='dps', ordering=24)
+        lalafellin = Gear.objects.create(
+            name='Lalafellin',
+            item_level=5,
+            has_armour=True,
+            has_accessories=False,
+            has_weapon=False,
+        ).pk
+        weathered_acc = Gear.objects.create(
+            name='Weathered',
+            item_level=5,
+            has_armour=False,
+            has_accessories=True,
+            has_weapon=False,
+        ).pk
+        weathered = Gear.objects.create(
+            name='Weathered',
+            item_level=1,
+            has_armour=False,
+            has_accessories=False,
+            has_weapon=True,
+        ).pk
+
+        url = reverse('api:lodestone_gear_import', kwargs={'character_id': '47800977', 'expected_job': 'PGL'})
+        user = self._get_user()
+        self.client.force_authenticate(user)
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK, response.json())
+
+        # Build an expected data packet
+        expected = {
+            'job_id': 'PGL',
+            'mainhand': weathered,
+            'offhand': weathered,
+            'head': -1,
+            'body': lalafellin,
+            'hands': lalafellin,
+            'legs': lalafellin,
+            'feet': lalafellin,
+            'earrings': weathered_acc,
+            'necklace': weathered_acc,
+            'bracelet': weathered_acc,
+            'right_ring': -1,
+            'left_ring': weathered_acc,
+            'min_il': 1,
+            'max_il': 5,
         }
         self.maxDiff = None
         self.assertDictEqual(response.json(), expected)

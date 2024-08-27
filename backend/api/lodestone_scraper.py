@@ -186,17 +186,21 @@ class LodestoneScraper:
             if (slot_name == 'OFFHAND' and expected_job != 'PLD') or slot_name in IGNORED_SLOTS:
                 continue
 
-            class_list = soup.select_one(selectors['CLASS_LIST']['selector']).getText()
-            if expected_job not in class_list and class_list not in SPECIAL_ALLOWED_CLASSLISTS:
-                raise MismatchedJobError(class_list)
+            # Do a test to see if the gear slot is available
+            class_list_el = soup.select_one(selectors['CLASS_LIST']['selector'])
+            gear_name = None
+            if class_list_el is not None:
+                class_list = soup.select_one(selectors['CLASS_LIST']['selector']).getText()
+                if expected_job not in class_list and class_list not in SPECIAL_ALLOWED_CLASSLISTS:
+                    raise MismatchedJobError(class_list)
 
-            gear_name = soup.select_one(selectors['NAME']['selector']).getText()
-            item_level = int(soup.select_one(selectors['ITEM_LEVEL']['selector']).getText().split(' ')[-1])
+                gear_name = soup.select_one(selectors['NAME']['selector']).getText()
+                item_level = int(soup.select_one(selectors['ITEM_LEVEL']['selector']).getText().split(' ')[-1])
 
-            if item_level > max_il:
-                max_il = item_level
-            if item_level < min_il:
-                min_il = item_level
+                if item_level > max_il:
+                    max_il = item_level
+                if item_level < min_il:
+                    min_il = item_level
 
             slot_map[LODESTONE_TO_SA_NAME_MAP[slot_name]] = gear_name
 

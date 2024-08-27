@@ -67,7 +67,7 @@ export default class Actions extends Vue {
   }
 
   get syncableLists(): BISList[] {
-    if (this.character.bis_lists == null) return []
+    if (this.character.bis_lists == null || this.bisList == null) return []
     return this.character.bis_lists.filter((list: BISList) => list.id !== this.bisList.id && list.job.id === this.bisList.job_id)
   }
 

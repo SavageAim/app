@@ -94,12 +94,18 @@ class ImportAPIView(APIView):
     ACCESSORY_SLOTS = {'earrings', 'necklace', 'bracelet', 'left_ring', 'right_ring'}
 
     @staticmethod
-    def _get_gear_id(gear_selection: Dict[str, str], item_name: str) -> str:
+    def _get_gear_id(gear_selection: Dict[str, str], item_name: Optional[str]) -> str:
         """
         Find the id of the gear piece that matches the name closest.
+
+        If item_name is None, return -1 for the dropdown option.
+
         Check the extra_import_classes for distance also
         However, if item_name is present in extra_import_names, immediately return the id
         """
+        if item_name is None:
+            return -1
+
         diff = float('inf')
         gear_id = None
         for details in gear_selection:
