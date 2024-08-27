@@ -19,6 +19,8 @@
           <li>This shouldn't affect the loot distrib rolls, only it now requires less weeks to get there!</li>
         </ul>
       </p>
+      <p>Fixed some issues with proxy character pages not rendering properly.</p>
+      <p>Fixed errors occurring when trying to import from Lodestone when the Character is missing equipment.</p>
     </div>
   </div>
 </template>
