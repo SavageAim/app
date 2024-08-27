@@ -157,7 +157,7 @@ export default class TeamLoot extends TeamViewMixin {
     // Turn data object into a map of item: PFCM
     const chosenMembers: { [item: string]: PerFightChosenMember } = {}
     Object.entries(data).forEach(([item, memberId]) => {
-      if (item !== 'token') {
+      if (item !== 'token' && memberId !== null) {
         const member = this.getTeamMember(memberId)
         const itemsObtained = this.loot.received[member.name]?.need || 0
         chosenMembers[item] = {
