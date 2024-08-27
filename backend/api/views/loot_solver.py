@@ -52,7 +52,7 @@ class LootSolver(APIView):
     SECOND_FLOOR_SLOTS = ['head', 'hands', 'feet', 'tome-accessory-augment']
     THIRD_FLOOR_SLOTS = ['body', 'legs', 'tome-armour-augment', ]
     FIRST_FLOOR_TOKENS = 3
-    SECOND_FLOOR_TOKENS = 4
+    SECOND_FLOOR_TOKENS = 3
     THIRD_FLOOR_TOKENS = 4
 
     @staticmethod

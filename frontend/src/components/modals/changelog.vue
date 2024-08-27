@@ -12,10 +12,13 @@
     </div>
     <div class="card-content content">
       <h2 class="has-text-primary subtitle">{{ version }}</h2>
-      <div class="divider"><i class="material-icons icon">expand_more</i> Loot Solver Update <i class="material-icons icon">expand_more</i></div>
-      <p>Discovered a major issue with the Loot Solver algorithm being inefficient due to it being super naive.</p>
-      <p>This release improves the algorithm to be more true to the "top N people get items every week".</p>
-      <p>A whole writeup of the methodology is available <a href="https://github.com/orgs/SavageAim/discussions/1" target="_blank">here</a>, in case anyone wants to have a read!</p>
+      <div class="divider"><i class="material-icons icon">expand_more</i> Bugfixes <i class="material-icons icon">expand_more</i></div>
+      <p>
+        Set the weeks-per-token-purchase for the second fight of a Tier to <code>3</code>, as accessory augments are only 3 tokens instead of 4.
+        <ul>
+          <li>This shouldn't affect the loot distrib rolls, only it now requires less weeks to get there!</li>
+        </ul>
+      </p>
     </div>
   </div>
 </template>
