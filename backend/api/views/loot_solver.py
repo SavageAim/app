@@ -6,6 +6,7 @@ Record new loot and update BIS Lists accordingly.
 """
 # stdlib
 from collections import defaultdict, deque
+from copy import deepcopy
 from typing import Dict, List, Tuple, Union
 # lib
 from django.core.exceptions import ValidationError
@@ -273,6 +274,8 @@ class LootSolver(APIView):
         """
         handouts = []
         remove_slots = slots.copy()
+        # Deepcopy the prio brackets dict so that sentry errors can print the upper level prio brackets for more debugging ease
+        prio_brackets = deepcopy(prio_brackets)
         if 'augment' in slots[-1]:
             remove_slots = [remove_slots[-1]] + remove_slots[:-1]
         while len(prio_brackets) > 0:
