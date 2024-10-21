@@ -30,6 +30,7 @@ class Settings(auto_prefetch.Model):
     }
 
     loot_manager_version = models.CharField(max_length=10, choices=LOOT_MANAGER_VERSIONS, default=LOOT_MANAGER_DEFAULT)
+    loot_solver_greed = models.BooleanField(default=False)
     notifications = models.JSONField(default=dict)
     theme = models.CharField(max_length=24)
     user = auto_prefetch.OneToOneField(User, on_delete=models.CASCADE, related_name='settings')

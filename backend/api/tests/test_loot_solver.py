@@ -1550,15 +1550,37 @@ class LootSolverV2TestSuite(SavageAimTestCase):
             list(requirements.keys()),
             requirements,
             prio_brackets,
-            weeks,
-            weeks - 1,
+            4,
+            3,
         )
         self.assertEqual(len(result), 1, result)
 
         expected = {
             'Body': None,
             'Legs': 1,
-            'Tome Armour Augment': None,
+            'Tome Armour Augment': 2,
             'token': True,
         }
+        self.assertDictEqual(result[0], expected)
+
+        # Now make the request greedy and ensure that the token is not assigned anymore
+        expected['Tome Armour Augment'] = None
+        prio_brackets = {
+            2: [1],
+            1: [2, 3, 4, 5, 6, 7, 8],
+        }
+        requirements = {
+            'body': [],
+            'legs': [1],
+            'tome-armour-augment': [1, 2, 3, 4, 5, 6, 7, 8]
+        }
+        result = LootSolver._get_handout_data(
+            list(requirements.keys()),
+            requirements,
+            prio_brackets,
+            4,
+            3,
+            True,
+        )
+        self.assertEqual(len(result), 1, result)
         self.assertDictEqual(result[0], expected)

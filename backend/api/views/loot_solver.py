@@ -279,7 +279,7 @@ class LootSolver(APIView):
         return slot.replace('-', ' ').title()
 
     @staticmethod
-    def _get_handout_data(slots: List[str], requirements: Requirements, prio_brackets: PrioBrackets, weeks_per_token: int, weeks: int) -> List[HandoutData]:
+    def _get_handout_data(slots: List[str], requirements: Requirements, prio_brackets: PrioBrackets, weeks_per_token: int, weeks: int, greedy: bool = False) -> List[HandoutData]:
         """
         Do the algorithm for gathering handout information
         """
@@ -372,7 +372,7 @@ class LootSolver(APIView):
 
                 # Check if we're already at the end of needing to assign loot
                 member_items_left = LootSolver._get_current_member_priority(prio_brackets, member_id)
-                if weeks % weeks_per_token == 0 and item in remove_slots and member_items_left <= 1:
+                if greedy and weeks % weeks_per_token == 0 and item in remove_slots and member_items_left <= 1:
                     week_data[output_item_name] = None
                     continue
 
@@ -447,6 +447,7 @@ class LootSolver(APIView):
         history: QuerySet[Loot],
         id_order: List[int],
         non_loot_gear_obtained: NonLootGear,
+        greedy: bool,
     ) -> List[HandoutData]:
         """
         Simulate handing out the loot for a first floor clear.
@@ -458,7 +459,7 @@ class LootSolver(APIView):
             id_order,
             non_loot_gear_obtained,
         )
-        return self._get_handout_data(self.FIRST_FLOOR_SLOTS, floor_requirements, prio_brackets, self.FIRST_FLOOR_TOKENS, weeks)
+        return self._get_handout_data(self.FIRST_FLOOR_SLOTS, floor_requirements, prio_brackets, self.FIRST_FLOOR_TOKENS, weeks, greedy)
 
     @staticmethod
     def _get_second_floor_data(
@@ -466,6 +467,7 @@ class LootSolver(APIView):
         history: QuerySet[Loot],
         id_order: List[int],
         non_loot_gear_obtained: NonLootGear,
+        greedy: bool,
     ) -> List[HandoutData]:
         """
         Simulate handing out the loot for a second floor clear.
@@ -477,7 +479,7 @@ class LootSolver(APIView):
             id_order,
             non_loot_gear_obtained,
         )
-        return LootSolver._get_handout_data(LootSolver.SECOND_FLOOR_SLOTS, floor_requirements, prio_brackets, LootSolver.SECOND_FLOOR_TOKENS, weeks)
+        return LootSolver._get_handout_data(LootSolver.SECOND_FLOOR_SLOTS, floor_requirements, prio_brackets, LootSolver.SECOND_FLOOR_TOKENS, weeks, greedy)
 
     def _get_third_floor_data(
         self,
@@ -485,6 +487,7 @@ class LootSolver(APIView):
         history: QuerySet[Loot],
         id_order: List[int],
         non_loot_gear_obtained: NonLootGear,
+        greedy: bool,
     ) -> List[HandoutData]:
         """
         Simulate handing out the loot for a third floor clear.
@@ -496,7 +499,7 @@ class LootSolver(APIView):
             id_order,
             non_loot_gear_obtained,
         )
-        return self._get_handout_data(self.THIRD_FLOOR_SLOTS, floor_requirements, prio_brackets, self.THIRD_FLOOR_TOKENS, weeks)
+        return self._get_handout_data(self.THIRD_FLOOR_SLOTS, floor_requirements, prio_brackets, self.THIRD_FLOOR_TOKENS, weeks, greedy)
 
     def _get_fourth_floor_data(self, history: QuerySet[Loot], team_size: int, non_loot_gear_obtained: NonLootGear) -> HandoutData:
         """
@@ -607,9 +610,9 @@ class LootSolver(APIView):
         non_loot_gear_obtained = self._get_gear_not_obtained_from_drops(obj.tier, obj.members.all(), history)
 
         # Run the four functions  gather them all up and build up a map for the response
-        first = self._get_first_floor_data(requirements, history, id_ordering, non_loot_gear_obtained)
-        second = self._get_second_floor_data(requirements, history, id_ordering, non_loot_gear_obtained)
-        third = self._get_third_floor_data(requirements, history, id_ordering, non_loot_gear_obtained)
+        first = self._get_first_floor_data(requirements, history, id_ordering, non_loot_gear_obtained, request.user.settings.loot_solver_greed)
+        second = self._get_second_floor_data(requirements, history, id_ordering, non_loot_gear_obtained, request.user.settings.loot_solver_greed)
+        third = self._get_third_floor_data(requirements, history, id_ordering, non_loot_gear_obtained, request.user.settings.loot_solver_greed)
         fourth = self._get_fourth_floor_data(history, obj.members.count(), non_loot_gear_obtained)
 
         # Build and return the response
