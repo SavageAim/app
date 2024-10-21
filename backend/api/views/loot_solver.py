@@ -57,6 +57,17 @@ class LootSolver(APIView):
     THIRD_FLOOR_TOKENS = 4
 
     @staticmethod
+    def _get_current_member_priority(prio_brackets: PrioBrackets, member_id: int) -> int:
+        """
+        Find what priority the given member has in the given prio brackets.
+        Returns 0 if they are not in the prio brackets
+        """
+        for prio, members in prio_brackets.items():
+            if member_id in members:
+                return prio
+        return 0
+
+    @staticmethod
     def _get_team_solver_sort_order(team: Team) -> List[int]:
         """
         Given a Team, apply their solver sort overrides to the default list, then turn that new list into a list of member IDs.
@@ -277,7 +288,7 @@ class LootSolver(APIView):
         # Deepcopy the prio brackets dict so that sentry errors can print the upper level prio brackets for more debugging ease
         prio_brackets = deepcopy(prio_brackets)
         if 'augment' in slots[-1]:
-            remove_slots = [remove_slots[-1]] + remove_slots[:-1]
+            remove_slots = [remove_slots[-1]]
         while len(prio_brackets) > 0:
             weeks += 1
             week_data = {}
@@ -357,6 +368,12 @@ class LootSolver(APIView):
                 # Attempt to give this item to the chosen member, if it's not already in the week's data
                 output_item_name = LootSolver._get_output_slot_name(item)
                 if output_item_name in week_data:
+                    continue
+
+                # Check if we're already at the end of needing to assign loot
+                member_items_left = LootSolver._get_current_member_priority(prio_brackets, member_id)
+                if weeks % weeks_per_token == 0 and item in remove_slots and member_items_left <= 1:
+                    week_data[output_item_name] = None
                     continue
 
                 # At this point, the item is guaranteed to go to this person
