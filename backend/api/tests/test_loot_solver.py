@@ -1527,3 +1527,38 @@ class LootSolverV2TestSuite(SavageAimTestCase):
 
         # Mounts will still be 8 since it's history based
         self.assertEqual(content['fourth_floor'], {'weapons': 1, 'mounts': 1})
+
+    def test_token_purchase_greed_assignments(self):
+        """
+        Test Plan:
+            - Create a small test case where someone needs 2 items, and everyone else needs 1
+            - Set the weeks value to be where token purchases are available
+            - Ensure that the person who needs 2 items gets 1 of their required items and all other slots are greed.
+        """
+        prio_brackets = {
+            2: [1],
+            1: [2, 3, 4, 5, 6, 7, 8],
+        }
+        requirements = {
+            'body': [],
+            'legs': [1],
+            'tome-armour-augment': [1, 2, 3, 4, 5, 6, 7, 8]
+        }
+        weeks = LootSolver.THIRD_FLOOR_TOKENS
+        Loot.objects.all().delete()
+        result = LootSolver._get_handout_data(
+            list(requirements.keys()),
+            requirements,
+            prio_brackets,
+            weeks,
+            weeks - 1,
+        )
+        self.assertEqual(len(result), 1, result)
+
+        expected = {
+            'Body': None,
+            'Legs': 1,
+            'Tome Armour Augment': None,
+            'token': True,
+        }
+        self.assertDictEqual(result[0], expected)
