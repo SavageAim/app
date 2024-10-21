@@ -40,7 +40,7 @@ class UserSerializer(serializers.Serializer):
             return obj.settings.loot_manager_version
         except (AttributeError, Settings.DoesNotExist):
             return Settings.LOOT_MANAGER_DEFAULT
-        
+
     def get_loot_solver_greed(self, obj) -> str:
         """
         Given a User, retrieve the greediness value they want for their loot solver

@@ -1598,7 +1598,6 @@ class LootSolverV2TestSuite(SavageAimTestCase):
             'legs': [1],
             'tome-armour-augment': [1, 2, 3, 4, 5, 6, 7, 8]
         }
-        weeks = LootSolver.THIRD_FLOOR_TOKENS
         Loot.objects.all().delete()
         result = LootSolver._get_handout_data(
             list(requirements.keys()),
