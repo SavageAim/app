@@ -82,12 +82,13 @@ class User(SavageAimTestCase):
         user = self._get_user()
         self.client.force_authenticate(user)
 
-        data = {'theme': 'abcde', 'notifications': {'abcde': 'abcde'}, 'loot_manager_version': 'abcde'}
+        data = {'theme': 'abcde', 'notifications': {'abcde': 'abcde'}, 'loot_manager_version': 'abcde', 'loot_solver_greed': 'abcde'}
         response = self.client.put(url, data)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(response.json()['username'], ['This field is required.'])
         self.assertEqual(response.json()['notifications'], ['"abcde" is not a valid choice.'])
         self.assertEqual(response.json()['loot_manager_version'], ['"abcde" is not a valid choice.'])
+        self.assertEqual(response.json()['loot_solver_greed'], ['Must be a valid boolean.'])
 
         data['notifications'] = {'team_lead': 'abcde'}
         response = self.client.put(url, data)
