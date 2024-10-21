@@ -1457,6 +1457,60 @@ class LootSolverV2TestSuite(SavageAimTestCase):
 
         self.assertEqual(content['fourth_floor'], {'weapons': 8, 'mounts': 8})
 
+    def test_whole_view_as_greedy(self):
+        """
+        Test the M1S situation against the solver algorithm, ensure that we get back the expected responses
+        """
+
+        url = reverse('api:loot_solver', kwargs={'team_id': self.team.pk})
+        user = self._get_user()
+        user.settings.loot_solver_greed = True
+        user.settings.save()
+        self.client.force_authenticate(user)
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        content = response.json()
+
+        first_floor_expected = [
+            {'token': False, 'Earrings': self.tm8.id, 'Necklace': self.tm2.id, 'Bracelet': self.tm3.id, 'Ring': self.tm4.id},
+            {'token': False, 'Earrings': self.tm2.id, 'Necklace': self.tm6.id, 'Bracelet': self.tm5.id, 'Ring': self.tm7.id},
+            {'token': True, 'Earrings': self.tm4.id, 'Necklace': None, 'Bracelet': self.tm8.id, 'Ring': self.tm3.id},
+        ]
+        first_floor_received = content['first_floor']
+        self.assertEqual(len(first_floor_expected), len(first_floor_received), first_floor_received)
+        for i in range(len(first_floor_expected)):
+            self.assertDictEqual(first_floor_expected[i], first_floor_received[i], f'{i+1}/{len(first_floor_received)}')
+
+        second_floor_expected = [
+            {'token': False, 'Head': self.tm6.id, 'Hands': self.tm1.id, 'Feet': self.tm7.id, 'Tome Accessory Augment': self.tm5.id},
+            {'token': False, 'Head': self.tm1.id, 'Hands': None, 'Feet': self.tm6.id, 'Tome Accessory Augment': self.tm7.id},
+            {'token': True, 'Head': self.tm2.id, 'Hands': None, 'Feet': self.tm8.id, 'Tome Accessory Augment': self.tm3.id},
+            {'token': False, 'Head': self.tm7.id, 'Hands': None, 'Feet': self.tm4.id, 'Tome Accessory Augment': self.tm6.id},
+            {'token': False, 'Head': None, 'Hands': None, 'Feet': self.tm5.id, 'Tome Accessory Augment': self.tm1.id},
+            {'token': True, 'Head': None, 'Hands': None, 'Feet': self.tm3.id, 'Tome Accessory Augment': None},
+        ]
+        second_floor_received = content['second_floor']
+        self.assertEqual(len(second_floor_expected), len(second_floor_received), second_floor_received)
+        for i in range(len(second_floor_expected)):
+            self.assertDictEqual(second_floor_expected[i], second_floor_received[i], f'{i+1}/{len(second_floor_received)}')
+
+        third_floor_expected = [
+            {'token': False, 'Body': self.tm8.id, 'Legs': self.tm5.id, 'Tome Armour Augment': self.tm2.id},
+            {'token': False, 'Body': self.tm6.id, 'Legs': self.tm7.id, 'Tome Armour Augment': self.tm1.id},
+            {'token': False, 'Body': self.tm4.id, 'Legs': self.tm2.id, 'Tome Armour Augment': self.tm3.id},
+            {'token': True, 'Body': None, 'Legs': self.tm1.id, 'Tome Armour Augment': self.tm8.id},
+            {'token': False, 'Body': None, 'Legs': None, 'Tome Armour Augment': self.tm5.id},
+            {'token': False, 'Body': None, 'Legs': None, 'Tome Armour Augment': self.tm6.id},
+            {'token': False, 'Body': None, 'Legs': None, 'Tome Armour Augment': self.tm7.id},
+            {'token': True, 'Body': None, 'Legs': None, 'Tome Armour Augment': None},
+        ]
+        third_floor_received = content['third_floor']
+        self.assertEqual(len(third_floor_expected), len(third_floor_received), third_floor_received)
+        for i in range(len(third_floor_expected)):
+            self.assertDictEqual(third_floor_expected[i], third_floor_received[i], f'{i+1}/{len(third_floor_received)}')
+
+        self.assertEqual(content['fourth_floor'], {'weapons': 8, 'mounts': 8})
+
     def test_for_single_person_requiring_loot(self):
         """
         Make it so only a single person in the team requires loot, ensure the solver manages this scenario properly
@@ -1527,3 +1581,59 @@ class LootSolverV2TestSuite(SavageAimTestCase):
 
         # Mounts will still be 8 since it's history based
         self.assertEqual(content['fourth_floor'], {'weapons': 1, 'mounts': 1})
+
+    def test_token_purchase_greed_assignments(self):
+        """
+        Test Plan:
+            - Create a small test case where someone needs 2 items, and everyone else needs 1
+            - Set the weeks value to be where token purchases are available
+            - Ensure that the person who needs 2 items gets 1 of their required items and all other slots are greed.
+        """
+        prio_brackets = {
+            2: [1],
+            1: [2, 3, 4, 5, 6, 7, 8],
+        }
+        requirements = {
+            'body': [],
+            'legs': [1],
+            'tome-armour-augment': [1, 2, 3, 4, 5, 6, 7, 8]
+        }
+        Loot.objects.all().delete()
+        result = LootSolver._get_handout_data(
+            list(requirements.keys()),
+            requirements,
+            prio_brackets,
+            4,
+            3,
+        )
+        self.assertEqual(len(result), 1, result)
+
+        expected = {
+            'Body': None,
+            'Legs': 1,
+            'Tome Armour Augment': 2,
+            'token': True,
+        }
+        self.assertDictEqual(result[0], expected)
+
+        # Now make the request greedy and ensure that the token is not assigned anymore
+        expected['Tome Armour Augment'] = None
+        prio_brackets = {
+            2: [1],
+            1: [2, 3, 4, 5, 6, 7, 8],
+        }
+        requirements = {
+            'body': [],
+            'legs': [1],
+            'tome-armour-augment': [1, 2, 3, 4, 5, 6, 7, 8]
+        }
+        result = LootSolver._get_handout_data(
+            list(requirements.keys()),
+            requirements,
+            prio_brackets,
+            4,
+            3,
+            True,
+        )
+        self.assertEqual(len(result), 1, result)
+        self.assertDictEqual(result[0], expected)

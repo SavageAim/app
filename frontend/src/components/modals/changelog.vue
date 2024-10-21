@@ -12,15 +12,15 @@
     </div>
     <div class="card-content content">
       <h2 class="has-text-primary subtitle">{{ version }}</h2>
-      <div class="divider"><i class="material-icons icon">expand_more</i> Bugfixes <i class="material-icons icon">expand_more</i></div>
-      <p>
-        Set the weeks-per-token-purchase for the second fight of a Tier to <code>3</code>, as accessory augments are only 3 tokens instead of 4.
-        <ul>
-          <li>This shouldn't affect the loot distrib rolls, only it now requires less weeks to get there!</li>
-        </ul>
-      </p>
-      <p>Fixed some issues with proxy character pages not rendering properly.</p>
-      <p>Fixed errors occurring when trying to import from Lodestone when the Character is missing equipment.</p>
+      <div class="divider"><i class="material-icons icon">expand_more</i> Loot Solver Greed-y Mode <i class="material-icons icon">expand_more</i></div>
+      <p>A new settings block has been added to the Settings page for managing the Loot Solver!</p>
+      <p>A more Greed-y mode has been added as a setting to the Loot Solver, which will increase the amount of items that are available for alt Jobs but also increase the amount of people who will be expected to buy their required items with tokens.</p>
+      <p>This feature was requested by @Rai, hopefully this works to your liking!</p>
+
+      <div class="divider"><i class="material-icons icon">expand_more</i> Loot Solver Bug Updates <i class="material-icons icon">expand_more</i></div>
+      <p>If you have been having issues with the Loot Manager page giving you Internal Server Error messages or anything of the like, I am looking into it!</p>
+      <p>This release contains some code that should help me track down the root of the error and make it reproduceable in tests, after which I will be able to catch it properly and remove it for good.</p>
+      <p>I appreciate your patience as I try to uncover the root cause of this bug, thank you :D</p>
     </div>
   </div>
 </template>

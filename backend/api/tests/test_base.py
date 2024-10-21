@@ -3,6 +3,8 @@ from string import ascii_letters
 from django.contrib.auth.models import User
 from rest_framework.test import APITestCase
 
+from api.models.settings import Settings
+
 __all__ = [
     'SavageAimTestCase',
 ]
@@ -16,6 +18,16 @@ class SavageAimTestCase(APITestCase):
     def _get_user(self):
         """
         Get a user object to auth against the API
+        """
+        if User.objects.exists():
+            return User.objects.first()
+        user = User.objects.create_user('test', 'test')
+        Settings.objects.create(user=user)
+        return user
+
+    def _get_user_without_settings(self):
+        """
+        Get a user object to auth against the API, without a settings object existing
         """
         if User.objects.exists():
             return User.objects.first()

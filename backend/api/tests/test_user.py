@@ -10,8 +10,8 @@ class User(SavageAimTestCase):
     Test the /me/ endpoint for logged in and anonymous users
     """
 
-    def tearDown(self):
-        Token.objects.all().delete()
+    # def tearDown(self):
+    #     Token.objects.all().delete()
 
     def test_anonymous_user(self):
         """
@@ -29,7 +29,7 @@ class User(SavageAimTestCase):
         Ensure that the id is the same as the user we logged in as
         """
         url = reverse('api:user')
-        user = self._get_user()
+        user = self._get_user_without_settings()
         self.client.force_authenticate(user)
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -49,7 +49,7 @@ class User(SavageAimTestCase):
         Do it twice so we hit the DoesNotExist successfully
         """
         url = reverse('api:user')
-        user = self._get_user()
+        user = self._get_user_without_settings()
         self.client.force_authenticate(user)
 
         data = {'theme': 'blue', 'notifications': {'verify_fail': False}, 'loot_manager_version': 'fight', 'username': 'abcde'}
@@ -60,9 +60,10 @@ class User(SavageAimTestCase):
         self.assertEqual(user.settings.theme, 'blue')
         self.assertFalse(user.settings.notifications['verify_fail'])
         self.assertEqual(user.get_full_name(), data['username'])
+        self.assertFalse(user.settings.loot_solver_greed)
 
         # Run it again to hit the other block
-        data = {'theme': 'purple', 'notifications': {'verify_success': True}, 'username': 'abcde'}
+        data = {'theme': 'purple', 'notifications': {'verify_success': True}, 'username': 'abcde', 'loot_solver_greed': True}
         response = self.client.put(url, data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         user.refresh_from_db()
@@ -71,6 +72,7 @@ class User(SavageAimTestCase):
         self.assertTrue(user.settings.notifications['verify_success'])
         self.assertTrue('team_lead' not in user.settings.notifications)
         self.assertEqual(user.settings.loot_manager_version, 'fight')  # Ensure hasn't changed
+        self.assertTrue(user.settings.loot_solver_greed)
 
     def test_update_400(self):
         """
@@ -80,12 +82,13 @@ class User(SavageAimTestCase):
         user = self._get_user()
         self.client.force_authenticate(user)
 
-        data = {'theme': 'abcde', 'notifications': {'abcde': 'abcde'}, 'loot_manager_version': 'abcde'}
+        data = {'theme': 'abcde', 'notifications': {'abcde': 'abcde'}, 'loot_manager_version': 'abcde', 'loot_solver_greed': 'abcde'}
         response = self.client.put(url, data)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(response.json()['username'], ['This field is required.'])
         self.assertEqual(response.json()['notifications'], ['"abcde" is not a valid choice.'])
         self.assertEqual(response.json()['loot_manager_version'], ['"abcde" is not a valid choice.'])
+        self.assertEqual(response.json()['loot_solver_greed'], ['Must be a valid boolean.'])
 
         data['notifications'] = {'team_lead': 'abcde'}
         response = self.client.put(url, data)

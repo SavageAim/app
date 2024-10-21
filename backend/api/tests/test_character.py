@@ -374,7 +374,7 @@ class CharacterVerification(SavageAimTestCase):
         Just call the mock task with a verified character and test the notifier task works
         Also test after changing the notif settings to ensure a second notif isn't sent
         """
-        user = self._get_user()
+        user = self._get_user_without_settings()
         char = Character.objects.create(
             avatar_url='https://img.savageaim.com/abcde',
             lodestone_id=1234567890,
