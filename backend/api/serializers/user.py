@@ -18,6 +18,7 @@ class UserSerializer(serializers.Serializer):
     avatar_url = serializers.SerializerMethodField()
     id = serializers.IntegerField()
     loot_manager_version = serializers.SerializerMethodField()
+    loot_solver_greed = serializers.SerializerMethodField()
     notifications = serializers.SerializerMethodField()
     theme = serializers.SerializerMethodField()
     token = serializers.CharField(source='auth_token.key', default=None)
@@ -39,6 +40,15 @@ class UserSerializer(serializers.Serializer):
             return obj.settings.loot_manager_version
         except (AttributeError, Settings.DoesNotExist):
             return Settings.LOOT_MANAGER_DEFAULT
+        
+    def get_loot_solver_greed(self, obj) -> str:
+        """
+        Given a User, retrieve the greediness value they want for their loot solver
+        """
+        try:
+            return obj.settings.loot_solver_greed
+        except (AttributeError, Settings.DoesNotExist):
+            return False
 
     @extend_schema_field(
         inline_serializer(
