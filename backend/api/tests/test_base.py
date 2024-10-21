@@ -24,6 +24,14 @@ class SavageAimTestCase(APITestCase):
         user = User.objects.create_user('test', 'test')
         Settings.objects.create(user=user)
         return user
+    
+    def _get_user_without_settings(self):
+        """
+        Get a user object to auth against the API, without a settings object existing
+        """
+        if User.objects.exists():
+            return User.objects.first()
+        return User.objects.create_user('test', 'test')
 
     def _create_user(self):
         """

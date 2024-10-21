@@ -62,6 +62,7 @@ class UserView(APIView):
         obj.theme = serializer.validated_data.get('theme', obj.theme)
         obj.notifications.update(serializer.validated_data.get('notifications', {}))
         obj.loot_manager_version = serializer.validated_data.get('loot_manager_version', obj.loot_manager_version)
+        obj.loot_solver_greed = serializer.validated_data.get('loot_solver_greed', obj.loot_solver_greed)
         obj.save()
 
         # Update the username

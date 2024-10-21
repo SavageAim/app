@@ -20,7 +20,13 @@ class SettingsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Settings
-        fields = ['loot_manager_version', 'notifications', 'theme', 'username']
+        fields = [
+            'loot_manager_version',
+            'loot_solver_greed',
+            'notifications',
+            'theme',
+            'username',
+        ]
 
     def validate_notifications(self, notifications: Dict[str, bool]) -> Dict[str, bool]:
         """
