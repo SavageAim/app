@@ -35,6 +35,7 @@ const DEFAULT_USER = {
   avatar_url: '',
   id: null,
   loot_manager_version: 'item',
+  loot_solver_greed: false,
   notifications: {
     loot_tracker_update: true,
     team_disband: true,

@@ -88,6 +88,7 @@ export interface SettingsErrors {
   theme?: string[]
   notifications?: string[]
   loot_manager_version?: string[]
+  loot_solver_greed?: string[]
 }
 
 // Team create response will return a string id since it uses uuid

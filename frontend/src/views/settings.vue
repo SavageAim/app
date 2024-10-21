@@ -30,6 +30,11 @@
                     Loot Manager Version <span v-if="unsavedLootManager()">*</span>
                   </a>
                 </li>
+                <li>
+                  <a :class="{ 'is-active': activeTab.lootSolver, 'has-text-danger': errorsInLootSolver() }" @click="showLootSolver">
+                    Loot Solver Settings <span v-if="unsavedLootSolver()">*</span>
+                  </a>
+                </li>
               </ul>
             </aside>
           </div>
@@ -67,6 +72,12 @@
           v-on:changeLootManagerVersion="changeLootManagerVersion"
           v-if="activeTab.lootManager"
         />
+        <LootSolverSettings
+          :errors="errors"
+          :loot-solver-greed="lootSolverGreed"
+          v-on:changeLootSolverGreed="changeLootSolverGreed"
+          v-if="activeTab.lootSolver"
+        />
       </div>
     </div>
   </div>
@@ -77,6 +88,7 @@ import isEqual from 'lodash.isequal'
 import * as Sentry from '@sentry/vue'
 import { Component, Watch } from 'vue-property-decorator'
 import LootManagerSettings from '@/components/settings/loot_manager.vue'
+import LootSolverSettings from '@/components/settings/loot_solver.vue'
 import NotificationsSettingsComponent from '@/components/settings/notifications.vue'
 import ThemeSettings from '@/components/settings/theme.vue'
 import UserDetailsSettings from '@/components/settings/user_details.vue'
@@ -88,6 +100,7 @@ import SavageAimMixin from '@/mixins/savage_aim_mixin'
 @Component({
   components: {
     LootManagerSettings,
+    LootSolverSettings,
     NotificationsSettingsComponent,
     ThemeSettings,
     UserDetailsSettings,
@@ -99,6 +112,7 @@ export default class Settings extends SavageAimMixin {
     theme: false,
     notifications: false,
     lootManager: false,
+    lootSolver: false,
   }
 
   errors: SettingsErrors = {}
@@ -114,6 +128,8 @@ export default class Settings extends SavageAimMixin {
   theme = this.user.theme
 
   username = this.user.username
+
+  lootSolverGreed = this.user.loot_solver_greed
 
   mounted(): void {
     document.title = 'User Settings - Savage Aim'
@@ -131,6 +147,11 @@ export default class Settings extends SavageAimMixin {
 
   changeLootManagerVersion(version: string): void {
     this.lootManagerVersion = version
+  }
+
+  changeLootSolverGreed(greed: boolean): void {
+    console.log(this.lootSolverGreed, greed)
+    this.lootSolverGreed = greed
   }
 
   changeNotification(data: {notification: keyof NotificationSettings, value: boolean}): void {
@@ -151,6 +172,10 @@ export default class Settings extends SavageAimMixin {
 
   errorsInLootManager(): boolean {
     return (this.errors.loot_manager_version?.length || 0) > 0
+  }
+
+  errorsInLootSolver(): boolean {
+    return (this.errors.loot_solver_greed?.length || 0) > 0
   }
 
   errorsInNotifications(): boolean {
@@ -179,6 +204,7 @@ export default class Settings extends SavageAimMixin {
     this.activeTab.theme = false
     this.activeTab.notifications = false
     this.activeTab.lootManager = false
+    this.activeTab.lootSolver = false
   }
 
   // Save the data into a new bis list
@@ -187,6 +213,7 @@ export default class Settings extends SavageAimMixin {
       theme: this.theme,
       notifications: this.notifications,
       loot_manager_version: this.lootManagerVersion,
+      loot_solver_greed: this.lootSolverGreed,
       username: this.username,
     })
 
@@ -227,6 +254,11 @@ export default class Settings extends SavageAimMixin {
     this.activeTab.lootManager = true
   }
 
+  showLootSolver(): void {
+    this.resetActiveTab()
+    this.activeTab.lootSolver = true
+  }
+
   showNotifications(): void {
     this.resetActiveTab()
     this.activeTab.notifications = true
@@ -243,6 +275,10 @@ export default class Settings extends SavageAimMixin {
 
   unsavedLootManager(): boolean {
     return this.lootManagerVersion !== this.user.loot_manager_version
+  }
+
+  unsavedLootSolver(): boolean {
+    return this.lootSolverGreed !== this.user.loot_solver_greed
   }
 
   unsavedNotifications(): boolean {

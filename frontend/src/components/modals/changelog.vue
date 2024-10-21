@@ -12,7 +12,7 @@
     </div>
     <div class="card-content content">
       <h2 class="has-text-primary subtitle">{{ version }}</h2>
-      <div class="divider"><i class="material-icons icon">expand_more</i> Bugfixes <i class="material-icons icon">expand_more</i></div>
+      <div class="divider"><i class="material-icons icon">expand_more</i> Loot Solver Greed-y Mode <i class="material-icons icon">expand_more</i></div>
       <p>
         Set the weeks-per-token-purchase for the second fight of a Tier to <code>3</code>, as accessory augments are only 3 tokens instead of 4.
         <ul>
