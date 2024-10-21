@@ -38,6 +38,4 @@ class SavageAimTestCase(APITestCase):
         Create an arbitrary user for other purposes than above function
         """
         string = ''.join(choice(ascii_letters) for _ in range(8))
-        user = User.objects.create_user(string, string)
-        Settings.objects.create(user=user)
-        return user
+        return User.objects.create_user(string, string)

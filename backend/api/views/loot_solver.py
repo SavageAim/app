@@ -447,7 +447,7 @@ class LootSolver(APIView):
         history: QuerySet[Loot],
         id_order: List[int],
         non_loot_gear_obtained: NonLootGear,
-        greedy: bool,
+        greedy: bool = False,
     ) -> List[HandoutData]:
         """
         Simulate handing out the loot for a first floor clear.
@@ -467,7 +467,7 @@ class LootSolver(APIView):
         history: QuerySet[Loot],
         id_order: List[int],
         non_loot_gear_obtained: NonLootGear,
-        greedy: bool,
+        greedy: bool = False,
     ) -> List[HandoutData]:
         """
         Simulate handing out the loot for a second floor clear.
@@ -487,7 +487,7 @@ class LootSolver(APIView):
         history: QuerySet[Loot],
         id_order: List[int],
         non_loot_gear_obtained: NonLootGear,
-        greedy: bool,
+        greedy: bool = False,
     ) -> List[HandoutData]:
         """
         Simulate handing out the loot for a third floor clear.
