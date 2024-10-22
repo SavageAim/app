@@ -101,8 +101,6 @@ class TeamMemberResource(APIView):
         except (TeamMember.DoesNotExist, ValidationError):
             return Response(status=404)
 
-        team = obj.team
-
         # Check permissions and kick status - Request is valid if;
         #   - Anyone with the Proxy Manager permission is kicking a proxy
         #   - The Team Leader is kicking someone *else* from the Team.
@@ -136,8 +134,8 @@ class TeamMemberResource(APIView):
         obj.team.remove_character(obj.character, kick)
 
         # Websocket stuff
-        self._send_to_team(team, {'type': 'team', 'id': str(team.id), 'invite_code': str(team.invite_code)})
-        for tm in team.members.all():
+        self._send_to_team(obj.team, {'type': 'team', 'id': str(obj.team.id), 'invite_code': str(obj.team.invite_code)})
+        for tm in TeamMember.objects.filter(team_id=team_id).select_related('character', 'character__user'):
             self._send_to_user(tm.character.user, {'type': 'character', 'id': tm.character.pk})
 
         # Special handling for Proxy characters, we should delete them here
