@@ -1204,7 +1204,7 @@ class LootTestSuite(SavageAimTestCase):
 
         data = {
             'member_id': '9999999',
-            'obtained': (datetime.today() + timedelta(days=1)).strftime('%Y-%m-%d'),
+            'obtained': (datetime.today() + timedelta(days=2)).strftime('%Y-%m-%d'),
         }
         response = self.client.post(url, data)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
