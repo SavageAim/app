@@ -1134,6 +1134,8 @@ class LootTestSuite(SavageAimTestCase):
             'item': 'mount',
             'obtained': obtained,
         }
+        # Also test creating one for tomorrow which should be allowed due to timezone issues
+        obtained = (datetime.today() + timedelta(days=1)).strftime('%Y-%m-%d')
         greed_data = {
             'greed': True,
             'member_id': self.mt_tm.pk,
