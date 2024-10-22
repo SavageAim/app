@@ -1637,3 +1637,17 @@ class LootSolverV2TestSuite(SavageAimTestCase):
         )
         self.assertEqual(len(result), 1, result)
         self.assertDictEqual(result[0], expected)
+
+    def test_request_from_user_with_no_settings(self):
+        """
+        Test Plan:
+            - Create a new user with no settings
+            - Send a request and ensure that the view does not fail
+        """
+        url = reverse('api:loot_solver', kwargs={'team_id': self.team.pk})
+        user = self._create_user()
+        self.client.force_authenticate(user)
+        self.c1.user = user
+        self.c1.save()
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK, response.content)
