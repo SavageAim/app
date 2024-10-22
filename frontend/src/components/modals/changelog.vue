@@ -13,17 +13,18 @@
     <div class="card-content content">
       <h2 class="has-text-primary subtitle">{{ version }}</h2>
       <div class="divider"><i class="material-icons icon">expand_more</i> Bugfixes <i class="material-icons icon">expand_more</i></div>
-      <p>Fixed a bug with the Loot Solver for Users who have never saved their Settings before. Sorry about that one, tests weren't extensive enough.</p>
+      <p>
+        Fixed a timezone-based bug when creating manual Loot Entries.
+        <ul>
+          <li>Due to the server running in UTC time, people in timezones ahead of UTC can have issues where the server will tell them that they cannot create Loot for in the future.</li>
+          <li>To make it work, now the server will accept Loot for the day after its current day!</li>
+        </ul>
+      </p>
 
-      <div class="divider"><i class="material-icons icon">expand_more</i> Loot Solver Greed-y Mode <i class="material-icons icon">expand_more</i></div>
-      <p>A new settings block has been added to the Settings page for managing the Loot Solver!</p>
-      <p>A more Greed-y mode has been added as a setting to the Loot Solver, which will increase the amount of items that are available for alt Jobs but also increase the amount of people who will be expected to buy their required items with tokens.</p>
-      <p>This feature was requested by @Rai, hopefully this works to your liking!</p>
-
-      <div class="divider"><i class="material-icons icon">expand_more</i> Loot Solver Bug Updates <i class="material-icons icon">expand_more</i></div>
-      <p>If you have been having issues with the Loot Manager page giving you Internal Server Error messages or anything of the like, I am looking into it!</p>
-      <p>This release contains some code that should help me track down the root of the error and make it reproduceable in tests, after which I will be able to catch it properly and remove it for good.</p>
-      <p>I appreciate your patience as I try to uncover the root cause of this bug, thank you :D</p>
+      <div class="divider"><i class="material-icons icon">expand_more</i> Quick-Set to BIS <i class="material-icons icon">expand_more</i></div>
+      <p>Thank you Rak for the feature request!</p>
+      <p>All of the Current Gear dropdowns on the Edit BIS pages now have a button you can click to instantly set the Current value to your set BIS value for that slot!</p>
+      <p>This just brings a little bit of QoL to anyone updating their BIS Lists manually, after purchasing items for example!</p>
     </div>
   </div>
 </template>
