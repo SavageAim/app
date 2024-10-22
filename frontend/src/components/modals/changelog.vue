@@ -12,6 +12,9 @@
     </div>
     <div class="card-content content">
       <h2 class="has-text-primary subtitle">{{ version }}</h2>
+      <div class="divider"><i class="material-icons icon">expand_more</i> Bugfixes <i class="material-icons icon">expand_more</i></div>
+      <p>Fixed a bug with the Loot Solver for Users who have never saved their Settings before. Sorry about that one, tests weren't extensive enough.</p>
+
       <div class="divider"><i class="material-icons icon">expand_more</i> Loot Solver Greed-y Mode <i class="material-icons icon">expand_more</i></div>
       <p>A new settings block has been added to the Settings page for managing the Loot Solver!</p>
       <p>A more Greed-y mode has been added as a setting to the Loot Solver, which will increase the amount of items that are available for alt Jobs but also increase the amount of people who will be expected to buy their required items with tokens.</p>
