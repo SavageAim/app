@@ -18,7 +18,7 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 # local
 from .base import APIView
-from api.models import Gear, Job, Loot, Team, TeamMember, Tier
+from api.models import Gear, Job, Loot, Settings, Team, TeamMember, Tier
 
 Requirements = Dict[str, List[int]]
 PrioBrackets = Dict[int, List[int]]
@@ -610,9 +610,13 @@ class LootSolver(APIView):
         non_loot_gear_obtained = self._get_gear_not_obtained_from_drops(obj.tier, obj.members.all(), history)
 
         # Run the four functions  gather them all up and build up a map for the response
-        first = self._get_first_floor_data(requirements, history, id_ordering, non_loot_gear_obtained, request.user.settings.loot_solver_greed)
-        second = self._get_second_floor_data(requirements, history, id_ordering, non_loot_gear_obtained, request.user.settings.loot_solver_greed)
-        third = self._get_third_floor_data(requirements, history, id_ordering, non_loot_gear_obtained, request.user.settings.loot_solver_greed)
+        try:
+            greedy = request.user.settings.loot_solver_greed
+        except Settings.DoesNotExist:
+            greedy = False
+        first = self._get_first_floor_data(requirements, history, id_ordering, non_loot_gear_obtained, greedy)
+        second = self._get_second_floor_data(requirements, history, id_ordering, non_loot_gear_obtained, greedy)
+        third = self._get_third_floor_data(requirements, history, id_ordering, non_loot_gear_obtained, greedy)
         fourth = self._get_fourth_floor_data(history, obj.members.count(), non_loot_gear_obtained)
 
         # Build and return the response
