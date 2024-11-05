@@ -79,7 +79,7 @@
         <li>
           <b>Fight: </b> {{ tier.fights[3] }}<br />
           <b>Weapons Remaining: </b> {{ data.fourth_floor.weapons }}<br />
-          <b>Mounts Remaining: </b> {{ data.fourth_floor.weapons }}
+          <b>Mounts Remaining: </b> {{ data.fourth_floor.mounts }}
         </li>
       </ul>
 

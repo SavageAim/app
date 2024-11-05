@@ -20,6 +20,7 @@
           <li>To make it work, now the server will accept Loot for the day after its current day!</li>
         </ul>
       </p>
+      <p>Fixed an issue where the mobile version of the Loot Solver would show incorrect numbers for some fields.</p>
 
       <div class="divider"><i class="material-icons icon">expand_more</i> Quick-Set to BIS <i class="material-icons icon">expand_more</i></div>
       <p>Thank you Rak for the feature request!</p>
