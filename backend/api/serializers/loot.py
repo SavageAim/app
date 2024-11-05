@@ -2,7 +2,7 @@
 Serializer for Loot data
 """
 # stdlib
-from datetime import datetime
+from datetime import datetime, timedelta
 from string import capwords
 from typing import Optional
 # lib
@@ -90,8 +90,9 @@ class LootCreateSerializer(serializers.ModelSerializer):
     def validate_obtained(self, obtained):
         """
         Ensure we're not recording loot for the future
+        NB: One day in the future is acceptable to allow for issues with timezones n such.
         """
-        if obtained > datetime.today().date():
+        if obtained > (datetime.today() + timedelta(days=1)).date():
             raise serializers.ValidationError('Cannot record Loot for a date in the future.')
         return obtained
 

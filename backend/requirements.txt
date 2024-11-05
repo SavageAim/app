@@ -24,10 +24,10 @@ cryptography==43.0.3
 daphne==3.0.2
 defusedxml==0.7.1
 Deprecated==1.2.13
-Django==3.2.25
+Django==4.2.16
 django-allauth==0.47.0
 django-auto-prefetch==1.9.0
-djangorestframework==3.14.0
+djangorestframework==3.15.2
 drf-spectacular==0.27.2
 gunicorn==22.0.0
 hiredis==2.0.0
