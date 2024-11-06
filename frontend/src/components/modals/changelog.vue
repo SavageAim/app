@@ -21,6 +21,7 @@
         </ul>
       </p>
       <p>Fixed an issue where the mobile version of the Loot Solver would show incorrect numbers for some fields.</p>
+      <p>Improved the Viper and Pictomancer icons finally!</p>
 
       <div class="divider"><i class="material-icons icon">expand_more</i> Quick-Set to BIS <i class="material-icons icon">expand_more</i></div>
       <p>Thank you Rak for the feature request!</p>
