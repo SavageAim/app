@@ -40,6 +40,7 @@ class CharacterCollectionSerializer(serializers.ModelSerializer):
         inline_serializer(
             'CharacterCollectionBISListSummary',
             {'id': serializers.IntegerField(), 'name': serializers.CharField()},
+            many=True,
         ),
     )
     def get_bis_lists(self, char: Character) -> List[Dict[str, Union[str, int]]]:
