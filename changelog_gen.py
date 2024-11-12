@@ -3,12 +3,15 @@ from bs4.element import TemplateString
 
 # Open the changelog file, split it on <script> tag, use the 0th element
 
+with open('frontend/.env') as f:
+    version = f.read().replace('"', '').split('=')[1]
+
 with open('frontend/src/components/modals/changelog.vue') as f:
     template = f.read().split('<script>')[0]
 
 soup = BeautifulSoup(template, features='html.parser')
 
-lines = []
+lines = [f'# {version}']
 dividers = soup.select('div.divider')
 
 for div in dividers:
