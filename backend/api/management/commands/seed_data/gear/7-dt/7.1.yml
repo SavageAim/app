@@ -1,0 +1,15 @@
+- has_accessories: False
+  has_armour: True
+  has_weapon: False
+  item_level: 720
+  name: "Ark Angel's"
+- has_accessories: False
+  has_armour: False
+  has_weapon: True
+  item_level: 725
+  name: 'Eternal'
+- has_accessories: True
+  has_armour: True
+  has_weapon: True
+  item_level: 720
+  name: 'Augmented Archeo Kingdom'

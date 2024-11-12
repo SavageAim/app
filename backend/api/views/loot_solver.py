@@ -523,23 +523,26 @@ class LootSolver(APIView):
                     'first_floor': inline_serializer(
                         'LootSolverFirstFloorResponse',
                         {
-                            slot: serializers.ListField(child=serializers.IntegerField())
+                            slot: serializers.IntegerField()
                             for slot in FIRST_FLOOR_SLOTS
                         },
+                        many=True,
                     ),
                     'second_floor': inline_serializer(
                         'LootSolverSecondFloorResponse',
                         {
-                            slot: serializers.ListField(child=serializers.IntegerField())
+                            slot: serializers.IntegerField()
                             for slot in SECOND_FLOOR_SLOTS
                         },
+                        many=True,
                     ),
                     'third_floor': inline_serializer(
                         'LootSolverThirdFloorResponse',
                         {
-                            slot: serializers.ListField(child=serializers.IntegerField())
+                            slot: serializers.IntegerField()
                             for slot in THIRD_FLOOR_SLOTS
                         },
+                        many=True,
                     ),
                     'fourth_floor': inline_serializer(
                         'LootSolverFourthFloorResponse',
