@@ -3,7 +3,7 @@
     <div class="field-label is-normal">
       <label class="label">{{ name }}</label>
     </div>
-    <template v-if="bisValue">
+    <template v-if="bisValue && bisValue !== value">
       <div class="field-body">
         <div class="field is-expanded">
           <div class="field has-addons">
@@ -16,7 +16,7 @@
               </div>
             </div>
             <div class="control">
-              <button class="button is-link" @click="setToCopyValue" data-microtip-position="top" role="tooltip" aria-label="Paste BIS Value">
+              <button class="button has-text-link" @click="setToCopyValue" data-microtip-position="top" role="tooltip" aria-label="Paste BIS Value">
                 <i class="material-icons">content_paste_go</i>
               </button>
             </div>
