@@ -19,6 +19,7 @@
           <li>Ultimate Edenmorn Weapons - Item Level 735</li>
         </ul>
       </p>
+      <p>Best of luck to anyone doing FRU prog!</p>
     </div>
   </div>
 </template>
