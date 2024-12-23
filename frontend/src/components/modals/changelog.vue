@@ -12,14 +12,13 @@
     </div>
     <div class="card-content content">
       <h2 class="has-text-primary subtitle">{{ version }}</h2>
-      <div class="divider"><i class="material-icons icon">expand_more</i> FFXIV 7.11 Update <i class="material-icons icon">expand_more</i></div>
+      <div class="divider"><i class="material-icons icon">expand_more</i> FFXIV 7.15 Chaotic Release <i class="material-icons icon">expand_more</i></div>
       <p>
-        Added the following new types of Gear released in 7.11;
+        Added the following new types of Gear released in 7.15 alongside Chaotic;
         <ul>
-          <li>Ultimate Edenmorn Weapons - Item Level 735</li>
+          <li>Clouddark Armour - Item Level 730</li>
         </ul>
       </p>
-      <p>Best of luck to anyone doing FRU prog!</p>
     </div>
   </div>
 </template>
