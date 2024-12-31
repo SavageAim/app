@@ -321,6 +321,9 @@ class LootSolver(APIView):
                 if done:
                     break
 
+            # If we have less characters than items, we can re-add people back to the dictionary after we remove them to cycle around properly
+            re_insert = len(potential_loot_members) < needed_item_count
+
             # At this point, we have a mapping of potential member_ids to the items they still need this week.
             # It has the minimum required amount of people such that every Need item can be handed out to someone.
             # Now we determine who actually gets what
@@ -397,8 +400,14 @@ class LootSolver(APIView):
                         prio_brackets[new_prio] = []
                     prio_brackets[new_prio].append(member_id)
 
-                # Now we need to remove the member_id from potentials, and also remove the item from anyone else
-                potential_loot_members.pop(member_id, None)
+                # Now we need to remove the member_id from potentials and remove the item from the popped list in case we need to re-insert
+                removed = potential_loot_members.pop(member_id, None)
+                try:
+                    removed.remove(item)
+                except ValueError:
+                    pass
+
+                # Now remove the item from everyone else
                 for other_member_id, other_member_items in potential_loot_members.items():
                     try:
                         other_member_items.remove(item)
@@ -408,6 +417,11 @@ class LootSolver(APIView):
                     if len(other_member_items) == 1:
                         # Put the person and their item into the queue
                         handout_queue.append((other_member_id, other_member_items[0]))
+
+                # Then do some checking if we need to re_insert the popped member
+                if re_insert:
+                    # Put them back in the dictionary because dictionary keys are ordered by insertion time
+                    potential_loot_members[member_id] = removed
 
             # Add the week data to the handouts list
             handouts.append(week_data)
