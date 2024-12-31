@@ -1651,3 +1651,41 @@ class LootSolverV2TestSuite(SavageAimTestCase):
         self.c1.save()
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK, response.content)
+
+    def test_dev_setup_edgecase_bug_solution(self):
+        """
+        Test Plan:
+            - Set up a test case for second fight that matches the dev setup Team 1 case.
+            - Ensure that the correct response is given, meaning that we get all of the loot handouts done ASAP.
+        """
+        requirements = {
+            'head': [2, 3, 4],
+            'hands': [2, 3, 4],
+            'feet': [2, 4],
+            'tome-accessory-augment': [2, 2, 2, 3, 3, 4, 4, 4, 4],
+        }
+        prio_brackets = {
+            7: [4],
+            6: [2],
+            4: [3],
+        }
+
+        expected = [
+            {'token': False, 'Head': 4, 'Hands': 2, 'Feet': 4, 'Tome Accessory Augment': 3},
+            {'token': False, 'Head': 3, 'Hands': 4, 'Feet': 2, 'Tome Accessory Augment': 2},
+            {'token': True, 'Head': 2, 'Hands': 3, 'Feet': None, 'Tome Accessory Augment': 4},
+            {'token': False, 'Head': None, 'Hands': None, 'Feet': None, 'Tome Accessory Augment': 4},
+            {'token': False, 'Head': None, 'Hands': None, 'Feet': None, 'Tome Accessory Augment': 2},
+            {'token': True, 'Head': None, 'Hands': None, 'Feet': None, 'Tome Accessory Augment': 4},
+        ]
+        received = LootSolver._get_handout_data(
+            LootSolver.SECOND_FLOOR_SLOTS,
+            requirements,
+            prio_brackets,
+            LootSolver.SECOND_FLOOR_TOKENS,
+            0,
+            False,
+        )
+        self.assertEqual(len(expected), len(received), received)
+        for i in range(len(expected)):
+            self.assertDictEqual(expected[i], received[i], f'{i+1}/{len(received)}')
