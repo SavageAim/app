@@ -11,7 +11,7 @@
       </div>
     </div>
     <div class="card-content content">
-      <h2 class="has-text-primary subtitle">{{ version }}</h2>
+      <h2 class="has-text-primary subtitle">{{ version }} - Happy New Year!!</h2>
       <div class="divider"><i class="material-icons icon">expand_more</i> Bugfixes <i class="material-icons icon">expand_more</i></div>
       <p>Worked out some edgecase issues with the Loot Solver. If you run into any weirdness with your Team's Loot Solver, please let me know!</p>
 
