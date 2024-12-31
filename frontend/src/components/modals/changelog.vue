@@ -12,13 +12,11 @@
     </div>
     <div class="card-content content">
       <h2 class="has-text-primary subtitle">{{ version }}</h2>
-      <div class="divider"><i class="material-icons icon">expand_more</i> FFXIV 7.15 Chaotic Release <i class="material-icons icon">expand_more</i></div>
-      <p>
-        Added the following new types of Gear released in 7.15 alongside Chaotic;
-        <ul>
-          <li>Clouddark Armour - Item Level 730</li>
-        </ul>
-      </p>
+      <div class="divider"><i class="material-icons icon">expand_more</i> Bugfixes <i class="material-icons icon">expand_more</i></div>
+      <p>Worked out some edgecase issues with the Loot Solver. If you run into any weirdness with your Team's Loot Solver, please let me know!</p>
+
+      <div class="divider"><i class="material-icons icon">expand_more</i> Developer QoL <i class="material-icons icon">expand_more</i></div>
+      <p>Ever wanted to try running SavageAim locally and messing around with it? Well the README in the GitHub repo just got a whole lot more helpful, and there's now even a command to setup your local database automatically!</p>
     </div>
   </div>
 </template>
