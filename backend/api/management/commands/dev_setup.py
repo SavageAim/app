@@ -20,8 +20,8 @@ class Command(BaseCommand):
             User.objects.all().delete()
 
         print('Creating Users')
-        user1 = User.objects.create_superuser(username='devuser', password='password')
-        user2 = User.objects.create_superuser(username='devuser2', password='password')
+        user1 = User.objects.create_superuser(username='devuser', password='password', first_name='Dev User 1')
+        user2 = User.objects.create_superuser(username='devuser2', password='password', first_name='Dev User 2')
 
         print('Creating Characters')
         char1 = models.Character.objects.create(
