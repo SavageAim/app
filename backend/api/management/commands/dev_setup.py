@@ -24,7 +24,7 @@ class Command(BaseCommand):
         user2 = User.objects.create_superuser(username='devuser2', password='password', first_name='Dev User 2')
 
         print('Creating Characters')
-        char1 = models.Character.objects.create(
+        models.Character.objects.create(
             avatar_url='https://placehold.co/96/2E53A5/F3F3EC.png?text=1',
             lodestone_id='1',
             name='Character 1',
@@ -68,16 +68,16 @@ class Command(BaseCommand):
             has_weapon=True,
         )
         raid_gear = models.Gear.objects.get(
-            item_level=tier.max_item_level-5,
+            item_level=tier.max_item_level - 5,
             name=tier.raid_gear_name,
             has_weapon=False,
         )
         tome_gear = models.Gear.objects.get(
-            item_level=tier.max_item_level-5,
+            item_level=tier.max_item_level - 5,
             name=tier.tome_gear_name,
         )
         crafted_gear = models.Gear.objects.get(
-            item_level=tier.max_item_level-25,
+            item_level=tier.max_item_level - 25,
             has_weapon=True,
             has_armour=True,
             has_accessories=True,
