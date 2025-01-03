@@ -47,10 +47,10 @@ export default class GreedCharacterEntry extends Vue {
   @Prop()
   userHasPermission!: boolean
 
-  save(list: GreedItem): void {
+  save(list: GreedItem | null): void {
     // A main level function to determine how we save. The modal type can no longer make the determination for us
     // Some items cannot be saved with an update, even if they are displayed using the raid modal
-    if (this.item.indexOf('tome') !== -1 || this.item === 'mount') {
+    if (this.item.indexOf('tome') !== -1 || this.item === 'mount' || list == null) {
       // We cannot run an update but we do want to save them
       this.saveWithoutUpdate()
     }

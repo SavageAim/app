@@ -31,6 +31,7 @@
           </div>
         </div>
       </a>
+      <button class="button is-info is-fullwidth" @click="() => { select(null) }">Give to Character</button>
     </div>
   </div>
 </template>
@@ -45,9 +46,9 @@ export default class GreedRaidModal extends Vue {
   entry!: GreedGear
 
   @Prop()
-  save!: (list: GreedItem) => void
+  save!: (list: GreedItem | null) => void
 
-  select(list: GreedItem): void {
+  select(list: GreedItem | null): void {
     this.save(list)
     this.$emit('close')
   }
