@@ -26,9 +26,60 @@ class LodestoneGearImport(SavageAimTestCase):
     def test_import(self):
         """
         Test Plan;
-            - Import Eira and ensure her gear matches what I currently had equipped
+            - Create Gear entries for some ARR items
+            - Import Niseras and ensure her gear matches what I currently had equipped
         """
-        url = reverse('api:lodestone_gear_import', kwargs={'character_id': '22909725', 'expected_job': 'GNB'})
+        ironworks = Gear.objects.create(
+            name='Augmented Ironworks',
+            item_level=130,
+            has_armour=True,
+            has_accessories=True,
+            has_weapon=True,
+        ).pk
+        koga = Gear.objects.create(
+            name='Koga',
+            item_level=90,
+            has_armour=True,
+            has_accessories=False,
+            has_weapon=False,
+        ).pk
+        azeyma = Gear.objects.create(
+            name="Azeyma's",
+            item_level=560,
+            has_armour=False,
+            has_accessories=True,
+            has_weapon=False,
+        ).pk
+        brass = Gear.objects.create(
+            name='Aetherial Brass',
+            item_level=16,
+            has_armour=False,
+            has_accessories=True,
+            has_weapon=False,
+        ).pk
+        dawn = Gear.objects.create(
+            name='Dawn',
+            item_level=18,
+            has_armour=False,
+            has_accessories=True,
+            has_weapon=False,
+        ).pk
+        new = Gear.objects.create(
+            name='Brand New',
+            item_level=30,
+            has_armour=False,
+            has_accessories=True,
+            has_weapon=False,
+        ).pk
+        weathered = Gear.objects.create(
+            name='Weathered',
+            item_level=5,
+            has_armour=False,
+            has_accessories=True,
+            has_weapon=False,
+        ).pk
+
+        url = reverse('api:lodestone_gear_import', kwargs={'character_id': '42935425', 'expected_job': 'NIN'})
         user = self._get_user()
         self.client.force_authenticate(user)
         response = self.client.get(url)
@@ -36,21 +87,21 @@ class LodestoneGearImport(SavageAimTestCase):
 
         # Build an expected data packet
         expected = {
-            'job_id': 'GNB',
-            'mainhand': Gear.objects.get(name='Archeo Kingdom').pk,
-            'offhand': Gear.objects.get(name='Archeo Kingdom').pk,
-            'head': Gear.objects.get(name='Dark Horse Champion', has_armour=True).pk,
-            'body': Gear.objects.get(name='Augmented Quetzalli', has_armour=True).pk,
-            'hands': Gear.objects.get(name='Quetzalli', has_armour=True).pk,
-            'legs': Gear.objects.get(name='Dark Horse Champion', has_armour=True).pk,
-            'feet': Gear.objects.get(name='Augmented Quetzalli', has_armour=True).pk,
-            'earrings': Gear.objects.get(name='Dark Horse Champion', has_accessories=True).pk,
-            'necklace': Gear.objects.get(name='Dark Horse Champion', has_accessories=True).pk,
-            'bracelet': Gear.objects.get(name='Augmented Quetzalli', has_accessories=True).pk,
-            'right_ring': Gear.objects.get(name='Augmented Quetzalli', has_accessories=True).pk,
-            'left_ring': Gear.objects.get(name='Dark Horse Champion', has_accessories=True).pk,
-            'min_il': 710,
-            'max_il': 730,
+            'job_id': 'NIN',
+            'mainhand': ironworks,
+            'offhand': ironworks,
+            'head': koga,
+            'body': ironworks,
+            'hands': koga,
+            'legs': ironworks,
+            'feet': koga,
+            'earrings': azeyma,
+            'necklace': brass,
+            'bracelet': dawn,
+            'right_ring': new,
+            'left_ring': weathered,
+            'min_il': 5,
+            'max_il': 560,
         }
         self.maxDiff = None
         self.assertDictEqual(response.json(), expected)
@@ -130,10 +181,9 @@ class LodestoneGearImport(SavageAimTestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
         # Job ID doesn't match gear
-        url = reverse('api:lodestone_gear_import', kwargs={'character_id': '22909725', 'expected_job': 'SAM'})
+        url = reverse('api:lodestone_gear_import', kwargs={'character_id': '22909725', 'expected_job': 'MNK'})
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_406_NOT_ACCEPTABLE)
-        self.assertEqual(
-            response.json()['message'],
-            'Couldn\'t import Gear from Lodestone. Gear was expected to be for "SAM", but "GNB" was found.',
+        self.assertTrue(
+            'Couldn\'t import Gear from Lodestone. Gear was expected to be for "MNK"' in response.json()['message'],
         )

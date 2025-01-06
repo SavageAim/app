@@ -114,8 +114,9 @@
               </div>
             </div>
 
-            <!-- If the member has no bis list just give a big button -->
-            <button v-if="entry.greed_lists.length === 0" class="button is-info is-fullwidth" @click="() => { chooseGreed(entry, null) }">Select This Character</button>
+            <!-- Generic "give item to this character" button -->
+            <div class="divider" v-if="entry.greed_lists.length > 0">OR</div>
+            <button class="button is-info is-fullwidth" @click="() => { chooseGreed(entry, null) }">Give Item to Character</button>
           </div>
         </a>
       </template>

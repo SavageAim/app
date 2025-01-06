@@ -17,6 +17,7 @@
     "match-sorter": "^6.3.1",
     "microtip": "^0.2.2",
     "multi-range-slider-vue": "^1.1.4",
+    "nanoid": "^3.3.8",
     "nouislider": "^15.7.0",
     "vue": "^2.6.11",
     "vue-class-component": "^7.2.3",

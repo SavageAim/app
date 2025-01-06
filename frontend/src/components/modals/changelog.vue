@@ -11,12 +11,15 @@
       </div>
     </div>
     <div class="card-content content">
-      <h2 class="has-text-primary subtitle">{{ version }} - Happy New Year!!</h2>
-      <div class="divider"><i class="material-icons icon">expand_more</i> Bugfixes <i class="material-icons icon">expand_more</i></div>
-      <p>Worked out some edgecase issues with the Loot Solver. If you run into any weirdness with your Team's Loot Solver, please let me know!</p>
-
-      <div class="divider"><i class="material-icons icon">expand_more</i> Developer QoL <i class="material-icons icon">expand_more</i></div>
-      <p>Ever wanted to try running SavageAim locally and messing around with it? Well the README in the GitHub repo just got a whole lot more helpful, and there's now even a command to setup your local database automatically!</p>
+      <h2 class="has-text-primary subtitle">{{ version }}</h2>
+      <div class="divider"><i class="material-icons icon">expand_more</i> Loot Solver Greed Improvements <i class="material-icons icon">expand_more</i></div>
+      <p>
+        Made it so that when people have Greed BIS Lists, you can still generically assign items to them without updating one of their BIS Lists if the item is not relevant.
+        <ul>
+          <li>For example, currently, if a WHM weapon drops from a fourth fight, and the person who gets it has Greed BIS Lists, but none for WHM, the only way to track the item was to track it manually via the form in the History section.</li>
+          <li>Now there is a generic "Give Item to Character" button even if they have Greed lists, to give them an item that a Character obtained without it being relevant to their Greed lists.</li>
+        </ul>
+      </p>
     </div>
   </div>
 </template>
