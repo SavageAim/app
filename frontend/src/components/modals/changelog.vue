@@ -16,7 +16,8 @@
       <p>
         Made it so that when people have Greed BIS Lists, you can still generically assign items to them without updating one of their BIS Lists if the item is not relevant.
         <ul>
-          <li>For example, if a Mainhand weapon drops that someone gets via Greed, despite them not having a Greed list for that item, you would have to manually assign the item so as not to affect their Greed lists.</li>
+          <li>For example, currently, if a WHM weapon drops from a fourth fight, and the person who gets it has Greed BIS Lists, but none for WHM, the only way to track the item was to track it manually via the form in the History section.</li>
+          <li>Now there is a generic "Give Item to Character" button even if they have Greed lists, to give them an item that a Character obtained without it being relevant to their Greed lists.</li>
         </ul>
       </p>
     </div>
