@@ -115,7 +115,8 @@
             </div>
 
             <!-- Generic "give item to this character" button -->
-            <button class="button is-info is-fullwidth" @click="() => { chooseGreed(entry, null) }">Select This Character</button>
+            <div class="divider" v-if="entry.greed_lists.length > 0">OR</div>
+            <button class="button is-info is-fullwidth" @click="() => { chooseGreed(entry, null) }">Give Item to Character</button>
           </div>
         </a>
       </template>

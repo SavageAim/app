@@ -31,7 +31,8 @@
           </div>
         </div>
       </a>
-      <button class="button is-info is-fullwidth" @click="() => { select(null) }">Give to Character</button>
+      <div class="divider">OR</div>
+      <button class="button is-info is-fullwidth" @click="() => { select(null) }">Give Item to Character</button>
     </div>
   </div>
 </template>
