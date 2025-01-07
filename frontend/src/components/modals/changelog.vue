@@ -12,12 +12,13 @@
     </div>
     <div class="card-content content">
       <h2 class="has-text-primary subtitle">{{ version }}</h2>
-      <div class="divider"><i class="material-icons icon">expand_more</i> Loot Solver Greed Improvements <i class="material-icons icon">expand_more</i></div>
+      <div class="divider"><i class="material-icons icon">expand_more</i> Feedback Request <i class="material-icons icon">expand_more</i></div>
       <p>
-        Made it so that when people have Greed BIS Lists, you can still generically assign items to them without updating one of their BIS Lists if the item is not relevant.
+        Hey everyone! I've added a simple feedback widget to get more opinions on how the site is to use!
         <ul>
-          <li>For example, currently, if a WHM weapon drops from a fourth fight, and the person who gets it has Greed BIS Lists, but none for WHM, the only way to track the item was to track it manually via the form in the History section.</li>
-          <li>Now there is a generic "Give Item to Character" button even if they have Greed lists, to give them an item that a Character obtained without it being relevant to their Greed lists.</li>
+          <li>The time is coming for quite a large rewrite of the site's code to upgrade from Vue 2 to Vue 3.</li>
+          <li>I want to keep the site as close to how it is currently as possible, but I'm also using this as an opportunity to fix any major issues with how the site works for users like you!</li>
+          <li>If there is anything weird or annoying or that you would like to be able to do in this future version, please let me know using the feedback form!</li>
         </ul>
       </p>
     </div>
