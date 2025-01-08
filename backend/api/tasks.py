@@ -11,6 +11,7 @@ from celery import shared_task
 from celery.utils.log import get_task_logger
 from channels.layers import get_channel_layer
 from django.core.management import call_command
+from django.db.models import Q
 from django.utils import timezone
 # local
 from . import notifier
@@ -22,7 +23,10 @@ logger = get_task_logger(__name__)
 
 def assimilate_proxies(real_char: Character):
     # Find all Proxy characters that have the same lodestone ID as this one
-    proxies = Character.objects.filter(user__isnull=True, lodestone_id=real_char.lodestone_id)
+    proxies = Character.objects.filter(
+        Q(user__isnull=True) | Q(user_id=real_char.user_id),
+        lodestone_id=real_char.lodestone_id,
+    )
 
     # For each Character (which should only ever be in one team each);
     #   - Notify the Team Leader that the claim has happened
@@ -30,7 +34,8 @@ def assimilate_proxies(real_char: Character):
     #   - Update the TeamMember object to point to this character
     for char in proxies:
         for tm in char.teammember_set.all():
-            notifier.team_proxy_claim(tm)
+            if char.user is None:
+                notifier.team_proxy_claim(tm)
 
             bis = tm.bis_list
             bis.owner = real_char
@@ -63,7 +68,7 @@ def verify_character(pk: int):
 
     if err is not None:
         notifier.verify_fail(obj, err)
-        logger.info(f'Character #{pk} could not be verified. Exiting.')
+        logger.info(f'Character #{pk} could not be verified. Exiting. ({err})')
         return
 
     logger.info(f'Character #{pk} verified. Updating DB.')
@@ -75,9 +80,14 @@ def verify_character(pk: int):
     assimilate_proxies(obj)
 
     # Next delete all unverified instances of the character (this includes proxies)
-    logger.debug(f'Deleting unverified instances of Character #{obj.lodestone_id} (#{pk}).')
-    objs = Character.objects.filter(verified=False, lodestone_id=obj.lodestone_id).exclude(pk=pk)
-    logger.debug(f'Found {objs.count()} instances of Character #{obj.lodestone_id} to delete.')
+    logger.info(f'Deleting unverified instances of Character #{obj.lodestone_id} (#{pk}) owned by {obj.user_id}.')
+    objs = Character.objects.filter(
+        Q(user__isnull=True) | Q(user_id=obj.user_id),
+        verified=False,
+        lodestone_id=obj.lodestone_id,
+    ).exclude(pk=pk)
+    ids_to_delete = [o.pk for o in objs]
+    logger.info(f'Found {objs.count()} instances of Character #{obj.lodestone_id} to delete.\n{ids_to_delete}')
     objs.delete()
     # Then we're done!
     notifier.verify_success(obj)

@@ -8,6 +8,7 @@ from allauth.socialaccount.models import SocialAccount, SocialApp, SocialToken
 from django.core.management import call_command
 from django.utils import timezone
 # local
+from api.lodestone_scraper import LodestoneScraper
 from api.models import BISList, Character, Gear, Job, Notification, Team, Tier
 from api.tasks import cleanup, verify_character, remind_users_to_verify
 from .test_base import SavageAimTestCase
@@ -77,6 +78,10 @@ class TasksTestSuite(SavageAimTestCase):
 
     Mock requests to return pre-determined html bodies
     """
+
+    def setUp(self):
+        # Call LodestoneScraper.get_instance here so it's unaffected by mocks
+        LodestoneScraper.get_instance()
 
     def tearDown(self):
         Notification.objects.all().delete()
@@ -225,13 +230,25 @@ class TasksTestSuite(SavageAimTestCase):
             verified=False,
             token=Character.generate_token(),
         )
+        third_version = Character.objects.create(
+            avatar_url='https://img.savageaim.com/abcde',
+            lodestone_id=1234567890,
+            user=char.user,
+            name='Char 3',
+            world='Lich',
+            verified=False,
+            token=Character.generate_token(),
+        )
         verify_character(char.pk)
 
         char.refresh_from_db()
         self.assertTrue(char.verified)
         self.assertEqual(Notification.objects.count(), 1)
         with self.assertRaises(Character.DoesNotExist):
-            Character.objects.get(pk=other_version.pk)
+            Character.objects.get(pk=third_version.pk)
+
+        # Ensure that the one owned by a different user is still present to be deleted
+        Character.objects.get(pk=other_version.pk)
 
         # Check for Notification
         notif = Notification.objects.first()
@@ -381,3 +398,138 @@ class TasksTestSuite(SavageAimTestCase):
         remind_users_to_verify()
         self.assertEqual(Notification.objects.count(), 1)
         self.assertEqual(Notification.objects.first().pk, notif.pk)
+
+    @patch('requests.get', side_effect=get_desktop_response)
+    @patch('api.notifier.team_proxy_claim')
+    def test_verify_bug_where_other_unverified_characters_are_used_for_something(self, *args):
+        """
+        Test Plan:
+            - Replicate the bug from Jan 7th
+                - Cannot delete some instances of model 'Character' because they are referenced through protected foreign keys: 'BISList.owner'."
+            - Appears to happen as a result of the other unverified characters being owned and being in use as opposed to being proxies
+        """
+        call_command('seed', stdout=StringIO())
+        lodestone_id = '1234567890'
+        # in the bug, the proxy was created before the character being verified
+        other_owned_character = Character.objects.create(
+            avatar_url='https://img.savageaim.com/abcde',
+            lodestone_id=lodestone_id,
+            user=self._get_user(),
+            name='Char 1',
+            world='Lich',
+            verified=False,
+            token=Character.generate_token(),
+        )
+        # Create a Team first
+        team = Team.objects.create(
+            invite_code=Team.generate_invite_code(),
+            name='Les Jambons',
+            tier=Tier.objects.get(max_item_level=605),
+        )
+        team2 = Team.objects.create(
+            invite_code=Team.generate_invite_code(),
+            name='Les Jambons',
+            tier=Tier.objects.get(max_item_level=605),
+        )
+
+        # Create the Character that we will be verifying
+        char = Character.objects.create(
+            avatar_url='https://img.savageaim.com/abcde',
+            lodestone_id=lodestone_id,
+            user=other_owned_character.user,
+            name='Char 2',
+            verified=False,
+            world='Lich',
+        )
+        proxy = Character.objects.create(
+            avatar_url='https://img.savageaim.com/abcde',
+            lodestone_id=lodestone_id,
+            user=None,
+            name='Char 3',
+            world='Lich',
+            verified=False,
+            token=Character.generate_token(),
+        )
+        raid_weapon = Gear.objects.get(item_level=605, name='Asphodelos')
+        raid_gear = Gear.objects.get(item_level=600, has_weapon=False)
+        tome_gear = Gear.objects.get(item_level=600, has_weapon=True)
+        crafted = Gear.objects.get(name='Classical')
+        bis = BISList.objects.create(
+            bis_body=raid_gear,
+            bis_bracelet=raid_gear,
+            bis_earrings=raid_gear,
+            bis_feet=raid_gear,
+            bis_hands=tome_gear,
+            bis_head=tome_gear,
+            bis_left_ring=tome_gear,
+            bis_legs=tome_gear,
+            bis_mainhand=raid_weapon,
+            bis_necklace=tome_gear,
+            bis_offhand=raid_weapon,
+            bis_right_ring=raid_gear,
+            current_body=crafted,
+            current_bracelet=crafted,
+            current_earrings=crafted,
+            current_feet=crafted,
+            current_hands=crafted,
+            current_head=crafted,
+            current_left_ring=crafted,
+            current_legs=crafted,
+            current_mainhand=crafted,
+            current_necklace=crafted,
+            current_offhand=crafted,
+            current_right_ring=crafted,
+            job_id='SGE',
+            owner=other_owned_character,
+        )
+        bis2 = BISList.objects.create(
+            bis_body=raid_gear,
+            bis_bracelet=raid_gear,
+            bis_earrings=raid_gear,
+            bis_feet=raid_gear,
+            bis_hands=tome_gear,
+            bis_head=tome_gear,
+            bis_left_ring=tome_gear,
+            bis_legs=tome_gear,
+            bis_mainhand=raid_weapon,
+            bis_necklace=tome_gear,
+            bis_offhand=raid_weapon,
+            bis_right_ring=raid_gear,
+            current_body=crafted,
+            current_bracelet=crafted,
+            current_earrings=crafted,
+            current_feet=crafted,
+            current_hands=crafted,
+            current_head=crafted,
+            current_left_ring=crafted,
+            current_legs=crafted,
+            current_mainhand=crafted,
+            current_necklace=crafted,
+            current_offhand=crafted,
+            current_right_ring=crafted,
+            job_id='PLD',
+            owner=proxy,
+        )
+
+        # Put the proxy character on the team
+        tm = team.members.create(character=other_owned_character, bis_list=bis, lead=True)
+        tm2 = team2.members.create(character=proxy, bis_list=bis2, lead=False)
+
+        # Attempt to verify the proxy character, which for some reason is causing a protected error
+        self.assertEqual(Character.objects.count(), 3)
+        verify_character(char.pk)
+        self.assertEqual(Character.objects.count(), 1)
+        with self.assertRaises(Character.DoesNotExist):
+            Character.objects.get(pk=proxy.pk)
+        with self.assertRaises(Character.DoesNotExist):
+            Character.objects.get(pk=other_owned_character.pk)
+
+        tm.refresh_from_db()
+        self.assertEqual(tm.character_id, char.pk)
+        tm2.refresh_from_db()
+        self.assertEqual(tm2.character_id, char.pk)
+
+        bis.refresh_from_db()
+        self.assertEqual(bis.owner_id, char.id)
+        bis2.refresh_from_db()
+        self.assertEqual(bis2.owner_id, char.id)
