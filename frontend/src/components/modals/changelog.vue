@@ -22,7 +22,19 @@
           <li class="has-text-primary">The fix I have implemented is to do this consolidation for un-verified Characters belonging to the same User as well, and leaving unverified versions owned by other Users to be deleted after the week deadline.</li>
         </ul>
       </p>
-      <p>If anyone would like to share feedback / give ideas on this matter, please let me know on Github or in the Discord. Hopefully this is an acceptable solution!</p>
+      <p>If anyone would like to share feedback / give ideas on this matter, please let me know on Github or in the Discord, or by using the new addition below. Hopefully this is an acceptable solution!</p>
+
+      <div class="divider"><i class="material-icons icon">expand_more</i> Feedback Form <i class="material-icons icon">expand_more</i></div>
+      <p>
+        Added a little Feedback widget for another mechanism of gathering feedback for people not on Github or don't want to join the Discord.
+        <ul>
+          <li>I need to upgrade the website UI from using Vue 2 to Vue 3; I'm aiming to start on this in the downtime after 7.2 drops.</li>
+          <li>I intend to keep the site as close as possible as how it is to use currently so if you like how it works then don't worry!</li>
+          <li>However, if there are bugs/issues that I haven't caught, or if there is anything you think is weird or difficult to use, please let me know!</li>
+          <li>I want to make this site as good as I can, and I want you all to be as happy as possible using it as well, so please help me if there is anything I should know!</li>
+        </ul>
+      </p>
+      <p>I wasn't planning on releasing this so soon but I wanted the bugfix out ASAP and this was already in the codebase :D</p>
     </div>
   </div>
 </template>

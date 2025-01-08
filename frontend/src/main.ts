@@ -32,10 +32,28 @@ Sentry.init({
   logErrors: true,
   release: 'savageaim@20250106',
   integrations: [
-    new Sentry.BrowserTracing({
-      routingInstrumentation: Sentry.vueRouterInstrumentation(router),
+    Sentry.browserTracingIntegration(),
+    Sentry.replayIntegration(),
+    Sentry.feedbackIntegration({
+      colorScheme: 'dark',
+      showName: false,
+      showEmail: false,
+      showBranding: false,
+      triggerLabel: 'Feedback',
+      formTitle: 'Send us Feedback',
+      submitButtonLabel: 'Send',
+      messageLabel: 'Message',
+      messagePlaceholder: 'What would you like to tell us?',
+      themeDark: {
+        background: '#17181c',
+        foreground: '#F3F3EC',
+        accentForeground: '#F3F3EC',
+        accentBackground: '#5d98c4',
+        successColor: '#4E9381',
+        errorColor: '#c14762',
+        outline: '0.5px solid #2E53A5',
+      },
     }),
-    new Sentry.Replay(),
   ],
   tracesSampleRate: 0.5,
 
