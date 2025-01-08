@@ -28,7 +28,7 @@
       <p>
         Added a little Feedback widget for another mechanism of gathering feedback for people not on Github or don't want to join the Discord.
         <ul>
-          <li>I need to upgrade the website UI from using Vue 2 to Vue 3, aiming to do this in the downtime after 7.2 drops.</li>
+          <li>I need to upgrade the website UI from using Vue 2 to Vue 3; I'm aiming to start on this in the downtime after 7.2 drops.</li>
           <li>I intend to keep the site as close as possible as how it is to use currently so if you like how it works then don't worry!</li>
           <li>However, if there are bugs/issues that I haven't caught, or if there is anything you think is weird or difficult to use, please let me know!</li>
           <li>I want to make this site as good as I can, and I want you all to be as happy as possible using it as well, so please help me if there is anything I should know!</li>
