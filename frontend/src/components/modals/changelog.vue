@@ -12,14 +12,17 @@
     </div>
     <div class="card-content content">
       <h2 class="has-text-primary subtitle">{{ version }}</h2>
-      <div class="divider"><i class="material-icons icon">expand_more</i> Loot Solver Greed Improvements <i class="material-icons icon">expand_more</i></div>
-      <p>
-        Made it so that when people have Greed BIS Lists, you can still generically assign items to them without updating one of their BIS Lists if the item is not relevant.
+      <div class="divider"><i class="material-icons icon">expand_more</i> Character Verify Bugfix <i class="material-icons icon">expand_more</i></div>
+      <p>Fixed a bug during the Character Verification process where it couldn't do cleanup, which first occurred yesterday.</p>
+      <p>For an explanation of the bug and what was done to fix it;
         <ul>
-          <li>For example, currently, if a WHM weapon drops from a fourth fight, and the person who gets it has Greed BIS Lists, but none for WHM, the only way to track the item was to track it manually via the form in the History section.</li>
-          <li>Now there is a generic "Give Item to Character" button even if they have Greed lists, to give them an item that a Character obtained without it being relevant to their Greed lists.</li>
+          <li>Previously, unverified Characters could not be used to make BIS Lists or join Teams or anything, so when you verified a Character the system would delete all the unverified versions of the same Character by Lodestone ID.</li>
+          <li>Now however, unverified Characters can be used for a week before everything gets deleted, but this caused a bug in the cleanup process where if an unverified version had a BIS List it couldn't be deleted.</li>
+          <li>Also, any proxies using the same Character get merged into the verified Character, consolidating all BIS Lists and Team Membership into the verified Character.</li>
+          <li class="has-text-primary">The fix I have implemented is to do this consolidation for un-verified Characters belonging to the same User as well, and leaving unverified versions owned by other Users to be deleted after the week deadline.</li>
         </ul>
       </p>
+      <p>If anyone would like to share feedback / give ideas on this matter, please let me know on Github or in the Discord. Hopefully this is an acceptable solution!</p>
     </div>
   </div>
 </template>
