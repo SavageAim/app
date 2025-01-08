@@ -619,7 +619,44 @@ class TeamResource(SavageAimTestCase):
             job=Job.objects.last(),
             owner=other_char,
         )
+        proxy_char = Character.objects.create(
+            avatar_url='https://img.savageaim.com/abcde',
+            lodestone_id=987654321,
+            user=None,
+            name='Char 3',
+            world='Lich',
+        )
+        g = Gear.objects.first()
+        proxy_bis = BISList.objects.create(
+            bis_body=g,
+            bis_bracelet=g,
+            bis_earrings=g,
+            bis_feet=g,
+            bis_hands=g,
+            bis_head=g,
+            bis_left_ring=g,
+            bis_legs=g,
+            bis_mainhand=g,
+            bis_necklace=g,
+            bis_offhand=g,
+            bis_right_ring=g,
+            current_body=g,
+            current_bracelet=g,
+            current_earrings=g,
+            current_feet=g,
+            current_hands=g,
+            current_head=g,
+            current_left_ring=g,
+            current_legs=g,
+            current_mainhand=g,
+            current_necklace=g,
+            current_offhand=g,
+            current_right_ring=g,
+            job=Job.objects.last(),
+            owner=proxy_char,
+        )
         self.team.members.create(character=other_char, bis_list=other_bis, lead=False)
+        self.team.members.create(character=proxy_char, bis_list=proxy_bis, lead=False)
 
         response = self.client.delete(url)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT, response.content)

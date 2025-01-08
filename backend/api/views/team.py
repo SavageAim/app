@@ -208,7 +208,7 @@ class TeamResource(APIView):
             return Response(status=404)
 
         team_id = str(obj.pk)
-        members = list(obj.members.all())
+        members = list(obj.members.filter(character__user__isnull=False))
 
         obj.disband()
 

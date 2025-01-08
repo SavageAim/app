@@ -12,6 +12,10 @@
     </div>
     <div class="card-content content">
       <h2 class="has-text-primary subtitle">{{ version }}</h2>
+      <div class="divider"><i class="material-icons icon">expand_more</i> Team Delete Bugfix <i class="material-icons icon">expand_more</i></div>
+      <p>Quick extra push today to deliver a bugfix to a long hidden bug during Team deletion. Sorry for the inconvenience but thank you for catching it!</p>
+
+      <h2 class="has-text-primary subtitle">{{ version.split('.')[0] }}</h2>
       <div class="divider"><i class="material-icons icon">expand_more</i> Character Verify Bugfix <i class="material-icons icon">expand_more</i></div>
       <p>Fixed a bug during the Character Verification process where it couldn't do cleanup, which first occurred yesterday.</p>
       <p>For an explanation of the bug and what was done to fix it;
