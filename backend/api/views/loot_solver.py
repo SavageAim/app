@@ -197,7 +197,7 @@ class LootSolver(APIView):
         """
         # Limit floor requirements to the items that were important, then remove from this list as we update the prios below
         floor_requirements = {
-            slot: requirements.get(slot, [])
+            slot: deepcopy(requirements.get(slot, []))
             for slot in slots
         }
         relevant_history = history.filter(item__in=slots).order_by('obtained')
@@ -285,8 +285,11 @@ class LootSolver(APIView):
         """
         handouts = []
         remove_slots = slots.copy()
-        # Deepcopy the prio brackets dict so that sentry errors can print the upper level prio brackets for more debugging ease
+
+        # Deepcopy passed dicts for Sentry debugging
         prio_brackets = deepcopy(prio_brackets)
+        requirements = deepcopy(requirements)
+
         if 'augment' in slots[-1]:
             remove_slots = [remove_slots[-1]]
         while len(prio_brackets) > 0:
@@ -306,11 +309,18 @@ class LootSolver(APIView):
             # This ensures each item is given to the person with the highest priority of getting it
             done = False
             potential_loot_members: Dict[int, List[str]] = {}
+            # Skip repeated single item lists
+            single_item_entries = set()
             for priority in sorted(prio_brackets, reverse=True):
                 for member_id in prio_brackets[priority]:
                     required = [slot for slot in requirements if member_id in requirements[slot]]
-                    potential_loot_members[member_id] = required
 
+                    if len(required) == 1:
+                        if required[0] in single_item_entries:
+                            continue
+                        single_item_entries.add(required[0])
+
+                    potential_loot_members[member_id] = required
                     # Subtract from the set of things needed this week
                     required_slots_for_week -= set(required)
 
@@ -401,7 +411,7 @@ class LootSolver(APIView):
                     prio_brackets[new_prio].append(member_id)
 
                 # Now we need to remove the member_id from potentials and remove the item from the popped list in case we need to re-insert
-                removed = potential_loot_members.pop(member_id, None)
+                removed = potential_loot_members.pop(member_id, [])
                 try:
                     removed.remove(item)
                 except ValueError:
@@ -455,8 +465,8 @@ class LootSolver(APIView):
 
         return handouts
 
+    @staticmethod
     def _get_first_floor_data(
-        self,
         requirements: Requirements,
         history: QuerySet[Loot],
         id_order: List[int],
@@ -466,14 +476,14 @@ class LootSolver(APIView):
         """
         Simulate handing out the loot for a first floor clear.
         """
-        weeks, prio_brackets, floor_requirements = self._get_floor_data(
+        weeks, prio_brackets, floor_requirements = LootSolver._get_floor_data(
             requirements,
             history,
-            self.FIRST_FLOOR_SLOTS,
+            LootSolver.FIRST_FLOOR_SLOTS,
             id_order,
             non_loot_gear_obtained,
         )
-        return self._get_handout_data(self.FIRST_FLOOR_SLOTS, floor_requirements, prio_brackets, self.FIRST_FLOOR_TOKENS, weeks, greedy)
+        return LootSolver._get_handout_data(LootSolver.FIRST_FLOOR_SLOTS, floor_requirements, prio_brackets, LootSolver.FIRST_FLOOR_TOKENS, weeks, greedy)
 
     @staticmethod
     def _get_second_floor_data(
@@ -495,8 +505,8 @@ class LootSolver(APIView):
         )
         return LootSolver._get_handout_data(LootSolver.SECOND_FLOOR_SLOTS, floor_requirements, prio_brackets, LootSolver.SECOND_FLOOR_TOKENS, weeks, greedy)
 
+    @staticmethod
     def _get_third_floor_data(
-        self,
         requirements: Requirements,
         history: QuerySet[Loot],
         id_order: List[int],
@@ -506,16 +516,17 @@ class LootSolver(APIView):
         """
         Simulate handing out the loot for a third floor clear.
         """
-        weeks, prio_brackets, floor_requirements = self._get_floor_data(
+        weeks, prio_brackets, floor_requirements = LootSolver._get_floor_data(
             requirements,
             history,
-            self.THIRD_FLOOR_SLOTS,
+            LootSolver.THIRD_FLOOR_SLOTS,
             id_order,
             non_loot_gear_obtained,
         )
-        return self._get_handout_data(self.THIRD_FLOOR_SLOTS, floor_requirements, prio_brackets, self.THIRD_FLOOR_TOKENS, weeks, greedy)
+        return LootSolver._get_handout_data(LootSolver.THIRD_FLOOR_SLOTS, floor_requirements, prio_brackets, LootSolver.THIRD_FLOOR_TOKENS, weeks, greedy)
 
-    def _get_fourth_floor_data(self, history: QuerySet[Loot], team_size: int, non_loot_gear_obtained: NonLootGear) -> HandoutData:
+    @staticmethod
+    def _get_fourth_floor_data(history: QuerySet[Loot], team_size: int, non_loot_gear_obtained: NonLootGear) -> HandoutData:
         """
         Simulate handing out the loot for a fourth floor clear.
         Different from how the others are handled, because we just check how many people already have bis weapon, and also how many mounts have been obtained.

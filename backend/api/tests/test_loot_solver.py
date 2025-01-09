@@ -1689,3 +1689,39 @@ class LootSolverV2TestSuite(SavageAimTestCase):
         self.assertEqual(len(expected), len(received), received)
         for i in range(len(expected)):
             self.assertDictEqual(expected[i], received[i], f'{i+1}/{len(received)}')
+
+    def test_removed_pop_was_none_bug(self):
+        """
+        Test Plan:
+            - Run Loot Solver with data from the latest sentry issue where it got a None.remove call
+            - See what happened, and fix the bug, to make sure it never happens again
+        """
+        weeks = 0
+        prio_brackets = {
+            1: [1, 2],
+            2: [3, 4, 5, 6],
+        }
+        floor_requirements = {
+            'body': [5, 6, 3],
+            'legs': [4, 1, 2],
+            'tome-armour-augment': [4, 5, 6, 3],
+        }
+
+        expected = [
+            {'token': False, 'Body': 3, 'Legs': 4, 'Tome Armour Augment': 5},
+            {'token': False, 'Body': 6, 'Legs': 1, 'Tome Armour Augment': 4},
+            {'token': False, 'Body': 5, 'Legs': 2, 'Tome Armour Augment': 3},
+            {'token': True, 'Body': None, 'Legs': None, 'Tome Armour Augment': 6},
+        ]
+
+        received = LootSolver._get_handout_data(
+            LootSolver.THIRD_FLOOR_SLOTS,
+            floor_requirements,
+            prio_brackets,
+            LootSolver.THIRD_FLOOR_TOKENS,
+            weeks,
+            False,
+        )
+        self.assertEqual(len(expected), len(received), received)
+        for i in range(len(expected)):
+            self.assertDictEqual(expected[i], received[i], f'{i+1}/{len(received)}')
