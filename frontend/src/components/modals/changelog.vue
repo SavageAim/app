@@ -12,8 +12,14 @@
     </div>
     <div class="card-content content">
       <h2 class="has-text-primary subtitle">{{ version }}</h2>
+      <div class="divider"><i class="material-icons icon">expand_more</i> Loot Solver Algorithm Improvement / Bugfix <i class="material-icons icon">expand_more</i></div>
+      <p>Improved Loot Solver algorithm to handle newfound edgecase.</p>
+      <p>Also fixed silly bug in the code that was introduced when fixing the previous Loot Solver bug!</p>
+
+      <h2 class="has-text-primary subtitle">{{ version.split('.')[0] }}.2</h2>
       <div class="divider"><i class="material-icons icon">expand_more</i> Team Delete Bugfix <i class="material-icons icon">expand_more</i></div>
       <p>Quick extra push today to deliver a bugfix to a long hidden bug during Team deletion. Sorry for the inconvenience but thank you for catching it!</p>
+      <p>Thankfully it wasn't an issue for deleting anything, just caused an error at the end of the endpoint call!</p>
 
       <h2 class="has-text-primary subtitle">{{ version.split('.')[0] }}</h2>
       <div class="divider"><i class="material-icons icon">expand_more</i> Character Verify Bugfix <i class="material-icons icon">expand_more</i></div>
