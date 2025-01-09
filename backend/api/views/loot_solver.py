@@ -309,11 +309,18 @@ class LootSolver(APIView):
             # This ensures each item is given to the person with the highest priority of getting it
             done = False
             potential_loot_members: Dict[int, List[str]] = {}
+            # Skip repeated single item lists
+            single_item_entries = set()
             for priority in sorted(prio_brackets, reverse=True):
                 for member_id in prio_brackets[priority]:
                     required = [slot for slot in requirements if member_id in requirements[slot]]
-                    potential_loot_members[member_id] = required
 
+                    if len(required) == 1:
+                        if required[0] in single_item_entries:
+                            continue
+                        single_item_entries.add(required[0])
+
+                    potential_loot_members[member_id] = required
                     # Subtract from the set of things needed this week
                     required_slots_for_week -= set(required)
 
@@ -404,7 +411,7 @@ class LootSolver(APIView):
                     prio_brackets[new_prio].append(member_id)
 
                 # Now we need to remove the member_id from potentials and remove the item from the popped list in case we need to re-insert
-                removed = potential_loot_members.pop(member_id, None)
+                removed = potential_loot_members.pop(member_id, [])
                 try:
                     removed.remove(item)
                 except ValueError:
