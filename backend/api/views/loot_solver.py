@@ -197,7 +197,7 @@ class LootSolver(APIView):
         """
         # Limit floor requirements to the items that were important, then remove from this list as we update the prios below
         floor_requirements = {
-            slot: requirements.get(slot, [])
+            slot: deepcopy(requirements.get(slot, []))
             for slot in slots
         }
         relevant_history = history.filter(item__in=slots).order_by('obtained')
@@ -285,8 +285,11 @@ class LootSolver(APIView):
         """
         handouts = []
         remove_slots = slots.copy()
-        # Deepcopy the prio brackets dict so that sentry errors can print the upper level prio brackets for more debugging ease
+
+        # Deepcopy passed dicts for Sentry debugging
         prio_brackets = deepcopy(prio_brackets)
+        requirements = deepcopy(requirements)
+
         if 'augment' in slots[-1]:
             remove_slots = [remove_slots[-1]]
         while len(prio_brackets) > 0:
