@@ -6,10 +6,11 @@ from typing import Dict
 import requests
 
 API_KEY = os.environ.get('XIVAPI_KEY', None)
+HEADERS = {'User-Agent': f'savageaim.com'}
 
 
 class XIVAPISearchClient:
-    url = 'https://beta.xivapi.com/api/1/sheet/Item'
+    url = 'https://v2.xivapi.com/api/1/sheet/Item'
 
     @classmethod
     def get_item_information(cls, *item_ids: int) -> Dict[str, Dict[str, str]]:
