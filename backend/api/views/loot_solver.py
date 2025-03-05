@@ -417,16 +417,27 @@ class LootSolver(APIView):
                 except ValueError:
                     pass
 
-                # Now remove the item from everyone else
+                # Now remove the item from everyone else, and check for any now-unique items
                 for other_member_id, other_member_items in potential_loot_members.items():
                     try:
                         other_member_items.remove(item)
+                        if len(other_member_items) == 1:
+                            # Put the person and their item into the queue
+                            handout_queue.append((other_member_id, other_member_items[0]))
                     except ValueError:
                         # If the item isn't in the list, that's fine
-                        continue
-                    if len(other_member_items) == 1:
-                        # Put the person and their item into the queue
-                        handout_queue.append((other_member_id, other_member_items[0]))
+                        pass
+
+                    # Also recalc if someone now has a unique item that they should get
+                    member_items_set = set(other_member_items)
+                    other_set = set()
+                    for other_other_member_id, other_other_member_items in potential_loot_members.items():
+                        if other_member_id == other_other_member_id:
+                            continue
+                        other_set |= set(other_other_member_items)
+                    uniques = member_items_set - other_set
+                    for unique_item in uniques:
+                        handout_queue.append((other_member_id, unique_item))
 
                 # Then do some checking if we need to re_insert the popped member
                 if re_insert:
@@ -436,29 +447,34 @@ class LootSolver(APIView):
             # Add the week data to the handouts list
             handouts.append(week_data)
 
-            # Lastly, if weeks % token_count == 0, reduce everyone's requirement by 1
+            # Lastly, if weeks % token_count == 0, reduce everyone's requirement by 1 if they can buy an item
             if weeks % weeks_per_token == 0:
-                for priority in sorted(prio_brackets):
-                    prio_brackets[priority - 1] = prio_brackets[priority]
-
-                    # Need to also remove a loot item for everyone in the priority bracket to keep the requirements info in check
-                    for member_id in prio_brackets[priority]:
-                        # Reverse slots so that we always pop tokens if possible
+                # Find the members that can buy something and track what they can buy
+                member_purchases = {}
+                for remove_prio in sorted(prio_brackets, reverse=True):
+                    member_ids = prio_brackets[remove_prio]
+                    for member_id in member_ids:
                         for slot in remove_slots:
-                            try:
-                                requirements[slot].remove(member_id)
-                                break
-                            except ValueError:
-                                # Keep searching until we find one
-                                pass
+                            if member_id in requirements[slot] and member_id not in member_purchases:
+                                member_purchases[member_id] = slot
 
-                # Remove the 0 key and the highest key because that will have been duplicated
+                for purchaser_id, slot in member_purchases.items():
+                    # Remove the purchaser_id from the item requirements, reduce their priority by one
+                    requirements[slot].remove(purchaser_id)
+                    for remove_prio in sorted(prio_brackets):
+                        if purchaser_id in prio_brackets[remove_prio]:
+                            prio_brackets[remove_prio].remove(purchaser_id)
+                            try:
+                                prio_brackets[remove_prio - 1].append(purchaser_id)
+                            except KeyError:
+                                prio_brackets[remove_prio - 1] = [purchaser_id]
+                            break
+
+                # Remove 0 key, and any empty lists
                 prio_brackets.pop(0, None)
-                try:
-                    prio_brackets.pop(max(prio_brackets.keys()), None)
-                except ValueError:
-                    # 0 is also the max and we removed it?
-                    pass
+                for priority in list(prio_brackets.keys()):
+                    if prio_brackets[priority] == []:
+                        prio_brackets.pop(priority, None)
                 week_data['token'] = True
             else:
                 week_data['token'] = False
