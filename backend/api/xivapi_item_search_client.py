@@ -6,7 +6,7 @@ from typing import Dict
 import requests
 
 API_KEY = os.environ.get('XIVAPI_KEY', None)
-HEADERS = {'User-Agent': f'savageaim.com'}
+HEADERS = {'User-Agent': 'savageaim.com'}
 
 
 class XIVAPISearchClient:
@@ -21,7 +21,7 @@ class XIVAPISearchClient:
         item_ids = set(item_ids)
         rows = ','.join(str(item_id) for item_id in item_ids)
         url = f'{cls.url}?rows={rows}&fields=row_id,LevelItem.value,Name'
-        response = requests.get(url)
+        response = requests.get(url, headers=HEADERS)
         response.raise_for_status()
 
         for item in response.json().get('rows', []):
