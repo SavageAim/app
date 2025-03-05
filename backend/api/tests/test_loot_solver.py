@@ -809,6 +809,21 @@ class LootSolverTestSuite(SavageAimTestCase):
     def test_solver_sort_overrides(self):
         """
         Ensure that overriding the solver sort order actually affects the way the members are ordered.
+
+        expected = {
+            'earrings': [self.tm5.id, self.tm6.id],
+            'necklace': [self.tm1.id, self.tm2.id, self.tm3.id, self.tm4.id, self.tm7.id, self.tm8.id],
+            'bracelet': [self.tm3.id, self.tm4.id, self.tm5.id, self.tm6.id],
+            'ring': [self.tm5.id, self.tm6.id, self.tm7.id, self.tm8.id],
+            'head': [self.tm1.id, self.tm2.id, self.tm3.id, self.tm5.id, self.tm7.id, self.tm8.id],
+            'hands': [self.tm1.id, self.tm2.id, self.tm7.id],
+            'feet': [self.tm3.id, self.tm4.id, self.tm5.id, self.tm6.id, self.tm8.id],
+            'tome-accessory-augment': [self.tm1.id, self.tm1.id, self.tm1.id, self.tm2.id, self.tm2.id, self.tm2.id, self.tm3.id, self.tm3.id, self.tm4.id, self.tm4.id, self.tm5.id, self.tm5.id, self.tm6.id, self.tm6.id, self.tm7.id, self.tm7.id, self.tm7.id, self.tm8.id, self.tm8.id, self.tm8.id],
+            'body': [self.tm3.id, self.tm4.id, self.tm5.id, self.tm6.id, self.tm8.id],
+            'legs': [self.tm1.id, self.tm2.id, self.tm7.id],
+            'tome-armour-augment': [self.tm1.id, self.tm1.id, self.tm2.id, self.tm2.id, self.tm3.id, self.tm3.id, self.tm4.id, self.tm4.id, self.tm4.id, self.tm5.id, self.tm5.id, self.tm6.id, self.tm6.id, self.tm6.id, self.tm7.id, self.tm7.id, self.tm8.id, self.tm8.id],
+            'mainhand': [self.tm1.id, self.tm2.id, self.tm3.id, self.tm4.id, self.tm5.id, self.tm6.id, self.tm7.id, self.tm8.id],
+        }
         """
         # First test while the team has no overrides to ensure the list matches what we expect
         member_order = LootSolver._get_team_solver_sort_order(self.team)
@@ -850,8 +865,8 @@ class LootSolverTestSuite(SavageAimTestCase):
             {'token': False, 'Head': self.tm2.id, 'Hands': self.tm7.id, 'Feet': self.tm8.id, 'Tome Accessory Augment': self.tm1.id},
             {'token': False, 'Head': self.tm3.id, 'Hands': self.tm2.id, 'Feet': self.tm5.id, 'Tome Accessory Augment': self.tm8.id},
             {'token': True, 'Head': self.tm7.id, 'Hands': self.tm1.id, 'Feet': self.tm6.id, 'Tome Accessory Augment': self.tm4.id},
-            {'token': False, 'Head': self.tm8.id, 'Hands': None, 'Feet': self.tm3.id, 'Tome Accessory Augment': self.tm2.id},
-            {'token': False, 'Head': self.tm5.id, 'Hands': None, 'Feet': self.tm4.id, 'Tome Accessory Augment': self.tm7.id},
+            {'token': False, 'Head': self.tm5.id, 'Hands': None, 'Feet': self.tm3.id, 'Tome Accessory Augment': self.tm2.id},
+            {'token': False, 'Head': self.tm8.id, 'Hands': None, 'Feet': self.tm4.id, 'Tome Accessory Augment': self.tm7.id},
             {'token': True, 'Head': self.tm1.id, 'Hands': None, 'Feet': None, 'Tome Accessory Augment': self.tm6.id},
         ]
 
@@ -1671,12 +1686,12 @@ class LootSolverV2TestSuite(SavageAimTestCase):
         }
 
         expected = [
-            {'token': False, 'Head': 4, 'Hands': 2, 'Feet': 4, 'Tome Accessory Augment': 3},
-            {'token': False, 'Head': 3, 'Hands': 4, 'Feet': 2, 'Tome Accessory Augment': 2},
-            {'token': True, 'Head': 2, 'Hands': 3, 'Feet': None, 'Tome Accessory Augment': 4},
-            {'token': False, 'Head': None, 'Hands': None, 'Feet': None, 'Tome Accessory Augment': 4},
+            {'token': False, 'Head': 4, 'Hands': 3, 'Feet': 2, 'Tome Accessory Augment': 4},
+            {'token': False, 'Head': 3, 'Hands': 2, 'Feet': 4, 'Tome Accessory Augment': 4},
+            {'token': True, 'Head': 2, 'Hands': 4, 'Feet': None, 'Tome Accessory Augment': 3},
             {'token': False, 'Head': None, 'Hands': None, 'Feet': None, 'Tome Accessory Augment': 2},
-            {'token': True, 'Head': None, 'Hands': None, 'Feet': None, 'Tome Accessory Augment': 4},
+            {'token': False, 'Head': None, 'Hands': None, 'Feet': None, 'Tome Accessory Augment': 4},
+            {'token': True, 'Head': None, 'Hands': None, 'Feet': None, 'Tome Accessory Augment': 2},
         ]
         received = LootSolver._get_handout_data(
             LootSolver.SECOND_FLOOR_SLOTS,
@@ -1748,7 +1763,7 @@ class LootSolverV2TestSuite(SavageAimTestCase):
             {'Head': 1, 'Hands': 2, 'Feet': 5, 'Tome Accessory Augment': 6, 'token': True},
             {'Head': 3, 'Hands': 1, 'Feet': 4, 'Tome Accessory Augment': 2, 'token': False},
             {'Head': 2, 'Hands': 5, 'Feet': 6, 'Tome Accessory Augment': 1, 'token': False},
-            {'Head': 4, 'Hands': 6, 'Feet': 7, 'Tome Accessory Augment': 295, 'token': True},
+            {'Head': 4, 'Hands': 6, 'Feet': 7, 'Tome Accessory Augment': 1, 'token': True},
             {'Head': None, 'Hands': None, 'Feet': 8, 'Tome Accessory Augment': None, 'token': False},
             {'Head': None, 'Hands': None, 'Feet': 3, 'Tome Accessory Augment': None, 'token': False},
         ]
@@ -1756,4 +1771,3 @@ class LootSolverV2TestSuite(SavageAimTestCase):
         self.assertEqual(len(expected), len(received), received)
         for i in range(len(expected)):
             self.assertDictEqual(expected[i], received[i], f'{i+1}/{len(received)}')
-
