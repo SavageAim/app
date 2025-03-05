@@ -1725,3 +1725,35 @@ class LootSolverV2TestSuite(SavageAimTestCase):
         self.assertEqual(len(expected), len(received), received)
         for i in range(len(expected)):
             self.assertDictEqual(expected[i], received[i], f'{i+1}/{len(received)}')
+
+    def test_purchases_are_limited_to_tomes_only_in_midtier_fights(self):
+        """
+        There are some errors in the loot solver for fights 2/3 where it could be expecting armour piece buys for the same price as an augment.
+        """
+        weeks = 2
+        second_floor_requirements = {
+            'head': [1, 2, 3, 4],
+            'hands': [1, 2, 5, 6],
+            'feet': [5, 6, 7, 8, 3, 4],
+            'tome-accessory-augment': [1, 1, 1, 2, 2, 2, 5, 5, 6, 6],
+        }
+        second_floor_prios = {
+            5: [1, 2],
+            4: [5, 6],
+            2: [3, 4],
+            1: [7, 8],
+        }
+
+        expected = [
+            {'Head': 1, 'Hands': 2, 'Feet': 5, 'Tome Accessory Augment': 6, 'token': True},
+            {'Head': 3, 'Hands': 1, 'Feet': 4, 'Tome Accessory Augment': 2, 'token': False},
+            {'Head': 2, 'Hands': 5, 'Feet': 6, 'Tome Accessory Augment': 1, 'token': False},
+            {'Head': 4, 'Hands': 6, 'Feet': 7, 'Tome Accessory Augment': 295, 'token': True},
+            {'Head': None, 'Hands': None, 'Feet': 8, 'Tome Accessory Augment': None, 'token': False},
+            {'Head': None, 'Hands': None, 'Feet': 3, 'Tome Accessory Augment': None, 'token': False},
+        ]
+        received = LootSolver._get_handout_data(LootSolver.SECOND_FLOOR_SLOTS, second_floor_requirements, second_floor_prios, LootSolver.SECOND_FLOOR_TOKENS, weeks, False)
+        self.assertEqual(len(expected), len(received), received)
+        for i in range(len(expected)):
+            self.assertDictEqual(expected[i], received[i], f'{i+1}/{len(received)}')
+
