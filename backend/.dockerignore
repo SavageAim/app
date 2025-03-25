@@ -1,0 +1,5 @@
+**/__pycache__
+api/tests
+deployment
+.coveragerc
+.dockerignore

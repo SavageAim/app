@@ -12,39 +12,37 @@
     </div>
     <div class="card-content content">
       <h2 class="has-text-primary subtitle">{{ version }}</h2>
-      <div class="divider"><i class="material-icons icon">expand_more</i> Loot Solver Algorithm Improvement / Bugfix <i class="material-icons icon">expand_more</i></div>
-      <p>Improved Loot Solver algorithm to handle newfound edgecase.</p>
-      <p>Also fixed silly bug in the code that was introduced when fixing the previous Loot Solver bug!</p>
-
-      <h2 class="has-text-primary subtitle">{{ version.split('.')[0] }}.2</h2>
-      <div class="divider"><i class="material-icons icon">expand_more</i> Team Delete Bugfix <i class="material-icons icon">expand_more</i></div>
-      <p>Quick extra push today to deliver a bugfix to a long hidden bug during Team deletion. Sorry for the inconvenience but thank you for catching it!</p>
-      <p>Thankfully it wasn't an issue for deleting anything, just caused an error at the end of the endpoint call!</p>
-
-      <h2 class="has-text-primary subtitle">{{ version.split('.')[0] }}</h2>
-      <div class="divider"><i class="material-icons icon">expand_more</i> Character Verify Bugfix <i class="material-icons icon">expand_more</i></div>
-      <p>Fixed a bug during the Character Verification process where it couldn't do cleanup, which first occurred yesterday.</p>
-      <p>For an explanation of the bug and what was done to fix it;
-        <ul>
-          <li>Previously, unverified Characters could not be used to make BIS Lists or join Teams or anything, so when you verified a Character the system would delete all the unverified versions of the same Character by Lodestone ID.</li>
-          <li>Now however, unverified Characters can be used for a week before everything gets deleted, but this caused a bug in the cleanup process where if an unverified version had a BIS List it couldn't be deleted.</li>
-          <li>Also, any proxies using the same Character get merged into the verified Character, consolidating all BIS Lists and Team Membership into the verified Character.</li>
-          <li class="has-text-primary">The fix I have implemented is to do this consolidation for un-verified Characters belonging to the same User as well, and leaving unverified versions owned by other Users to be deleted after the week deadline.</li>
-        </ul>
-      </p>
-      <p>If anyone would like to share feedback / give ideas on this matter, please let me know on Github or in the Discord, or by using the new addition below. Hopefully this is an acceptable solution!</p>
-
-      <div class="divider"><i class="material-icons icon">expand_more</i> Feedback Form <i class="material-icons icon">expand_more</i></div>
+      <div class="divider"><i class="material-icons icon">expand_more</i> FFXIV Patch 7.2 <i class="material-icons icon">expand_more</i></div>
+      <p>A new Tier, AAC Cruiserweight Tier, has been added. Please ensure to update your Team to the new Tier to have BIS Table colours display correctly, and best of luck!</p>
       <p>
-        Added a little Feedback widget for another mechanism of gathering feedback for people not on Github or don't want to join the Discord.
+        All the gear added with Patch 7.2 has been added to the site, please enjoy updating your BIS Lists for the new Tier!
         <ul>
-          <li>I need to upgrade the website UI from using Vue 2 to Vue 3; I'm aiming to start on this in the downtime after 7.2 drops.</li>
-          <li>I intend to keep the site as close as possible as how it is to use currently so if you like how it works then don't worry!</li>
-          <li>However, if there are bugs/issues that I haven't caught, or if there is anything you think is weird or difficult to use, please let me know!</li>
-          <li>I want to make this site as good as I can, and I want you all to be as happy as possible using it as well, so please help me if there is anything I should know!</li>
+          <li>Ceremonial Weapon, Armour and Accessories - Item Level 740</li>
+          <li>Cruiser Armour and Accessories - Item Level 740</li>
+          <li>????? Trial Weapon - Item Level 745 (name hidden in changelog for spoilers sake)</li>
+          <li>Historia Weapon, Armour and Accessories - Item Level 750</li>
+          <li>Augmented Historia Weapon, Armour and Accessories - Item Level 760</li>
+          <li>Babyface Champion Armour and Accessories - Item Level 760</li>
+          <li>Babyface Champion Weapon - Item Level 765</li>
         </ul>
       </p>
-      <p>I wasn't planning on releasing this so soon but I wanted the bugfix out ASAP and this was already in the codebase :D</p>
+      <p>The default values for the Item Level filters in BIS pages have been updated to the new range for Cruiserweight. (740 - 765)</p>
+
+      <div class="divider"><i class="material-icons icon">expand_more</i> Loot Solver Bugfixes <i class="material-icons icon">expand_more</i></div>
+      <p>
+        Fixed a bug where the Loot Solver would assume that you could buy armour pieces from 2nd and 3rd fights of a Tier with the same number of clear-tokens as the tome augmentation items.
+        <ul>
+          <li>As a reminder, the Solver assumes you only buy Tome Augmentation items from the 2nd and 3rd fights!</li>
+        </ul>
+      </p>
+      <p>Also fixed some other very well hidden bugs, so thank you to everyone for using the Loot page and giving me good data!</p>
+
+      <div class="divider"><i class="material-icons icon">expand_more</i> Work Commencing on SavageAim "v2" <i class="material-icons icon">expand_more</i></div>
+      <p>As mentioned before, I need to update some frontend libraries that the site uses for security and updates sakes.</p>
+      <p>If you have any issues with the site, now is definitely the time to make them known, as I'll be trying to fix a bunch of things while keeping the site looking as much the same as possible!</p>
+      <p>Leave your feedback either in the Discord (link at the bottom of the page) or using the nice lil feedback widget at the bottom right of your page!</p>
+      <p>You can track v2 plans at the GitHub Issue <a href="https://github.com/SavageAim/app/issues/92" target="_blank">here!</a></p>
+      <p>Thank you all for your continued support, SavageAim wouldn't be half the tool it is without y'all!</p>
     </div>
   </div>
 </template>
