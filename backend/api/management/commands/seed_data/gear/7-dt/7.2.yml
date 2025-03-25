@@ -1,0 +1,38 @@
+- has_accessories: True
+  has_armour: True
+  has_weapon: True
+  item_level: 740
+  name: 'Ceremonial'
+- has_accessories: True
+  has_armour: True
+  has_weapon: False
+  item_level: 740
+  name: 'Cruiser'
+- has_accessories: False
+  has_armour: False
+  has_weapon: True
+  item_level: 745
+  name: 'Queensknight'
+  extra_import_names:
+    - Book of Chivalry
+    - Word of the Knighthood
+- has_accessories: True
+  has_armour: True
+  has_weapon: True
+  item_level: 750
+  name: 'Historia'
+- has_accessories: True
+  has_armour: True
+  has_weapon: True
+  item_level: 760
+  name: 'Augmented Historia'
+- has_accessories: True
+  has_armour: True
+  has_weapon: False
+  item_level: 760
+  name: 'Babyface Champion'
+- has_accessories: False
+  has_armour: False
+  has_weapon: True
+  item_level: 765
+  name: 'Babyface Champion'

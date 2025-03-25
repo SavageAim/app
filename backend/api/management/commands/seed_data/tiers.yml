@@ -1,3 +1,15 @@
+# 7.2
+- raid_gear_name: 'Babyface Champion'
+  tome_gear_name: 'Augmented Historia'
+  max_item_level: 765
+  name: 'AAC Cruiserweight Tier'
+  fights:
+    - 'AAC Cruiserweight M1'
+    - 'AAC Cruiserweight M2'
+    - 'AAC Cruiserweight M3'
+    - 'AAC Cruiserweight M4'
+
+
 # 7.0
 - raid_gear_name: 'Dark Horse Champion'
   tome_gear_name: 'Augmented Quetzalli'
