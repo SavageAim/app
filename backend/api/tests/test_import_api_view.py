@@ -1,9 +1,8 @@
 from io import StringIO
+
 from django.core.management import call_command
-from django.urls import reverse
-from rest_framework import status
+
 from api.models import Gear
-from api.serializers import GearSerializer
 from .test_base import SavageAimTestCase
 from ..views.base import ImportAPIView
 
