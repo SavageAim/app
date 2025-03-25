@@ -20,16 +20,16 @@ click-repl==0.2.0
 constantly==15.1.0
 coreapi==2.3.3
 coreschema==0.0.4
-cryptography==43.0.3
+cryptography==44.0.1
 daphne==3.0.2
 defusedxml==0.7.1
 Deprecated==1.2.13
-Django==4.2.17
+Django==4.2.20
 django-allauth==0.47.0
 django-auto-prefetch==1.9.0
 djangorestframework==3.15.2
 drf-spectacular==0.27.2
-gunicorn==22.0.0
+gunicorn==23.0.0
 hiredis==2.0.0
 hyperlink==21.0.0
 idna==3.7
@@ -37,7 +37,7 @@ incremental==24.7.2
 inflection==0.5.1
 itypes==1.2.0
 jellyfish==0.9.0
-Jinja2==3.1.5
+Jinja2==3.1.6
 jsonschema==4.17.3
 kombu==5.2.3
 MarkupSafe==2.1.1
@@ -50,7 +50,7 @@ pyasn1==0.4.8
 pyasn1-modules==0.2.8
 pycparser==2.21
 PyJWT==2.4.0
-pyOpenSSL==24.2.1
+pyOpenSSL==24.3.0
 pyparsing==3.0.6
 pyrsistent==0.20.0
 python3-openid==3.2.0
