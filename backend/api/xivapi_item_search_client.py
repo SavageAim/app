@@ -10,7 +10,7 @@ HEADERS = {'User-Agent': 'savageaim.com'}
 
 
 class XIVAPISearchClient:
-    url = 'https://v2.xivapi.com/api/1/sheet/Item'
+    url = 'https://v2.xivapi.com/api/sheet/Item'
 
     @classmethod
     def get_item_information(cls, *item_ids: int) -> Dict[str, Dict[str, str]]:
