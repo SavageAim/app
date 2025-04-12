@@ -133,6 +133,8 @@ SESSION_COOKIE_SECURE = True
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 # Socal Auth
+SESSION_COOKIE_AGE = 2592000
+SOCIALACCOUNT_ADAPTER = 'api.adapters.SavageAimAccountAdapter'
 AUTHENTICATION_BACKENDS = [
     'allauth.account.auth_backends.AuthenticationBackend'
 ]

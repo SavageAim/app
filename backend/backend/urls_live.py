@@ -41,6 +41,11 @@ patterns = [
         RedirectView.as_view(url=f'{settings.LOGIN_REDIRECT_URL}auth/?auth_error=1', permanent=True),
         name='socialaccount_login_error',
     ),
+    path(
+        'auth/double_email/',
+        RedirectView.as_view(url=f'{settings.LOGIN_REDIRECT_URL}auth/?auth_duplicate=1', permanent=True),
+        name='socialaccount_signup',
+    ),
 ]
 
 urlpatterns = [

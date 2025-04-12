@@ -10,6 +10,10 @@
     <div v-if="wasError" class="notification is-danger">
       An error occurred while attempting to log in. Please try again later or report it in the Discord server if it persists.
     </div>
+    <div v-if="wasDuplicateError" class="notification is-danger">
+      There appears to be an account on the platform with the same email as the one you just tried to sign up with.
+      If this is an error or a problem, or you've had to make a new Discord account, talk to us on Discord and we can get this sorted out!
+    </div>
 
     <!-- Actual Auth Stuff -->
     <div class="card">
@@ -76,6 +80,10 @@ export default class Auth extends SavageAimMixin {
 
   get wasError(): boolean {
     return this.$route.query.auth_error === '1'
+  }
+
+  get wasDuplicateError(): boolean {
+    return this.$route.query.auth_duplicate === '1'
   }
 }
 </script>
