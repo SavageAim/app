@@ -658,10 +658,13 @@ class LootSolver(APIView):
             greedy = request.user.settings.loot_solver_greed
         except Settings.DoesNotExist:
             greedy = False
-        first = self._get_first_floor_data(requirements, history, id_ordering, non_loot_gear_obtained, greedy)
-        second = self._get_second_floor_data(requirements, history, id_ordering, non_loot_gear_obtained, greedy)
-        third = self._get_third_floor_data(requirements, history, id_ordering, non_loot_gear_obtained, greedy)
-        fourth = self._get_fourth_floor_data(history, obj.members.count(), non_loot_gear_obtained)
+        try:
+            first = self._get_first_floor_data(requirements, history, id_ordering, non_loot_gear_obtained, greedy)
+            second = self._get_second_floor_data(requirements, history, id_ordering, non_loot_gear_obtained, greedy)
+            third = self._get_third_floor_data(requirements, history, id_ordering, non_loot_gear_obtained, greedy)
+            fourth = self._get_fourth_floor_data(history, obj.members.count(), non_loot_gear_obtained)
+        except TypeError:
+            return Response(status=400)
 
         # Build and return the response
         return Response({

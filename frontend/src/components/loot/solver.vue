@@ -268,6 +268,12 @@ export default class LootSolver extends SavageAimMixin {
         if (reload) this.$forceUpdate()
       }
       else {
+        if (response.status === 400) {
+          this.$notify({
+            text: `Loot Solver could not fetch data. Be sure your Team is set to the correct Tier and try again!.`,
+            type: 'is-danger',
+          })
+        }
         super.handleError(response.status)
       }
     }
