@@ -24,7 +24,7 @@
       </div>
 
       <div class="columns is-multiline is-desktop">
-        <TeamMemberCard v-for="tm in team.members" :key="tm.id" :team-id="team.id" :details="tm" :max-item-level="team.tier.max_item_level" />
+        <TeamMemberCard v-for="tm in team.members" :key="tm.id" :viewer-is-lead="isTeamLead" :team-id="team.id" :details="tm" :max-item-level="team.tier.max_item_level" />
       </div>
     </template>
   </div>
@@ -46,6 +46,12 @@ import TeamViewMixin from '@/mixins/team_view_mixin'
 })
 export default class TeamOverview extends TeamViewMixin {
   loading = true
+
+  get isTeamLead(): boolean {
+    // Find the current user's character, and return if they are the lead
+    if (this.team == null) return false
+    return this.team.members.find((member) => this.$store.state.user.id === member.character.user_id)?.lead || false
+  }
 
   get url(): string {
     return `/backend/api/team/${this.teamId}/`

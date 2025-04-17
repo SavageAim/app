@@ -74,6 +74,15 @@
                   </span>
                 </a>
               </template>
+              <template v-else-if="viewerIsLead">
+                <hr class="dropdown-divider" />
+                <a class="card-footer-item">
+                  <span class="icon-text">
+                    <span class="icon"><i class="material-icons">cloud_download</i></span>
+                    <span>Lodestone Update</span>
+                  </span>
+                </a>
+              </template>
             </div>
           </div>
         </div>
@@ -111,6 +120,12 @@
             </span>
           </a>
         </template>
+        <a class="card-footer-item" v-else-if="viewerIsLead">
+          <span class="icon-text">
+            <span class="icon"><i class="material-icons">cloud_download</i></span>
+            <span>Lodestone Update</span>
+          </span>
+        </a>
       </footer>
     </div>
   </div>
@@ -138,6 +153,9 @@ export default class TeamMemberCard extends Vue {
 
   @Prop()
   teamId!: number
+
+  @Prop()
+  viewerIsLead!: boolean
 
   get displayFooter(): boolean {
     // Check all the link cases in the footer and if none of them are true, we don't want to render the card footer at all
