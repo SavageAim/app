@@ -92,7 +92,7 @@ class LodestoneScraper:
         response = requests.get(url, headers={'User-Agent': self.user_agent})
         if response.status_code != 200:
             LOGGER.error(
-                f'Received {response.status_code} response from Lodestone for `check_token`.'
+                f'Received {response.status_code} response from Lodestone for `check_token`. (URL: {url})'
                 f'\n\t{response.content}',
             )
             return 'Lodestone may be down.'
@@ -121,7 +121,7 @@ class LodestoneScraper:
             raise CharacterNotFoundError
         elif response.status_code != 200:
             LOGGER.error(
-                f'Received {response.status_code} response from Lodestone for `get_character_data`.'
+                f'Received {response.status_code} response from Lodestone for `get_character_data`. (URL: {url})'
                 f'\n\t{response.content}',
             )
             raise LodestoneError
@@ -171,7 +171,7 @@ class LodestoneScraper:
             raise CharacterNotFoundError
         elif response.status_code != 200:
             LOGGER.error(
-                f'Received {response.status_code} response from Lodestone for `get_character_data`.'
+                f'Received {response.status_code} response from Lodestone for `get_current_gear` (URL: {url}).'
                 f'\n\t{response.content}',
             )
             raise LodestoneError
