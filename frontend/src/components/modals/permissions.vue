@@ -13,6 +13,7 @@
         <input type="checkbox" id="loot-manager" value="1" :checked="member.permissions.loot_manager">
         Loot Manager - Hand out Loot via Loot Manager
       </label>
+      <br />
       <label class="checkbox" for="proxy-manager">
         <input type="checkbox" id="proxy-manager" value="2" :checked="member.permissions.proxy_manager">
         Proxy Manager - Manage Proxy Characters
