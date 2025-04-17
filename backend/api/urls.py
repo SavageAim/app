@@ -55,6 +55,11 @@ urlpatterns = [
         views.TeamMemberPermissionsResource.as_view(),
         name='team_member_permissions',
     ),
+    path(
+        'team/<str:team_id>/member/<int:pk>/gear_update/',
+        views.TeamMemberCurrentGearResource.as_view(),
+        name='team_member_current_gear_update',
+    ),
     path('team/join/<str:invite_code>/', views.TeamInvite.as_view(), name='team_invite'),
 
     # Team Proxy

@@ -13,9 +13,11 @@ from drf_spectacular.utils import OpenApiResponse
 from drf_spectacular.views import extend_schema
 from rest_framework.request import Request
 from rest_framework.response import Response
+
 # local
-from .base import APIView
-from api.models import TeamMember
+from .base import APIView, ImportAPIView
+from api.lodestone_scraper import CharacterNotFoundError, LodestoneError, LodestoneScraper, MismatchedJobError
+from api.models import Gear, TeamMember
 from api.serializers import (
     TeamMemberSerializer,
     TeamMemberModifySerializer,
@@ -141,6 +143,81 @@ class TeamMemberResource(APIView):
         # Special handling for Proxy characters, we should delete them here
         if obj.character.user is None:
             obj.character.delete()
+
+        return Response(status=204)
+
+
+class TeamMemberCurrentGearResource(ImportAPIView):
+    """
+    Allow the Team Lead to force-sync a TeamMember's current gear with their lodestone data.
+    """
+
+    @extend_schema(
+        tags=['team_member'],
+        responses={
+            204: OpenApiResponse(description='The Member\'s Current Gear has been updated from Lodestone.'),
+            400: OpenApiResponse(description='Something went wrong when trying to update.'),
+            404: OpenApiResponse(description='The Team ID does not exist or the Member ID is not valid. Alternatively, the requesting User is not the Team Lead.'),
+        }
+    )
+    def post(self, request: Request, team_id: str, pk: id) -> Response:
+        """
+        Force updating of a Team Member's Current Gear by the Team Lead.
+        """
+        # Make sure the user in question is the Team Leader
+        team = self._get_team_as_leader(request, team_id)
+        if team is None:
+            return Response(status=404)
+
+        try:
+            # Attempt to get a valid member of the specified Team
+            obj = team.members.get(pk=pk)
+        except (TeamMember.DoesNotExist, ValidationError):
+            return Response(status=404)
+
+        # Run the Lodestone Import stuff for the character
+        character_id = obj.character.lodestone_id
+        expected_job = obj.bis_list.job.id
+        scraper = LodestoneScraper.get_instance()
+        try:
+            data = scraper.get_current_gear(character_id, expected_job)
+        except CharacterNotFoundError:
+            return Response({'message': 'Could not find a Character with the given ID.'}, status=404)
+        except LodestoneError:
+            return Response({'message': 'An error occurred connecting to Lodestone.'}, status=400)
+        except MismatchedJobError as e:
+            msg = f'Couldn\'t import Gear from Lodestone. Gear was expected to be for "{expected_job}", but "{e.received}" was found.'
+            return Response({'message': msg}, status=406)
+
+        # Now do Levenstein things for matching found gear to Gear objects
+        filtered_gear = Gear.objects.filter(
+            item_level__gte=data['min_il'],
+            item_level__lte=data['max_il'],
+        ).values('name', 'id', 'extra_import_classes', 'extra_import_names')
+
+        # Loop through each gear slot and fetch the id based off the name
+        bis_obj = obj.bis_list
+        for slot, item_name in data['gear'].items():
+            current_slot_name = f'current_{slot}_id'
+            if slot in self.ARMOUR_SLOTS:
+                slot_id = self._get_gear_id(filtered_gear.filter(has_armour=True), item_name)
+            elif slot in self.ACCESSORY_SLOTS:
+                slot_id = self._get_gear_id(filtered_gear.filter(has_accessories=True), item_name)
+            else:
+                slot_id = self._get_gear_id(filtered_gear.filter(has_weapon=True), item_name)
+            if slot_id == -1:
+                continue
+            setattr(
+                bis_obj,
+                current_slot_name,
+                slot_id,
+            )
+        bis_obj.save()
+
+        # Websocket stuff
+        self._send_to_team(obj.team, {'type': 'team', 'id': str(obj.team.id), 'invite_code': str(obj.team.invite_code)})
+        for tm in obj.team.members.all():
+            self._send_to_user(tm.character.user, {'type': 'character', 'id': tm.character.pk})
 
         return Response(status=204)
 

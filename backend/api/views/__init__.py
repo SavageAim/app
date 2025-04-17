@@ -9,7 +9,7 @@ from .loot_solver import LootSolver
 from .notification import NotificationCollection, NotificationResource
 from .plugin import PluginImport
 from .team import TeamCollection, TeamResource, TeamInvite
-from .team_member import TeamMemberResource, TeamMemberPermissionsResource
+from .team_member import TeamMemberResource, TeamMemberPermissionsResource, TeamMemberCurrentGearResource
 from .team_proxy import TeamProxyCollection, TeamProxyResource, TeamProxyClaim
 from .tier import TierCollection
 from .user import UserView, UserTokenView
@@ -52,6 +52,7 @@ __all__ = [
     'TeamInvite',
 
     'TeamMemberResource',
+    'TeamMemberCurrentGearResource',
     'TeamMemberPermissionsResource',
 
     'TeamProxyCollection',
