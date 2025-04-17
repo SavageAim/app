@@ -643,3 +643,176 @@ class TeamMemberPermissionsResource(SavageAimTestCase):
         self.char.save()
         url = reverse('api:team_member_permissions', kwargs={'team_id': self.team.pk, 'pk': self.tm.pk})
         self.assertEqual(self.client.put(url).status_code, status.HTTP_404_NOT_FOUND)
+
+
+class TeamMemberCurrentGearResource(SavageAimTestCase):
+    """
+    Test views related to TeamMemberCurrentGear specific code
+    """
+
+    def setUp(self):
+        """
+        Prepopulate the DB with known data we can calculate off of
+        """
+        self.maxDiff = None
+        call_command('seed', stdout=StringIO())
+
+        # Create a Team first
+        self.team = Team.objects.create(
+            invite_code=Team.generate_invite_code(),
+            name='Les Jambons',
+            tier=Tier.objects.get(max_item_level=765),
+        )
+
+        # Create two characters belonging to separate users
+        self.char = Character.objects.create(
+            avatar_url='https://img.savageaim.com/abcde',
+            lodestone_id=1234567890,
+            user=self._get_user(),
+            name='Team Lead',
+            verified=True,
+            world='Lich',
+        )
+        self.char2 = Character.objects.create(
+            avatar_url='https://img.savageaim.com/abcde',
+            lodestone_id=22909725,
+            user=self._get_user(),
+            name='Not Team Lead',
+            verified=False,
+            world='Lich',
+        )
+
+        # Next, create two BIS lists for each character
+        raid_weapon = Gear.objects.get(item_level=765, name='Babyface Champion')
+        raid_gear = Gear.objects.get(item_level=760, has_weapon=False)
+        tome_gear = Gear.objects.get(item_level=760, has_weapon=True)
+        crafted = Gear.objects.get(name='Ceremonial')
+        self.bis = BISList.objects.create(
+            bis_body=raid_gear,
+            bis_bracelet=raid_gear,
+            bis_earrings=raid_gear,
+            bis_feet=raid_gear,
+            bis_hands=tome_gear,
+            bis_head=tome_gear,
+            bis_left_ring=tome_gear,
+            bis_legs=tome_gear,
+            bis_mainhand=raid_weapon,
+            bis_necklace=tome_gear,
+            bis_offhand=raid_weapon,
+            bis_right_ring=raid_gear,
+            current_body=crafted,
+            current_bracelet=crafted,
+            current_earrings=crafted,
+            current_feet=crafted,
+            current_hands=crafted,
+            current_head=crafted,
+            current_left_ring=crafted,
+            current_legs=crafted,
+            current_mainhand=crafted,
+            current_necklace=crafted,
+            current_offhand=crafted,
+            current_right_ring=crafted,
+            job_id='SGE',
+            owner=self.char,
+        )
+        self.bis2 = BISList.objects.create(
+            bis_body=tome_gear,
+            bis_bracelet=tome_gear,
+            bis_earrings=tome_gear,
+            bis_feet=tome_gear,
+            bis_hands=raid_gear,
+            bis_head=raid_gear,
+            bis_left_ring=raid_gear,
+            bis_legs=raid_gear,
+            bis_mainhand=raid_weapon,
+            bis_necklace=raid_gear,
+            bis_offhand=raid_weapon,
+            bis_right_ring=tome_gear,
+            current_body=crafted,
+            current_bracelet=crafted,
+            current_earrings=crafted,
+            current_feet=crafted,
+            current_hands=crafted,
+            current_head=crafted,
+            current_left_ring=crafted,
+            current_legs=crafted,
+            current_mainhand=crafted,
+            current_necklace=crafted,
+            current_offhand=crafted,
+            current_right_ring=crafted,
+            job_id='RDM',
+            owner=self.char2,
+        )
+
+        # Lastly, link the characters to the team
+        self.tm = self.team.members.create(character=self.char, bis_list=self.bis, lead=True)
+        self.tm2 = self.team.members.create(character=self.char2, bis_list=self.bis2, lead=False)
+
+    def test_update(self):
+        """
+        As the team leader, request an update of tm2's current gear from lodestone
+        """
+        url = reverse('api:team_member_current_gear_update', kwargs={'team_id': self.team.pk, 'pk': self.tm2.pk})
+        user = self.char.user
+        self.client.force_authenticate(user)
+        self.assertEqual(self.client.post(url).status_code, status.HTTP_204_NO_CONTENT)
+
+        # Check the Current Gear after a refresh
+        self.bis2.refresh_from_db()
+        self.assertEqual(self.bis2.current_mainhand.name, 'Voidvessel')
+        self.assertEqual(self.bis2.current_head.name, 'Augmented Credendum')
+        self.assertEqual(self.bis2.current_body.name, 'Augmented Credendum')
+        self.assertEqual(self.bis2.current_hands.name, 'Augmented Credendum')
+        self.assertEqual(self.bis2.current_legs.name, 'Augmented Credendum')
+        self.assertEqual(self.bis2.current_feet.name, 'Augmented Credendum')
+        self.assertEqual(self.bis2.current_earrings.name, 'Diadochos')
+        self.assertEqual(self.bis2.current_necklace.name, 'Augmented Credendum')
+        self.assertEqual(self.bis2.current_bracelet.name, 'Augmented Credendum')
+        self.assertEqual(self.bis2.current_right_ring.name, 'Augmented Credendum')
+        self.assertEqual(self.bis2.current_left_ring.name, 'Augmented Credendum')
+
+    def test_errors(self):
+        """
+        Test any potential errors and error messages;
+            - Could not find Lodestone character
+            - Lodestone Job doesn't match the BIS Job
+        """
+        user = self.char.user
+        self.client.force_authenticate(user)
+
+        # Bad Character ID
+        url = reverse('api:team_member_current_gear_update', kwargs={'team_id': self.team.pk, 'pk': self.tm.pk})
+        response = self.client.post(url)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+        # Job ID doesn't match gear
+        self.bis2.job_id = 'MNK'
+        self.bis2.save()
+        url = reverse('api:team_member_current_gear_update', kwargs={'team_id': self.team.pk, 'pk': self.tm2.pk})
+        response = self.client.post(url)
+        self.assertEqual(response.status_code, status.HTTP_406_NOT_ACCEPTABLE)
+        self.assertTrue(
+            'Couldn\'t import Gear from Lodestone. Gear was expected to be for "MNK"' in response.json()['message'],
+        )
+
+    def test_404(self):
+        """
+        Test 404 responses for bad requests
+
+        - Team ID doesn't exist
+        - Team member pk not in team
+        - Requesting team member isn't leader
+        """
+        user = self._get_user()
+        self.client.force_authenticate(user)
+
+        url = reverse('api:team_member_current_gear_update', kwargs={'team_id': 'abcde', 'pk': self.tm.pk})
+        self.assertEqual(self.client.post(url).status_code, status.HTTP_404_NOT_FOUND)
+
+        url = reverse('api:team_member_current_gear_update', kwargs={'team_id': self.team.pk, 'pk': '9999'})
+        self.assertEqual(self.client.post(url).status_code, status.HTTP_404_NOT_FOUND)
+
+        self.char.user = self._create_user()
+        self.char.save()
+        url = reverse('api:team_member_current_gear_update', kwargs={'team_id': self.team.pk, 'pk': self.tm.pk})
+        self.assertEqual(self.client.post(url).status_code, status.HTTP_404_NOT_FOUND)
