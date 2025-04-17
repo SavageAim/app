@@ -76,7 +76,7 @@
               </template>
               <template v-else-if="viewerIsLead">
                 <hr class="dropdown-divider" />
-                <a class="card-footer-item">
+                <a class="card-footer-item" @click="lodestoneUpdate">
                   <span class="icon-text">
                     <span class="icon"><i class="material-icons">cloud_download</i></span>
                     <span>Lodestone Update</span>
@@ -120,7 +120,7 @@
             </span>
           </a>
         </template>
-        <a class="card-footer-item" v-else-if="viewerIsLead">
+        <a class="card-footer-item" v-else-if="viewerIsLead" @click="lodestoneUpdate">
           <span class="icon-text">
             <span class="icon"><i class="material-icons">cloud_download</i></span>
             <span>Lodestone Update</span>
@@ -132,10 +132,12 @@
 </template>
 
 <script lang="ts">
+import * as Sentry from '@sentry/vue'
 import { Component, Vue, Prop } from 'vue-property-decorator'
 import BISTable from '@/components/bis_table.vue'
 import LeaveTeam from '@/components/modals/confirmations/leave_team.vue'
 import TeamMember from '@/interfaces/team_member'
+import { ImportError } from '@/interfaces/imports'
 
 @Component({
   components: {
@@ -162,11 +164,41 @@ export default class TeamMemberCard extends Vue {
     return (
       this.details.bis_list.external_link != null
       || this.owner
+      || (this.viewerIsLead && !this.owner)
     )
   }
 
   leave(): void {
     this.$modal.show(LeaveTeam, { details: this.details, teamId: this.teamId })
+  }
+
+  async lodestoneUpdate(): Promise<void> {
+    try {
+      const response = await fetch(`/backend/api/team/${this.teamId}/member/${this.details.id}/gear_update/`, {
+        method: 'POST',
+        headers: {
+          'X-CSRFToken': this.$cookies.get('csrftoken'),
+        },
+      })
+
+      if (response.ok) {
+        this.$notify({ text: `Current Gear pulled from Lodestone for ${this.details.name}!`, type: 'is-success' })
+      }
+      else {
+        const error = await response.json() as ImportError
+        if (response.status === 406) {
+          this.$notify({ text: error.message, type: 'is-link' })
+        }
+        else {
+          // Only add the "Error while ..." text when it's not for the wrong job error
+          this.$notify({ text: `Error while importing Lodestone gear; ${error.message}`, type: 'is-danger' })
+        }
+      }
+    }
+    catch (e) {
+      this.$notify({ text: `Error ${e} when attempting to import Lodestone data.`, type: 'is-danger' })
+      Sentry.captureException(e)
+    }
   }
 
   // Flag stating whether the logged in user is the owner of the member on this card
