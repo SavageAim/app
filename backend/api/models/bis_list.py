@@ -7,6 +7,7 @@ from typing import List
 import auto_prefetch
 from django.db import models
 from django.db.models import Q
+from django.dispatch import receiver
 
 
 class BISList(auto_prefetch.Model):
@@ -181,3 +182,29 @@ class BISList(auto_prefetch.Model):
             | (Q(bis_legs__name=gear_name) & ~Q(current_legs__name=gear_name))
             | (Q(bis_feet__name=gear_name) & ~Q(current_feet__name=gear_name)),
         )
+
+
+@receiver(models.signals.pre_save, sender=BISList)
+def bis_list_ring_swap(sender, instance: BISList, *args, **kwargs):
+    """
+    Check if either of the current_ring slots on the to-be-saved BIS List need to be swapped.
+    Swapping is required if one of the bis slots matches the opposite current slot and doesn't match its own.
+    """
+    needs_swapping = False
+    if (
+        instance.bis_right_ring_id != instance.current_right_ring_id 
+        and instance.bis_right_ring_id == instance.current_left_ring_id
+    ):
+        needs_swapping = True
+
+    if (
+        instance.bis_left_ring_id != instance.current_left_ring_id 
+        and instance.bis_left_ring_id == instance.current_right_ring_id
+    ):
+        needs_swapping = True
+
+    if not needs_swapping:
+        return
+
+    # Swap the current rings to make it work
+    instance.current_left_ring, instance.current_right_ring = instance.current_right_ring, instance.current_left_ring
