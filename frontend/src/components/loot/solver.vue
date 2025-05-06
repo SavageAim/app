@@ -203,6 +203,9 @@
           </tr>
         </tbody>
       </table>
+
+      <br/>
+      <p class="has-text-warning has-text-centered" v-if="!shouldShowAssignButton">If you would like to auto-fill the Loot for a fight, try enabling the "Per Fight Loot Manager" in your <router-link to="/settings/">Settings page!</router-link></p>
     </div>
   </div>
 </template>
