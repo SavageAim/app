@@ -245,6 +245,51 @@ class BISListCollection(SavageAimTestCase):
         self.assertEqual(sync_bis.current_body_id, self.gear_id_map['Radiant Host'])
         self.assertEqual(non_sync_bis.current_body_id, self.gear_id_map['Moonward'])
 
+    def test_create_with_ring_swap(self):
+        """
+        Create a new BIS List for the character
+        """
+        url = reverse('api:bis_collection', kwargs={'character_id': self.char.pk})
+        self.client.force_authenticate(self.char.user)
+
+        # Try one with PLD first
+        data = {
+            'job_id': 'PLD',
+            'bis_mainhand_id': self.gear_id_map['Augmented Historia'],
+            'bis_offhand_id': self.gear_id_map['Augmented Historia'],
+            'bis_head_id': self.gear_id_map['Babyface Champion'],
+            'bis_body_id': self.gear_id_map['Augmented Historia'],
+            'bis_hands_id': self.gear_id_map['Babyface Champion'],
+            'bis_legs_id': self.gear_id_map['Babyface Champion'],
+            'bis_feet_id': self.gear_id_map['Babyface Champion'],
+            'bis_earrings_id': self.gear_id_map['Augmented Historia'],
+            'bis_necklace_id': self.gear_id_map['Augmented Historia'],
+            'bis_bracelet_id': self.gear_id_map['Augmented Historia'],
+            'bis_right_ring_id': self.gear_id_map['Augmented Historia'],
+            'bis_left_ring_id': self.gear_id_map['Babyface Champion'],
+            'current_mainhand_id': self.gear_id_map['Ceremonial'],
+            'current_offhand_id': self.gear_id_map['Ceremonial'],
+            'current_head_id': self.gear_id_map['Ceremonial'],
+            'current_body_id': self.gear_id_map['Ceremonial'],
+            'current_hands_id': self.gear_id_map['Ceremonial'],
+            'current_legs_id': self.gear_id_map['Ceremonial'],
+            'current_feet_id': self.gear_id_map['Ceremonial'],
+            'current_earrings_id': self.gear_id_map['Ceremonial'],
+            'current_necklace_id': self.gear_id_map['Ceremonial'],
+            'current_bracelet_id': self.gear_id_map['Ceremonial'],
+            'current_right_ring_id': self.gear_id_map['Babyface Champion'],
+            'current_left_ring_id': self.gear_id_map['Ceremonial'],
+            'external_link': '',
+            'name': 'Swap the Rings',
+        }
+
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.content)
+        self.assertEqual(BISList.objects.count(), 1)
+        obj = BISList.objects.first()
+        # Ensure that the request to create has swapped the rings to the correct location
+        self.assertEqual(obj.bis_left_ring_id, obj.current_left_ring_id)
+
     def test_404(self):
         """
         Test all situations where the endpoint would respond with a 404;
@@ -428,6 +473,59 @@ class BISListResource(SavageAimTestCase):
         self.assertEqual(content['bis_earrings_id'], [invalid_gear])
         self.assertEqual(content['current_mainhand_id'], [invalid_gear])
         self.assertEqual(content['name'], ['Ensure this field has no more than 64 characters.'])
+
+    def test_update_with_ring_swap(self):
+        """
+        Update the existing BIS List with a PUT request
+        """
+        url = reverse('api:bis_resource', kwargs={'character_id': self.char.pk, 'pk': self.bis.pk})
+        self.client.force_authenticate(self.char.user)
+
+        # Get modern gear for the update
+        tome_gear = Gear.objects.get(name='Augmented Historia').pk
+        raid_gear = Gear.objects.get(name='Babyface Champion', has_weapon=False).pk
+        crafted_gear = Gear.objects.get(name='Ceremonial').pk
+
+        # Send an update request with the rings swapped, ensure they are bis when the request is finished
+        data = {
+            'job_id': 'PLD',
+            'bis_mainhand_id': tome_gear,
+            'bis_offhand_id': tome_gear,
+            'bis_head_id': raid_gear,
+            'bis_body_id': tome_gear,
+            'bis_hands_id': raid_gear,
+            'bis_legs_id': raid_gear,
+            'bis_feet_id': raid_gear,
+            'bis_earrings_id': tome_gear,
+            'bis_necklace_id': tome_gear,
+            'bis_bracelet_id': tome_gear,
+            'bis_right_ring_id': tome_gear,
+            'bis_left_ring_id': raid_gear,
+            'current_mainhand_id': crafted_gear,
+            'current_offhand_id': crafted_gear,
+            'current_head_id': crafted_gear,
+            'current_body_id': crafted_gear,
+            'current_hands_id': crafted_gear,
+            'current_legs_id': crafted_gear,
+            'current_feet_id': crafted_gear,
+            'current_earrings_id': crafted_gear,
+            'current_necklace_id': crafted_gear,
+            'current_bracelet_id': crafted_gear,
+            'current_right_ring_id': raid_gear,
+            'current_left_ring_id': tome_gear,
+            'external_link': None,
+            'name': 'Update ring swap c:',
+        }
+
+        response = self.client.put(url, data)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT, response.content)
+
+        # Assert the rings are correct
+        self.bis.refresh_from_db()
+        self.assertEqual(self.bis.bis_right_ring_id, tome_gear)
+        self.assertEqual(self.bis.bis_left_ring_id, raid_gear)
+        self.assertEqual(self.bis.bis_right_ring_id, self.bis.current_right_ring_id)
+        self.assertEqual(self.bis.bis_left_ring_id, self.bis.current_left_ring_id)
 
     def test_404(self):
         """
