@@ -17,7 +17,7 @@
         BIS List updates will now automatically swap the current ring slots if, for example, the current left ring matches the bis right ring.
         <ul>
           <li>This should hopefully make the Loot Solver / Manager break less often.</li>
-          <li>This deployment has also re-saved every BIS List in the system to automatically update the lists for everyone.</li>
+          <li>This deployment has also re-saved every BIS List in the system to automatically update the lists for everyone. (I really hope this hasn't broken anything...)</li>
           <li>Thanks toonie for the suggestion!</li>
         </ul>
       </p>
