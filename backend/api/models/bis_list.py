@@ -192,13 +192,13 @@ def bis_list_ring_swap(sender, instance: BISList, *args, **kwargs):
     """
     needs_swapping = False
     if (
-        instance.bis_right_ring_id != instance.current_right_ring_id 
+        instance.bis_right_ring_id != instance.current_right_ring_id
         and instance.bis_right_ring_id == instance.current_left_ring_id
     ):
         needs_swapping = True
 
     if (
-        instance.bis_left_ring_id != instance.current_left_ring_id 
+        instance.bis_left_ring_id != instance.current_left_ring_id
         and instance.bis_left_ring_id == instance.current_right_ring_id
     ):
         needs_swapping = True
