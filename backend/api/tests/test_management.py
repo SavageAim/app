@@ -132,3 +132,62 @@ class ManagementCommandTestSuite(SavageAimTestCase):
         self.assertTrue('verify_success' in settings.notifications)
         self.assertTrue(settings.notifications['verify_success'])
         self.assertFalse(settings.notifications['verify_fail'])
+
+    def test_save_bis_list_ring_swap(self):
+        """
+        Create a BISList with rings swapped, then run the management command
+        """
+        call_command('seed', stdout=StringIO())
+        char = models.Character.objects.create(
+            avatar_url='https://img.savageaim.com/abcde',
+            lodestone_id=1234567890,
+            user=self._get_user(),
+            name='Team Lead',
+            verified=True,
+            world='Lich',
+        )
+
+        # Next, create two BIS lists for each character
+        raid_weapon = models.Gear.objects.get(item_level=605, name='Asphodelos')
+        raid_gear = models.Gear.objects.get(item_level=600, has_weapon=False)
+        tome_gear = models.Gear.objects.get(item_level=600, has_weapon=True)
+        crafted = models.Gear.objects.get(name='Classical')
+        bis = models.BISList.objects.create(
+            bis_body=raid_gear,
+            bis_bracelet=raid_gear,
+            bis_earrings=raid_gear,
+            bis_feet=raid_gear,
+            bis_hands=tome_gear,
+            bis_head=tome_gear,
+            bis_legs=tome_gear,
+            bis_mainhand=raid_weapon,
+            bis_necklace=tome_gear,
+            bis_offhand=raid_weapon,
+            bis_left_ring=tome_gear,
+            bis_right_ring=raid_gear,
+            current_body=crafted,
+            current_bracelet=crafted,
+            current_earrings=crafted,
+            current_feet=crafted,
+            current_hands=crafted,
+            current_head=crafted,
+            current_legs=crafted,
+            current_mainhand=crafted,
+            current_necklace=crafted,
+            current_offhand=crafted,
+            current_left_ring=crafted,
+            current_right_ring=tome_gear,
+            job_id='SGE',
+            owner=char,
+        )
+        models.BISList.objects.update(
+            current_right_ring_id=tome_gear.id,
+            current_left_ring_id=crafted.id,
+        )
+        bis.refresh_from_db()
+        self.assertNotEqual(bis.current_right_ring_id, crafted.id)
+        self.assertNotEqual(bis.current_left_ring_id, tome_gear.id)
+        call_command('save_all_bis_lists')
+        bis.refresh_from_db()
+        self.assertEqual(bis.current_right_ring_id, crafted.id)
+        self.assertEqual(bis.current_left_ring_id, tome_gear.id)
