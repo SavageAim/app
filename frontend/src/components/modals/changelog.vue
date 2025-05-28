@@ -12,16 +12,14 @@
     </div>
     <div class="card-content content">
       <h2 class="has-text-primary subtitle">{{ version }}</h2>
-      <div class="divider"><i class="material-icons icon">expand_more</i> Quality of Life <i class="material-icons icon">expand_more</i></div>
+      <div class="divider"><i class="material-icons icon">expand_more</i> FFXIV 7.25 - Occult Crescent <i class="material-icons icon">expand_more</i></div>
       <p>
-        BIS List updates will now automatically swap the current ring slots if, for example, the current left ring matches the bis right ring.
+        Added the following new types of Gear released in 7.25 alongside Occult Crescent;
         <ul>
-          <li>This should hopefully make the Loot Solver / Manager break less often.</li>
-          <li>This deployment has also re-saved every BIS List in the system to automatically update the lists for everyone. (I really hope this hasn't broken anything...)</li>
-          <li>Thanks toonie for the suggestion!</li>
+          <li>Phantom Penumbrae Weapons - Item Level 745</li>
         </ul>
       </p>
-      <p>Added a message to the Loot Solver that links to the Settings page if you are not using the Per-Fight Loot Manager, just in case you want to use auto-assign but don't know how.</p>
+      <p>Enjoy the new relic grind!</p>
     </div>
   </div>
 </template>
