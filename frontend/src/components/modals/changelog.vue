@@ -12,14 +12,14 @@
     </div>
     <div class="card-content content">
       <h2 class="has-text-primary subtitle">{{ version }}</h2>
-      <div class="divider"><i class="material-icons icon">expand_more</i> FFXIV 7.25 - Occult Crescent <i class="material-icons icon">expand_more</i></div>
+      <div class="divider"><i class="material-icons icon">expand_more</i> FFXIV 7.25 (again) <i class="material-icons icon">expand_more</i></div>
+      <p>Didn't initially realise that the armour from OC was worth adding but it's actually pretty decent so...</p>
       <p>
-        Added the following new types of Gear released in 7.25 alongside Occult Crescent;
+        Added the following new gear added in 7.25;
         <ul>
-          <li>Phantom Penumbrae Weapons - Item Level 745</li>
+          <li>Arcanaut's Armour - Item Level 745</li>
         </ul>
       </p>
-      <p>Enjoy the new relic grind!</p>
     </div>
   </div>
 </template>

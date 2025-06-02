@@ -3,3 +3,8 @@
   has_weapon: True
   item_level: 745
   name: 'Phantom Penumbrae'
+- has_accessories: False
+  has_armour: True
+  has_weapon: False
+  item_level: 745
+  name: "Arcanaut's"
