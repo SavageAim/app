@@ -12,12 +12,13 @@
     </div>
     <div class="card-content content">
       <h2 class="has-text-primary subtitle">{{ version }}</h2>
-      <div class="divider"><i class="material-icons icon">expand_more</i> FFXIV 7.25 (again) <i class="material-icons icon">expand_more</i></div>
-      <p>Didn't initially realise that the armour from OC was worth adding but it's actually pretty decent so...</p>
+      <div class="divider"><i class="material-icons icon">expand_more</i> FFXIV 7.3 <i class="material-icons icon">expand_more</i></div>
       <p>
-        Added the following new gear added in 7.25;
+        Added the following new gear added in 7.3;
         <ul>
-          <li>Arcanaut's Armour - Item Level 745</li>
+          <li>Augmented Ceremonial Weapons, Armour, and Accessories - Item Level 750</li>
+          <li>War Cloud's Armour - Item Level 750</li>
+          <li>7.3 Extreme Trial Weapons - Item Level 755</li>
         </ul>
       </p>
     </div>

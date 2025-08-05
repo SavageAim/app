@@ -1,0 +1,15 @@
+- has_accessories: True
+  has_armour: True
+  has_weapon: True
+  item_level: 750
+  name: 'Augmented Ceremonial'
+- has_accessories: False
+  has_armour: True
+  has_weapon: False
+  item_level: 750
+  name: "War Cloud's"
+- has_accessories: False
+  has_armour: False
+  has_weapon: True
+  item_level: 755
+  name: 'Ageless'

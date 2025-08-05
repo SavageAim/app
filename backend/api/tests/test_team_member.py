@@ -740,7 +740,7 @@ class TeamMemberCurrentGearResource(SavageAimTestCase):
             current_necklace=crafted,
             current_offhand=crafted,
             current_right_ring=crafted,
-            job_id='RDM',
+            job_id='DNC',
             owner=self.char2,
         )
 
@@ -755,7 +755,8 @@ class TeamMemberCurrentGearResource(SavageAimTestCase):
         url = reverse('api:team_member_current_gear_update', kwargs={'team_id': self.team.pk, 'pk': self.tm2.pk})
         user = self.char.user
         self.client.force_authenticate(user)
-        self.assertEqual(self.client.post(url).status_code, status.HTTP_204_NO_CONTENT)
+        response = self.client.post(url)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT, response.content)
 
         # Check the Current Gear after a refresh
         self.bis2.refresh_from_db()
