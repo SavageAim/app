@@ -12,15 +12,10 @@
     </div>
     <div class="card-content content">
       <h2 class="has-text-primary subtitle">{{ version }}</h2>
-      <div class="divider"><i class="material-icons icon">expand_more</i> FFXIV 7.3 <i class="material-icons icon">expand_more</i></div>
-      <p>
-        Added the following new gear added in 7.3;
-        <ul>
-          <li>Augmented Ceremonial Weapons, Armour, and Accessories - Item Level 750</li>
-          <li>War Cloud's Armour - Item Level 750</li>
-          <li>7.3 Extreme Trial Weapons - Item Level 755</li>
-        </ul>
-      </p>
+      <div class="divider"><i class="material-icons icon">expand_more</i> FFXIV 7.3 (again) <i class="material-icons icon">expand_more</i></div>
+      <p>Fixed the Second Alliance Raid Gear Names for automatic importing.</p>
+      <p>Didn't realise the sets had different names.</p>
+      <p>The name in the list will still be War Cloud's but it applies to all of the gear from the raid.</p>
     </div>
   </div>
 </template>

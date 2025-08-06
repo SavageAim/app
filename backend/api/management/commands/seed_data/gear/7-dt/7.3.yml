@@ -8,6 +8,13 @@
   has_weapon: False
   item_level: 750
   name: "War Cloud's"
+  extra_import_classes:
+    # Striking
+    - "Prishe's"
+    # Scouting / Aiming
+    - "Mayakov"
+    # Healing / Casting
+    - "Orastery"
 - has_accessories: False
   has_armour: False
   has_weapon: True
