@@ -1,0 +1,38 @@
+- has_accessories: True
+  has_armour: True
+  has_weapon: True
+  item_level: 770
+  name: "Courtly Lover's"
+- has_accessories: True
+  has_armour: True
+  has_weapon: False
+  item_level: 770
+  name: 'Heavyweight'
+- has_accessories: False
+  has_armour: False
+  has_weapon: True
+  item_level: 775
+  name: 'Runaway'
+  extra_import_names:
+    - Book of the Doomed
+    - Word of the Rail
+- has_accessories: True
+  has_armour: True
+  has_weapon: True
+  item_level: 780
+  name: 'Bygone Brass'
+- has_accessories: True
+  has_armour: True
+  has_weapon: True
+  item_level: 790
+  name: 'Augmented Bygone Brass'
+- has_accessories: True
+  has_armour: True
+  has_weapon: False
+  item_level: 790
+  name: 'Grand Champion'
+- has_accessories: False
+  has_armour: False
+  has_weapon: True
+  item_level: 795
+  name: 'Grand Champion'
