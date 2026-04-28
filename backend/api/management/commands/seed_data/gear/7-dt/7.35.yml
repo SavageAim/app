@@ -1,0 +1,15 @@
+- has_accessories: False
+  has_armour: False
+  has_weapon: True
+  item_level: 745
+  name: 'Veldian'
+- has_accessories: False
+  has_armour: False
+  has_weapon: True
+  item_level: 755
+  name: 'Sacramental'
+- has_accessories: False
+  has_armour: False
+  has_weapon: True
+  item_level: 760
+  name: 'Augmented Veldian'
