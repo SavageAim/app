@@ -1,6 +1,8 @@
 # stdlib
 from os import scandir
+from pathlib import Path
 # lib
+from django.db import IntegrityError
 import yaml
 from django.conf import settings
 from django.core.management.base import BaseCommand
@@ -28,7 +30,15 @@ class Command(BaseCommand):
 
                 with scandir(expac_dir.path) as gear_files:
                     for file in gear_files:
-                        self.stdout.write(self.style.HTTP_REDIRECT(f'Seeding Gear from {file.name}'))
+                        version = Path(file.path).stem
+                        self.stdout.write(self.style.HTTP_REDIRECT(f'Seeding Gear from {version}'))
+
+                        # Store the version for the file in the DB
+                        try:
+                            models.XIVVersion.objects.create(version=version)
+                        except IntegrityError:
+                            pass
+
                         with open(file.path, 'r') as f:
                             self.import_file(f, models.Gear)
 

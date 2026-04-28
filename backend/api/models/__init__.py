@@ -8,6 +8,7 @@ from .settings import Settings
 from .team import Team
 from .team_member import TeamMember
 from .tier import Tier
+from .xiv_version import XIVVersion
 
 __all__ = [
     'BISList',
@@ -29,4 +30,6 @@ __all__ = [
     'TeamMember',
 
     'Tier',
+
+    'XIVVersion',
 ]
