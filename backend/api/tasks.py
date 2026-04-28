@@ -142,3 +142,11 @@ def refresh_tokens():
     Refresh any tokens that are about to expire
     """
     call_command('refresh_tokens')
+
+
+@shared_task(name='check_game_version')
+def check_game_version():
+    """
+    Check if a new, unseeded, game version has been added to xivapi that we don't have yet
+    """
+    call_command('check_game_version', '--latest', '--notify')

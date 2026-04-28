@@ -29,5 +29,9 @@ app.conf.beat_schedule = {
     'refresh_oauth_tokens': {
         'task': 'refresh_tokens',
         'schedule': crontab(hour=0, minute=0),
+    },
+    'check_game_version': {
+        'task': 'check_game_version',
+        'schedule': crontab(minute=0, hour='*/6'),
     }
 }
