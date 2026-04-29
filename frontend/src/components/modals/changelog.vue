@@ -17,8 +17,8 @@
         The following new gear has been added;
         <ul>
           <li>Augmented Courtly Lover's Weapon, Armour, and Accessories - Item Level 780</li>
-          <li>Runaway Trial Weapon - Item Level 785</li>
-          <li>Bygone Brass Armour - Item Level 780</li>
+          <li>of Naught Trial Weapons - Item Level 785</li>
+          <li>Vana'dielian Armour - Item Level 780</li>
         </ul>
       </p>
       <div class="divider"><i class="material-icons icon">expand_more</i> Note <i class="material-icons icon">expand_more</i></div>
