@@ -1,0 +1,15 @@
+- has_accessories: True
+  has_armour: True
+  has_weapon: True
+  item_level: 780
+  name: "Augmented Courtly Lover's"
+- has_accessories: False
+  has_armour: False
+  has_weapon: True
+  item_level: 785
+  name: 'of Naught'
+- has_accessories: False
+  has_armour: True
+  has_weapon: False
+  item_level: 780
+  name: "Vana'dielian"

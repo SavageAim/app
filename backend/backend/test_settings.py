@@ -170,3 +170,6 @@ CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TIMEZONE = 'Europe/Dublin'
+
+# Add the webhook for versioning
+VERSION_WEBHOOK = environ.get('VERSION_WEBHOOK', None)

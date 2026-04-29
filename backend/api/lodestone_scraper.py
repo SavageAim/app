@@ -1,7 +1,10 @@
 # stdlib
 import logging
+import random
 import re
+from time import sleep
 from typing import Optional
+from urllib.parse import urljoin
 # lib
 import requests
 from bs4 import BeautifulSoup
@@ -9,6 +12,7 @@ from bs4 import BeautifulSoup
 META_JSON_URL = 'https://raw.githubusercontent.com/xivapi/lodestone-css-selectors/main/meta.json'
 CHARACTER_JSON_URL = 'https://raw.githubusercontent.com/xivapi/lodestone-css-selectors/main/profile/character.json'
 GEARSET_JSON_URL = 'https://raw.githubusercontent.com/xivapi/lodestone-css-selectors/main/profile/gearset.json'
+LODESTONE_BASE_URL = 'https://eu.finalfantasyxiv.com/'
 CHARACTER_URL = 'https://eu.finalfantasyxiv.com/lodestone/character/{character_id}'
 LOGGER = logging.getLogger(__name__)
 
@@ -35,6 +39,21 @@ LODESTONE_TO_SA_NAME_MAP = {
     'BRACELETS': 'bracelet',
     'RING1': 'right_ring',
     'RING2': 'left_ring',
+}
+# Moving to lazy loading means we have to make individual requests for each tooltip
+LODESTONE_NAME_TO_NUMBER = {
+    'MAINHAND': 0,
+    'OFFHAND': 1,
+    'HEAD': 2,
+    'BODY': 3,
+    'HANDS': 4,
+    'LEGS': 6,
+    'FEET': 7,
+    'EARRINGS': 8,
+    'NECKLACE': 9,
+    'BRACELETS': 10,
+    'RING1': 11,
+    'RING2': 12,
 }
 
 
@@ -79,6 +98,7 @@ class LodestoneScraper:
         instance.user_agent = meta_json['userAgentDesktop']
         instance.character_json = requests.get(CHARACTER_JSON_URL).json()
         instance.gearset_json = requests.get(GEARSET_JSON_URL).json()
+        instance.lazy_load_attribute_name = 'data-lazy_load_url'
 
         cls._instance = instance
         return instance
@@ -159,6 +179,20 @@ class LodestoneScraper:
             'dc': dc,
         }
 
+    def get_tooltip_html(self, url: str) -> bytes:
+        """
+        Fetch and return the string of the tooltip data which is now lazy-loaded
+        """
+        url = urljoin(LODESTONE_BASE_URL, url)
+        response = requests.get(url, headers={'User-Agent': self.user_agent})
+        if response.status_code != 200:
+            LOGGER.error(
+                f'Received {response.status_code} response from Lodestone for `get_tooltip_html` (URL: {url}).'
+                f'\n\t{response.content}',
+            )
+            raise LodestoneError
+        return response.content
+
     def get_current_gear(self, character_id: str, expected_job: str):
         """
         Fetch and parse the the character's page to retrieve the current gear.
@@ -186,23 +220,45 @@ class LodestoneScraper:
             if (slot_name == 'OFFHAND' and expected_job != 'PLD') or slot_name in IGNORED_SLOTS:
                 continue
 
+            savage_aim_slot_name = LODESTONE_TO_SA_NAME_MAP[slot_name]
+            slot_map[savage_aim_slot_name] = None  # pre-populate with None for cases where we don't have any information on lodestone
+
+            # Get the selectors and remove the icon selector at the start, check that we can find that element before fetching the tooltip data
+            slot_number = LODESTONE_NAME_TO_NUMBER[slot_name]
+            slot_image_selector = f'.icon-c--{slot_number}'
+            class_list_selector = selectors['CLASS_LIST']['selector'].lstrip(slot_image_selector).strip().lstrip('>').strip()
+            gear_name_selector = selectors['NAME']['selector'].lstrip(slot_image_selector).strip().lstrip('>').strip()
+            item_level_selector = selectors['ITEM_LEVEL']['selector'].lstrip(slot_image_selector).strip().lstrip('>').strip()
+
+            # Ensure the slot image exists in the html
+            slot_marker_el = soup.select_one(slot_image_selector)
+            if slot_marker_el is None:
+                continue
+            # Get the data-lazy-load-url from the slot
+            if self.lazy_load_attribute_name not in slot_marker_el.attrs:
+                # If it doesn't have the url, assume slot is empty but record it as such
+                continue
+            tooltip_url = slot_marker_el[self.lazy_load_attribute_name]
+            sleep(random.random())  # Don't send requests as fast as we can
+            tooltip_soup = BeautifulSoup(self.get_tooltip_html(tooltip_url), 'html.parser')
+
             # Do a test to see if the gear slot is available
-            class_list_el = soup.select_one(selectors['CLASS_LIST']['selector'])
+            class_list_el = tooltip_soup.select_one(class_list_selector)
             gear_name = None
             if class_list_el is not None:
-                class_list = soup.select_one(selectors['CLASS_LIST']['selector']).getText()
+                class_list = tooltip_soup.select_one(class_list_selector).getText()
                 if expected_job not in class_list and class_list not in SPECIAL_ALLOWED_CLASSLISTS:
                     raise MismatchedJobError(class_list)
 
-                gear_name = soup.select_one(selectors['NAME']['selector']).getText()
-                item_level = int(soup.select_one(selectors['ITEM_LEVEL']['selector']).getText().split(' ')[-1])
+                gear_name = tooltip_soup.select_one(gear_name_selector).getText()
+                item_level = int(tooltip_soup.select_one(item_level_selector).getText().split(' ')[-1])
 
                 if item_level > max_il:
                     max_il = item_level
                 if item_level < min_il:
                     min_il = item_level
 
-            slot_map[LODESTONE_TO_SA_NAME_MAP[slot_name]] = gear_name
+            slot_map[savage_aim_slot_name] = gear_name
 
         # Handling for non-PLDs
         if expected_job != 'PLD':

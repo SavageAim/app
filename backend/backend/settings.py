@@ -195,3 +195,6 @@ CHANNEL_LAYERS = {
         },
     },
 }
+
+# Add the webhook for versioning
+VERSION_WEBHOOK = environ.get('VERSION_WEBHOOK', None)
