@@ -28,6 +28,12 @@ optional = true
 [tool.poetry.group.wsgi.dependencies]
 gunicorn = "^25.3.0"
 
+[tool.poetry.group.testing]
+optional = true
+
+[tool.poetry.group.testing.dependencies]
+coverage = "^7.13.5"
+
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
