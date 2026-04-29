@@ -769,8 +769,8 @@ class TeamMemberCurrentGearResource(SavageAimTestCase):
         self.assertEqual(self.bis2.current_earrings.name, 'Historia')
         self.assertEqual(self.bis2.current_necklace.name, 'Augmented Ceremonial')
         self.assertEqual(self.bis2.current_bracelet.name, 'Historia')
-        self.assertEqual(self.bis2.current_right_ring.name, 'Babyface Champion')
-        self.assertEqual(self.bis2.current_left_ring.name, 'Historia')
+        self.assertEqual(self.bis2.current_right_ring.name, 'Historia')
+        self.assertEqual(self.bis2.current_left_ring.name, 'Babyface Champion')
 
     def test_errors(self):
         """

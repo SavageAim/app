@@ -178,7 +178,7 @@ class LodestoneScraper:
             'world': world,
             'dc': dc,
         }
-    
+
     def get_tooltip_html(self, url: str) -> bytes:
         """
         Fetch and return the string of the tooltip data which is now lazy-loaded
@@ -229,7 +229,7 @@ class LodestoneScraper:
             class_list_selector = selectors['CLASS_LIST']['selector'].lstrip(slot_image_selector).strip().lstrip('>').strip()
             gear_name_selector = selectors['NAME']['selector'].lstrip(slot_image_selector).strip().lstrip('>').strip()
             item_level_selector = selectors['ITEM_LEVEL']['selector'].lstrip(slot_image_selector).strip().lstrip('>').strip()
-            
+
             # Ensure the slot image exists in the html
             slot_marker_el = soup.select_one(slot_image_selector)
             if slot_marker_el is None:
