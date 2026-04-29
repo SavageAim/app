@@ -11,7 +11,7 @@ defaults:
 jobs:
   build:
     runs-on: ubuntu-latest
-    container: ubuntu
+    container: ubuntu-22
 
     services:
       postgres:
