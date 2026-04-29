@@ -685,7 +685,7 @@ class TeamMemberCurrentGearResource(SavageAimTestCase):
         # Next, create two BIS lists for each character
         raid_weapon = Gear.objects.get(item_level=765, name='Babyface Champion')
         raid_gear = Gear.objects.get(item_level=760, has_weapon=False)
-        tome_gear = Gear.objects.get(item_level=760, has_weapon=True)
+        tome_gear = Gear.objects.get(item_level=760, has_weapon=True, name='Augmented Historia')
         crafted = Gear.objects.get(name='Ceremonial')
         self.bis = BISList.objects.create(
             bis_body=raid_gear,
@@ -740,7 +740,7 @@ class TeamMemberCurrentGearResource(SavageAimTestCase):
             current_necklace=crafted,
             current_offhand=crafted,
             current_right_ring=crafted,
-            job_id='DNC',
+            job_id='GNB',
             owner=self.char2,
         )
 
@@ -760,17 +760,17 @@ class TeamMemberCurrentGearResource(SavageAimTestCase):
 
         # Check the Current Gear after a refresh
         self.bis2.refresh_from_db()
-        self.assertEqual(self.bis2.current_mainhand.name, 'Voidvessel')
-        self.assertEqual(self.bis2.current_head.name, 'Augmented Credendum')
-        self.assertEqual(self.bis2.current_body.name, 'Augmented Credendum')
-        self.assertEqual(self.bis2.current_hands.name, 'Augmented Credendum')
-        self.assertEqual(self.bis2.current_legs.name, 'Augmented Credendum')
-        self.assertEqual(self.bis2.current_feet.name, 'Augmented Credendum')
-        self.assertEqual(self.bis2.current_earrings.name, 'Diadochos')
-        self.assertEqual(self.bis2.current_necklace.name, 'Augmented Credendum')
-        self.assertEqual(self.bis2.current_bracelet.name, 'Augmented Credendum')
-        self.assertEqual(self.bis2.current_right_ring.name, 'Augmented Credendum')
-        self.assertEqual(self.bis2.current_left_ring.name, 'Augmented Credendum')
+        self.assertEqual(self.bis2.current_mainhand.name, 'Queensknight')
+        self.assertEqual(self.bis2.current_head.name, 'Babyface Champion')
+        self.assertEqual(self.bis2.current_body.name, 'Augmented Ceremonial')
+        self.assertEqual(self.bis2.current_hands.name, 'Babyface Champion')
+        self.assertEqual(self.bis2.current_legs.name, 'Augmented Ceremonial')
+        self.assertEqual(self.bis2.current_feet.name, 'Babyface Champion')
+        self.assertEqual(self.bis2.current_earrings.name, 'Historia')
+        self.assertEqual(self.bis2.current_necklace.name, 'Augmented Ceremonial')
+        self.assertEqual(self.bis2.current_bracelet.name, 'Historia')
+        self.assertEqual(self.bis2.current_right_ring.name, 'Babyface Champion')
+        self.assertEqual(self.bis2.current_left_ring.name, 'Historia')
 
     def test_errors(self):
         """
