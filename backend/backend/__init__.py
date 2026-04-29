@@ -2,4 +2,4 @@
 
 from .celery import app as celery_app
 
-VERSION = '20251217'
+VERSION = '20260429'
