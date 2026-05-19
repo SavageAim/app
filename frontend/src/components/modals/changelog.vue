@@ -12,12 +12,13 @@
     </div>
     <div class="card-content content">
       <h2 class="has-text-primary subtitle">{{ version }}</h2>
-      <div class="divider"><i class="material-icons icon">expand_more</i> Important Announcement <i class="material-icons icon">expand_more</i></div>
-      <p>The hosting I've been using to provide this website is sadly closing down.</p>
-      <p>This does not mean the end of the site, I will be moving the site to a different host, but sadly it won't be free like my old hosting.</p>
-      <p>There will be some downtime on the site to make sure I don't lose data in the transfer.</p>
-      <p>This downtime will begin Tuesday May 19th, and I aim to have everything back up and running by the end of May with no data loss.</p>
-      <p>Very sorry for the inconvenience but I need to do it sooner rather than later!</p>
+      <div class="divider"><i class="material-icons icon">expand_more</i> We're Back! <i class="material-icons icon">expand_more</i></div>
+      <p>If you can see this, then we're back online!</p>
+      <p>We've successfully moved host to a new provider that hopefully won't go away any time soon, and we should be better than ever on an infrastructure angle!</p>
+      <p>To help cover the costs, there's a <b>COMPLETELY OPTIONAL</b> Patreon link in the footer of the page.</p>
+      <p>If you feel generous enough to help cover server costs, then by all means go support the app there!</p>
+      <p>There are no real benefits to it though other than the knowledge that you are doing it, but if you still want to then thank you so much!</p>
+      <p>Either way, more work to do so I'll see y'all soon!</p>
     </div>
   </div>
 </template>
