@@ -12,7 +12,7 @@ WORKDIR /savage-aim
 
 COPY . .
 
-RUN --mount=type=cache,target=$POETRY_CACHE_DIR poetry install --with wsgi
+RUN --mount=type=cache,target=$POETRY_CACHE_DIR poetry install --with cors
 
 # The runtime image, used to just run the code provided its virtual environment
 FROM python:3.10-slim-buster AS runtime
@@ -28,6 +28,6 @@ COPY --from=builder /savage-aim /savage-aim
 RUN mv backend/urls_live.py backend/urls.py && \
     mv backend/settings_live.py backend/settings.py
 
-# Set the gunicorn to run the wsgi file
+# Set the daphne to run the asgi file
 EXPOSE 443
 ENTRYPOINT daphne -b 0.0.0.0 -p 443 backend.asgi:application

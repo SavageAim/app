@@ -30,7 +30,8 @@ SECRET_KEY = environ['SECRET_KEY']
 DEBUG = False
 
 ALLOWED_HOSTS = [
-    'savageaim.com',
+    'api.savageaim.com',
+    'ws.savageaim.com',
 ]
 
 TEMPLATES = [
@@ -52,6 +53,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'channels',
+    'corsheaders',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -70,15 +72,12 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
-
-# TODO - CSRF Protection
-# https://docs.djangoproject.com/en/3.2/ref/csrf/
-# should just be credentials: include on the frontend
 
 ROOT_URLCONF = 'backend.urls'
 
@@ -91,11 +90,11 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'postgres',
-        'USER': 'postgres',
+        'NAME': environ.get('DATABASE_NAME', 'postgres'),
+        'USER': environ.get('DATABASE_USER', 'postgres'),
         'PASSWORD': '',
-        'HOST': 'database',
-        'PORT': '5432',
+        'HOST': environ.get('DATABASE_HOST', 'database'),
+        'PORT': environ.get('DATABASE_PORT', 5432),
         'OPTIONS': {
             'CONN_MAX_AGE': None,
         }
@@ -123,7 +122,7 @@ SPECTACULAR_SETTINGS = {
     'DESCRIPTION': 'FFXIV BIS Management Website',
     'VERSION': VERSION,
     'SERVE_INCLUDE_SCHEMA': False,
-    'SERVERS': [{'url': 'https://savageaim.com/', 'description': 'Main Site'}],
+    'SERVERS': [{'url': 'https://api.savageaim.com/', 'description': 'Savage Aim API'}],
     'SCHEMA_PATH_PREFIX': '/backend/api',
     'DISABLE_ERRORS_AND_WARNINGS': True,
 }
@@ -142,13 +141,15 @@ SITE_ID = 2
 SOCIALACCOUNT_PROVIDERS = {
     'discord': {},
 }
-LOGIN_REDIRECT_URL = 'https://savageaim.com/'
-LOGOUT_REDIRECT_URL = 'https://savageaim.com/'
+LOGIN_REDIRECT_URL = 'https://app.savageaim.com/'
+LOGOUT_REDIRECT_URL = 'https://app.savageaim.com/'
 SOCIALACCOUNT_LOGIN_ON_GET = True
 
 # Celery settings
-BROKER_URL = 'redis://redis:6379'
-CELERY_RESULT_BACKEND = 'redis://redis:6379'
+REDIS_HOSTNAME = environ.get('REDIS_HOSTNAME', 'redis')
+REDIS_PORT = environ.get('REDIS_PORT', '6379')
+
+CELERY_RESULT_BACKEND = BROKER_URL = f'redis://{REDIS_HOSTNAME}:{REDIS_PORT}'
 CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
@@ -204,8 +205,7 @@ sentry_sdk.init(
     integrations=[DjangoIntegration()],
     traces_sampler=sampler,
 
-    # If you wish to associate users to errors (assuming you are using
-    # django.contrib.auth) you may enable sending PII data.
+    # If you wish to associate users to errors (assuming you are using django.contrib.auth) you may enable sending PII data.
     send_default_pii=True,
     release=f'savageaim@{VERSION}',
 )
@@ -215,10 +215,16 @@ CHANNEL_LAYERS = {
     'default': {
         'BACKEND': 'channels_redis.core.RedisChannelLayer',
         'CONFIG': {
-            "hosts": [('redis', 6379)],
+            "hosts": [(REDIS_HOSTNAME, REDIS_PORT)],
         },
     },
 }
 
 # Add the webhook for versioning
 VERSION_WEBHOOK = environ.get('VERSION_WEBHOOK', None)
+
+# Add cors headers to allow frontend to communicate
+CORS_ALLOWED_ORIGINS = [
+    'savageaim.com',
+    'app.savageaim.com',  # test domain for working on the deployment while github pages stays up
+]
