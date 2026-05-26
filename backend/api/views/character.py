@@ -180,7 +180,7 @@ class CharacterVerification(APIView):
             return Response(status=404)
 
         # Do some celery stuff!
-        VerifyCharacterTask.asap(pk)
+        VerifyCharacterTask.asap(pk=pk)
 
         return Response(status=202)
 
@@ -259,7 +259,7 @@ class CharacterDelete(APIView):
 
         # Save data for the WS update
         char_id = obj.pk
-        teams = obj.teammember_set.all()
+        team_ids = {tm.team.pk for tm in obj.teammember_set.all()}
 
         # Call character.remove to cleanup teams first
         obj.remove()
@@ -269,10 +269,10 @@ class CharacterDelete(APIView):
 
         # Send WS updates
         self._send_to_user(request.user, {'type': 'character', 'id': char_id})
-        for tm in teams:
+        for team in Team.objects.filter(pk__in=team_ids):
             self._send_to_team(
-                tm.team,
-                {'type': 'team', 'id': str(tm.team.id), 'invite_code': str(tm.team.invite_code)},
+                team,
+                {'type': 'team', 'id': str(team.id), 'invite_code': str(team.invite_code)},
             )
             # Potential need to clean up here, but I don't feel like it's too big of an issue
 

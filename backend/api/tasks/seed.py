@@ -59,10 +59,10 @@ class SeedTask(Task):
     def import_file(self, file, model):
         data = yaml.safe_load(file)
         for item in data:
-            self.stdout.write(f'\t{item["name"]}')
+            logger.info(f'\t{item["name"]}')
             _, created = model.objects.get_or_create(**item)
             if not created:
-                self.stdout.write('\t\tSkipping, as it is already in the DB.')
+                logger.info('\t\tSkipping, as it is already in the DB.')
 
     def import_jobs(self, file):
         """
@@ -71,12 +71,12 @@ class SeedTask(Task):
         """
         data = yaml.safe_load(file)
         for job in data:
-            self.stdout.write(f'\t{job["id"]}')
+            logger.info(f'\t{job["id"]}')
 
             # Check if the Job is already in the Database
             try:
                 obj = models.Job.objects.get(pk=job['id'])
-                self.stdout.write(
+                logger.info(
                     f'\t\tAlready exists, ensuring correct ordering ({obj.ordering} -> {job["ordering"]})',
                 )
                 obj.ordering = job['ordering']

@@ -38,12 +38,12 @@ class VerifyCharacterTask(Task):
                 tm.character = real_char
                 tm.save()
 
-    def run(self, user_id: int):
-        logger.info(f'Commencing verification attempt for Character #{user_id}')
+    def run(self, pk: int):
+        logger.info(f'Commencing verification attempt for Character #{pk}')
         try:
-            obj = Character.objects.get(pk=user_id, verified=False)
+            obj = Character.objects.get(pk=pk, verified=False)
         except Character.DoesNotExist:
-            logger.warning(f'Character #{user_id} either does not exist, or is already verified.')
+            logger.warning(f'Character #{pk} either does not exist, or is already verified.')
             return
 
         logger.debug('calling lookup function')
@@ -52,10 +52,10 @@ class VerifyCharacterTask(Task):
 
         if err is not None:
             notifier.verify_fail(obj, err)
-            logger.error(f'Character #{user_id} could not be verified. Error: {err}')
+            logger.error(f'Character #{pk} could not be verified. Error: {err}')
             return
 
-        logger.info(f'Character #{user_id} verified. Updating DB.')
+        logger.info(f'Character #{pk} verified. Updating DB.')
         obj.verified = True
         obj.save()
 
@@ -70,7 +70,7 @@ class VerifyCharacterTask(Task):
             Q(user__isnull=True) | Q(user_id=obj.user_id),
             verified=False,
             lodestone_id=obj.lodestone_id,
-        ).exclude(pk=user_id)
+        ).exclude(pk=pk)
         ids_to_delete = [o.pk for o in objs]
         logger.info(f'Found {objs.count()} instances of Character #{obj.lodestone_id} to delete.\n{ids_to_delete}')
         objs.delete()

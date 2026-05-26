@@ -67,6 +67,9 @@ INSTALLED_APPS = [
 
     # API Schema
     'drf_spectacular',
+
+    # Tasks
+    'django_cloud_tasks',
 ]
 
 MIDDLEWARE = [
