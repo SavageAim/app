@@ -37,6 +37,7 @@ optional = true
 
 [tool.poetry.group.wsgi.dependencies]
 gunicorn = "^25.3.0"
+gevent = "^26.5.0"
 
 [tool.poetry.group.testing]
 optional = true

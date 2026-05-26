@@ -32,4 +32,4 @@ RUN mv backend/urls_live.py backend/urls.py && \
 EXPOSE 443
 ENTRYPOINT python3 manage.py migrate &&  \
            python3 manage.py seed && \
-           gunicorn --bind=0.0.0.0:443 --access-logfile - --log-file - --log-level info --capture-output --enable-stdio-inheritance backend.wsgi
+           gunicorn --bind=0.0.0.0:443 -k gevent --timeout 300 --access-logfile - --log-file - --log-level info --capture-output --enable-stdio-inheritance backend.wsgi
