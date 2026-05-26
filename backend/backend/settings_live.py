@@ -148,17 +148,6 @@ LOGIN_REDIRECT_URL = 'https://app.savageaim.com/'
 LOGOUT_REDIRECT_URL = 'https://app.savageaim.com/'
 SOCIALACCOUNT_LOGIN_ON_GET = True
 
-# Celery settings
-REDIS_HOSTNAME = environ.get('REDIS_HOSTNAME', 'redis')
-REDIS_PORT = environ.get('REDIS_PORT', '6379')
-
-CELERY_RESULT_BACKEND = BROKER_URL = f'redis://{REDIS_HOSTNAME}:{REDIS_PORT}'
-CELERY_ACCEPT_CONTENT = ['application/json']
-CELERY_TASK_SERIALIZER = 'json'
-CELERY_RESULT_SERIALIZER = 'json'
-CELERY_TIMEZONE = 'Europe/Dublin'
-CELERY_ANNOTATIONS = {'tasks.verify_character': {'rate_limit': '1/s'}}
-
 # Get django logs to stdout
 LOGGING = {
     'version': 1,
@@ -212,13 +201,15 @@ sentry_sdk.init(
 )
 
 # Channels
+REDIS_HOSTNAME = environ.get('REDIS_HOSTNAME', 'redis')
+REDIS_PORT = environ.get('REDIS_PORT', '6379')
 CHANNEL_LAYERS = {
-    'default': {
-        'BACKEND': 'channels_redis.core.RedisChannelLayer',
-        'CONFIG': {
-            "hosts": [(REDIS_HOSTNAME, REDIS_PORT)],
-        },
-    },
+    # 'default': {
+    #     'BACKEND': 'channels_redis.core.RedisChannelLayer',
+    #     'CONFIG': {
+    #         "hosts": [(REDIS_HOSTNAME, REDIS_PORT)],
+    #     },
+    # },
 }
 
 # Add the webhook for versioning

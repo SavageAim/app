@@ -17,8 +17,16 @@
       <p>We've successfully moved host to a new provider that hopefully won't go away any time soon, and we should be better than ever on an infrastructure angle!</p>
       <p>To help cover the costs, there's a <b>COMPLETELY OPTIONAL</b> Patreon link in the footer of the page.</p>
       <p>If you feel generous enough to help cover server costs, then by all means go support the app there!</p>
-      <p>There are no real benefits to it though other than the knowledge that you are doing it, but if you still want to then thank you so much!</p>
-      <p>Either way, more work to do so I'll see y'all soon!</p>
+
+      <div class="divider"><i class="material-icons icon">expand_more</i> Except <i class="material-icons icon">expand_more</i></div>
+      <p><b>TL;DR: Websockets have been disabled for now, so real time updates from team members etc won't be happening.</b></p>
+      <p>Originally, we had just a couple of VMs that hosted the website since I was given them for free.</p>
+      <p>I've migrated to a scaling-on-demand system in order to keep pricing down when the site is not in use.</p>
+      <p>However, we would still need something like Redis in order to facilitate the websocket system.</p>
+      <p>Hosting one of those is insanely pricey for something that is, in effect, a hobby project.</p>
+      <p>If things change in the future, I really hope to put out an update saying Websockets / Real Time Updates are back.</p>
+      <p>But for now, I think it's an understandable thing to cut while trying to get things back up and running.</p>
+      <p>I'm really sorry if this is an inconvenience to you.</p>
     </div>
   </div>
 </template>
