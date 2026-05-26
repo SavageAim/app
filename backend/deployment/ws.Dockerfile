@@ -1,5 +1,5 @@
 # The builder image, used to build the virtual environment
-FROM python:3.10-slim-buster AS builder
+FROM python:3.11-slim-buster AS builder
 
 RUN pip3 install poetry
 
@@ -15,7 +15,7 @@ COPY . .
 RUN --mount=type=cache,target=$POETRY_CACHE_DIR poetry install --with cors
 
 # The runtime image, used to just run the code provided its virtual environment
-FROM python:3.10-slim-buster AS runtime
+FROM python:3.11-slim-buster AS runtime
 
 ENV VIRTUAL_ENV=/savage-aim/.venv
 ENV PATH="${VIRTUAL_ENV}/bin:$PATH"

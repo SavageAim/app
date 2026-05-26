@@ -7,8 +7,8 @@ license = "MIT"
 package-mode = false
 
 [tool.poetry.dependencies]
-python = "^3.10"
-django = "4.2.30"
+python = "^3.11,<3.12"
+django = "<6"
 djangorestframework = "3.15.2"
 django-allauth = "0.50.0"
 drf-spectacular = "0.27.2"
@@ -22,7 +22,9 @@ coreapi = "2.3.3"
 setuptools = "^75.6.0"
 sentry-sdk = "^2.58.0"
 redis = "4.5.5"
-django-cloud-tasks = "^0.0.4"
+django-google-cloud-tasks = "^2.21.0"
+cachetools = "^7.1.4"
+python-dateutil = "^2.9.0.post0"
 
 [tool.poetry.group.cors]
 optional = true

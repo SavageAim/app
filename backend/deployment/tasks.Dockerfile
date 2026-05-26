@@ -1,5 +1,5 @@
 # The builder image, used to build the virtual environment
-FROM python:3.10-slim-buster AS builder
+FROM python:3.11-slim-buster AS builder
 
 RUN pip3 install poetry
 
@@ -15,7 +15,7 @@ COPY . .
 RUN --mount=type=cache,target=$POETRY_CACHE_DIR poetry install --with cors,wsgi
 
 # The runtime image, used to just run the code provided its virtual environment
-FROM python:3.10-slim-buster AS runtime
+FROM python:3.11-slim-buster AS runtime
 
 ENV VIRTUAL_ENV=/savage-aim/.venv
 ENV PATH="${VIRTUAL_ENV}/bin:$PATH"
@@ -30,4 +30,5 @@ RUN mv backend/task_urls.py backend/urls.py && \
 
 # Set the daphne to run the asgi file
 EXPOSE 443
-ENTRYPOINT 
+ENTRYPOINT python manage.py schedule_tasks && \
+           gunicorn --bind=0.0.0.0:443 --access-logfile - --log-file - --log-level info --capture-output --enable-stdio-inheritance backend.wsgi

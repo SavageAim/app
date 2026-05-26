@@ -2,14 +2,13 @@
 version: '3'
 services:
   database:
-    image: "postgres:13"
+    image: "pgautoupgrade/pgautoupgrade:15-debian"
     volumes:
       - ./database-data:/var/lib/postgresql/data/ # persist data even if container shuts downvolumes:
     ports:
       - '5432:5432'
     environment:
       - 'POSTGRES_HOST_AUTH_METHOD=trust'
-    command: ['postgres', '-c', 'track_activity_query_size=1048576']
 
   proxy:
     image: 'nginx:latest'

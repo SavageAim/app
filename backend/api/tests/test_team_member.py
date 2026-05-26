@@ -740,7 +740,7 @@ class TeamMemberCurrentGearResource(SavageAimTestCase):
             current_necklace=crafted,
             current_offhand=crafted,
             current_right_ring=crafted,
-            job_id='GNB',
+            job_id='PLD',
             owner=self.char2,
         )
 
@@ -760,7 +760,7 @@ class TeamMemberCurrentGearResource(SavageAimTestCase):
 
         # Check the Current Gear after a refresh
         self.bis2.refresh_from_db()
-        self.assertEqual(self.bis2.current_mainhand.name, 'Queensknight')
+        self.assertEqual(self.bis2.current_mainhand.name, 'Ageless')
         self.assertEqual(self.bis2.current_head.name, 'Babyface Champion')
         self.assertEqual(self.bis2.current_body.name, 'Augmented Ceremonial')
         self.assertEqual(self.bis2.current_hands.name, 'Babyface Champion')
@@ -769,7 +769,7 @@ class TeamMemberCurrentGearResource(SavageAimTestCase):
         self.assertEqual(self.bis2.current_earrings.name, 'Historia')
         self.assertEqual(self.bis2.current_necklace.name, 'Augmented Ceremonial')
         self.assertEqual(self.bis2.current_bracelet.name, 'Historia')
-        self.assertEqual(self.bis2.current_right_ring.name, 'Historia')
+        self.assertEqual(self.bis2.current_right_ring.name, 'Augmented Historia')
         self.assertEqual(self.bis2.current_left_ring.name, 'Babyface Champion')
 
     def test_errors(self):
