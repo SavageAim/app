@@ -12,12 +12,17 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 import sentry_sdk
 from os import environ
 from pathlib import Path
+from urllib.parse import urlsplit
 from sentry_sdk.integrations.django import DjangoIntegration
 from . import VERSION
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+# Django Cloud Task Settings
+DJANGO_CLOUD_TASKS_EAGER = False
+DJANGO_CLOUD_TASKS_ENDPOINT = environ.get('TASKS_ENDPOINT', 'http://localhost:8080')
 
 
 # Quick-start development settings - unsuitable for production
@@ -30,21 +35,7 @@ SECRET_KEY = environ['SECRET_KEY']
 DEBUG = False
 
 ALLOWED_HOSTS = [
-    'api.savageaim.com',
-    'ws.savageaim.com',
-]
-
-TEMPLATES = [
-    {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
-        'APP_DIRS': True,
-        'OPTIONS': {
-            'context_processors': [
-                'django.template.context_processors.request',
-            ],
-        },
-    },
+    urlsplit(DJANGO_CLOUD_TASKS_ENDPOINT).netloc,
 ]
 
 # Application definition
@@ -73,13 +64,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
 ROOT_URLCONF = 'backend.urls'
@@ -220,7 +205,3 @@ CORS_ALLOWED_ORIGINS = [
     'https://savageaim.com',
     'https://app.savageaim.com',  # test domain for working on the deployment while github pages stays up
 ]
-
-# Django Cloud Task Settings
-DJANGO_CLOUD_TASKS_EAGER = False
-DJANGO_CLOUD_TASKS_ENDPOINT = environ.get('TASKS_ENDPOINT', 'http://localhost:8080')

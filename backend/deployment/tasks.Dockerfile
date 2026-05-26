@@ -26,7 +26,7 @@ WORKDIR /savage-aim
 
 COPY --from=builder /savage-aim /savage-aim
 RUN mv backend/task_urls.py backend/urls.py && \
-    mv backend/settings_live.py backend/settings.py
+    mv backend/tasks_settings.py backend/settings.py
 
 # Set the daphne to run the asgi file
 EXPOSE 443
