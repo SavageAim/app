@@ -46,6 +46,26 @@ jobs:
     - name: Push the Docker image
       run: docker push --all-tags ghcr.io/savageaim/app/ws-backend
 
+  build-task-backend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Get Release Info
+      id: get_release
+      uses: bruceadams/get-release@v1.3.2
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
+    - name: Build the Docker image
+      run: docker build . --file deployment/tasks.Dockerfile -t ghcr.io/savageaim/app/task-backend:latest -t ghcr.io/savageaim/app/task-backend:${{ steps.get_release.outputs.tag_name }}
+    - name: Login to GitHub Docker Registry
+      run: docker login ghcr.io -u freyamade -p ${{ secrets.GITHUB_TOKEN }}
+    - name: Push the Docker image
+      run: docker push --all-tags ghcr.io/savageaim/app/task-backend
+
   build-frontend:
     runs-on: ubuntu-latest
     defaults:
