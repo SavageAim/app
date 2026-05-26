@@ -34,7 +34,7 @@ export default class NewChar extends SavageAimMixin {
 
   loading = false
 
-  url = `/backend/api/character/`
+  url = `${process.env.VUE_APP_URL}/backend/api/character/`
 
   get urlInput(): HTMLInputElement {
     return this.$refs.url as HTMLInputElement

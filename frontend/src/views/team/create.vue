@@ -88,7 +88,7 @@ export default class TeamCreate extends SavageAimMixin {
 
   tierId = '-1'
 
-  url = `/backend/api/team/`
+  url = `${process.env.VUE_APP_URL}/backend/api/team/`
 
   // Values for sending
   get bisListId(): string {

@@ -273,7 +273,7 @@ export default class TeamSettings extends TeamViewMixin {
   }
 
   get url(): string {
-    return `/backend/api/team/${this.teamId}/`
+    return `${process.env.VUE_APP_URL}/backend/api/team/${this.teamId}/`
   }
 
   addOverride(): void {
@@ -338,7 +338,7 @@ export default class TeamSettings extends TeamViewMixin {
   async loadDefaultSortOrder(): Promise<void> {
     // Load the job sort data from the API
     try {
-      const response = await fetch('/backend/api/job/solver/')
+      const response = await fetch(`${process.env.VUE_APP_URL}/backend/api/job/solver/`)
       if (response.ok) {
         // Parse the JSON into a team and save it
         const details = (await response.json()) as Job[]

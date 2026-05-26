@@ -1,7 +1,7 @@
 <template>
   <footer id="footer" class="content has-text-centered">
     <a class="patreon-link" href="https://www.patreon.com/cw/freyamade" target="_blank" data-microtip-position="top" role="tooltip" aria-label="Support SavageAim on Patreon"><span class="icon is-large"><img src="/patreon.svg" alt="Patreon Logo" class="image is-24x24" height="24" width="24" /></span></a>
-    <a href="/backend/schema" target="_blank" data-microtip-position="top" role="tooltip" aria-label="API Schema"><span class="icon is-large"><i class="material-icons">api</i></span></a>
+    <a :href="`${baseUrl}/backend/schema`" target="_blank" data-microtip-position="top" role="tooltip" aria-label="API Schema"><span class="icon is-large"><i class="material-icons">api</i></span></a>
     <a href="https://wiki.savageaim.com" target="_blank" data-microtip-position="top" role="tooltip" aria-label="Wiki"><span class="icon is-large"><i class="material-icons">menu_book</i></span></a>
     <a data-microtip-position="top" role="tooltip" aria-label="Changelog" @click="showChangelog"><span class="icon is-large"><i class="material-icons">update</i></span></a>
     <a href="https://github.com/SavageAim/app" target="_blank" data-microtip-position="top" role="tooltip" aria-label="Github Repo"><span class="icon is-large"><i class="material-icons">code</i></span></a>
@@ -23,6 +23,10 @@ import Changelog from '@/components/modals/changelog.vue'
 export default class Footer extends Vue {
   get currentYear(): number {
     return (new Date()).getFullYear()
+  }
+
+  get baseUrl(): string {
+    return process.env.VUE_APP_URL
   }
 
   showChangelog(): void {

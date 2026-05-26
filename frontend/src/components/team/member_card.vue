@@ -174,7 +174,7 @@ export default class TeamMemberCard extends Vue {
 
   async lodestoneUpdate(): Promise<void> {
     try {
-      const response = await fetch(`/backend/api/team/${this.teamId}/member/${this.details.id}/gear_update/`, {
+      const response = await fetch(`${process.env.VUE_APP_URL}/backend/api/team/${this.teamId}/member/${this.details.id}/gear_update/`, {
         method: 'POST',
         headers: {
           'X-CSRFToken': this.$cookies.get('csrftoken'),

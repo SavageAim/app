@@ -4,8 +4,8 @@ import QuickSwitcher from '@/components/modals/switcher.vue'
 import User from '@/interfaces/user'
 
 export default class SavageAimMixin extends Vue {
-  LOGIN_URL = `/backend/accounts/discord/login/`
-  LOGOUT_URL = `/backend/logout/`
+  LOGIN_URL = `${process.env.VUE_APP_URL}/backend/accounts/discord/login/`
+  LOGOUT_URL = `${process.env.VUE_APP_URL}/backend/logout/`
 
   get authenticated(): boolean {
     return this.$store.state.user.id !== null

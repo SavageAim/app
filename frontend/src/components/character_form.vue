@@ -33,7 +33,7 @@ export default class CharacterForm extends SavageAimMixin {
   @Prop()
   apiLoading!: boolean
 
-  baseUrl = `/backend/api/lodestone`
+  baseUrl = `${process.env.VUE_APP_URL}/backend/api/lodestone`
 
   char: Character | null = null
 

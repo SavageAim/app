@@ -106,7 +106,7 @@ export default class TeamMemberForm extends SavageAimMixin {
   }
 
   characterUrl(id: string): string {
-    return `/backend/api/character/${id}/`
+    return `${process.env.VUE_APP_URL}/backend/api/character/${id}/`
   }
 
   @Watch('characterId')

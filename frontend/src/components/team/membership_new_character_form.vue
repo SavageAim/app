@@ -51,11 +51,11 @@ export default class TeamMemberCreateNewCharacterForm extends SavageAimMixin {
 
   character: Character | null = null
 
-  characterCreateUrl = '/backend/api/character/'
+  characterCreateUrl = `${process.env.VUE_APP_URL}/backend/api/character/`
 
   characterErrors: string[] = []
 
-  characterImportUrl = '/backend/api/lodestone'
+  characterImportUrl = `${process.env.VUE_APP_URL}/backend/api/lodestone`
 
   characterLoaded = false
 
@@ -129,7 +129,7 @@ export default class TeamMemberCreateNewCharacterForm extends SavageAimMixin {
 
     const body = JSON.stringify(bisList)
     const charId = this.character?.id || ''
-    const url = `/backend/api/character/${charId}/bis_lists/`
+    const url = `${process.env.VUE_APP_URL}/backend/api/character/${charId}/bis_lists/`
     try {
       const response = await fetch(url, {
         method: 'POST',
@@ -247,7 +247,7 @@ export default class TeamMemberCreateNewCharacterForm extends SavageAimMixin {
     const etroUrl = this.bisUrl()
     const match = this.etroUrlRegex.exec(etroUrl)
     if (match === null) return null
-    const url = `/backend/api/import/etro/${match[1]}/`
+    const url = `${process.env.VUE_APP_URL}/backend/api/import/etro/${match[1]}/`
     try {
       const response = await fetch(url)
       if (response.ok) {
@@ -269,7 +269,7 @@ export default class TeamMemberCreateNewCharacterForm extends SavageAimMixin {
     const xivGearUrl = this.bisUrl()
     const match = this.xivGearUrlRegex.exec(xivGearUrl)
     if (match === null) return null
-    const url = `/backend/api/import/xivgear/${match[1]}/`
+    const url = `${process.env.VUE_APP_URL}/backend/api/import/xivgear/${match[1]}/`
 
     try {
       const response = await fetch(url)
@@ -352,7 +352,7 @@ export default class TeamMemberCreateNewCharacterForm extends SavageAimMixin {
 
   private async importCurrentGear(jobId: string, tier: Tier): Promise<LodestoneImportResponse | null> {
     try {
-      const response = await fetch(`/backend/api/lodestone/${this.character!.lodestone_id}/import/${jobId}`)
+      const response = await fetch(`${process.env.VUE_APP_URL}/backend/api/lodestone/${this.character!.lodestone_id}/import/${jobId}`)
       if (response.ok) {
         // Handle the import
         const data = await response.json() as LodestoneImportResponse

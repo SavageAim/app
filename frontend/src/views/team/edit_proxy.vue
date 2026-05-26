@@ -76,7 +76,7 @@ export default class EditProxy extends TeamViewMixin {
   team!: Team
 
   get url(): string {
-    return `/backend/api/team/${this.teamId}/proxies/${this.charId}/`
+    return `${process.env.VUE_APP_URL}/backend/api/team/${this.teamId}/proxies/${this.charId}/`
   }
 
   checkPermissions(): void {

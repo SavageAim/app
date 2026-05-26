@@ -163,7 +163,7 @@ export default class TeamJoin extends SavageAimMixin {
   }
 
   get url(): string {
-    return `/backend/api/team/join/${this.teamId}/`
+    return `${process.env.VUE_APP_URL}/backend/api/team/join/${this.teamId}/`
   }
 
   claim(character: Character): void {

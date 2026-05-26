@@ -53,7 +53,7 @@ export default class EditBIS extends NewBIS {
 
   // URL for reading and writing
   get url(): string {
-    return `/backend/api/character/${this.characterId}/bis_lists/${this.bisId}/`
+    return `${process.env.VUE_APP_URL}/backend/api/character/${this.characterId}/bis_lists/${this.bisId}/`
   }
 
   // Load functions

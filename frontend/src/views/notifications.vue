@@ -44,7 +44,7 @@ export default class NotificationView extends SavageAimMixin {
   async load(): Promise<void> {
     // Load the team data from the API
     try {
-      const response = await fetch('/backend/api/notifications/')
+      const response = await fetch(`${process.env.VUE_APP_URL}/backend/api/notifications/`)
       if (response.ok) {
         // Parse the JSON into a team and save it
         this.notifications = (await response.json()) as Notification[]
@@ -62,7 +62,7 @@ export default class NotificationView extends SavageAimMixin {
 
   async markAllAsRead(): Promise<void> {
     try {
-      const response = await fetch('/backend/api/notifications/', {
+      const response = await fetch(`${process.env.VUE_APP_URL}/backend/api/notifications/`, {
         method: 'POST',
         headers: {
           'X-CSRFToken': this.$cookies.get('csrftoken'),

@@ -101,7 +101,7 @@ export default class DeleteBIS extends Vue {
   }
 
   get url(): string {
-    return `/backend/api/character/${this.character.id}/bis_lists/${this.bis.id}/delete/`
+    return `${process.env.VUE_APP_URL}/backend/api/character/${this.character.id}/bis_lists/${this.bis.id}/delete/`
   }
 
   mounted(): void {

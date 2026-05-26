@@ -54,7 +54,7 @@ export default class DeleteLoot extends Vue {
   team!: Team
 
   get url(): string {
-    return `/backend/api/team/${this.team.id}/loot/delete/`
+    return `${process.env.VUE_APP_URL}/backend/api/team/${this.team.id}/loot/delete/`
   }
 
   async deleteLoot(): Promise<void> {

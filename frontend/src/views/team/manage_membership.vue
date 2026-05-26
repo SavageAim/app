@@ -81,7 +81,7 @@ export default class TeamManageMembership extends SavageAimMixin {
   }
 
   get teamUrl(): string {
-    return `/backend/api/team/${this.teamId}/`
+    return `${process.env.VUE_APP_URL}/backend/api/team/${this.teamId}/`
   }
 
   get url(): string {

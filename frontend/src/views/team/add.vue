@@ -55,7 +55,7 @@ export default class TeamAdd extends SavageAimMixin {
   }
 
   url(): string {
-    return `/backend/api/team/join/${this.inviteCode()}/`
+    return `${process.env.VUE_APP_URL}/backend/api/team/join/${this.inviteCode()}/`
   }
 
   async joinTeam(): Promise<void> {

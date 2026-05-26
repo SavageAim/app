@@ -83,11 +83,11 @@ export default class NewProxy extends TeamViewMixin {
   team!: Team
 
   get readUrl(): string {
-    return `/backend/api/team/${this.teamId}/`
+    return `${process.env.VUE_APP_URL}/backend/api/team/${this.teamId}/`
   }
 
   get writeUrl(): string {
-    return `/backend/api/team/${this.teamId}/proxies/`
+    return `${process.env.VUE_APP_URL}/backend/api/team/${this.teamId}/proxies/`
   }
 
   changeCharacter(): void {

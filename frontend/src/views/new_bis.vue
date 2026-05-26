@@ -43,7 +43,7 @@ export default class NewBIS extends SavageAimMixin {
 
   // URL to load character data from
   get charUrl(): string {
-    return `/backend/api/character/${this.characterId}/`
+    return `${process.env.VUE_APP_URL}/backend/api/character/${this.characterId}/`
   }
 
   // Flag indicating if we're ready to display the page
@@ -56,7 +56,7 @@ export default class NewBIS extends SavageAimMixin {
 
   // Url to send data to
   get url(): string {
-    return `/backend/api/character/${this.characterId}/bis_lists/`
+    return `${process.env.VUE_APP_URL}/backend/api/character/${this.characterId}/bis_lists/`
   }
 
   // Load functions

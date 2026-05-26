@@ -63,7 +63,7 @@ export default class DeleteTeam extends Vue {
   }
 
   get url(): string {
-    return `/backend/api/team/${this.team.id}/`
+    return `${process.env.VUE_APP_URL}/backend/api/team/${this.team.id}/`
   }
 
   async deleteTeam(): Promise<void> {

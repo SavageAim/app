@@ -53,7 +53,7 @@ export default class ClaimCharacter extends Vue {
   teamId!: number
 
   get url(): string {
-    return `/backend/api/team/${this.teamId}/proxies/${this.details.id}/claim/`
+    return `${process.env.VUE_APP_URL}/backend/api/team/${this.teamId}/proxies/${this.details.id}/claim/`
   }
 
   async claimCharacter(): Promise<void> {

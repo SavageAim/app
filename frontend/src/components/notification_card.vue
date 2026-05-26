@@ -44,7 +44,7 @@ export default class NotificationCard extends Vue {
 
   async markAsRead(): Promise<void> {
     try {
-      const response = await fetch(`/backend/api/notifications/${this.notification.id}/`, {
+      const response = await fetch(`${process.env.VUE_APP_URL}/backend/api/notifications/${this.notification.id}/`, {
         method: 'POST',
         headers: {
           'X-CSRFToken': this.$cookies.get('csrftoken'),

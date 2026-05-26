@@ -57,7 +57,7 @@ const store: Store = {
   actions: {
     async fetchCharacters({ commit }): Promise<void> {
       try {
-        const response = await fetch(`/backend/api/character/`)
+        const response = await fetch(`${process.env.VUE_APP_URL}/backend/api/character/`)
         if (response.ok) {
           // Parse the list into an array of character interfaces and store them in the character data list
           commit('setCharacters', await response.json() as Character[])
@@ -73,7 +73,7 @@ const store: Store = {
 
     async fetchGear({ commit }): Promise<void> {
       try {
-        const response = await fetch(`/backend/api/gear/`)
+        const response = await fetch(`${process.env.VUE_APP_URL}/backend/api/gear/`)
         if (!response.ok) {
           Vue.notify({ text: `Error ${response.status} when fetching Gear list.`, type: 'is-danger' })
         }
@@ -88,7 +88,7 @@ const store: Store = {
 
     async fetchItemLevels({ commit }): Promise<void> {
       try {
-        const response = await fetch(`/backend/api/gear/item_levels/`)
+        const response = await fetch(`${process.env.VUE_APP_URL}/backend/api/gear/item_levels/`)
         if (!response.ok) {
           Vue.notify({ text: `Error ${response.status} when fetching Gear list.`, type: 'is-danger' })
         }
@@ -105,7 +105,7 @@ const store: Store = {
 
     async fetchJobs({ commit }): Promise<void> {
       try {
-        const response = await fetch(`/backend/api/job/`)
+        const response = await fetch(`${process.env.VUE_APP_URL}/backend/api/job/`)
         if (!response.ok) {
           Vue.notify({ text: `Error ${response.status} when fetching Jobs list.`, type: 'is-danger' })
         }
@@ -123,7 +123,7 @@ const store: Store = {
 
       try {
         // Store is limited to latest 20, but a Notification page will return them all
-        const response = await fetch(`/backend/api/notifications/?limit=20`)
+        const response = await fetch(`${process.env.VUE_APP_URL}/backend/api/notifications/?limit=20`)
         if (!response.ok) {
           Vue.notify({ text: `Error ${response.status} when fetching Notifications list.`, type: 'is-danger' })
         }
@@ -139,7 +139,7 @@ const store: Store = {
     async fetchTeams({ commit }): Promise<void> {
       // Fetch teams for all characters under the control of the logged in user
       try {
-        const response = await fetch(`/backend/api/team/`)
+        const response = await fetch(`${process.env.VUE_APP_URL}/backend/api/team/`)
         if (response.ok) {
           // Parse the list into an array of character interfaces and store them in the character data list
           commit('setTeams', await response.json() as Team[])
@@ -155,7 +155,7 @@ const store: Store = {
 
     async fetchTiers({ commit }): Promise<void> {
       try {
-        const response = await fetch(`/backend/api/tier/`)
+        const response = await fetch(`${process.env.VUE_APP_URL}/backend/api/tier/`)
         if (!response.ok) {
           Vue.notify({ text: `Error ${response.status} when fetching Tiers list.`, type: 'is-danger' })
         }
@@ -170,7 +170,7 @@ const store: Store = {
 
     async fetchUser({ commit, dispatch, state }): Promise<void> {
       try {
-        const response = await fetch(`/backend/api/me/`, { credentials: 'include' })
+        const response = await fetch(`${process.env.VUE_APP_URL}/backend/api/me/`, { credentials: 'include' })
         if (response.ok) {
           // Store the response as the state's user
           const userDetails = await response.json() as User

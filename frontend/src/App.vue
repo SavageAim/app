@@ -28,7 +28,7 @@ export default class App extends Vue {
 
   // Check that the backend server is up before loading the App properly
   async checkBackend(): Promise<void> {
-    const response = await fetch('/backend/health/')
+    const response = await fetch(`${process.env.VUE_APP_URL}/backend/health/`)
     if (response.ok) {
       this.loadData()
       Vue.nextTick(() => this.$forceUpdate)

@@ -54,7 +54,7 @@ export default class TeamOverview extends TeamViewMixin {
   }
 
   get url(): string {
-    return `/backend/api/team/${this.teamId}/`
+    return `${process.env.VUE_APP_URL}/backend/api/team/${this.teamId}/`
   }
 
   created(): void {

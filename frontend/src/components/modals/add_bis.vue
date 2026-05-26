@@ -38,7 +38,7 @@ export default class AddBIS extends Vue {
 
   // Url to send data to
   get url(): string {
-    return `/backend/api/character/${this.character.id}/bis_lists/`
+    return `${process.env.VUE_APP_URL}/backend/api/character/${this.character.id}/bis_lists/`
   }
 
   handleError(errorCode: number): void {

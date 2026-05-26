@@ -75,7 +75,7 @@ export default class Notifications extends Vue {
 
   async markAllAsRead(): Promise<void> {
     try {
-      const response = await fetch('/backend/api/notifications/', {
+      const response = await fetch(`${process.env.VUE_APP_URL}/backend/api/notifications/`, {
         method: 'POST',
         headers: {
           'X-CSRFToken': this.$cookies.get('csrftoken'),

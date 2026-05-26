@@ -63,7 +63,7 @@ export default class UserDetailsSettings extends Vue {
   }
 
   get tokenUrl(): string {
-    return '/backend/api/me/token/'
+    return `${process.env.VUE_APP_URL}/backend/api/me/token/`
   }
 
   changeUsername(): void {

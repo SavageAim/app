@@ -137,7 +137,7 @@ export default class Settings extends SavageAimMixin {
 
   // Url to send data to
   get url(): string {
-    return `/backend/api/me/`
+    return `${process.env.VUE_APP_URL}/backend/api/me/`
   }
 
   // Return the user object from the store

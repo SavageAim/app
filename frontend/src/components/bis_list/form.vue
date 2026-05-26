@@ -132,7 +132,7 @@ export default class BISListForm extends Vue {
   }
 
   get lodestoneImportUrl(): string {
-    return `/backend/api/lodestone/${this.character.lodestone_id}/import`
+    return `${process.env.VUE_APP_URL}/backend/api/lodestone/${this.character.lodestone_id}/import`
   }
 
   get syncableLists(): BISList[] {
@@ -228,7 +228,7 @@ export default class BISListForm extends Vue {
   etroImportUrl(): string | null {
     const match = this.etroImportPattern.exec(this.bisList.external_link || '')
     if (match === null) return null
-    return `/backend/api/import/etro/${match[1]}/`
+    return `${process.env.VUE_APP_URL}/backend/api/import/etro/${match[1]}/`
   }
 
   @Watch('bisList.external_link', { deep: true })
@@ -242,7 +242,7 @@ export default class BISListForm extends Vue {
 
     const match = this.xivGearImportPattern.exec(testUrl)
     if (match === null) return null
-    return `/backend/api/import/xivgear/${match[1]}/`
+    return `${process.env.VUE_APP_URL}/backend/api/import/xivgear/${match[1]}/`
   }
 
   handleErrors(errors: BISListErrors): void {

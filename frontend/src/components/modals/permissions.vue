@@ -50,7 +50,7 @@ export default class Permissions extends Vue {
   teamId!: number
 
   get url(): string {
-    return `/backend/api/team/${this.teamId}/member/${this.member.id}/permissions/`
+    return `${process.env.VUE_APP_URL}/backend/api/team/${this.teamId}/member/${this.member.id}/permissions/`
   }
 
   async save(): Promise<void> {

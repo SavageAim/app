@@ -134,7 +134,7 @@ export default class TeamLoot extends TeamViewMixin {
   }
 
   get url(): string {
-    return `/backend/api/team/${this.teamId}/loot/`
+    return `${process.env.VUE_APP_URL}/backend/api/team/${this.teamId}/loot/`
   }
 
   get version(): string {

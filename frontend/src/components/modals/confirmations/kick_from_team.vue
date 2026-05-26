@@ -68,7 +68,7 @@ export default class KickFromTeam extends Vue {
   teamId!: number
 
   get url(): string {
-    return `/backend/api/team/${this.teamId}/member/${this.details.id}/`
+    return `${process.env.VUE_APP_URL}/backend/api/team/${this.teamId}/member/${this.details.id}/`
   }
 
   async kickFromTeam(): Promise<void> {

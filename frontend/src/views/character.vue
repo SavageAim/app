@@ -308,19 +308,19 @@ export default class Character extends SavageAimMixin {
   updating = false
 
   get bisListUrl(): string {
-    return `/backend/api/character/${this.characterId}/bis_lists/`
+    return `${process.env.VUE_APP_URL}/backend/api/character/${this.characterId}/bis_lists/`
   }
 
   get lodestoneUrl(): string {
-    return `/backend/api/lodestone/${this.character.lodestone_id}/`
+    return `${process.env.VUE_APP_URL}/backend/api/lodestone/${this.character.lodestone_id}/`
   }
 
   get teamsUrl(): string {
-    return `/backend/api/team/?char_id=${this.characterId}`
+    return `${process.env.VUE_APP_URL}/backend/api/team/?char_id=${this.characterId}`
   }
 
   get url(): string {
-    return `/backend/api/character/${this.characterId}/`
+    return `${process.env.VUE_APP_URL}/backend/api/character/${this.characterId}/`
   }
 
   created(): void {

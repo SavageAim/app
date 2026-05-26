@@ -85,7 +85,7 @@ export default class DeleteCharacter extends Vue {
   }
 
   get url(): string {
-    return `/backend/api/character/${this.character.id}/delete/`
+    return `${process.env.VUE_APP_URL}/backend/api/character/${this.character.id}/delete/`
   }
 
   mounted(): void {

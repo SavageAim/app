@@ -81,7 +81,7 @@ export default class TeamManagement extends TeamViewMixin {
   team!: Team
 
   get url(): string {
-    return `/backend/api/team/${this.teamId}/`
+    return `${process.env.VUE_APP_URL}/backend/api/team/${this.teamId}/`
   }
 
   // Retrieve the User's Character in the Team
