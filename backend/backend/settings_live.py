@@ -19,6 +19,10 @@ from . import VERSION
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# Django Cloud Task Settings
+DJANGO_CLOUD_TASKS_EAGER = False
+DJANGO_CLOUD_TASKS_ENDPOINT = environ.get('TASKS_ENDPOINT', 'http://localhost:8080')
+
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
@@ -32,6 +36,7 @@ DEBUG = False
 ALLOWED_HOSTS = [
     'api.savageaim.com',
     'ws.savageaim.com',
+    DJANGO_CLOUD_TASKS_ENDPOINT,
 ]
 
 TEMPLATES = [
@@ -220,7 +225,3 @@ CORS_ALLOWED_ORIGINS = [
     'https://savageaim.com',
     'https://app.savageaim.com',  # test domain for working on the deployment while github pages stays up
 ]
-
-# Django Cloud Task Settings
-DJANGO_CLOUD_TASKS_EAGER = False
-DJANGO_CLOUD_TASKS_ENDPOINT = environ.get('TASKS_ENDPOINT', 'http://localhost:8080')
