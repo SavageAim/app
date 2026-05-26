@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 import sentry_sdk
 from os import environ
 from pathlib import Path
+from urllib.parse import urlsplit
 from sentry_sdk.integrations.django import DjangoIntegration
 from . import VERSION
 
@@ -36,7 +37,7 @@ DEBUG = False
 ALLOWED_HOSTS = [
     'api.savageaim.com',
     'ws.savageaim.com',
-    DJANGO_CLOUD_TASKS_ENDPOINT,
+    urlsplit(DJANGO_CLOUD_TASKS_ENDPOINT).netloc,
 ]
 
 TEMPLATES = [
