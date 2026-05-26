@@ -228,3 +228,8 @@ CORS_ALLOWED_ORIGINS = [
     'savageaim.com',
     'app.savageaim.com',  # test domain for working on the deployment while github pages stays up
 ]
+
+# Django Cloud Task Settings
+DJANGO_CLOUD_TASKS_EAGER = False
+DJANGO_CLOUD_TASKS_ENDPOINT = environ.get('TASKS_ENDPOINT', 'http://localhost:8080')
+

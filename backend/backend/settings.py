@@ -198,3 +198,6 @@ CHANNEL_LAYERS = {
 
 # Add the webhook for versioning
 VERSION_WEBHOOK = environ.get('VERSION_WEBHOOK', None)
+
+# Django Cloud Task Settings
+DJANGO_CLOUD_TASKS_EAGER = True  # debug cloud tasks by running them asap in current thread

@@ -10,7 +10,7 @@ from django.utils import timezone
 # local
 from api.lodestone_scraper import LodestoneScraper
 from api.models import BISList, Character, Gear, Job, Notification, Team, Tier
-from api.tasks import cleanup, verify_character, remind_users_to_verify
+from api.tasks import cleanup, VerifyCharacterTask, remind_users_to_verify
 from .test_base import SavageAimTestCase
 
 
@@ -239,7 +239,7 @@ class TasksTestSuite(SavageAimTestCase):
             verified=False,
             token=Character.generate_token(),
         )
-        verify_character(char.pk)
+        VerifyCharacterTask.asap(char.pk)
 
         char.refresh_from_db()
         self.assertTrue(char.verified)
@@ -325,7 +325,7 @@ class TasksTestSuite(SavageAimTestCase):
         tm = team.members.create(character=proxy, bis_list=bis, lead=True)
 
         # Verify, then we check that the Proxy was deleted, and that the existing character is now the only member
-        verify_character(char.pk)
+        VerifyCharacterTask.asap(char.pk)
         with self.assertRaises(Character.DoesNotExist):
             Character.objects.get(pk=proxy.pk)
 
@@ -352,13 +352,13 @@ class TasksTestSuite(SavageAimTestCase):
             verified=True,
             token=Character.generate_token(),
         )
-        verify_character(char.pk)
+        VerifyCharacterTask.asap(char.pk)
         mocked_get.assert_not_called()
 
         # Unverify the character and attempt to, then check the notifications for the reason why
         char.verified = False
         char.save()
-        verify_character(char.pk)
+        VerifyCharacterTask.asap(char.pk)
         mocked_get.assert_called_once()
 
         # Check for Notification
@@ -517,7 +517,7 @@ class TasksTestSuite(SavageAimTestCase):
 
         # Attempt to verify the proxy character, which for some reason is causing a protected error
         self.assertEqual(Character.objects.count(), 3)
-        verify_character(char.pk)
+        VerifyCharacterTask.asap(char.pk)
         self.assertEqual(Character.objects.count(), 1)
         with self.assertRaises(Character.DoesNotExist):
             Character.objects.get(pk=proxy.pk)
