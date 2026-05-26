@@ -14,17 +14,34 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+
+    - name: Log in to Docker Hub
+      uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+
+    - name: Log in to the Container registry
+      uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+
     - name: Get Release Info
       id: get_release
       uses: bruceadams/get-release@v1.3.2
       env:
         GITHUB_TOKEN: ${{ github.token }}
-    - name: Build the Docker image
-      run: docker build . --file deployment/Dockerfile -t ghcr.io/savageaim/app/backend:latest -t ghcr.io/savageaim/app/backend:${{ steps.get_release.outputs.tag_name }}
-    - name: Login to GitHub Docker Registry
-      run: docker login ghcr.io -u freyamade -p ${{ secrets.GITHUB_TOKEN }}
-    - name: Push the Docker image
-      run: docker push --all-tags ghcr.io/savageaim/app/backend
+
+    - name: Build and Push Docker Images
+      run: |
+        docker build . --file deployment/Dockerfile -t ghcr.io/savageaim/app/backend:latest -t ghcr.io/savageaim/app/backend:${{ steps.get_release.outputs.tag_name }}
+        docker push --all-tags ghcr.io/savageaim/app/backend
+        # Rename images to dockerhub and push there too
+        docker image tag ghcr.io/savageaim/app/backend:latest freyamade/savageaim:backend
+        docker image tag ghcr.io/savageaim/app/backend:${{ steps.get_release.outputs.tag_name }} freyamade/savageaim:backend-${{ steps.get_release.outputs.tag_name }}
+        docker push --all-tags freyamade/savageaim
 
   build-ws-backend:
     runs-on: ubuntu-latest
@@ -34,17 +51,34 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+
+    - name: Log in to Docker Hub
+      uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+
+    - name: Log in to the Container registry
+      uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+
     - name: Get Release Info
       id: get_release
       uses: bruceadams/get-release@v1.3.2
       env:
         GITHUB_TOKEN: ${{ github.token }}
-    - name: Build the Docker image
-      run: docker build . --file deployment/ws.Dockerfile -t ghcr.io/savageaim/app/ws-backend:latest -t ghcr.io/savageaim/app/ws-backend:${{ steps.get_release.outputs.tag_name }}
-    - name: Login to GitHub Docker Registry
-      run: docker login ghcr.io -u freyamade -p ${{ secrets.GITHUB_TOKEN }}
-    - name: Push the Docker image
-      run: docker push --all-tags ghcr.io/savageaim/app/ws-backend
+
+    - name: Build and Push Docker Images
+      run: |
+        docker build . --file deployment/ws.Dockerfile -t ghcr.io/savageaim/app/ws-backend:latest -t ghcr.io/savageaim/app/ws-backend:${{ steps.get_release.outputs.tag_name }}
+        docker push --all-tags ghcr.io/savageaim/app/ws-backend
+        # Rename images to dockerhub and push there too
+        docker image tag ghcr.io/savageaim/app/ws-backend:latest freyamade/savageaim:websockets
+        docker image tag ghcr.io/savageaim/app/ws-backend:${{ steps.get_release.outputs.tag_name }} freyamade/savageaim:websockets-${{ steps.get_release.outputs.tag_name }}
+        docker push --all-tags freyamade/savageaim
 
   build-task-backend:
     runs-on: ubuntu-latest
@@ -54,17 +88,34 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+
+    - name: Log in to Docker Hub
+      uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+
+    - name: Log in to the Container registry
+      uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+
     - name: Get Release Info
       id: get_release
       uses: bruceadams/get-release@v1.3.2
       env:
         GITHUB_TOKEN: ${{ github.token }}
-    - name: Build the Docker image
-      run: docker build . --file deployment/tasks.Dockerfile -t ghcr.io/savageaim/app/task-backend:latest -t ghcr.io/savageaim/app/task-backend:${{ steps.get_release.outputs.tag_name }}
-    - name: Login to GitHub Docker Registry
-      run: docker login ghcr.io -u freyamade -p ${{ secrets.GITHUB_TOKEN }}
-    - name: Push the Docker image
-      run: docker push --all-tags ghcr.io/savageaim/app/task-backend
+
+    - name: Build and Push Docker Images
+      run: |
+        docker build . --file deployment/tasks.Dockerfile -t ghcr.io/savageaim/app/task-backend:latest -t ghcr.io/savageaim/app/task-backend:${{ steps.get_release.outputs.tag_name }}
+        docker push --all-tags ghcr.io/savageaim/app/task-backend
+        # Rename images to dockerhub and push there too
+        docker image tag ghcr.io/savageaim/app/task-backend:latest freyamade/savageaim:tasks
+        docker image tag ghcr.io/savageaim/app/task-backend:${{ steps.get_release.outputs.tag_name }} freyamade/savageaim:tasks-${{ steps.get_release.outputs.tag_name }}
+        docker push --all-tags freyamade/savageaim
 
   build-frontend:
     runs-on: ubuntu-latest
@@ -74,16 +125,31 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+
+    - name: Log in to Docker Hub
+      uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+
+    - name: Log in to the Container registry
+      uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+
     - name: Get Release Info
       id: get_release
       uses: bruceadams/get-release@v1.3.2
       env:
         GITHUB_TOKEN: ${{ github.token }}
-    - name: Build the Docker image
-      run: docker build . --file deployment/Dockerfile --tag ghcr.io/savageaim/app/frontend:latest -t ghcr.io/savageaim/app/frontend:${{ steps.get_release.outputs.tag_name }}
-    - name: Build maintenance image
-      run: docker build . --file deployment/Dockerfile --build-arg VUE_APP_MAINTENANCE="1" --tag ghcr.io/savageaim/app/frontend:maint
-    - name: Login to GitHub Docker Registry
-      run: docker login ghcr.io -u freyamade -p ${{ secrets.GITHUB_TOKEN }}
-    - name: Push the Docker image
-      run: docker push --all-tags ghcr.io/savageaim/app/frontend
+
+    - name: Build and Push Docker Images
+      run: |
+        docker build . --file deployment/Dockerfile --tag ghcr.io/savageaim/app/frontend:latest -t ghcr.io/savageaim/app/frontend:${{ steps.get_release.outputs.tag_name }}
+        docker push --all-tags ghcr.io/savageaim/app/frontend
+        # Rename images to dockerhub and push there too
+        docker image tag ghcr.io/savageaim/app/frontend:latest freyamade/savageaim:frontend
+        docker image tag ghcr.io/savageaim/app/frontend:${{ steps.get_release.outputs.tag_name }} freyamade/savageaim:frontend-${{ steps.get_release.outputs.tag_name }}
+        docker push --all-tags freyamade/savageaim
