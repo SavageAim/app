@@ -95,7 +95,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': environ.get('DATABASE_NAME', 'postgres'),
         'USER': environ.get('DATABASE_USER', 'postgres'),
-        'PASSWORD': '',
+        'PASSWORD': environ.get('DATABASE_PASSWORD', ''),
         'HOST': environ.get('DATABASE_HOST', 'database'),
         'PORT': environ.get('DATABASE_PORT', 5432),
         'OPTIONS': {
@@ -217,8 +217,8 @@ VERSION_WEBHOOK = environ.get('VERSION_WEBHOOK', None)
 
 # Add cors headers to allow frontend to communicate
 CORS_ALLOWED_ORIGINS = [
-    'savageaim.com',
-    'app.savageaim.com',  # test domain for working on the deployment while github pages stays up
+    'https://savageaim.com',
+    'https://app.savageaim.com',  # test domain for working on the deployment while github pages stays up
 ]
 
 # Django Cloud Task Settings
