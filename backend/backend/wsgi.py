@@ -13,8 +13,5 @@ from django.core.wsgi import get_wsgi_application
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'backend.settings')
 
-# Import all our cloud tasks in here so they can be discovered
-from api.tasks import *  # noqa
-
 
 application = get_wsgi_application()
