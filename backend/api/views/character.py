@@ -163,7 +163,10 @@ class CharacterVerification(APIView):
         responses={
             202: OpenApiResponse(description='Character verification has been requested!'),
             404: OpenApiResponse(
-                description='The given Character ID did not belong to a valid, unverified, Character owned by the requesting User.',
+                description=(
+                    'The given Character ID did not belong to a valid, unverified, '
+                    'Character owned by the requesting User.'
+                ),
             ),
         },
         operation_id='request_character_verification',

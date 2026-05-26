@@ -207,8 +207,6 @@ sentry_sdk.init(
     dsn=environ['SENTRY_DSN'],
     integrations=[DjangoIntegration()],
     traces_sampler=sampler,
-
-    # If you wish to associate users to errors (assuming you are using django.contrib.auth) you may enable sending PII data.
     send_default_pii=True,
     release=f'savageaim@{VERSION}',
 )
@@ -235,4 +233,3 @@ CORS_ALLOWED_ORIGINS = [
 # Django Cloud Task Settings
 DJANGO_CLOUD_TASKS_EAGER = False
 DJANGO_CLOUD_TASKS_ENDPOINT = environ.get('TASKS_ENDPOINT', 'http://localhost:8080')
-

@@ -405,7 +405,7 @@ class TasksTestSuite(SavageAimTestCase):
         """
         Test Plan:
             - Replicate the bug from Jan 7th
-                - Cannot delete some instances of model 'Character' because 
+                - Cannot delete some instances of model 'Character' because
                   they are referenced through protected foreign keys: 'BISList.owner'.
             - Appears to happen as a result of the other unverified characters being owned
               and being in use as opposed to being proxies

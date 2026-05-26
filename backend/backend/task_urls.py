@@ -1,5 +1,5 @@
 from django.urls import path, include
 
 urlpatterns = [
-    include('django_cloud_tasks.urls'),
+    path('tasks/', include('django_cloud_tasks.urls')),
 ]
