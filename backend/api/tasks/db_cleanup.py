@@ -10,7 +10,7 @@ logger = getLogger(__name__)
 
 
 class DBCleanupTask(PeriodicTask):
-    run_every = '@hourly'
+    run_every = '0 * * * *'
 
     def run(self):
         """

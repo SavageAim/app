@@ -3,7 +3,7 @@ from django_cloud_tasks.tasks import PeriodicTask
 
 
 class RefreshTokensTask(PeriodicTask):
-    run_every = '@daily'
+    run_every = '0 0 * * *'
 
     def run(self):
         """
