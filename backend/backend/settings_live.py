@@ -219,7 +219,7 @@ VERSION_WEBHOOK = environ.get('VERSION_WEBHOOK', None)
 CORS_ALLOW_CREDENTIALS = True
 SESSION_COOKIE_SAMESITE = 'None'
 CSRF_COOKIE_SAMESITE = 'None'
-SESSION_COOKIE_DOMAIN = '*.savageaim.com'
+SESSION_COOKIE_DOMAIN = '.savageaim.com'
 CORS_ALLOWED_ORIGINS = [
     'https://savageaim.com',
     'https://app.savageaim.com',  # test domain for working on the deployment while github pages stays up
