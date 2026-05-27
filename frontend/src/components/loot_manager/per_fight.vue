@@ -270,6 +270,7 @@ export default class PerFightLootManager extends SavageAimMixin {
     try {
       const response = await fetch(this.url, {
         method: 'POST',
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
           'X-CSRFToken': this.$cookies.get('csrftoken'),
@@ -295,6 +296,7 @@ export default class PerFightLootManager extends SavageAimMixin {
     try {
       const response = await fetch(`${this.url}bis/`, {
         method: 'POST',
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
           'X-CSRFToken': this.$cookies.get('csrftoken'),

@@ -346,6 +346,7 @@ export default class Character extends SavageAimMixin {
     try {
       const response = await fetch(this.bisListUrl, {
         method: 'POST',
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
           'X-CSRFToken': this.$cookies.get('csrftoken'),
@@ -369,7 +370,7 @@ export default class Character extends SavageAimMixin {
   async fetchChar(reload: boolean): Promise<void> {
     // Load the character data from the API
     try {
-      const response = await fetch(this.url)
+      const response = await fetch(this.url, { credentials: 'include' })
       if (response.ok) {
         // Parse the list into an array of character interfaces and store them in the character data list
         this.character = (await response.json()) as CharacterDetails
@@ -390,7 +391,7 @@ export default class Character extends SavageAimMixin {
   async fetchTeams(): Promise<void> {
     // Load the character data from the API
     try {
-      const response = await fetch(this.teamsUrl)
+      const response = await fetch(this.teamsUrl, { credentials: 'include' })
       if (response.ok) {
         // Parse the list into an array of teams and store them in the teams data list
         this.teams = (await response.json()) as Team[]
@@ -423,6 +424,7 @@ export default class Character extends SavageAimMixin {
     try {
       const response = await fetch(this.url, {
         method: 'PATCH',
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
           'X-CSRFToken': this.$cookies.get('csrftoken'),
@@ -459,6 +461,7 @@ export default class Character extends SavageAimMixin {
     try {
       const response = await fetch(this.lodestoneUrl, {
         method: 'GET',
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
           'X-CSRFToken': this.$cookies.get('csrftoken'),

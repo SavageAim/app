@@ -59,7 +59,7 @@ export default class EditBIS extends NewBIS {
   // Load functions
   async getList(): Promise<void> {
     try {
-      const response = await fetch(this.url)
+      const response = await fetch(this.url, { credentials: 'include' })
       if (response.ok) {
         // Parse the list into an array of character interfaces and store them in the character data list
         const data = await response.json() as BISList

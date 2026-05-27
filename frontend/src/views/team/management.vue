@@ -104,7 +104,7 @@ export default class TeamManagement extends TeamViewMixin {
   async fetchTeam(reload: boolean): Promise<void> {
     // Load the team data from the API
     try {
-      const response = await fetch(this.url)
+      const response = await fetch(this.url, { credentials: 'include' })
       if (response.ok) {
         // Parse the JSON into a team and save it
         this.team = (await response.json()) as Team

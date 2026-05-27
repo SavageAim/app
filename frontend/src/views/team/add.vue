@@ -63,7 +63,7 @@ export default class TeamAdd extends SavageAimMixin {
     this.joinError = ''
 
     try {
-      const response = await fetch(this.url())
+      const response = await fetch(this.url(), { credentials: 'include' })
       if (response.ok) {
         // If the code is valid, redirect to the page
         this.$router.push(`/team/join/${this.inviteCode()}/`)

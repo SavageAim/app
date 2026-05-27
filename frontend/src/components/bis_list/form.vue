@@ -172,7 +172,7 @@ export default class BISListForm extends Vue {
     if (url === null) return
     this.importLoading = true
     try {
-      const response = await fetch(url)
+      const response = await fetch(url, { credentials: 'include' })
       if (response.ok) {
         // Handle the import
         const data = await response.json() as ExternalBISGearImportResponse
@@ -199,7 +199,7 @@ export default class BISListForm extends Vue {
     if (setNum !== undefined) url = `${url}?set=${setNum}`
     this.importLoading = true
     try {
-      const response = await fetch(url)
+      const response = await fetch(url, { credentials: 'include' })
       if (response.status === 200) {
         // Handle the import
         const data = await response.json() as ExternalBISGearImportResponse
@@ -289,7 +289,7 @@ export default class BISListForm extends Vue {
   async lodestoneImport(): Promise<void> {
     this.importLoading = true
     try {
-      const response = await fetch(`${this.lodestoneImportUrl}/${this.bisList.job_id}`)
+      const response = await fetch(`${this.lodestoneImportUrl}/${this.bisList.job_id}`, { credentials: 'include' })
       if (response.ok) {
         // Handle the import
         const data = await response.json() as LodestoneImportResponse

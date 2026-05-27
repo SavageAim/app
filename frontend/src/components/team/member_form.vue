@@ -117,7 +117,7 @@ export default class TeamMemberForm extends SavageAimMixin {
     // If not, go fetch the bis lists for the character
     const url = this.characterUrl(this.characterId)
     try {
-      const response = await fetch(url)
+      const response = await fetch(url, { credentials: 'include' })
       if (response.ok) {
         // Parse the list into an array of character interfaces and store them in the character data list
         const details = (await response.json()) as CharacterDetails

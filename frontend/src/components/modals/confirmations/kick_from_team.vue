@@ -75,6 +75,7 @@ export default class KickFromTeam extends Vue {
     try {
       const response = await fetch(this.url, {
         method: 'DELETE',
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
           'X-CSRFToken': Vue.$cookies.get('csrftoken'),

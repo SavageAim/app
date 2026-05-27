@@ -77,6 +77,7 @@ export default class Notifications extends Vue {
     try {
       const response = await fetch(`${process.env.VUE_APP_URL}/backend/api/notifications/`, {
         method: 'POST',
+        credentials: 'include',
         headers: {
           'X-CSRFToken': this.$cookies.get('csrftoken'),
         },

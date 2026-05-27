@@ -302,7 +302,7 @@ export default class TeamSettings extends TeamViewMixin {
   async fetchTeam(reload: boolean): Promise<void> {
     // Load the team data from the API
     try {
-      const response = await fetch(this.url)
+      const response = await fetch(this.url, { credentials: 'include' })
       if (response.ok) {
         // Parse the JSON into a team and save it
         this.team = (await response.json()) as Team
@@ -338,7 +338,7 @@ export default class TeamSettings extends TeamViewMixin {
   async loadDefaultSortOrder(): Promise<void> {
     // Load the job sort data from the API
     try {
-      const response = await fetch(`${process.env.VUE_APP_URL}/backend/api/job/solver/`)
+      const response = await fetch(`${process.env.VUE_APP_URL}/backend/api/job/solver/`, { credentials: 'include' })
       if (response.ok) {
         // Parse the JSON into a team and save it
         const details = (await response.json()) as Job[]
@@ -361,6 +361,7 @@ export default class TeamSettings extends TeamViewMixin {
     try {
       const response = await fetch(this.url, {
         method: 'PATCH',
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
           'X-CSRFToken': this.$cookies.get('csrftoken'),
@@ -403,6 +404,7 @@ export default class TeamSettings extends TeamViewMixin {
     try {
       const response = await fetch(this.url, {
         method: 'PUT',
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
           'X-CSRFToken': this.$cookies.get('csrftoken'),

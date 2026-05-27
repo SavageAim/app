@@ -262,7 +262,7 @@ export default class LootSolver extends SavageAimMixin {
     this.loaded = false
     try {
       // Pick a URL at random, 50% odds each time
-      const response = await fetch(this.url)
+      const response = await fetch(this.url, { credentials: 'include' })
 
       if (response.ok) {
         // Parse the JSON and save it in instance variables

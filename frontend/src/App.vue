@@ -24,11 +24,11 @@ import SavageAimMixin from '@/mixins/savage_aim_mixin'
   },
 })
 export default class App extends Vue {
-  updateSocket!: WebSocket
+  // updateSocket!: WebSocket
 
   // Check that the backend server is up before loading the App properly
   async checkBackend(): Promise<void> {
-    const response = await fetch(`${process.env.VUE_APP_URL}/backend/health/`)
+    const response = await fetch(`${process.env.VUE_APP_URL}/backend/health/`, { credentials: 'include' })
     if (response.ok) {
       this.loadData()
       Vue.nextTick(() => this.$forceUpdate)
@@ -56,7 +56,8 @@ export default class App extends Vue {
   }
 
   async mounted(): Promise<void> {
-    this.checkBackend()
+    // this.checkBackend()
+    this.loadData()
   }
 
   loadData(): void {
@@ -71,7 +72,7 @@ export default class App extends Vue {
     this.checkChangelog()
 
     // Set up updates socket
-    this.initSocket()
+    // this.initSocket()
   }
 
   initSocket(): void {

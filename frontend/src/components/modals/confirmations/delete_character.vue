@@ -95,7 +95,7 @@ export default class DeleteCharacter extends Vue {
   async getDeleteInfo(): Promise<void> {
     // Load the character data from the API
     try {
-      const response = await fetch(this.url)
+      const response = await fetch(this.url, { credentials: 'include' })
       if (response.ok) {
         // Parse the list into an array of character interfaces and store them in the character data list
         this.details = (await response.json()) as CharacterDeleteReadResponse[]
@@ -115,6 +115,7 @@ export default class DeleteCharacter extends Vue {
     try {
       const response = await fetch(this.url, {
         method: 'DELETE',
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
           'X-CSRFToken': Vue.$cookies.get('csrftoken'),

@@ -99,6 +99,7 @@ export default class Actions extends Vue {
     try {
       const response = await fetch(url, {
         method: this.method,
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
           'X-CSRFToken': this.$cookies.get('csrftoken'),

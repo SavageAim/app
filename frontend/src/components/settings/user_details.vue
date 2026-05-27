@@ -74,6 +74,7 @@ export default class UserDetailsSettings extends Vue {
     try {
       const response = await fetch(this.tokenUrl, {
         method: 'PATCH',
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
           'X-CSRFToken': this.$cookies.get('csrftoken'),

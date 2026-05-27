@@ -60,6 +60,7 @@ export default class ClaimCharacter extends Vue {
     try {
       const response = await fetch(this.url, {
         method: 'POST',
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
           'X-CSRFToken': Vue.$cookies.get('csrftoken'),

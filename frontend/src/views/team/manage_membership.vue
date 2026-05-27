@@ -96,7 +96,7 @@ export default class TeamManageMembership extends SavageAimMixin {
   async fetchMember(): Promise<void> {
     // Load the member data from the API
     try {
-      const response = await fetch(this.url)
+      const response = await fetch(this.url, { credentials: 'include' })
       if (response.ok) {
         // Parse the JSON into a team and save it
         this.member = (await response.json()) as TeamMember
@@ -115,7 +115,7 @@ export default class TeamManageMembership extends SavageAimMixin {
   async fetchTeam(): Promise<void> {
     // Load the team data from the API
     try {
-      const response = await fetch(this.teamUrl)
+      const response = await fetch(this.teamUrl, { credentials: 'include' })
       if (response.ok) {
         // Parse the JSON into a team and save it
         this.team = (await response.json()) as Team
@@ -139,6 +139,7 @@ export default class TeamManageMembership extends SavageAimMixin {
     try {
       const response = await fetch(this.url, {
         method: 'PUT',
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
           'X-CSRFToken': this.$cookies.get('csrftoken'),

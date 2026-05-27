@@ -102,6 +102,7 @@ export default class EditProxy extends TeamViewMixin {
     try {
       const response = await fetch(this.url, {
         method: 'PUT',
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
           'X-CSRFToken': Vue.$cookies.get('csrftoken'),
@@ -134,7 +135,7 @@ export default class EditProxy extends TeamViewMixin {
   async fetchProxy(reload: boolean): Promise<void> {
     // Load the team data from the API
     try {
-      const response = await fetch(this.url)
+      const response = await fetch(this.url, { credentials: 'include' })
       if (response.ok) {
         // Parse the JSON into a team and save it
         const json = (await response.json()) as ReadResponse

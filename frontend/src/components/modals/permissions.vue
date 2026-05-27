@@ -65,6 +65,7 @@ export default class Permissions extends Vue {
     try {
       const response = await fetch(this.url, {
         method: 'PUT',
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
           'X-CSRFToken': Vue.$cookies.get('csrftoken'),

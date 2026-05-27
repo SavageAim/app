@@ -176,6 +176,7 @@ export default class TeamMemberCard extends Vue {
     try {
       const response = await fetch(`${process.env.VUE_APP_URL}/backend/api/team/${this.teamId}/member/${this.details.id}/gear_update/`, {
         method: 'POST',
+        credentials: 'include',
         headers: {
           'X-CSRFToken': this.$cookies.get('csrftoken'),
         },

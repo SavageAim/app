@@ -62,7 +62,7 @@ export default class NewBIS extends SavageAimMixin {
   // Load functions
   async getChar(): Promise<void> {
     try {
-      const response = await fetch(this.charUrl)
+      const response = await fetch(this.charUrl, { credentials: 'include' })
       if (response.ok) {
         // Parse the list into an array of character interfaces and store them in the character data list
         this.character = (await response.json()) as CharacterDetails

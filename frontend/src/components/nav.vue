@@ -125,7 +125,7 @@ export default class Nav extends SavageAimMixin {
 
   async logout(): Promise<void> {
     // Send a GET request to the logout url, and that should be all we need to do
-    await fetch(this.LOGOUT_URL)
+    await fetch(this.LOGOUT_URL, { credentials: 'include' })
     this.$store.commit('resetUser')
     if (this.$route.path !== '/') this.$router.push('/')
     this.$notify({ text: 'Successfully logged out!', type: 'is-success' })

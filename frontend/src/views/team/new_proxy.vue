@@ -122,6 +122,7 @@ export default class NewProxy extends TeamViewMixin {
     try {
       const response = await fetch(this.writeUrl, {
         method: 'POST',
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
           'X-CSRFToken': Vue.$cookies.get('csrftoken'),
@@ -157,7 +158,7 @@ export default class NewProxy extends TeamViewMixin {
   async fetchTeam(reload: boolean): Promise<void> {
     // Load the team data from the API
     try {
-      const response = await fetch(this.readUrl)
+      const response = await fetch(this.readUrl, { credentials: 'include' })
       if (response.ok) {
         // Parse the JSON into a team and save it
         this.team = (await response.json()) as Team

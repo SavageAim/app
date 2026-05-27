@@ -182,7 +182,7 @@ export default class TeamLoot extends TeamViewMixin {
     // Load the loot data from the API
     try {
       // Pick a URL at random, 50% odds each time
-      const response = await fetch(this.url)
+      const response = await fetch(this.url, { credentials: 'include' })
 
       if (response.ok) {
         // Parse the JSON and save it in instance variables
@@ -224,6 +224,7 @@ export default class TeamLoot extends TeamViewMixin {
     try {
       const response = await fetch(this.url, {
         method: 'POST',
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
           'X-CSRFToken': this.$cookies.get('csrftoken'),
@@ -259,6 +260,7 @@ export default class TeamLoot extends TeamViewMixin {
     try {
       const response = await fetch(`${this.url}bis/`, {
         method: 'POST',
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
           'X-CSRFToken': this.$cookies.get('csrftoken'),

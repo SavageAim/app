@@ -186,7 +186,7 @@ export default class TeamJoin extends SavageAimMixin {
   async fetchTeam(reload: boolean): Promise<void> {
     // Load the team data from the API
     try {
-      const response = await fetch(this.url)
+      const response = await fetch(this.url, { credentials: 'include' })
       if (response.ok) {
         // Parse the JSON into a team and save it
         this.team = (await response.json()) as Team
@@ -219,6 +219,7 @@ export default class TeamJoin extends SavageAimMixin {
     try {
       const response = await fetch(this.url, {
         method: 'POST',
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
           'X-CSRFToken': this.$cookies.get('csrftoken'),

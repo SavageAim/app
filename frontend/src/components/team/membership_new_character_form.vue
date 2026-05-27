@@ -133,6 +133,7 @@ export default class TeamMemberCreateNewCharacterForm extends SavageAimMixin {
     try {
       const response = await fetch(url, {
         method: 'POST',
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
           'X-CSRFToken': this.$cookies.get('csrftoken'),
@@ -163,6 +164,7 @@ export default class TeamMemberCreateNewCharacterForm extends SavageAimMixin {
     try {
       const response = await fetch(this.characterCreateUrl, {
         method: 'POST',
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
           'X-CSRFToken': Vue.$cookies.get('csrftoken'),
@@ -249,7 +251,7 @@ export default class TeamMemberCreateNewCharacterForm extends SavageAimMixin {
     if (match === null) return null
     const url = `${process.env.VUE_APP_URL}/backend/api/import/etro/${match[1]}/`
     try {
-      const response = await fetch(url)
+      const response = await fetch(url, { credentials: 'include' })
       if (response.ok) {
         // Handle the import
         const data = await response.json() as ExternalBISGearImportResponse
@@ -272,7 +274,7 @@ export default class TeamMemberCreateNewCharacterForm extends SavageAimMixin {
     const url = `${process.env.VUE_APP_URL}/backend/api/import/xivgear/${match[1]}/`
 
     try {
-      const response = await fetch(url)
+      const response = await fetch(url, { credentials: 'include' })
       if (response.status === 200) {
         // Handle the import
         const data = await response.json() as ExternalBISGearImportResponse
@@ -313,6 +315,7 @@ export default class TeamMemberCreateNewCharacterForm extends SavageAimMixin {
     try {
       const response = await fetch(url, {
         method: 'GET',
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
           'X-CSRFToken': Vue.$cookies.get('csrftoken'),
@@ -352,7 +355,9 @@ export default class TeamMemberCreateNewCharacterForm extends SavageAimMixin {
 
   private async importCurrentGear(jobId: string, tier: Tier): Promise<LodestoneImportResponse | null> {
     try {
-      const response = await fetch(`${process.env.VUE_APP_URL}/backend/api/lodestone/${this.character!.lodestone_id}/import/${jobId}`)
+      const response = await fetch(`${process.env.VUE_APP_URL}/backend/api/lodestone/${this.character!.lodestone_id}/import/${jobId}`, {
+        credentials: 'include',
+      })
       if (response.ok) {
         // Handle the import
         const data = await response.json() as LodestoneImportResponse

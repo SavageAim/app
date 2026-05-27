@@ -220,6 +220,7 @@ export default class Settings extends SavageAimMixin {
     try {
       const response = await fetch(this.url, {
         method: 'PUT',
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
           'X-CSRFToken': this.$cookies.get('csrftoken'),

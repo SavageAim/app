@@ -78,6 +78,7 @@ export default class LeaveTeam extends Vue {
     try {
       const response = await fetch(this.url, {
         method: 'DELETE',
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
           'X-CSRFToken': Vue.$cookies.get('csrftoken'),
