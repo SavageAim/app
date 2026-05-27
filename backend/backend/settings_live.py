@@ -221,7 +221,7 @@ SESSION_COOKIE_SAMESITE = 'None'
 CSRF_COOKIE_SAMESITE = 'None'
 SESSION_COOKIE_DOMAIN = '.savageaim.com'
 CSRF_COOKIE_DOMAIN = '.savageaim.com'
-CORS_ALLOWED_ORIGINS = [
+CORS_ALLOWED_ORIGINS = CSRF_TRUSTED_ORIGINS = [
     'https://savageaim.com',
     'https://app.savageaim.com',  # test domain for working on the deployment while github pages stays up
 ]
