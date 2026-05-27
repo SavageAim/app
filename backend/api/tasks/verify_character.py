@@ -3,8 +3,8 @@ from logging import getLogger
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
 from django.db.models import Q
-from django_cloud_tasks.tasks import Task
 
+from .base import SavageAimTask
 from .. import notifier
 from ..lodestone_scraper import LodestoneScraper
 from ..models import Character
@@ -12,7 +12,7 @@ from ..models import Character
 logger = getLogger(__name__)
 
 
-class VerifyCharacterTask(Task):
+class VerifyCharacterTask(SavageAimTask):
 
     def _assimilate_proxies(self, real_char: Character):
         # Find all Proxy characters that have the same lodestone ID as this one

@@ -10,14 +10,14 @@ from pathlib import Path
 import yaml
 from django.db import IntegrityError
 from django.conf import settings
-from django_cloud_tasks.tasks import Task
 # local
-from api import models
+from .base import SavageAimTask
+from .. import models
 
 logger = getLogger(__name__)
 
 
-class SeedTask(Task):
+class SeedTask(SavageAimTask):
     def run(self):
         logger.info('Beginning Seed of DB')
         seed_data_dir = settings.BASE_DIR / 'seed_data'
