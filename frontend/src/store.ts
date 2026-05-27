@@ -88,7 +88,9 @@ const store: Store = {
 
     async fetchItemLevels({ commit }): Promise<void> {
       try {
-        const response = await fetch(`${process.env.VUE_APP_URL}/backend/api/gear/item_levels/`, { credentials: 'include' })
+        const response = await fetch(`${process.env.VUE_APP_URL}/backend/api/gear/item_levels/`, {
+          credentials: 'include',
+        })
         if (!response.ok) {
           Vue.notify({ text: `Error ${response.status} when fetching Gear list.`, type: 'is-danger' })
         }
@@ -123,7 +125,9 @@ const store: Store = {
 
       try {
         // Store is limited to latest 20, but a Notification page will return them all
-        const response = await fetch(`${process.env.VUE_APP_URL}/backend/api/notifications/?limit=20`, { credentials: 'include' })
+        const response = await fetch(`${process.env.VUE_APP_URL}/backend/api/notifications/?limit=20`, {
+          credentials: 'include',
+        })
         if (!response.ok) {
           Vue.notify({ text: `Error ${response.status} when fetching Notifications list.`, type: 'is-danger' })
         }
