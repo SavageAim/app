@@ -15,8 +15,9 @@
       <div class="divider"><i class="material-icons icon">expand_more</i> We're Back! <i class="material-icons icon">expand_more</i></div>
       <p>If you can see this, then we're back online!</p>
       <p>We've successfully moved host to a new provider that hopefully won't go away any time soon, and we should be better than ever on an infrastructure angle!</p>
-      <p>To help cover the costs, there's a <b>COMPLETELY OPTIONAL</b> Patreon link in the footer of the page.</p>
-      <p>If you feel generous enough to help cover server costs, then by all means go support the app there!</p>
+      <p>Some friends and I have done some initial testing to make sure all is as it should be, but if there are any issues at all I'll be happy to fix them asap!</p>
+      <p>Also, if you would like to help cover the costs, there's a <b>COMPLETELY OPTIONAL</b> Patreon link in the footer of the page.</p>
+      <p>There's no real benefits I can offer to Patreon supporters as I want the site to remain ad-free for everyone but I am always open to suggestions!</p>
 
       <div class="divider"><i class="material-icons icon">expand_more</i> Except <i class="material-icons icon">expand_more</i></div>
       <p><b>TL;DR: Websockets have been disabled for now, so real time updates from team members etc won't be happening.</b></p>

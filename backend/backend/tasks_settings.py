@@ -129,8 +129,8 @@ SITE_ID = 2
 SOCIALACCOUNT_PROVIDERS = {
     'discord': {},
 }
-LOGIN_REDIRECT_URL = 'https://app.savageaim.com/'
-LOGOUT_REDIRECT_URL = 'https://app.savageaim.com/'
+LOGIN_REDIRECT_URL = 'https://savageaim.com/'
+LOGOUT_REDIRECT_URL = 'https://savageaim.com/'
 SOCIALACCOUNT_LOGIN_ON_GET = True
 
 # Get django logs to stdout
@@ -203,5 +203,4 @@ VERSION_WEBHOOK = environ.get('VERSION_WEBHOOK', None)
 # Add cors headers to allow frontend to communicate
 CORS_ALLOWED_ORIGINS = [
     'https://savageaim.com',
-    'https://app.savageaim.com',  # test domain for working on the deployment while github pages stays up
 ]
