@@ -4,6 +4,7 @@ from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
 from django.conf import settings
 from django.db.models import Q
+from django_cloud_tasks.serializers import serialize
 from django_cloud_tasks.tasks import SubscriberTask
 
 from .base import SavageAimPublisherTask
@@ -19,17 +20,6 @@ class VerifyCharacterTask(SavageAimPublisherTask):
     @classmethod
     def topic_name(cls) -> str:
         return TOPIC_NAME
-
-    # Define run command that runs the subscriber during eager environments
-    def run(
-        self,
-        message: dict,
-        attributes: dict[str, str] | None = None,
-        headers: dict[str, str] | None = None,
-    ):
-        if settings.DJANGO_CLOUD_TASKS_EAGER:
-            return VerifyCharacterTaskSubscriber().run(output=StringIO(), **message)
-        return super().run(message, attributes, headers)
 
 
 class VerifyCharacterTaskSubscriber(SubscriberTask):
@@ -62,7 +52,8 @@ class VerifyCharacterTaskSubscriber(SubscriberTask):
                 tm.character = real_char
                 tm.save()
 
-    def run(self, pk: int, output: StringIO | None = None) -> dict:
+    def run(self, content: dict, output: StringIO | None = None, *args, **kwargs) -> dict:
+        pk = content['pk']
         print(f'Commencing verification attempt for Character #{pk}', file=output)
         try:
             obj = Character.objects.get(pk=pk, verified=False)
@@ -97,7 +88,10 @@ class VerifyCharacterTaskSubscriber(SubscriberTask):
             lodestone_id=obj.lodestone_id,
         ).exclude(pk=pk)
         ids_to_delete = [o.pk for o in objs]
-        print(f'Found {objs.count()} instances of Character #{obj.lodestone_id} to delete.\n{ids_to_delete}', file=output)
+        print(
+            f'Found {objs.count()} instances of Character #{obj.lodestone_id} to delete.\n{ids_to_delete}',
+            file=output,
+        )
         objs.delete()
         # Then we're done!
         notifier.verify_success(obj)

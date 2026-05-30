@@ -183,7 +183,7 @@ class CharacterVerification(APIView):
             return Response(status=404)
 
         # Do some celery stuff!
-        VerifyCharacterTask.sync(message=dict(pk=pk))
+        VerifyCharacterTask.sync(dict(pk=pk), {'attributes': 'required'})
 
         return Response(status=202)
 

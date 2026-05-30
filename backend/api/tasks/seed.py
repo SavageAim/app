@@ -11,6 +11,7 @@ import yaml
 from django.conf import settings
 from django.core.management import call_command
 from django.db import IntegrityError
+from django_cloud_tasks.serializers import serialize
 from django_cloud_tasks.tasks import SubscriberTask
 # local
 from .base import SavageAimPublisherTask
@@ -33,7 +34,17 @@ class SeedTask(SavageAimPublisherTask):
     ):
         if settings.DJANGO_CLOUD_TASKS_EAGER:
             return SeedTaskSubscriber().run(output=StringIO(), **message)  # fake io for hiding io during tests
-        return super().run(message, attributes, headers)
+
+        # Real override to fix a bug in the library
+        # Cloud PubSub does not support headers, but we simulate them with a key in the data property
+        message = self._build_message_with_headers(message=message, headers=headers)
+        message['attributes'] = attributes
+
+        return self._get_publisher_client().publish(
+            message=serialize(value=message),
+            topic_id=self.topic_name(),
+            attributes=attributes,
+        )
 
 
 class SeedTaskSubscriber(SubscriberTask):
@@ -41,7 +52,7 @@ class SeedTaskSubscriber(SubscriberTask):
     def topic_name(cls) -> str:
         return TOPIC_NAME
 
-    def run(self, output: StringIO | None = None) -> dict:
+    def run(self, output: StringIO | None = None, *args, **kwargs) -> dict:
         print('Beginning Seed of DB', file=output)
         call_command('migrate', stdout=StringIO())
         seed_data_dir = settings.BASE_DIR / 'seed_data'
