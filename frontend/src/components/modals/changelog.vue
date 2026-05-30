@@ -14,6 +14,7 @@
       <h2 class="has-text-primary subtitle">{{ version }}</h2>
       <div class="divider"><i class="material-icons icon">expand_more</i> Minor Fixes <i class="material-icons icon">expand_more</i></div>
       <p>Re-architected how async tasks are run to try and save costs + make them faster (a rare win-win in this industry!)</p>
+      <p>Also tried a change to improve startup time of the API so requests get answered faster when the site hasn't been used in a while.</p>
     </div>
   </div>
 </template>

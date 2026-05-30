@@ -8,8 +8,9 @@ from os import scandir
 from pathlib import Path
 # lib
 import yaml
-from django.db import IntegrityError
 from django.conf import settings
+from django.core.management import call_command
+from django.db import IntegrityError
 from django_cloud_tasks.tasks import SubscriberTask
 # local
 from .base import SavageAimPublisherTask
@@ -42,6 +43,7 @@ class SeedTaskSubscriber(SubscriberTask):
 
     def run(self, output: StringIO | None = None) -> dict:
         print('Beginning Seed of DB', file=output)
+        call_command('migrate', stdout=StringIO())
         seed_data_dir = settings.BASE_DIR / 'seed_data'
         gear_data_dir = seed_data_dir / 'gear'
 
