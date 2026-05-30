@@ -1,18 +1,42 @@
-from logging import getLogger
+from io import StringIO
 
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
+from django.conf import settings
 from django.db.models import Q
+from django_cloud_tasks.tasks import SubscriberTask
 
-from .base import SavageAimTask
+from .base import SavageAimPublisherTask
 from .. import notifier
 from ..lodestone_scraper import LodestoneScraper
 from ..models import Character
 
-logger = getLogger(__name__)
+TOPIC_NAME = 'verify-character'
 
 
-class VerifyCharacterTask(SavageAimTask):
+class VerifyCharacterTask(SavageAimPublisherTask):
+
+    @classmethod
+    def topic_name(cls) -> str:
+        return TOPIC_NAME
+
+    # Define run command that runs the subscriber during eager environments
+    def run(
+        self,
+        message: dict,
+        attributes: dict[str, str] | None = None,
+        headers: dict[str, str] | None = None,
+    ):
+        if settings.DJANGO_CLOUD_TASKS_EAGER:
+            return VerifyCharacterTaskSubscriber().run(output=StringIO(), **message)
+        return super().run(message, attributes, headers)
+
+
+class VerifyCharacterTaskSubscriber(SubscriberTask):
+
+    @classmethod
+    def topic_name(cls) -> str:
+        return TOPIC_NAME
 
     def _assimilate_proxies(self, real_char: Character):
         # Find all Proxy characters that have the same lodestone ID as this one
@@ -38,24 +62,24 @@ class VerifyCharacterTask(SavageAimTask):
                 tm.character = real_char
                 tm.save()
 
-    def run(self, pk: int):
-        logger.info(f'Commencing verification attempt for Character #{pk}')
+    def run(self, pk: int, output: StringIO | None = None) -> dict:
+        print(f'Commencing verification attempt for Character #{pk}', file=output)
         try:
             obj = Character.objects.get(pk=pk, verified=False)
         except Character.DoesNotExist:
-            logger.warning(f'Character #{pk} either does not exist, or is already verified.')
-            return
+            print(f'Character #{pk} either does not exist, or is already verified.', file=output)
+            return {'status': 'verified', 'already': 'yes'}
 
-        logger.debug('calling lookup function')
+        print('calling lookup function', file=output)
         err = LodestoneScraper.get_instance().check_token(obj.lodestone_id, obj.token)
-        logger.debug('finished lookup function')
+        print('finished lookup function', file=output)
 
         if err is not None:
             notifier.verify_fail(obj, err)
-            logger.error(f'Character #{pk} could not be verified. Error: {err}')
-            return
+            print(f'Character #{pk} could not be verified. Error: {err}', file=output)
+            return {'status': 'failed', 'error': err}
 
-        logger.info(f'Character #{pk} verified. Updating DB.')
+        print(f'Character #{pk} verified. Updating DB.', file=output)
         obj.verified = True
         obj.save()
 
@@ -63,8 +87,9 @@ class VerifyCharacterTask(SavageAimTask):
         self._assimilate_proxies(obj)
 
         # Finally cleanup the DB
-        logger.info(
+        print(
             f'Deleting unverified instances of Character #{obj.lodestone_id} (#{obj.pk}) owned by {obj.user_id}.',
+            file=output,
         )
         objs = Character.objects.filter(
             Q(user__isnull=True) | Q(user_id=obj.user_id),
@@ -72,7 +97,7 @@ class VerifyCharacterTask(SavageAimTask):
             lodestone_id=obj.lodestone_id,
         ).exclude(pk=pk)
         ids_to_delete = [o.pk for o in objs]
-        logger.info(f'Found {objs.count()} instances of Character #{obj.lodestone_id} to delete.\n{ids_to_delete}')
+        print(f'Found {objs.count()} instances of Character #{obj.lodestone_id} to delete.\n{ids_to_delete}', file=output)
         objs.delete()
         # Then we're done!
         notifier.verify_success(obj)
@@ -80,3 +105,5 @@ class VerifyCharacterTask(SavageAimTask):
         channel_layer = get_channel_layer()
         if channel_layer is not None:
             async_to_sync(channel_layer.group_send)(f'user-updates-{obj.user.id}', {'type': 'character', 'id': obj.pk})
+
+        return {'status': 'verified', 'already': 'no'}

@@ -31,4 +31,5 @@ RUN mv backend/task_urls.py backend/urls.py && \
 # Set the daphne to run the asgi file
 EXPOSE 443
 ENTRYPOINT python manage.py schedule_tasks && \
+           python manage.py initialize_subscribers && \
            gunicorn --bind=0.0.0.0:443 -k gevent --timeout 600 --access-logfile - --log-file - --log-level info --capture-output --enable-stdio-inheritance backend.wsgi

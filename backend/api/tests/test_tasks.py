@@ -239,7 +239,7 @@ class TasksTestSuite(SavageAimTestCase):
             verified=False,
             token=Character.generate_token(),
         )
-        VerifyCharacterTask.asap(pk=char.pk)
+        VerifyCharacterTask.sync(message=dict(pk=char.pk))
 
         char.refresh_from_db()
         self.assertTrue(char.verified)
@@ -325,7 +325,7 @@ class TasksTestSuite(SavageAimTestCase):
         tm = team.members.create(character=proxy, bis_list=bis, lead=True)
 
         # Verify, then we check that the Proxy was deleted, and that the existing character is now the only member
-        VerifyCharacterTask.asap(pk=char.pk)
+        VerifyCharacterTask.sync(message=dict(pk=char.pk))
         with self.assertRaises(Character.DoesNotExist):
             Character.objects.get(pk=proxy.pk)
 
@@ -352,13 +352,13 @@ class TasksTestSuite(SavageAimTestCase):
             verified=True,
             token=Character.generate_token(),
         )
-        VerifyCharacterTask.asap(pk=char.pk)
+        VerifyCharacterTask.sync(message=dict(pk=char.pk))
         mocked_get.assert_not_called()
 
         # Unverify the character and attempt to, then check the notifications for the reason why
         char.verified = False
         char.save()
-        VerifyCharacterTask.asap(pk=char.pk)
+        VerifyCharacterTask.sync(message=dict(pk=char.pk))
         mocked_get.assert_called_once()
 
         # Check for Notification
@@ -519,7 +519,7 @@ class TasksTestSuite(SavageAimTestCase):
 
         # Attempt to verify the proxy character, which for some reason is causing a protected error
         self.assertEqual(Character.objects.count(), 3)
-        VerifyCharacterTask.asap(pk=char.pk)
+        VerifyCharacterTask.sync(message=dict(pk=char.pk))
         self.assertEqual(Character.objects.count(), 1)
         with self.assertRaises(Character.DoesNotExist):
             Character.objects.get(pk=proxy.pk)

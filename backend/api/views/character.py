@@ -183,7 +183,7 @@ class CharacterVerification(APIView):
             return Response(status=404)
 
         # Do some celery stuff!
-        VerifyCharacterTask.asap(pk=pk)
+        VerifyCharacterTask.sync(message=dict(pk=pk))
 
         return Response(status=202)
 

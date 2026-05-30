@@ -8,4 +8,4 @@ class Command(BaseCommand):
     help = 'Seed the DB with static data for Gear, Tier and Job information.'
 
     def handle(self, *args, **options):
-        SeedTask.asap()
+        SeedTask.sync({})
