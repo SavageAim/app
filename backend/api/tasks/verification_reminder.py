@@ -11,7 +11,7 @@ logger = getLogger(__name__)
 
 
 class VerificationReminderTask(PeriodicTask):
-    run_every = '0 * * * *'
+    run_every = '0 0 * * *'
 
     def run(self):
         """

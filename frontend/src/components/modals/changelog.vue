@@ -12,9 +12,12 @@
     </div>
     <div class="card-content content">
       <h2 class="has-text-primary subtitle">{{ version }}</h2>
-      <div class="divider"><i class="material-icons icon">expand_more</i> Minor Fixes <i class="material-icons icon">expand_more</i></div>
-      <p>Re-architected how async tasks are run to try and save costs + make them faster (a rare win-win in this industry!)</p>
-      <p>Also tried a change to improve startup time of the API so requests get answered faster when the site hasn't been used in a while.</p>
+      <div class="divider"><i class="material-icons icon">expand_more</i> FFXIV 7.51 <i class="material-icons icon">expand_more</i></div>
+      <p>Added the Palazzo Diamond Weapons, Item Level 795, available from the new Dancing Mad Ultimate.</p>
+      <p>Best of luck to all proggers!</p>
+
+      <div class="divider"><i class="material-icons icon">expand_more</i> Minor Updates <i class="material-icons icon">expand_more</i></div>
+      <p>Changed the Verification Reminder and Unverified Character Cleanup jobs from hourly to daily to save on costs.</p>
     </div>
   </div>
 </template>

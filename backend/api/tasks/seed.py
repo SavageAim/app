@@ -11,7 +11,6 @@ import yaml
 from django.conf import settings
 from django.core.management import call_command
 from django.db import IntegrityError
-from django_cloud_tasks.serializers import serialize
 from django_cloud_tasks.tasks import SubscriberTask
 # local
 from .base import SavageAimPublisherTask
@@ -33,18 +32,10 @@ class SeedTask(SavageAimPublisherTask):
         headers: dict[str, str] | None = None,
     ):
         if settings.DJANGO_CLOUD_TASKS_EAGER:
-            return SeedTaskSubscriber().run(output=StringIO(), **message)  # fake io for hiding io during tests
+            return SeedTaskSubscriber().run(output=StringIO())  # fake io for hiding io during tests
 
         # Real override to fix a bug in the library
-        # Cloud PubSub does not support headers, but we simulate them with a key in the data property
-        message = self._build_message_with_headers(message=message, headers=headers)
-        message['attributes'] = attributes
-
-        return self._get_publisher_client().publish(
-            message=serialize(value=message),
-            topic_id=self.topic_name(),
-            attributes=attributes,
-        )
+        super().run(message, attributes, headers)
 
 
 class SeedTaskSubscriber(SubscriberTask):
