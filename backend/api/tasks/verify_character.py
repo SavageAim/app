@@ -2,9 +2,7 @@ from io import StringIO
 
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
-from django.conf import settings
 from django.db.models import Q
-from django_cloud_tasks.serializers import serialize
 from django_cloud_tasks.tasks import SubscriberTask
 
 from .base import SavageAimPublisherTask
