@@ -384,7 +384,7 @@ class CharacterVerification(SavageAimTestCase):
             world='Lich',
             verified=True,
         )
-        _fake_task(char.id)
+        _fake_task({'pk': char.id})
 
         # Check Notification was created properly
         self.assertEqual(Notification.objects.filter(user=user).count(), 1)
