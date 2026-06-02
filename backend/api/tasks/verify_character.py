@@ -19,7 +19,7 @@ class VerifyCharacterTask(SavageAimPublisherTask):
     @classmethod
     def topic_name(cls) -> str:
         return TOPIC_NAME
-    
+
     # Define run command that runs the subscriber during eager environments
     def run(
         self,

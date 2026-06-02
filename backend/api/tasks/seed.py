@@ -11,7 +11,6 @@ import yaml
 from django.conf import settings
 from django.core.management import call_command
 from django.db import IntegrityError
-from django_cloud_tasks.serializers import serialize
 from django_cloud_tasks.tasks import SubscriberTask
 # local
 from .base import SavageAimPublisherTask
