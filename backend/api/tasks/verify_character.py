@@ -2,6 +2,7 @@ from io import StringIO
 
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
+from django.conf import settings
 from django.db.models import Q
 from django_cloud_tasks.tasks import SubscriberTask
 
@@ -18,6 +19,19 @@ class VerifyCharacterTask(SavageAimPublisherTask):
     @classmethod
     def topic_name(cls) -> str:
         return TOPIC_NAME
+    
+    # Define run command that runs the subscriber during eager environments
+    def run(
+        self,
+        message: dict,
+        attributes: dict[str, str] | None = None,
+        headers: dict[str, str] | None = None,
+    ):
+        if settings.DJANGO_CLOUD_TASKS_EAGER:
+            return VerifyCharacterTaskSubscriber().run(content=message, output=StringIO())  # for hiding io during tests
+
+        # Real override to fix a bug in the library
+        super().run(message, attributes, headers)
 
 
 class VerifyCharacterTaskSubscriber(SubscriberTask):

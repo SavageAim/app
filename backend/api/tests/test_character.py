@@ -12,10 +12,11 @@ from api.serializers import CharacterCollectionSerializer, CharacterDetailsSeria
 from .test_base import SavageAimTestCase
 
 
-def _fake_task(pk: int, **kwargs):
+def _fake_task(content: dict, **kwargs):
     """
     Handle what celery would handle if it were running
     """
+    pk = content['pk']
     try:
         obj = Character.objects.get(pk=pk)
     except Character.DoesNotExist:  # pragma: no cover

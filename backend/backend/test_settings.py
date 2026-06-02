@@ -48,6 +48,9 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.discord',
+
+    # Cloud Tasks
+    'django_cloud_tasks',
 ]
 
 MIDDLEWARE = [
@@ -163,13 +166,8 @@ LOGIN_REDIRECT_URL = 'http://localhost:8080/'
 LOGOUT_REDIRECT_URL = '/'
 SOCIALACCOUNT_LOGIN_ON_GET = True
 
-# Celery settings
-BROKER_URL = 'redis://localhost:6379'
-CELERY_RESULT_BACKEND = 'redis://localhost:6379'
-CELERY_ACCEPT_CONTENT = ['application/json']
-CELERY_TASK_SERIALIZER = 'json'
-CELERY_RESULT_SERIALIZER = 'json'
-CELERY_TIMEZONE = 'Europe/Dublin'
-
 # Add the webhook for versioning
 VERSION_WEBHOOK = environ.get('VERSION_WEBHOOK', None)
+
+# Cloud Tasks
+DJANGO_CLOUD_TASKS_EAGER = True
