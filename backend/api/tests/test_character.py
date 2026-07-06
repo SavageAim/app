@@ -335,7 +335,7 @@ class CharacterVerification(SavageAimTestCase):
         Notification.objects.all().delete()
         Character.objects.all().delete()
 
-    @patch('api.tasks.verify_character.VerifyCharacterTaskSubscriber.run', side_effect=_fake_task)
+    @patch('api.views.character.verify_character.delay', side_effect=_fake_task)
     def test_verify(self, mocked_task):
         """
         Create a couple of characters for a user and send a list request for them
@@ -401,7 +401,7 @@ class CharacterVerification(SavageAimTestCase):
         VerifyCharacterTask.sync(dict(pk=char.pk))
         self.assertEqual(Notification.objects.filter(user=user).count(), 1)
 
-    @patch('api.tasks.verify_character.VerifyCharacterTaskSubscriber.run', side_effect=_fake_task)
+    @patch('api.views.character.verify_character.delay', side_effect=_fake_task)
     def test_404(self, mocked_task):
         """
         Test the cases that cause a 404 to be returned;

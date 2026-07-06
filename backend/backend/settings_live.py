@@ -224,7 +224,10 @@ CSRF_COOKIE_DOMAIN = '.savageaim.com'
 CORS_ALLOWED_ORIGINS = CSRF_TRUSTED_ORIGINS = [
     'https://savageaim.com',
 ]
+<<<<<<< HEAD
 
 # Django Cloud Task Settings
 DJANGO_CLOUD_TASKS_EAGER = False
 DJANGO_CLOUD_TASKS_ENDPOINT = environ.get('TASKS_ENDPOINT', 'http://localhost:8080')
+=======
+>>>>>>> parent of 4b116b9 (migrate verify_character task to cloud task system)

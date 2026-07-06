@@ -18,7 +18,7 @@ from api.serializers import (
     CharacterDetailsSerializer,
     CharacterUpdateSerializer,
 )
-from api.tasks import VerifyCharacterTask
+from api.tasks import verify_character
 
 
 class CharacterCollection(APIView):
@@ -183,7 +183,7 @@ class CharacterVerification(APIView):
             return Response(status=404)
 
         # Do some celery stuff!
-        VerifyCharacterTask.sync(dict(pk=pk), {'attributes': 'required'})
+        verify_character.delay(pk)
 
         return Response(status=202)
 
