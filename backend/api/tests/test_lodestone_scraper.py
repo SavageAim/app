@@ -42,7 +42,7 @@ class LodestoneScraper(SavageAimTestCase):
                 'https://img2.finalfantasyxiv.com/f/ce3cf70bc9048943a57001f987830daa_'
                 '7206469080400ed57a5373d0a9c55c59fc0.jpg'
             ),
-            'name': 'Eira Erikawa',
+            'name': 'Eira Suzumori',
             'world': 'Lich',
             'dc': 'Light',
         }
