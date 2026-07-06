@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "savage-aim-backend"
-version = "20260602"
+version = "20260706"
 description = "Django Backend for savageaim.com"
 authors = ["freyama.de"]
 license = "MIT"
