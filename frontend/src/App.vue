@@ -24,7 +24,7 @@ import SavageAimMixin from '@/mixins/savage_aim_mixin'
   },
 })
 export default class App extends Vue {
-  // updateSocket!: WebSocket
+  updateSocket!: WebSocket
 
   // Check that the backend server is up before loading the App properly
   async checkBackend(): Promise<void> {
@@ -72,43 +72,43 @@ export default class App extends Vue {
     this.checkChangelog()
 
     // Set up updates socket
-    // this.initSocket()
+    this.initSocket()
   }
 
-  // initSocket(): void {
-  //   // Do all the set up and handling of the websocket
-  //   const sock = new WebSocket(`${process.env.VUE_APP_WS_URL}/ws/updates/`)
+  initSocket(): void {
+    // Do all the set up and handling of the websocket
+    const sock = new WebSocket(`${process.env.VUE_APP_WS_URL}/ws/updates/`)
 
-  //   sock.onmessage = async (msg: MessageEvent) => {
-  //     const payload = JSON.parse(msg.data) as SocketPayload
+    sock.onmessage = async (msg: MessageEvent) => {
+      const payload = JSON.parse(msg.data) as SocketPayload
 
-  //     switch (payload.model) {
-  //     case 'bis':
-  //       break
-  //     case 'character':
-  //       await this.$store.dispatch('fetchCharacters')
-  //       break
-  //     case 'loot':
-  //       break
-  //     case 'notification':
-  //       await this.$store.dispatch('fetchNotifications')
-  //       break
-  //     case 'settings':
-  //       await this.$store.dispatch('fetchUser')
-  //       break
-  //     case 'team':
-  //       await this.$store.dispatch('fetchTeams')
-  //       break
-  //     default:
-  //       Vue.notify({ text: `Unexpected packet model "${payload.model}" received.`, type: 'is-warning' })
-  //     }
-  //     payload.reloadUrls.forEach((url: string) => {
-  //       if (this.$route.path.includes(url)) this.reloadView()
-  //     })
-  //   }
+      switch (payload.model) {
+      case 'bis':
+        break
+      case 'character':
+        await this.$store.dispatch('fetchCharacters')
+        break
+      case 'loot':
+        break
+      case 'notification':
+        await this.$store.dispatch('fetchNotifications')
+        break
+      case 'settings':
+        await this.$store.dispatch('fetchUser')
+        break
+      case 'team':
+        await this.$store.dispatch('fetchTeams')
+        break
+      default:
+        Vue.notify({ text: `Unexpected packet model "${payload.model}" received.`, type: 'is-warning' })
+      }
+      payload.reloadUrls.forEach((url: string) => {
+        if (this.$route.path.includes(url)) this.reloadView()
+      })
+    }
 
-  //   this.updateSocket = sock
-  // }
+    this.updateSocket = sock
+  }
 
   reloadView(): void {
     // Reload the view currently loaded in the router-view component
