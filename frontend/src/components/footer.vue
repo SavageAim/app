@@ -7,7 +7,7 @@
     <a href="https://github.com/SavageAim/app" target="_blank" data-microtip-position="top" role="tooltip" aria-label="Github Repo"><span class="icon is-large"><i class="material-icons">code</i></span></a>
     <a href="https://github.com/SavageAim/plugin" target="_blank" data-microtip-position="top" role="tooltip" aria-label="Dalamud Plugin"><span class="icon is-large"><i class="material-icons">extension</i></span></a>
     <a class="discord-link" href="https://discord.gg/k8szJ5qAKw" target="_blank" data-microtip-position="top" role="tooltip" aria-label="Savage Aim Discord"><span class="icon is-large"><img src="/discord.svg" alt="Discord Logo" class="image is-24x24 discord" height="24" width="24" /></span></a>
-    <p>Savage Aim release {{ $store.state.version }}, by Eira Erikawa (Lich)</p>
+    <p>Savage Aim release {{ $store.state.version }}, by Eira Suzumori (Lich)</p>
     <p>FINAL FANTASY XIV ©2010 - {{ currentYear }} SQUARE ENIX CO., LTD. All Rights Reserved.</p>
     <p>FINAL FANTASY is a registered trademark of Square Enix Holdings Co., Ltd. All material used under license.</p>
   </footer>

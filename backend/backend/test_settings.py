@@ -48,9 +48,6 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.discord',
-
-    # Cloud Tasks
-    'django_cloud_tasks',
 ]
 
 MIDDLEWARE = [
@@ -168,6 +165,3 @@ SOCIALACCOUNT_LOGIN_ON_GET = True
 
 # Add the webhook for versioning
 VERSION_WEBHOOK = environ.get('VERSION_WEBHOOK', None)
-
-# Cloud Tasks
-DJANGO_CLOUD_TASKS_EAGER = True

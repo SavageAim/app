@@ -52,9 +52,6 @@ INSTALLED_APPS = [
 
     # API Schema
     'drf_spectacular',
-
-    # Tasks
-    'django_cloud_tasks',
 ]
 
 MIDDLEWARE = [
@@ -125,7 +122,7 @@ SPECTACULAR_SETTINGS = {
     'DESCRIPTION': 'FFXIV BIS Management Website',
     'VERSION': VERSION,
     'SERVE_INCLUDE_SCHEMA': False,
-    'SERVERS': [{'url': 'https://api.savageaim.com/', 'description': 'Main Site'}],
+    'SERVERS': [{'url': 'https://savageaim.com/', 'description': 'Main Site'}],
     'SCHEMA_PATH_PREFIX': '/backend/api',
 }
 
@@ -183,16 +180,13 @@ SOCIALACCOUNT_LOGIN_ON_GET = True
 
 # Channel Layers
 CHANNEL_LAYERS = {
-    # 'default': {
-    #     'BACKEND': 'channels_redis.core.RedisChannelLayer',
-    #     'CONFIG': {
-    #         "hosts": [('localhost', 6379)],
-    #     },
-    # },
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('localhost', 6379)],
+        },
+    },
 }
 
 # Add the webhook for versioning
 VERSION_WEBHOOK = environ.get('VERSION_WEBHOOK', None)
-
-# Django Cloud Task Settings
-DJANGO_CLOUD_TASKS_EAGER = True  # debug cloud tasks by running them asap in current thread

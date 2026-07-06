@@ -10,7 +10,7 @@ from django.utils import timezone
 # local
 from api.lodestone_scraper import LodestoneScraper
 from api.models import BISList, Character, Gear, Job, Notification, Team, Tier
-from api.tasks import DBCleanupTask, VerifyCharacterTask, VerificationReminderTask
+from api.tasks import cleanup, verify_character, remind_users_to_verify
 from .test_base import SavageAimTestCase
 
 
@@ -168,7 +168,7 @@ class TasksTestSuite(SavageAimTestCase):
         )
 
         # Run the cleanup task and ensure the DB is as it should be
-        DBCleanupTask.asap()
+        cleanup()
         with self.assertRaises(Character.DoesNotExist):
             Character.objects.get(pk=old_unver.pk)
         self.assertEqual(Character.objects.filter(pk__in=[old_ver.pk, new_unver.pk, proxy.pk]).count(), 3)
@@ -239,7 +239,7 @@ class TasksTestSuite(SavageAimTestCase):
             verified=False,
             token=Character.generate_token(),
         )
-        VerifyCharacterTask.sync(dict(pk=char.pk), {'attributes': 'required'})
+        verify_character(char.pk)
 
         char.refresh_from_db()
         self.assertTrue(char.verified)
@@ -325,7 +325,7 @@ class TasksTestSuite(SavageAimTestCase):
         tm = team.members.create(character=proxy, bis_list=bis, lead=True)
 
         # Verify, then we check that the Proxy was deleted, and that the existing character is now the only member
-        VerifyCharacterTask.sync(dict(pk=char.pk), {'attributes': 'required'})
+        verify_character(char.pk)
         with self.assertRaises(Character.DoesNotExist):
             Character.objects.get(pk=proxy.pk)
 
@@ -352,13 +352,13 @@ class TasksTestSuite(SavageAimTestCase):
             verified=True,
             token=Character.generate_token(),
         )
-        VerifyCharacterTask.sync(dict(pk=char.pk), {'attributes': 'required'})
+        verify_character(char.pk)
         mocked_get.assert_not_called()
 
         # Unverify the character and attempt to, then check the notifications for the reason why
         char.verified = False
         char.save()
-        VerifyCharacterTask.sync(dict(pk=char.pk), {'attributes': 'required'})
+        verify_character(char.pk)
         mocked_get.assert_called_once()
 
         # Check for Notification
@@ -384,7 +384,7 @@ class TasksTestSuite(SavageAimTestCase):
         )
         Character.objects.update(created=timezone.now() - timedelta(days=5))
         # Run the reminder function once, ensure the notification is created
-        VerificationReminderTask.asap()
+        remind_users_to_verify()
         self.assertEqual(Notification.objects.count(), 1)
         notif = Notification.objects.first()
         self.assertEqual(notif.link, f'/characters/{old_unver.id}/')
@@ -395,7 +395,7 @@ class TasksTestSuite(SavageAimTestCase):
 
         # Run the function again, ensure that there is still only one notif
         Character.objects.update(created=timezone.now() - timedelta(days=6))
-        VerificationReminderTask.asap()
+        remind_users_to_verify()
         self.assertEqual(Notification.objects.count(), 1)
         self.assertEqual(Notification.objects.first().pk, notif.pk)
 
@@ -519,7 +519,7 @@ class TasksTestSuite(SavageAimTestCase):
 
         # Attempt to verify the proxy character, which for some reason is causing a protected error
         self.assertEqual(Character.objects.count(), 3)
-        VerifyCharacterTask.sync(dict(pk=char.pk), {'attributes': 'required'})
+        verify_character(char.pk)
         self.assertEqual(Character.objects.count(), 1)
         with self.assertRaises(Character.DoesNotExist):
             Character.objects.get(pk=proxy.pk)

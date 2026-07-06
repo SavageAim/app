@@ -740,7 +740,7 @@ class TeamMemberCurrentGearResource(SavageAimTestCase):
             current_necklace=crafted,
             current_offhand=crafted,
             current_right_ring=crafted,
-            job_id='PLD',
+            job_id='BLM',
             owner=self.char2,
         )
 

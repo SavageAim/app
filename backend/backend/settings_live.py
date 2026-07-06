@@ -30,8 +30,7 @@ SECRET_KEY = environ['SECRET_KEY']
 DEBUG = False
 
 ALLOWED_HOSTS = [
-    'api.savageaim.com',
-    'ws.savageaim.com',
+    'savageaim.com',
 ]
 
 TEMPLATES = [
@@ -67,9 +66,6 @@ INSTALLED_APPS = [
 
     # API Schema
     'drf_spectacular',
-
-    # Tasks
-    'django_cloud_tasks',
 ]
 
 MIDDLEWARE = [
@@ -125,7 +121,7 @@ SPECTACULAR_SETTINGS = {
     'DESCRIPTION': 'FFXIV BIS Management Website',
     'VERSION': VERSION,
     'SERVE_INCLUDE_SCHEMA': False,
-    'SERVERS': [{'url': 'https://api.savageaim.com/', 'description': 'Savage Aim API'}],
+    'SERVERS': [{'url': 'https://savageaim.com/', 'description': 'Savage Aim API'}],
     'SCHEMA_PATH_PREFIX': '/backend/api',
     'DISABLE_ERRORS_AND_WARNINGS': True,
 }
@@ -147,6 +143,17 @@ SOCIALACCOUNT_PROVIDERS = {
 LOGIN_REDIRECT_URL = 'https://savageaim.com/'
 LOGOUT_REDIRECT_URL = 'https://savageaim.com/'
 SOCIALACCOUNT_LOGIN_ON_GET = True
+
+# Celery
+REDIS_HOSTNAME = environ.get('REDIS_HOSTNAME', 'redis')
+REDIS_PORT = environ.get('REDIS_PORT', '6379')
+
+CELERY_RESULT_BACKEND = BROKER_URL = f'redis://{REDIS_HOSTNAME}:{REDIS_PORT}'
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TIMEZONE = 'Europe/Dublin'
+CELERY_ANNOTATIONS = {'tasks.verify_character': {'rate_limit': '1/s'}}
 
 # Get django logs to stdout
 LOGGING = {
@@ -204,12 +211,12 @@ sentry_sdk.init(
 REDIS_HOSTNAME = environ.get('REDIS_HOSTNAME', 'redis')
 REDIS_PORT = environ.get('REDIS_PORT', '6379')
 CHANNEL_LAYERS = {
-    # 'default': {
-    #     'BACKEND': 'channels_redis.core.RedisChannelLayer',
-    #     'CONFIG': {
-    #         "hosts": [(REDIS_HOSTNAME, REDIS_PORT)],
-    #     },
-    # },
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [(REDIS_HOSTNAME, REDIS_PORT)],
+        },
+    },
 }
 
 # Add the webhook for versioning
@@ -224,7 +231,3 @@ CSRF_COOKIE_DOMAIN = '.savageaim.com'
 CORS_ALLOWED_ORIGINS = CSRF_TRUSTED_ORIGINS = [
     'https://savageaim.com',
 ]
-
-# Django Cloud Task Settings
-DJANGO_CLOUD_TASKS_EAGER = False
-DJANGO_CLOUD_TASKS_ENDPOINT = environ.get('TASKS_ENDPOINT', 'http://localhost:8080')

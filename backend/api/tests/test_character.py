@@ -9,15 +9,13 @@ from rest_framework import status
 from api import notifier
 from api.models import BISList, Character, Gear, Notification, Job, Settings, Team, Tier
 from api.serializers import CharacterCollectionSerializer, CharacterDetailsSerializer
-from api.tasks import VerifyCharacterTask
 from .test_base import SavageAimTestCase
 
 
-def _fake_task(content: dict, **kwargs):
+def _fake_task(pk: int):
     """
     Handle what celery would handle if it were running
     """
-    pk = content['pk']
     try:
         obj = Character.objects.get(pk=pk)
     except Character.DoesNotExist:  # pragma: no cover
@@ -335,7 +333,7 @@ class CharacterVerification(SavageAimTestCase):
         Notification.objects.all().delete()
         Character.objects.all().delete()
 
-    @patch('api.tasks.verify_character.VerifyCharacterTaskSubscriber.run', side_effect=_fake_task)
+    @patch('api.views.character.verify_character.delay', side_effect=_fake_task)
     def test_verify(self, mocked_task):
         """
         Create a couple of characters for a user and send a list request for them
@@ -371,8 +369,7 @@ class CharacterVerification(SavageAimTestCase):
         self.assertEqual(notif.type, 'verify_success')
         self.assertFalse(notif.read)
 
-    @patch('api.tasks.verify_character.VerifyCharacterTaskSubscriber.run', side_effect=_fake_task)
-    def test_verify_fail_notifs(self, *args):
+    def test_verify_fail_notifs(self):
         """
         Just call the mock task with a verified character and test the notifier task works
         Also test after changing the notif settings to ensure a second notif isn't sent
@@ -386,7 +383,7 @@ class CharacterVerification(SavageAimTestCase):
             world='Lich',
             verified=True,
         )
-        VerifyCharacterTask.sync(dict(pk=char.pk))
+        _fake_task(char.pk)
 
         # Check Notification was created properly
         self.assertEqual(Notification.objects.filter(user=user).count(), 1)
@@ -398,10 +395,10 @@ class CharacterVerification(SavageAimTestCase):
 
         # Update settings and try again
         Settings.objects.create(user=user, theme='beta', notifications={'verify_fail': False})
-        VerifyCharacterTask.sync(dict(pk=char.pk))
+        _fake_task(char.pk)
         self.assertEqual(Notification.objects.filter(user=user).count(), 1)
 
-    @patch('api.tasks.verify_character.VerifyCharacterTaskSubscriber.run', side_effect=_fake_task)
+    @patch('api.views.character.verify_character.delay', side_effect=_fake_task)
     def test_404(self, mocked_task):
         """
         Test the cases that cause a 404 to be returned;
