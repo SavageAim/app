@@ -52,9 +52,6 @@ INSTALLED_APPS = [
 
     # API Schema
     'drf_spectacular',
-
-    # Tasks
-    'django_cloud_tasks',
 ]
 
 MIDDLEWARE = [
@@ -183,12 +180,12 @@ SOCIALACCOUNT_LOGIN_ON_GET = True
 
 # Channel Layers
 CHANNEL_LAYERS = {
-    # 'default': {
-    #     'BACKEND': 'channels_redis.core.RedisChannelLayer',
-    #     'CONFIG': {
-    #         "hosts": [('localhost', 6379)],
-    #     },
-    # },
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('localhost', 6379)],
+        },
+    },
 }
 
 # Add the webhook for versioning

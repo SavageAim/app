@@ -7,8 +7,8 @@ license = "MIT"
 package-mode = false
 
 [tool.poetry.dependencies]
-python = "^3.10"
-django = "4.2.30"
+python = "^3.11,<3.12"
+django = "<6"
 celery = "5.6.3"
 djangorestframework = "3.15.2"
 django-allauth = "0.50.0"
