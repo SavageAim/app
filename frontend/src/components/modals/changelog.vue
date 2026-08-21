@@ -17,7 +17,7 @@
 
       <div class="divider"><i class="material-icons icon">expand_more</i> Random Authentication Failures <i class="material-icons icon">expand_more</i></div>
       <p>If you can log in but are randomly getting 403 errors when trying to do things, please <b>Reset your Cookies for this site.</b></p>
-      <p>This is a leftover issue from the back-to-back migrations and only affects anyone who logged in while this site was hosted at <code>app.savageaim.com</code></p>
+      <p>This is a leftover issue from the back-to-back migrations and only potentially affects anyone who logged in before the second migration finished on July 6th, 2026</p>
     </div>
   </div>
 </template>
